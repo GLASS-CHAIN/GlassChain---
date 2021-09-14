@@ -1,0 +1,301 @@
+Title="chain33"
+TestNet=true
+FixTime=false
+version="6.3.0"
+
+[crypto]
+
+[log]
+# Log level, support debug(dbug)/info/warn/error(eror)/crit
+loglevel = "debug"
+logConsoleLevel = "info"
+# Log file name, with a directory, all generated log files are placed in this directory
+logFile = "logs/chain33.log"
+# Maximum value of a single log file (unit: megabytes)
+maxFileSize = 300
+# Maximum number of saved historical log files
+maxBackups = 100
+# The most saved historical log messages (unit: day)
+maxAge = 28
+# Whether the log file name uses local events (otherwise UTC time is used)
+localTime = true
+# Whether the history log file is compressed (compression format is gz)
+compress = true
+# Whether to print the calling source file and line number
+callerFile = false
+# Whether to print the calling method
+callerFunction = false
+
+[blockchain]
+defCacheSize=128
+maxFetchBlockNum=128
+timeoutSeconds=5
+batchBlockNum=128
+driver="leveldb"
+dbPath="datadir"
+dbCache=64
+isStrongConsistency=false
+singleMode=false
+batchsync=false
+isRecordBlockSequence=true
+isParaChain=false
+enableTxQuickIndex=true
+enableReExecLocal=true
+# Enable streamlininglocaldb
+enableReduceLocaldb=true
+enablePushSubscribe=false
+
+# Turn off shard storage, the default false is to turn on shard storage; parachain does not require sharding and needs to modify this default parameter to true
+disableShard=false
+# The number of blocks contained in each large block in shard storage
+chunkblockNum=100
+# Enable to get data from P2pStore
+enableFetchP2pstore=true
+# After enabling the assumption that the archived data has been deleted, get the data situation
+enableIfDelLocalChunk=false
+
+[p2p]
+# p2p type
+types=["dht"]
+# Whether to start P2P service
+enable=true
+# Type of database used
+driver="leveldb"
+# Type of database used
+dbPath="datadir/addrbook"
+# Database cache size
+dbCache=4
+# GRPC Request log file
+grpcLogFile="grpc33.log"
+#waitPid Waiting for the seed to be imported
+waitPid=false
+
+
+[p2p.sub.gossip]
+seeds=[]
+isSeed=false
+serverStart=true
+innerSeedEnable=true
+useGithub=true
+innerBounds=300
+
+[p2p.sub.dht]
+seeds=[]
+port=13803
+maxConnectNum=100
+# Prohibit discovering nodes via LAN
+disableFindLANPeers=false
+# Configured as a full node mode, the full node saves all fragmented data
+isFullNode=false
+
+[rpc]
+jrpcBindAddr="localhost:8801"
+grpcBindAddr="localhost:8802"
+whitelist=["127.0.0.1"]
+jrpcFuncWhitelist=["*"]
+grpcFuncWhitelist=["*"]
+
+
+[mempool]
+name="price"
+poolCacheSize=10240
+maxTxNumPerAccount=100
+# The minimum transaction fee rate, this has no default value, it is required, generally it is0.001 coins
+minTxFeeRate=100000
+# The largest transaction fee rate, 0.1 coins
+maxTxFeeRate=10000000
+# The largest handling fee for a single transaction, 10 coins
+maxTxFee=1000000000
+isLevelFee=true
+[mempool.sub.timeline]
+poolCacheSize=10240
+
+[mempool.sub.score]
+poolCacheSize=10240
+timeParam=1      #Time to price ratio
+priceConstant=10  #The handling fee is a constant relative to the time. When queuing, the handling fee is 1e3 higher ~= 1h faster
+pricePower=1     #Constant ratio
+
+[mempool.sub.price]
+poolCacheSize=10240
+
+[consensus]
+name="ticket"
+minerstart=true
+genesisBlockTime=1514533394
+genesis="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
+minerExecs=["ticket", "autonomy"]
+enableBestBlockCmp=true
+
+
+[mver.consensus]
+fundKeyAddr = "1BQXS6TxaYYG5mADaWij4AxhZZUTpw95a5"
+powLimitBits="0x1f00ffff"
+maxTxNumber = 1600      #160
+
+[mver.consensus.ForkChainParamV1]
+maxTxNumber = 1500
+
+[mver.consensus.ForkTicketFundAddrV1]
+fundKeyAddr = "1Ji3W12KGScCM7C2p8bg635sNkayDM8MGY"
+
+[mver.consensus.ticket]
+coinReward = 18
+coinDevFund = 12
+ticketPrice = 10000
+retargetAdjustmentFactor = 4
+futureBlockTime = 16
+ticketFrozenTime = 5    #5s only for test
+ticketWithdrawTime = 10 #10s only for test
+ticketMinerWaitTime = 2 #2s only for test
+targetTimespan=2304
+targetTimePerBlock=16
+
+[mver.consensus.ticket.ForkChainParamV1]
+futureBlockTime = 15
+ticketFrozenTime = 43200
+ticketWithdrawTime = 172800
+ticketMinerWaitTime = 7200
+targetTimespan=2160
+targetTimePerBlock=15
+
+[mver.consensus.ticket.ForkChainParamV2]
+coinReward = 5
+coinDevFund = 3
+targetTimespan=720
+targetTimePerBlock=5
+ticketPrice = 3000
+
+
+
+[consensus.sub.ticket]
+genesisBlockTime=1514533394
+[[consensus.sub.ticket.genesis]]
+minerAddr="12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
+returnAddr="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
+count=10000
+
+[[consensus.sub.ticket.genesis]]
+minerAddr="1PUiGcbsccfxW3zuvHXZBJfznziph5miAo"
+returnAddr="1EbDHAXpoiewjPLX9uqoz38HsKqMXayZrF"
+count=10000
+
+[[consensus.sub.ticket.genesis]]
+minerAddr="1EDnnePAZN48aC2hiTDzhkczfF39g1pZZX"
+returnAddr="1KcCVZLSQYRUwE5EXTsAoQs9LuJW6xwfQa"
+count=10000
+
+[store]
+name="kvmvccmavl"
+driver="leveldb"
+dbPath="datadir/mavltree"
+dbCache=128
+# store Database version
+storedbVersion="2.0.0"
+
+[store.sub.mavl]
+enableMavlPrefix=false
+enableMVCC=false
+enableMavlPrune=false
+pruneHeight=10000
+# Whether to enable mavl data to be loaded into memory
+enableMemTree=true
+# Whether to enable mavl leaf node data to be loaded into memory
+enableMemVal=true
+# The number of close tickets in the cache, the larger the cache, the faster the synchronization speed, the maximum is set to 1,500,000
+tkCloseCacheLen=100000
+
+[store.sub.kvmvccmavl]
+enableMVCCIter=true
+enableMavlPrefix=false
+enableMVCC=false
+enableMavlPrune=false
+pruneMavlHeight=10000
+enableMVCCPrune=false
+pruneMVCCHeight=10000
+# Whether to enable mavl data to be loaded into memory
+enableMemTree=true
+# Whether to enable mavl leaf node data to be loaded into memory
+enableMemVal=true
+# The number of close tickets in the cache, the larger the cache, the faster the synchronization speed, the maximum is set to 1,500,000
+tkCloseCacheLen=100000
+# This parameter is for parachains, the main chain does not need to enable this function
+enableEmptyBlockHandle=false
+
+[wallet]
+minFee=100000
+driver="leveldb"
+dbPath="wallet"
+dbCache=16
+signType="secp256k1"
+
+[wallet.sub.ticket]
+minerdisable=false
+minerwhitelist=["*"]
+
+[wallet.sub.multisig]
+rescanMultisigAddr=false
+
+[exec]
+enableStat=false
+enableMVCC=false
+alias=["token1:token","token2:token","token3:token"]
+
+[exec.sub.token]
+saveTokenTxList=true
+tokenApprs = [
+	"1Bsg9j6gW83sShoee1fZAt9TkUjcrCgA9S",
+	"1Q8hGLfoGe63efeWa8fJ4Pnukhkngt6poK",
+	"1LY8GFia5EiyoTodMLfkB5PHNNpXRqxhyB",
+	"1GCzJDS6HbgTQ2emade7mEJGGWFfA15pS9",
+	"1JYB8sxi4He5pZWHCd3Zi2nypQ4JMB6AxN",
+	"12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv",
+]
+
+[exec.sub.cert]
+# Whether to enable certificate verification and signing
+enable=false
+# Encrypted file path
+cryptoPath="authdir/crypto"
+# With certificate signature type, support "auth_ecdsa", "auth_sm2"
+signType="auth_ecdsa"
+
+[exec.sub.relay]
+genesis="12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
+
+[exec.sub.manage]
+superManager=[
+    "1Bsg9j6gW83sShoee1fZAt9TkUjcrCgA9S",
+    "12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv",
+    "1Q8hGLfoGe63efeWa8fJ4Pnukhkngt6poK"
+]
+[exec.sub.paracross]
+nodeGroupFrozenCoins=0
+#Parallel chain consensus stops waiting for the height of the main chain
+paraConsensusStopBlocks=30000
+
+[exec.sub.autonomy]
+total="16htvcBNSEA7fZhAdLJphDwQRQJaHpyHTp"
+useBalance=false
+
+[exec.sub.evm]
+#Free transaction fee mode The maximum gas allowed by the alliance chain. This configuration is only effective for deployment methods that do not charge transaction fees. This configuration will not work under other deployment methods.
+#Currently the maximum is 2 million
+evmGasLimit=2000000
+#evmInternal debug output, instruction level, default off, 0: off; 1: on
+evmDebugEnable=0
+
+[metrics]
+#Is it possible to send metrics data
+enableMetrics=false
+#Data Save Mode
+dataEmitMode="influxdb"
+
+[metrics.sub.influxdb]
+#Send interval in nanoseconds
+duration=1000000000
+url="http://influxdb:8086"
+database="chain33metrics"
+username=""
+password=""
+namespace=""
