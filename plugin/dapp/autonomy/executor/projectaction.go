@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	maxBoardPeriodAmount = 10000 * 300    // 每个时期董事会审批最大额度300万
-	boardPeriod          = 17280 * 30 * 1 // 时期为一个月
+	maxBoardPeriodAmount = 10000 * 300    
+	boardPeriod          = 17280 * 30 * 1 
 )
 
 func (a *action) propProject(prob *auty.ProposalProject) (*types.Receipt, error) {
@@ -36,7 +36,6 @@ func (a *action) propProject(prob *auty.ProposalProject) (*types.Receipt, error)
 		return nil, err
 	}
 
-	// 获取董事会成员
 	pboard, err := a.getActiveBoard()
 	if err != nil {
 		alog.Error("propProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "get getActiveBoard failed", err)

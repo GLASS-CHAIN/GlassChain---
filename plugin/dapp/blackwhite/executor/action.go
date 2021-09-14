@@ -26,10 +26,10 @@ const (
 	minAmount      int64 = 1
 	minPlayerCount int32 = 3
 	maxPlayerCount int32 = 100000
-	lockAmount     int64 = 100          //创建者锁定金额 types.coins/lockAmount
-	showTimeout    int64 = 60 * 5       // 公布密钥超时时间
-	maxPlayTimeout int64 = 60 * 60 * 24 // 创建交易之后最大超时时间
-	minPlayTimeout int64 = 60 * 10      // 创建交易之后最小超时时间
+	lockAmount     int64 = 100          
+	showTimeout    int64 = 60 * 5       
+	maxPlayTimeout int64 = 60 * 60 * 24 
+	minPlayTimeout int64 = 60 * 10      
 
 	white = "0"
 	black = "1"

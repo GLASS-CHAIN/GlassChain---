@@ -43,7 +43,6 @@ func newAddressResult(Addr string, blackwhite []int) *gt.AddressResult {
 	}
 }
 
-// 参数: 比对次数， 参加的数字， 那几个人赢了
 func newGameRound(name string, loop int32, blackwhite [][]int, win ...int32) ([]*addrResult, error) {
 	a := newTestAction()
 	var addrRes []*gt.AddressResult
@@ -91,7 +90,7 @@ func test1(t *testing.T) {
 	inputRet = append(inputRet, []int{0, 1, 0, 0, 1, 1, 0}) // in 3 loop win
 	inputRet = append(inputRet, []int{1, 0, 0, 0, 1, 1, 1})
 
-	_, err := newGameRound("第 1 次游戏", 7, inputRet, 5)
+	_, err := newGameRound("number 1 game", 7, inputRet, 5)
 	if err != nil {
 		fmt.Println(err)
 		require.Error(t, err)
@@ -114,7 +113,7 @@ func test2(t *testing.T) {
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 1})
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 1})
 
-	_, err := newGameRound("第 2 次游戏", 7, inputRet, 0, 1)
+	_, err := newGameRound("number 2 game", 7, inputRet, 0, 1)
 	if err != nil {
 		fmt.Println(err)
 		require.Error(t, err)
@@ -145,7 +144,7 @@ func test3(t *testing.T) {
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 1, 0, 1, 0})
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 1, 0, 1, 0})
 
-	_, err := newGameRound("第 3 次游戏", 10, inputRet, 2)
+	_, err := newGameRound("number 3 game", 10, inputRet, 2)
 	if err != nil {
 		fmt.Println(err)
 		require.Error(t, err)
@@ -179,7 +178,7 @@ func test4(t *testing.T) {
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 1, 0, 1, 0})
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 1, 0, 1, 0})
 
-	_, err := newGameRound("第 4 次游戏", 10, inputRet, 0, 1)
+	_, err := newGameRound("number 4 game", 10, inputRet, 0, 1)
 	if err != nil {
 		fmt.Println(err)
 		require.Error(t, err)
@@ -209,7 +208,7 @@ func test5(t *testing.T) {
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 0, 0, 1, 0})
 	inputRet = append(inputRet, []int{0, 0, 0, 0, 1, 1, 0, 0, 1, 0})
 
-	_, err := newGameRound("第 5 次游戏", 10, inputRet, 1, 2, 3)
+	_, err := newGameRound("number 5 game", 10, inputRet, 1, 2, 3)
 	if err != nil {
 		fmt.Println(err)
 		require.Error(t, err)
