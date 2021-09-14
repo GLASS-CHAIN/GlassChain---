@@ -122,7 +122,7 @@ func createTicket(cfg *types.Chain33Config, minerAddr, returnAddr string, count 
 	tx1 := types.Transaction{}
 	tx1.Execer = []byte(cfg.GetCoinExec())
 
-	//给hotkey 10000 个币，作为miner的手续费
+	//Give hotkey 10000 coins as the miner's handling fee
 	tx1.To = minerAddr
 	//gen payload
 	g := &cty.CoinsAction_Genesis{}
@@ -247,12 +247,12 @@ func getPrivMap(privs []crypto.PrivKey) map[string]crypto.PrivKey {
 }
 
 func (client *Client) getMinerTx(current *types.Block) (*ty.TicketAction, error) {
-	//检查第一个笔交易的execs, 以及执行状态
+	//Check the execs of the first transaction, and the execution status
 	if len(current.Txs) == 0 {
 		return nil, types.ErrEmptyTx
 	}
 	baseTx := current.Txs[0]
-	//判断交易类型和执行情况
+	//Determine the transaction type and execution
 	var ticketAction ty.TicketAction
 	err := types.Decode(baseTx.GetPayload(), &ticketAction)
 	if err != nil {
@@ -261,7 +261,7 @@ func (client *Client) getMinerTx(current *types.Block) (*ty.TicketAction, error)
 	if ticketAction.GetTy() != ty.TicketActionMiner {
 		return nil, types.ErrCoinBaseTxType
 	}
-	//判断交易执行是否OK
+	//Determine whether the transaction execution is OK
 	if ticketAction.GetMiner() == nil {
 		return nil, ty.ErrEmptyMinerTx
 	}
@@ -277,7 +277,7 @@ func (client *Client) getMinerModify(block *types.Block) ([]byte, error) {
 }
 
 func (client *Client) getModify(beg, end int64) ([]byte, error) {
-	//通过某个区间计算modify
+	//Calculate modify through a certain interval
 	timeSource := int64(0)
 	total := int64(0)
 	newmodify := ""
@@ -320,11 +320,11 @@ func (client *Client) CheckBlock(parent *types.Block, current *types.BlockDetail
 	if parent.Height+1 != current.Block.Height {
 		return types.ErrBlockHeight
 	}
-	//判断exec 是否成功
+	//Determine whether exec is successful
 	if current.Receipts[0].Ty != types.ExecOk {
 		return types.ErrCoinBaseExecErr
 	}
-	//check reward 的值是否正确
+	//Is the value of check reward correct?
 	miner := ticketAction.GetMiner()
 	if miner.Reward != (cfg.CoinReward + calcTotalFee(current.Block)) {
 		return types.ErrCoinbaseReward
@@ -334,7 +334,7 @@ func (client *Client) CheckBlock(parent *types.Block, current *types.BlockDetail
 	}
 	//check modify:
 
-	//通过判断区块的难度Difficulty
+	//By judging the difficulty of the block Difficulty
 	//1. target >= currentdiff
 	//2.  current bit == target
 	target, modify, err := client.getNextTarget(parent, parent.Difficulty)
@@ -348,7 +348,7 @@ func (client *Client) CheckBlock(parent *types.Block, current *types.BlockDetail
 	if currentdiff.Sign() < 0 {
 		return types.ErrCoinBaseTarget
 	}
-	//当前难度
+	//Current difficulty
 	currentTarget := difficulty.CompactToBig(current.Block.Difficulty)
 	if currentTarget.Cmp(difficulty.CompactToBig(miner.Bits)) != 0 {
 		tlog.Error("block error: calc tagget not the same to miner",
@@ -547,11 +547,11 @@ func (client *Client) searchTargetTicket(parent, block *types.Block) (*ty.Ticket
 			tlog.Warn("Client searchTargetTicket ticket is nil", "ticketID", ticketID)
 			continue
 		}
-		//已经到成熟期
+		//Has reached maturity
 		if !ticket.GetIsGenesis() && (block.BlockTime-ticket.GetCreateTime() <= ty.GetTicketMinerParam(cfg, block.Height).TicketFrozenTime) {
 			continue
 		}
-		// 查找私钥
+		// Find private key
 		priv, ok := client.privmap[ticket.MinerAddress]
 		if !ok {
 			tlog.Error("Client searchTargetTicket can't find private key", "MinerAddress", ticket.MinerAddress)
@@ -563,7 +563,7 @@ func (client *Client) searchTargetTicket(parent, block *types.Block) (*ty.Ticket
 			continue
 		}
 		currentdiff := client.getCurrentTarget(block.BlockTime, ticket.TicketId, modify, privHash)
-		if currentdiff.Cmp(diff) >= 0 { //难度要大于前一个，注意数字越小难度越大
+		if currentdiff.Cmp(diff) >= 0 { //The difficulty is greater than the previous one. Note that the smaller the number, the greater the difficulty
 			continue
 		}
 		tlog.Info("currentdiff", "hex", printBInt(currentdiff))
@@ -604,7 +604,7 @@ func (client *Client) Miner(parent, block *types.Block) error {
 	if err != nil {
 		return err
 	}
-	//需要首先对交易进行排序
+	//Need to sort transactions first
 	cfg := client.GetAPI().GetConfig()
 	if cfg.IsFork(block.Height, "ForkRootHash") {
 		block.Txs = types.TransactionSort(block.Txs)
@@ -618,7 +618,7 @@ func (client *Client) Miner(parent, block *types.Block) error {
 	return nil
 }
 
-//gas 直接燃烧
+//gas direct combustion
 func calcTotalFee(block *types.Block) (total int64) {
 	return 0
 }

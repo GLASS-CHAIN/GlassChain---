@@ -68,11 +68,11 @@ func newBlsClient(para *client, cfg *subConfig) *blsClient {
 }
 
 /*
-1. 当前的leaderIndex和自己在nodegroup里面index一致，则自己是leader，负责发送共识交易
-2. 当前leader负责每15s 发送一个喂狗消息，表明自己live
-3. 每个node开启watchdog定时器，如果超时，则leaderIndex++, 寻找新的活的leader
-4. node一旦收到新的喂狗消息，则把新消息的index更新为自己的leaderIndex， 如果和自己的leaderIndex冲突，则选大者
-5. 每隔比如100个共识高度，就需要轮换leader，触发leaderIndex++，leader均衡轮换发送共识交易
+1. The current leaderIndex is the same as the index in the nodegroup, so you are the leader and responsible for sending consensus transactions
+2. The current leader is responsible for sending a dog-feeding message every 15s to indicate that he is alive
+3. Each node starts the watchdog timer, if it expires, then leaderIndex++, looking for a new live leader
+4. Once the node receives a new dog-feeding message, it updates the index of the new message to its own leaderIndex, and if it conflicts with its own leaderIndex, choose the larger one
+5. Every 100 consensus heights, for example, the leader needs to be rotated, leaderIndex++ is triggered, and the leader rotates to send consensus transactions in a balanced manner
 */
 func (b *blsClient) procLeaderSync() {
 	defer b.paraClient.wg.Done()
@@ -88,7 +88,7 @@ out:
 	for {
 		select {
 		case <-feedDogTicker:
-			//leader需要定期喂狗
+			//leader need to feed the dog regularly
 			_, _, base, off, isLeader := b.getLeaderInfo()
 			if isLeader {
 				act := &pt.ParaP2PSubMsg{Ty: P2pSubLeaderSyncMsg}
@@ -101,12 +101,12 @@ out:
 			}
 
 		case <-watchDogTicker:
-			//排除不在Nodegroup里面的Node
+			//Exclude Nodes that are not in Nodegroup
 			if !b.isValidNodes(b.selfID) {
 				plog.Info("procLeaderSync watchdog, not in nodegroup", "self", b.selfID)
 				continue
 			}
-			//至少1分钟内要收到leader喂狗消息，否则认为leader挂了，index++
+			//Receive the leader feed dog message within at least 1 minute, otherwise think that the leader is down, index++
 			if atomic.LoadUint32(&b.feedDog) == 0 {
 				nodes, leader, _, off, _ := b.getLeaderInfo()
 				if len(nodes) <= 0 {
@@ -132,31 +132,31 @@ out:
 	}
 }
 
-//处理leader sync tx, 需接受同步的数据，两个节点基本的共识高度相同, 两个共同leader需相同
+//To process leader sync tx, need to accept synchronized data, the basic consensus height of two nodes is the same, and two common leaders need to be the same
 func (b *blsClient) rcvLeaderSyncTx(sync *pt.LeaderSyncInfo) error {
 	nodes, _, base, off, isLeader := b.getLeaderInfo()
 	if len(nodes) <= 0 {
 		return errors.Wrapf(pt.ErrParaNodeGroupNotSet, "id=%s", b.selfID)
 	}
 	syncLeader := (sync.BaseIdx + sync.Offset) % int32(len(nodes))
-	//接受同步数据需要两个节点基本的共识高度相同, 两个共同leader需相同
+	//Accepting synchronized data requires that the two nodes have the same basic consensus height, and the two common leaders need to be the same
 	if sync.BaseIdx != base || nodes[syncLeader] != sync.ID {
 		return errors.Wrapf(types.ErrNotSync, "peer base=%d,id=%s,self.Base=%d,id=%s", sync.BaseIdx, sync.ID, base, nodes[syncLeader])
 	}
-	//如果leader节点冲突，取大者
+	//If the leader node conflicts, whichever is greater
 	if isLeader && off > sync.Offset {
 		return errors.Wrapf(types.ErrNotSync, "self is leader, off=%d bigger than peer sync=%d", off, sync.Offset)
 	}
-	//更新同步过来的最新offset 高度
+	//Update the latest offset height synchronized
 	atomic.CompareAndSwapInt32(&b.leaderOffset, b.leaderOffset, sync.Offset)
 
-	//两节点不同步则不喂狗，以防止非同步或作恶节点喂狗
+	//If the two nodes are not synchronized, the dog will not be fed to prevent asynchronous or malicious nodes from feeding the dog
 	atomic.StoreUint32(&b.feedDog, 1)
 	return nil
 }
 
 func (b *blsClient) getLeaderInfo() ([]string, int32, int32, int32, bool) {
-	//在未同步前 不处理聚合消息
+	//Do not process aggregated messages before synchronization
 	if !b.paraClient.commitMsgClient.isSync() {
 		return nil, 0, 0, 0, false
 	}
@@ -165,7 +165,7 @@ func (b *blsClient) getLeaderInfo() ([]string, int32, int32, int32, bool) {
 		return nil, 0, 0, 0, false
 	}
 	h := b.paraClient.commitMsgClient.getConsensusHeight()
-	//间隔的除数再根据nodes取余数，平均覆盖所有节点
+	//The divisor of the interval then takes the remainder according to the nodes, covering all nodes on average
 	baseIdx := int32((h / int64(b.leaderSwitchInt)) % int64(len(nodes)))
 	offIdx := atomic.LoadInt32(&b.leaderOffset)
 	leaderIdx := (baseIdx + offIdx) % int32(len(nodes))
@@ -186,7 +186,7 @@ func (b *blsClient) isValidNodes(id string) bool {
 	return strings.Contains(nodes, id)
 }
 
-//1. 要等到达成共识了才发送，不然处理未达成共识的各种场景会比较复杂，而且浪费手续费
+//1. You have to wait until a consensus is reached before sending, otherwise it will be more complicated to deal with various scenarios where a consensus has not been reached, and it will waste handling fees.
 func (b *blsClient) procAggregateTxs() {
 	defer b.paraClient.wg.Done()
 	if len(b.selfID) <= 0 {
@@ -200,19 +200,19 @@ out:
 			b.mutex.Lock()
 			integrateCommits(b.commitsPool, commits)
 
-			//commitsPool里面任一高度满足共识，则认为done
+			//Any height in the commitsPool meets the consensus, then it is considered done
 			nodes, _ := b.getSuperNodes()
 			if !isMostCommitDone(len(nodes), b.commitsPool) {
 				b.mutex.Unlock()
 				continue
 			}
-			//自己是Leader,则聚合并发送交易
+			//If you are the leader, aggregate and send transactions
 			_, _, _, _, isLeader := b.getLeaderInfo()
 			if isLeader {
 				b.sendAggregateTx(nodes)
 			}
-			//聚合签名总共消耗大约1.5ms
-			//清空txsBuff，重新收集
+			//The aggregated signature consumes about 1.5ms in total
+			//Empty txsBuff and recollect
 			b.commitsPool = make(map[int64]*pt.ParaBlsSignSumDetails)
 			b.mutex.Unlock()
 
@@ -271,7 +271,7 @@ func (b *blsClient) rcvCommitTx(tx *types.Transaction) error {
 func (b *blsClient) checkCommitTx(txs []*types.Transaction) ([]*pt.ParacrossCommitAction, error) {
 	var commits []*pt.ParacrossCommitAction
 	for _, tx := range txs {
-		//验签
+		//Verification
 		if !tx.CheckSign(b.paraClient.GetCurrentHeight()) {
 			return nil, errors.Wrapf(types.ErrSign, "hash=%s", common.ToHex(tx.Hash()))
 		}
@@ -283,12 +283,12 @@ func (b *blsClient) checkCommitTx(txs []*types.Transaction) ([]*pt.ParacrossComm
 		if act.Ty != pt.ParacrossActionCommit {
 			return nil, errors.Wrapf(types.ErrInvalidParam, "act ty=%d", act.Ty)
 		}
-		//交易签名和bls签名用户一致
+		//The transaction signature is consistent with the bls signature user
 		commit := act.GetCommit()
 		if tx.From() != commit.Bls.Addrs[0] {
 			return nil, errors.Wrapf(types.ErrFromAddr, "from=%s,bls addr=%s", tx.From(), commit.Bls.Addrs[0])
 		}
-		//验证bls 签名
+		//Verify bls signature
 		err = b.verifyBlsSign(tx.From(), commit)
 		if err != nil {
 			return nil, errors.Wrapf(pt.ErrBlsSignVerify, "from=%s", tx.From())
@@ -308,7 +308,7 @@ func hasCommited(addrs []string, addr string) (bool, int) {
 	return false, 0
 }
 
-//整合相同高度commits
+//Integrate commits of the same height
 func integrateCommits(pool map[int64]*pt.ParaBlsSignSumDetails, commits []*pt.ParacrossCommitAction) {
 	for _, cmt := range commits {
 		if _, ok := pool[cmt.Status.Height]; !ok {
@@ -328,7 +328,7 @@ func integrateCommits(pool map[int64]*pt.ParaBlsSignSumDetails, commits []*pt.Pa
 	}
 }
 
-//txBuff中任一高度满足done则认为ok，有可能某些未达成的高度是冗余的，达成共识的高度发给链最终判决
+//If any height in txBuff satisfies done, it is considered ok. It is possible that some unreached heights are redundant, and the consensus height is sent to the chain for the final judgment.
 func isMostCommitDone(peers int, txsBuff map[int64]*pt.ParaBlsSignSumDetails) bool {
 	if peers <= 0 {
 		return false
@@ -344,7 +344,7 @@ func isMostCommitDone(peers int, txsBuff map[int64]*pt.ParaBlsSignSumDetails) bo
 	return false
 }
 
-//找出共识并达到2/3的commits， 并去除与共识不同的commits,为后面聚合签名做准备
+//Find out the consensus and reach 2/3 of the commits, and remove the commits that are different from the consensus to prepare for the subsequent aggregation of signatures
 func filterDoneCommits(peers int, pool map[int64]*pt.ParaBlsSignSumDetails) []*pt.ParaBlsSignSumDetails {
 	var seq []int64
 	for i, v := range pool {
@@ -355,7 +355,7 @@ func filterDoneCommits(peers int, pool map[int64]*pt.ParaBlsSignSumDetails) []*p
 		}
 		seq = append(seq, i)
 
-		//只保留与most相同的commits做聚合签名使用
+		//Only keep the same commits as most for aggregate signature use
 		a := &pt.ParaBlsSignSumDetails{Height: i, Msgs: [][]byte{[]byte(hash)}}
 		for j, m := range v.Msgs {
 			if bytes.Equal([]byte(hash), m) {
@@ -370,10 +370,10 @@ func filterDoneCommits(peers int, pool map[int64]*pt.ParaBlsSignSumDetails) []*p
 		return nil
 	}
 
-	//从低到高找出连续的commits
+	//Find consecutive commits from low to high
 	sort.Slice(seq, func(i, j int) bool { return seq[i] < seq[j] })
 	var signs []*pt.ParaBlsSignSumDetails
-	//共识高度要连续，不连续则退出
+	//The consensus height must be continuous, and if it is not continuous, exit
 	lastSeq := seq[0] - 1
 	for _, h := range seq {
 		if lastSeq+1 != h {
@@ -386,7 +386,7 @@ func filterDoneCommits(peers int, pool map[int64]*pt.ParaBlsSignSumDetails) []*p
 
 }
 
-//聚合多个签名为一个签名，并设置地址bitmap
+//Aggregate multiple signatures into one signature, and set the address bitmap
 func (b *blsClient) aggregateCommit2Action(nodes []string, commits []*pt.ParaBlsSignSumDetails) ([]*pt.ParacrossCommitAction, error) {
 	var notify []*pt.ParacrossCommitAction
 	for _, v := range commits {
@@ -479,12 +479,12 @@ func (b *blsClient) blsSign(commits []*pt.ParacrossCommitAction) error {
 }
 
 func (b *blsClient) getBlsPubKey(addr string) (crypto.PubKey, error) {
-	//先从缓存中获取
+	//Get it from the cache first
 	if v, ok := b.peersBlsPubKey[addr]; ok {
 		return v, nil
 	}
 
-	//缓存没有，则从statedb获取
+	//If the cache is not available, get it from statedb
 	cfg := b.paraClient.GetAPI().GetConfig()
 	ret, err := b.paraClient.GetAPI().QueryChain(&types.ChainExecutor{
 		Driver:   "paracross",
@@ -518,21 +518,21 @@ func (b *blsClient) getBlsPubKey(addr string) (crypto.PubKey, error) {
 }
 
 func (b *blsClient) verifyBlsSign(addr string, commit *pt.ParacrossCommitAction) error {
-	//1. 获取对应公钥
+	//1. Obtain the corresponding public key
 	pubKey, err := b.getBlsPubKey(addr)
 	if err != nil {
 		return errors.Wrapf(err, "pub key not exist to addr=%s", addr)
 	}
-	//2.　获取bls签名
+	//2.　Get bls signature
 	sig, err := b.cryptoCli.SignatureFromBytes(commit.Bls.Sign)
 	if err != nil {
 		return errors.Wrapf(err, "DeserializeSignature key=%s", common.ToHex(commit.Bls.Sign))
 	}
 
-	//3. 获取签名前原始msg
+	//3. Get the original msg before signing
 	msg := types.Encode(commit.Status)
 
-	//4. 验证bls 签名
+	//4. Verify bls signature
 	if !pubKey.VerifyBytes(msg, sig) {
 		plog.Error("paracross.Commit bls sign verify", "title", commit.Status.Title, "height", commit.Status.Height,
 			"addrsMap", common.ToHex(commit.Bls.AddrsMap), "sign", common.ToHex(commit.Bls.Sign), "addr", addr)
