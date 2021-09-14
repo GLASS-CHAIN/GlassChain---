@@ -679,19 +679,19 @@ func (client *Client) addMinerTx(parent, block *types.Block, diff *big.Int, priv
 
 	ticketAction.Value = &ty.TicketAction_Miner{Miner: miner}
 	ticketAction.Ty = ty.TicketActionMiner
-	//构造transaction
+	//structure transaction
 	tx := client.createMinerTx(&ticketAction, priv)
 	//unshift
 	if tx == nil {
 		return ty.ErrEmptyMinerTx
 	}
 	block.Difficulty = miner.Bits
-	//判断是替换还是append
+	//Determine whether to replace or append
 	_, err = client.getMinerTx(block)
 	if err != nil {
 		block.Txs = append([]*types.Transaction{tx}, block.Txs...)
 	} else {
-		//ticket miner 交易已经存在
+		//ticket miner Transaction already exists
 		block.Txs[0] = tx
 	}
 	return nil
@@ -728,7 +728,7 @@ func (client *Client) updateBlock(block *types.Block, txHashList [][]byte) (*typ
 	newblock := *block
 	newblock.BlockTime = types.Now().Unix()
 
-	//需要去重复tx并删除过期tx交易
+	//Need to repeat tx and delete expired tx transactions
 	if lastBlock.Height != newblock.Height-1 {
 		newblock.Txs = client.CheckTxDup(newblock.Txs)
 		newblock.Txs = client.CheckTxExpire(newblock.Txs, lastBlock.Height+1, newblock.BlockTime)
@@ -740,9 +740,9 @@ func (client *Client) updateBlock(block *types.Block, txHashList [][]byte) (*typ
 	if len(newblock.Txs) < int(cfg.MaxTxNumber-1) {
 		txs = client.RequestTx(int(cfg.MaxTxNumber)-1-len(newblock.Txs), txHashList)
 	}
-	//tx 有更新
+	//tx Update
 	if len(txs) > 0 {
-		//防止区块过大
+		//Prevent the block from being too large
 		txs = client.AddTxsToBlock(&newblock, txs)
 		if len(txs) > 0 {
 			txHashList = append(txHashList, getTxHashes(txs)...)
@@ -796,11 +796,11 @@ func getTxHashes(txs []*types.Transaction) (hashes [][]byte) {
 	return hashes
 }
 
-//CmpBestBlock 比较newBlock是不是最优区块，目前ticket主要是比较挖矿交易的难度系数
+//CmpBestBlock Compare whether newBlock is the best block or not. At present, the ticket is mainly to compare the difficulty coefficient of the mining transaction.
 func (client *Client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block) bool {
 	cfg := client.GetAPI().GetConfig()
 
-	//newblock挖矿交易的难度系数
+	//newblock Difficulty coefficient of mining transaction
 	newBlockTicket, err := client.getMinerTx(newBlock)
 	if err != nil {
 		tlog.Error("CmpBestBlock:getMinerTx", "newBlockHash", common.ToHex(newBlock.Hash(cfg)))
@@ -809,7 +809,7 @@ func (client *Client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block)
 	newBlockMiner := newBlockTicket.GetMiner()
 	newBlockDiff := client.getCurrentTarget(newBlock.BlockTime, newBlockMiner.TicketId, newBlockMiner.Modify, newBlockMiner.PrivHash)
 
-	//cmpBlock挖矿交易的难度系数
+	//cmpBlock Difficulty coefficient of mining transaction
 	cmpBlockTicket, err := client.getMinerTx(cmpBlock)
 	if err != nil {
 		tlog.Error("CmpBestBlock:getMinerTx", "cmpBlockHash", common.ToHex(cmpBlock.Hash(cfg)))
@@ -818,6 +818,6 @@ func (client *Client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block)
 	cmpBlockMiner := cmpBlockTicket.GetMiner()
 	cmpBlockDiff := client.getCurrentTarget(cmpBlock.BlockTime, cmpBlockMiner.TicketId, cmpBlockMiner.Modify, cmpBlockMiner.PrivHash)
 
-	//数字越小难度越大
+	//The smaller the number, the greater the difficulty
 	return newBlockDiff.Cmp(cmpBlockDiff) < 0
 }
