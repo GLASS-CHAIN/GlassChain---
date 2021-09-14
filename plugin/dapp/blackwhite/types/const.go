@@ -36,21 +36,16 @@ const (
 )
 
 const (
-	// GetBlackwhiteRoundInfo 用于在cmd里面的区分不同的查询
 	GetBlackwhiteRoundInfo = "GetBlackwhiteRoundInfo"
-	// GetBlackwhiteByStatusAndAddr 用于在cmd里面的区分不同的查询
 	GetBlackwhiteByStatusAndAddr = "GetBlackwhiteByStatusAndAddr"
-	// GetBlackwhiteloopResult 用于在cmd里面的区分不同的查询
 	GetBlackwhiteloopResult = "GetBlackwhiteloopResult"
 )
 
 var (
-	// BlackwhiteX 执行器名字
 	BlackwhiteX = "blackwhite"
 	glog        = log15.New("module", BlackwhiteX)
 	// JRPCName json RPC name
 	JRPCName = "Blackwhite"
-	// ExecerBlackwhite 执行器名字byte形式
 	ExecerBlackwhite = []byte(BlackwhiteX)
 	actionName       = map[string]int32{
 		"Create":      BlackwhiteActionCreate,
