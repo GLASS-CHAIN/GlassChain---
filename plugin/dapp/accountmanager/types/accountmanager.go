@@ -6,13 +6,8 @@ import (
 	"github.com/33cn/chain33/types"
 )
 
-/*
- * 交易相关类型定义
- * 交易action通常有对应的log结构，用于交易回执日志记录
- * 每一种action和log需要用id数值和name名称加以区分
- */
 
-// action类型id和name，这些常量可以自定义修改
+
 const (
 	TyUnknowAction = iota + 100
 	TyRegisterAction
@@ -34,7 +29,6 @@ const (
 	FuncNameQueryBalanceByID      = "QueryBalanceByID"
 )
 
-// log类型id值
 const (
 	TyUnknownLog = iota + 100
 	TyRegisterLog
@@ -44,7 +38,6 @@ const (
 	TyApplyLog
 )
 
-//状态
 const (
 	Normal = int32(iota)
 	Frozen
@@ -75,14 +68,11 @@ const (
 	ListSeek = int32(2)
 )
 const (
-	//Count 单次list还回条数
 	Count = int32(10)
 )
 
 var (
-	//AccountmanagerX 执行器名称定义
 	AccountmanagerX = "accountmanager"
-	//定义actionMap
 	actionMap = map[string]int32{
 		NameRegisterAction:  TyRegisterAction,
 		NameResetAction:     TyResetAction,
@@ -90,7 +80,6 @@ var (
 		NameTransferAction:  TyTransferAction,
 		NameSuperviseAction: TySuperviseAction,
 	}
-	//定义log的id和具体log类型及名称，填入具体自定义log类型
 	logMap = map[int64]*types.LogInfo{
 		TyRegisterLog:  {Ty: reflect.TypeOf(AccountReceipt{}), Name: "TyRegisterLog"},
 		TyResetLog:     {Ty: reflect.TypeOf(TransferReceipt{}), Name: "TyResetLog"},
@@ -104,7 +93,6 @@ var (
 // init defines a register function
 func init() {
 	types.AllowUserExec = append(types.AllowUserExec, []byte(AccountmanagerX))
-	//注册合约启用高度
 	types.RegFork(AccountmanagerX, InitFork)
 	types.RegExec(AccountmanagerX, InitExecutor)
 }
@@ -132,17 +120,14 @@ func NewType(cfg *types.Chain33Config) *AccountmanagerType {
 	return c
 }
 
-// GetPayload 获取合约action结构
 func (a *AccountmanagerType) GetPayload() types.Message {
 	return &AccountmanagerAction{}
 }
 
-// GetTypeMap 获取合约action的id和name信息
 func (a *AccountmanagerType) GetTypeMap() map[string]int32 {
 	return actionMap
 }
 
-// GetLogMap 获取合约log相关信息
 func (a *AccountmanagerType) GetLogMap() map[int64]*types.LogInfo {
 	return logMap
 }

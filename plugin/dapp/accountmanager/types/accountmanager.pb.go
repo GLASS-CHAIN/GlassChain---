@@ -188,7 +188,6 @@ func (*AccountmanagerAction) XXX_OneofWrappers() []interface{} {
 	}
 }
 
-//注册
 type Register struct {
 	AccountID            string   `protobuf:"bytes,1,opt,name=accountID,proto3" json:"accountID,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -228,7 +227,6 @@ func (m *Register) GetAccountID() string {
 	return ""
 }
 
-//重置公钥
 type ResetKey struct {
 	AccountID            string   `protobuf:"bytes,1,opt,name=accountID,proto3" json:"accountID,omitempty"`
 	Addr                 string   `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
@@ -276,10 +274,8 @@ func (m *ResetKey) GetAddr() string {
 	return ""
 }
 
-//用户申请服务
 type Apply struct {
 	AccountID string `protobuf:"bytes,1,opt,name=accountID,proto3" json:"accountID,omitempty"`
-	//操作， 1 撤销账户公钥重置, 2 锁定期结束后，执行重置公钥操作
 	Op                   int32    `protobuf:"varint,2,opt,name=op,proto3" json:"op,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -325,13 +321,11 @@ func (m *Apply) GetOp() int32 {
 	return 0
 }
 
-//合约内部账户之间转账
 type Transfer struct {
-	//资产类型 及转账金额
 	Asset *types.Asset `protobuf:"bytes,1,opt,name=asset,proto3" json:"asset,omitempty"`
-	// from账户
+
 	FromAccountID string `protobuf:"bytes,2,opt,name=fromAccountID,proto3" json:"fromAccountID,omitempty"`
-	// to账户
+
 	ToAccountID          string   `protobuf:"bytes,3,opt,name=toAccountID,proto3" json:"toAccountID,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -384,13 +378,11 @@ func (m *Transfer) GetToAccountID() string {
 	return ""
 }
 
-//管理员监管操作
 type Supervise struct {
-	//账户名单
 	AccountIDs []string `protobuf:"bytes,1,rep,name=accountIDs,proto3" json:"accountIDs,omitempty"`
-	//操作， 1为冻结，2为解冻，3增加有效期,4为授权
+
 	Op int32 `protobuf:"varint,2,opt,name=op,proto3" json:"op,omitempty"`
-	//0普通,后面根据业务需要可以自定义，有管理员授予不同的权限
+
 	Level                int32    `protobuf:"varint,3,opt,name=level,proto3" json:"level,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -444,23 +436,23 @@ func (m *Supervise) GetLevel() int32 {
 }
 
 type Account struct {
-	//账户名称
+
 	AccountID string `protobuf:"bytes,1,opt,name=accountID,proto3" json:"accountID,omitempty"`
-	//地址
+
 	Addr string `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
-	//上一次公钥地址
+
 	PrevAddr string `protobuf:"bytes,3,opt,name=prevAddr,proto3" json:"prevAddr,omitempty"`
-	//账户状态 0 正常， 1表示冻结, 2表示锁定 3,过期注销
+
 	Status int32 `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
-	//等级权限 0普通,后面根据业务需要可以自定义，有管理员授予不同的权限
+
 	Level int32 `protobuf:"varint,5,opt,name=level,proto3" json:"level,omitempty"`
-	//注册时间
+
 	CreateTime int64 `protobuf:"varint,6,opt,name=createTime,proto3" json:"createTime,omitempty"`
-	//失效时间
+
 	ExpireTime int64 `protobuf:"varint,7,opt,name=expireTime,proto3" json:"expireTime,omitempty"`
-	//锁定时间
+
 	LockTime int64 `protobuf:"varint,8,opt,name=lockTime,proto3" json:"lockTime,omitempty"`
-	//主键索引
+
 	Index                int64    `protobuf:"varint,9,opt,name=index,proto3" json:"index,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -696,7 +688,6 @@ func (m *TransferReceipt) GetIndex() int64 {
 	return 0
 }
 
-//回执日志
 type SuperviseReceipt struct {
 	Accounts             []*Account `protobuf:"bytes,1,rep,name=accounts,proto3" json:"accounts,omitempty"`
 	Op                   int32      `protobuf:"varint,2,opt,name=op,proto3" json:"op,omitempty"`
@@ -754,10 +745,9 @@ func (m *SuperviseReceipt) GetIndex() int64 {
 
 type QueryExpiredAccounts struct {
 	PrimaryKey string `protobuf:"bytes,1,opt,name=primaryKey,proto3" json:"primaryKey,omitempty"`
-	//第一次需要传入逾期时间，时间戳
+
 	ExpiredTime int64 `protobuf:"varint,2,opt,name=expiredTime,proto3" json:"expiredTime,omitempty"`
-	//单页返回多少条记录，默认返回10条
-	// 0降序，1升序，默认降序
+
 	Direction            int32    `protobuf:"varint,3,opt,name=direction,proto3" json:"direction,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -811,11 +801,11 @@ func (m *QueryExpiredAccounts) GetDirection() int32 {
 }
 
 type QueryAccountsByStatus struct {
-	//账户状态 1 正常， 2表示冻结, 3表示锁定
+
 	Status int32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	// 主键索引
+
 	PrimaryKey string `protobuf:"bytes,3,opt,name=primaryKey,proto3" json:"primaryKey,omitempty"`
-	// 0降序，1升序，默认降序
+
 	Direction            int32    `protobuf:"varint,5,opt,name=direction,proto3" json:"direction,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

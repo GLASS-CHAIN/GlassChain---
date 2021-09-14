@@ -119,7 +119,6 @@ func init() {
 	Init(auty.AutonomyX, chainTestCfg, nil)
 }
 
-// InitEnv 初始化环境
 func InitEnv() (*ExecEnv, drivers.Driver, dbm.KV, dbm.KVDB) {
 	//cfg := types.NewChain33Config(types.GetDefaultCfgstring())
 	accountA := types.Account{
@@ -211,7 +210,7 @@ func TestPropBoard(t *testing.T) {
 			StartBlockHeight: env.blockHeight + 5,
 			EndBlockHeight:   env.blockHeight + startEndBlockPeriod + 10,
 		},
-		{ // 正常
+		{ 
 			Update:           true,
 			Boards:           []string{"18e1nfiux7aVSfN2zYUZhbidMRokbBSPA6"},
 			StartBlockHeight: env.blockHeight + 5,
@@ -230,7 +229,7 @@ func TestPropBoard(t *testing.T) {
 			StartBlockHeight: env.blockHeight + 5,
 			EndBlockHeight:   env.blockHeight + startEndBlockPeriod + 10,
 		},
-		{ // 正常
+		{ 
 			Update:           false,
 			Boards:           boards,
 			StartBlockHeight: env.blockHeight + 5,
@@ -320,7 +319,6 @@ func testPropBoard(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB dbm.
 		}
 	}
 
-	// 更新tahash
 	env.txHash = common.ToHex(pbtx.Hash())
 	env.startHeight = opt1.StartBlockHeight
 	env.endHeight = opt1.EndBlockHeight
@@ -420,7 +418,6 @@ func voteProposalBoard(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB 
 	exec.SetAPI(api)
 
 	proposalID := env.txHash
-	// 4人参与投票，3人赞成票，1人反对票
 	type record struct {
 		priv   string
 		appr   bool
@@ -442,7 +439,6 @@ func voteProposalBoard(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB 
 		assert.NoError(t, err)
 		tx, err = signTx(tx, record.priv)
 		assert.NoError(t, err)
-		// 设定当前高度为投票高度
 		exec.SetEnv(env.startHeight, env.blockTime, env.difficulty)
 
 		receipt, err := exec.Exec(tx, int(1))
@@ -467,7 +463,6 @@ func voteProposalBoard(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB 
 		assert.NoError(t, err)
 		assert.NotNil(t, set)
 
-		// 每次需要重新设置,对于下一个是多个授权地址的需要设置多次
 		if i+1 < len(records) {
 			for j := 0; j < len(records[i+1].origin); j++ {
 				acc := &types.Account{
@@ -673,7 +668,6 @@ func TestVerifyMinerAddr(t *testing.T) {
 		AddrB,
 		AddrC,
 	}
-	// 授权地址AddrD
 	for _, addr := range addrs {
 		tkBind := &ticketTy.TicketBind{
 			MinerAddress:  AddrD,
