@@ -1,28 +1,28 @@
-# coinsx合约
+# coinsx contract
 
-## 前言
-1. 为配合BSN联盟链对p2p原生token转账限制规则，为了不影响既有的coins合约，增加了coinsx合约，
-2. coinsx合约转账，创世等功能和coins完全一致，增加了对转账的管理功能
+## Foreword
+1. In order to comply with the BSN consortium chain’s restriction rules on p2p native token transfers, in order not to affect the existing coins contract, the coinsx contract has been added.
+2. Coinsx contract transfer, creation and other functions are exactly the same as coins, adding management functions for transfers
 
 
-## 使用
-1. coinsx执行器和coins执行器不同，通过toml配置文件coinExec=“”配置，缺省是coins执行器
-1. 如果配置为coinExec="coinsx",则原生代币为coinsx合约，创世到coinsx合约
-1. coins cli 会根据配置文件修改相应执行器，transfer，withdraw等命令和coins一致， 
-1. json-rpc 构建交易需要明确采用配置的coinExec，缺省是coins
-1. 平行链资产转移
-   1. 旧的接口assetTransfer/assetWithdraw 仍只接受coins，如果主链是coinsx，则会失败，需要使用新接口
-   1. 新接口crossTransfer，通过必填的交易执行器参数保证了平行链铸造的资产和主链保持一致，而不是和平行链配置一致
-        1. 比如主链coinsx，平行链缺省代币是coins, 主链转移到平行链资产仍为coinsx.bty
-        1. 比如主链coins, 平行链缺省代币是coinsx, 平行链转移到主链资产为 coinsx.symbol
+## use
+1. The coinsx executor is different from the coins executor. It is configured through the toml configuration file coinExec="". The default is the coins executor
+1. If the configuration is coinExec="coinsx", the native token is the coinsx contract, and the creation to the coinsx contract
+1. The coins cli will modify the corresponding executor according to the configuration file, the transfer, withdraw and other commands are consistent with coins,
+1. json-rpc construction transaction needs to explicitly adopt the configured coinExec, the default is coins
+1. Parachain asset transfer
+   1. The old interface assetTransfer/assetWithdraw still only accepts coins. If the main chain is coinsx, it will fail and the new interface needs to be used
+   1. The new interface crossTransfer, through the required transaction executor parameters, ensures that the assets minted by the parachain are consistent with the main chain, rather than the configuration of the parachain.
+        1. For example, the main chain coinsx, the default token of the parachain is coins, and the assets transferred from the main chain to the parachain are still coinsx.bty
+        1. For example, the main chain coins, the default token of the parachain is coinsx, and the assets transferred from the parachain to the main chain are coinsx.symbol
 
-## coinsx 管理功能
-1. 只有节点超级管理员可以配置
-1. 配置转账使能和受限标志
-1. 配置链上管理员组，增删管理员
+## coinsx management function
+1. Only the node super administrator can configure
+1. Configure transfer enable and restricted flags
+1. Configure the administrator group on the chain, add or delete administrators
 
-## p2p转账限制规则
-1. 系统缺省转账受限
-1. 节点超级管理员from或to 转账都不受限
-1. 如果配置了转账使能，则任何用户转账不受限
-1. 如果配置了转账受限功能，则和超级管理员转账不受限，个人之间转账受限
+## p2p transfer restriction rules
+1. The system default transfer is limited
+1. Node super administrators are not restricted to transfer from or to
+1. If the transfer enable is configured, any user transfer is not restricted
+1. If the transfer limited function is configured, transfers with the super administrator are not limited, and transfers between individuals are limited

@@ -50,35 +50,35 @@ func main() {
 	r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	argsWithoutProg := os.Args[1:]
 	switch argsWithoutProg[0] {
-	case "-h": //使用帮助
+	case "-h": 
 		LoadHelp()
 	case "perf":
 		if len(argsWithoutProg) != 6 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("Parameter error").Error())
 			return
 		}
 		Perf(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3], argsWithoutProg[4], argsWithoutProg[5])
 	case "put":
 		if len(argsWithoutProg) != 3 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("Parameter error").Error())
 			return
 		}
 		Put(argsWithoutProg[1], argsWithoutProg[2], "")
 	case "get":
 		if len(argsWithoutProg) != 3 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("Parameter error").Error())
 			return
 		}
 		Get(argsWithoutProg[1], argsWithoutProg[2])
 	case "valnode":
 		if len(argsWithoutProg) != 4 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("Parameter error").Error())
 			return
 		}
 		ValNode(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3])
 	case "perfOld":
 		if len(argsWithoutProg) != 6 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("Parameter error").Error())
 			return
 		}
 		PerfOld(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3], argsWithoutProg[4], argsWithoutProg[5])
@@ -88,14 +88,14 @@ func main() {
 // LoadHelp ...
 func LoadHelp() {
 	fmt.Println("Available Commands:")
-	fmt.Println("perf [host, size, num, interval, duration]                   : 写数据性能测试，interval单位为100毫秒，host形式为ip:port")
-	fmt.Println("put  [ip, size]                                              : 写数据")
-	fmt.Println("get  [ip, hash]                                              : 读数据")
-	fmt.Println("valnode [ip, pubkey, power]                                  : 增加/删除/修改tendermint节点")
-	fmt.Println("perfOld [ip, size, num, interval, duration]                  : 不推荐使用，写数据性能测试，interval单位为100毫秒")
+	fmt.Println("perf [host, size, num, interval, duration]                   : Write data performance test, interval unit is 100 milliseconds, host format is ip:port")
+	fmt.Println("put  [ip, size]                                              : Write data")
+	fmt.Println("get  [ip, hash]                                              : Read data")
+	fmt.Println("valnode [ip, pubkey, power]                                  : Add/delete/modify tendermint node")
+	fmt.Println("perfOld [ip, size, num, interval, duration]                  : Not recommended, write data performance test, interval unit is 100 milliseconds")
 }
 
-// Perf 性能测试
+// Perf 
 func Perf(host, txsize, num, sleepinterval, totalduration string) {
 	var numThread int
 	numInt, err := strconv.Atoi(num)
@@ -157,14 +157,14 @@ func Perf(host, txsize, num, sleepinterval, totalduration string) {
 			for sec := 0; durInt == 0 || sec < durInt; sec++ {
 				height := atomic.LoadInt64(&blockHeight)
 				for txs := 0; txs < numInt/numThread; txs++ {
-					//构造存证交易
+					//Structuring a deposit transaction
 					tx := txPool.Get().(*types.Transaction)
 					tx.To = execAddr
 					tx.Fee = rand.Int63()
 					tx.Nonce = time.Now().UnixNano()
 					tx.Expire = height + types.TxHeightFlag + types.LowAllowPackHeight
 					tx.Payload = RandStringBytes(sizeInt)
-					//交易签名
+					//Transaction signature
 					tx.Sign(types.SECP256K1, priv)
 					txChan <- tx
 				}

@@ -1,33 +1,33 @@
-## 借贷合约表结构
+## Loan Contract Table Structure
 
-### 放贷表coller表结构
-字段名称|类型|说明
+### Loan table coller table structure
+Field name|Type|Description
 ---|---|---
-collateralizeId|string|放贷ID，主键
-accountAddr|string|大户地址
-recordId|string|借贷ID
-status|int32|放贷状态（1：已放贷 2：已收回）
+collateralizeId|string|Lending ID, primary key
+accountAddr|string|big account address
+recordId|string|Loan ID
+status|int32|Lending status (1: loaned 2: recovered)
 
-### 放贷表coller表索引
-索引名|说明
+### Loan table coller table index
+Index name|Description
 ---|---
-status|根据放贷状态查询放贷ID
-addr|根据大户地址查询放贷ID
-addr_status|根据放贷状态和大户地址查询放贷ID
+status|Query the loan ID according to the loan status
+addr|Query the loan ID according to the address of the big account
+addr_status|Query the loan ID according to the loan status and the address of the major account
 
-### 借贷表borrow表结构
-字段名称|类型|说明
+### Borrow table structure
+Field name|Type|Description
 ---|---|---
-recordId|string|借贷ID，主键
-collateralizeId|string|放贷ID
-accountAddr|string|用户地址
-status|int32|借贷状态（1：已发行 2：价格清算告警 3：价格清算 4：超时清算告警 5：超时清算 6：已清算）
+recordId|string|Loan ID, primary key
+collateralizeId|string|Lending ID
+accountAddr|string|User address
+status|int32|Lending status (1: issued 2: price clearing alarm 3: price clearing 4: overtime clearing alarm 5: overtime clearing 6: cleared)
 
-### 放贷表borrow表索引
-索引名|说明
+### Loan table borrow table index
+Index name|Description
 ---|---
-status|根据借贷状态查询借贷ID
-addr|根据大户地址查询借贷ID
-addr_status|根据借贷状态和用户地址查询借贷ID
-id_status|根据放贷ID和借贷状态查询借贷ID
-id_addr|根据放贷ID和用户地址查询借贷ID
+status|Query the loan ID according to the loan status
+addr|Query the loan ID according to the address of the big account
+addr_status|Query the loan ID according to the loan status and user address
+id_status|Query the loan ID according to the loan ID and loan status
+id_addr|Query the loan ID according to the loan ID and user address
