@@ -1,21 +1,18 @@
-# para 
-
-#支持主节点在云端，且允许自由切换，负载均衡
- 1. 平行链主节点设置在云端作为一个集群，提供统一ip和端口
+#Support the master node in the cloud, and allow free switching, load balancing
+ 1. The main node of the parachain is set in the cloud as a cluster, providing a unified IP and port
  
-## 场景
- 1. 主节点集群同步主网数据，各主节点保持独立
- 1. 某主节点挂掉，云端自动切换到新的主节点，平行链节点需要检查在新节点获取到的区块和之前的区块hash保持一致，一致指的是新区块是add type，parentHash和之前的
-    主链hash相同，del type的区块hash和之前主链的hash相同
- 1. 如果不一致，搜索平行链记录的主节点blockHash在新主节点上的seq作为下一个seq获取tx
- 1. 如果当前平行链block的mainBlockHash在新节点上找不到，可能是分叉的场景，需要找到分叉处，把以后的平行链block删除，从分叉处下一个seq同步平行链数据
+## Scenes
+ 1. The master node cluster synchronizes the main network data, and each master node remains independent
+ 1. When a master node hangs, the cloud automatically switches to the new master node. The parachain node needs to check that the block obtained at the new node is consistent with the previous block hash, which means that the new block is add type, parentHash And before
+    The hash of the main chain is the same, the block hash of del type is the same as the hash of the previous main chain
+ 1. If they are inconsistent, search for the seq of the master node blockHash of the parachain record on the new master node as the next seq to obtain tx
+ 1. If the mainBlockHash of the current parachain block cannot be found on the new node, it may be a fork scenario. You need to find the fork, delete the future parachain block, and synchronize the parachain data from the next seq at the fork.
 
-## 测试场景
- 1. 平行链在blockHeight=1之前主节点切换，平行链重新从seq=startSeq处同步数据(startSeq=0 or 非0场景)
- 1. 主节点切换，新的主节点seq和blockhash和老的完全一致
- 1. 主节点切换， 老的blockhash在新的节点上找不到，平行链最后一个节点的mainHash可以找到
- 1. 主节点切换， 老的blockhash在新的节点上找不到，平行链最后一个节点的mainHash找不到，回退查找到，删除分叉后节点重新同步
- 1. 主节点切换， 老的blockhash在新的节点上找不到，平行链最后一个节点的mainHash找不到，回退查找到，删除分叉节点中间失败，重新查找同步 
- 1. 主节点切换， 老的blockhash在新的节点上找不到，平行链所有节点都找不到场景，会无限循环查找，直到切换新主节点 
- 1. 系统重启，主节点切换场景
-
+## testing scenarios
+ 1. The parachain switches to the master node before blockHeight=1, and the parachain re-synchronizes data from seq=startSeq (startSeq=0 or non-zero scenario)
+ 1. The master node is switched, the new master node seq and blockhash are exactly the same as the old one
+ 1. The main node is switched, the old blockhash cannot be found on the new node, and the mainHash of the last node of the parachain can be found
+ 1. The main node is switched, the old blockhash can not be found on the new node, the mainHash of the last node of the parachain cannot be found, it is found back, and the node is resynchronized after deleting the fork
+ 1. The main node is switched, the old blockhash cannot be found on the new node, the mainHash of the last node of the parachain cannot be found, the fallback is found, the deletion of the forked node fails, and the synchronization is re-searched
+ 1. The master node is switched, the old blockhash cannot be found on the new node, and all the nodes of the parachain cannot find the scene, it will search in an infinite loop until the new master node is switched
+ 1. The system restarts and the master node switches scenes

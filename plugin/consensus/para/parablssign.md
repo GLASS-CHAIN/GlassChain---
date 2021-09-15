@@ -1,30 +1,25 @@
-# 平行链 bls 聚合签名
->平行链多个共识节点间通过P2P组成内部局域网，把之前每个节点发送到主链的共识交易转而先互相内部广播，leader节点负责把多个共识交易聚合成一个共识交易发送给主链
+# Parachain bls aggregate signature
+>Multiple consensus nodes in the parachain form an internal local area network through P2P, and the consensus transactions sent by each node to the main chain are first broadcasted internally. The leader node is responsible for aggregating multiple consensus transactions into one consensus transaction and sending it to the main chain.
 
 
-#1. 订阅P2P topic
-1. 以PARA-BLS-SIGN-TOPIC为topic在P2P订阅，平行链内部节点间通过p2p广播同步消息，比如这里bls签名交易和leader同步消息
+#1. Subscribe to P2P topic
+1. Subscribe in P2P with PARA-BLS-SIGN-TOPIC as the topic, and broadcast synchronization messages through P2P between the internal nodes of the parachain. For example, here bls signature transactions and leader synchronization messages
    
-#2. 协商leader
-1. 考虑到leader轮换发送共识交易，每隔一定共识高度比如100就会轮换下一个节点为leader发送交易，当前共识高度/100后对nodegroup 地址取余base值就是当前leader地址
-1. 考虑到某些leader节点可能是僵尸节点，每个节点监听leader节点每隔15s的心跳消息，如果超过1min没收到，则认为leader节点不工作，需要跳到下一个，这里维护
-一个offset，如果超时没收到，offset++，和之前的base相加取余一起确定下一个leader节点，如果当前节点发现自己是leader节点则开始发送sync消息，offset停止增长
-1. 随着共识高度增长，base增长，offset不变，一起确认新的leader
-1. 某些特殊场景有多个leader同步时候，收敛到最大索引值的leader
+#2. Negotiation leader
+1. Taking into account that the leader rotates to send consensus transactions, every certain consensus height, such as 100, will rotate the next node to send transactions for the leader. After the current consensus height/100, the remaining base value of the nodegroup address is the current leader address
+1. Considering that some leader nodes may be zombie nodes, each node monitors the heartbeat message of the leader node every 15s. If it is not received for more than 1 minute, it is considered that the leader node is not working and needs to skip to the next one. Here is maintenance
+An offset, if it is not received over time, offset++, and the previous base are added together to determine the next leader node. If the current node finds itself as the leader node, it will start sending sync messages, and the offset will stop growing
+1. As the consensus height grows, the base grows, and the offset remains the same, confirm the new leader together
+1. In some special scenarios, when multiple leaders are synchronized, converge to the leader with the largest index value
 
-#3. 发送聚合共识交易
-1. 共识交易P2P广播给所有订阅的节点，leader节点负责聚合后上链，如果收集的签名交易不超过2/3节点，则不发送上链交易，聚合交易最终在主链达成共识
-1. 节点广播共识交易后，超过一定时间共识高度没增长，重新发送共识交易
-
-
-#4. BLS聚合签名算法
-1. BLS签名需要的私钥比SECP256小一倍，采用SECP256私钥不断取hash直到满足BLS范围为止作为BLS私钥，然后确定BLS公钥
-1. BLS公钥注册到主链nodegroup里面，和聚合签名一起验证BLS签名，同时防止BLS leader节点作弊
-1. 对同一高度，每个节点签名的共识消息是一样的，只需要保留一份，签名聚合成一个，公钥信息压缩到一个bitmap，作为一个交易发送
-1. BLS签名有两种paring曲线，G1和G2，G1产生msg较短，G2的较长，一般公钥放G2上，签名消息放G1上，ETH采用公钥放G1，签名放G2，公钥较短，消息较长，
-我们由于公钥静态配置在数据库里，主链验证，签名经过消息发送，占用空间，和ETH相反比较好，静态库可以编译支持反转，但目前还是和ETH 2.0一致。
+#3. Send aggregate consensus transaction
+1. The consensus transaction is P2P broadcast to all subscribed nodes, and the leader node is responsible for the chain after aggregation. If the collected signature transaction does not exceed 2/3 nodes, the chain transaction will not be sent, and the aggregation transaction will finally reach a consensus on the main chain
+1. After the node broadcasts the consensus transaction, the consensus height does not increase for a certain period of time, and the consensus transaction is resent
 
 
- 
-
-
+#4. BLS aggregate signature algorithm
+1. The private key required for BLS signature is twice as small as SECP256. The SECP256 private key is used to continuously fetch the hash until the BLS range is met as the BLS private key, and then the BLS public key is determined
+1. The BLS public key is registered in the nodegroup of the main chain, and the BLS signature is verified together with the aggregate signature, while preventing the BLS leader node from cheating
+1. For the same height, the consensus message signed by each node is the same, only one copy is needed, the signatures are aggregated into one, and the public key information is compressed into a bitmap and sent as a transaction
+1. There are two paring curves for BLS signatures, G1 and G2. G1 generates a shorter msg, and G2 generates a longer. Generally, the public key is put on G2, and the signed message is put on G1. ETH uses the public key to put G1, the signature to G2, and the public key. The key is shorter, the message is longer,
+Because the public key is statically configured in the database, the main chain is verified, and the signature is sent after the message, it takes up space. It is better than ETH. The static library can be compiled to support reversal, but it is still consistent with ETH 2.0.
