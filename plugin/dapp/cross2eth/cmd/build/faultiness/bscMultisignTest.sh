@@ -7,11 +7,9 @@ set +e
 source "./publicTest.sh"
 source "./relayerPublic.sh"
 
-# ETH 部署合约者的私钥 用于部署合约时签名使用
 #ethDeployAddr="0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a"
 ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
-# chain33 部署合约者的私钥 用于部署合约时签名使用
 chain33DeployAddr="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
 chain33DeployKey="0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944"
 
@@ -54,14 +52,13 @@ function deployMultisign() {
         # shellcheck disable=SC2154
         check_addr "${result}" "${chain33Multisign}"
 
-        # chain33Multisign 要有手续费
         hash=$(${Chain33Cli} send coins transfer -a 10 -t "${chain33Multisign}" -k "${chain33DeployAddr}")
         check_tx "${Chain33Cli}" "${hash}"
         result=$(${Chain33Cli} account balance -a "${chain33Multisign}" -e coins)
         balance_ret "${result}" "10.0000"
     done
 
-    echo -e "${GRE}=========== 部署 chain33 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}=========== Deploy chain199 offline wallet contract ===========${NOC}"
     result=$(${CLIA} chain33 multisign deploy)
     cli_ret "${result}" "chain33 multisign deploy"
     multisignChain33Addr=$(echo "${result}" | jq -r ".msg")

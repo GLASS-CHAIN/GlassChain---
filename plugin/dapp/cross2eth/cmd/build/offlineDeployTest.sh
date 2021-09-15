@@ -8,14 +8,12 @@ source "./publicTest.sh"
 source "./relayerPublic.sh"
 source "./multisignPublicTest.sh"
 
-# ETH 部署合约者的私钥 用于部署合约时签名使用
 ethDeployAddr="0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a"
 ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
 # validatorsAddr=["0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a", "0x0df9a824699bc5878232c9e612fe1a5346a5a368", "0xcb074cb21cdddf3ce9c3c0a7ac4497d633c9d9f1", "0xd9dab021e74ecf475788ed7b61356056b2095830"]
 ethValidatorAddrKeyA="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
-# chain33 部署合约者的私钥 用于部署合约时签名使用
 chain33DeployAddr="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
 
 chain33ReceiverAddr="12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
@@ -67,7 +65,6 @@ function TestChain33ToEthAssets() {
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethereumBtyTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # 原来的地址金额
     result=$(${Chain33Cli} account balance -a "${chain33DeployAddr}" -e evm)
     #    balance=$(cli_ret "${result}" "balance" ".balance")
 
@@ -75,18 +72,15 @@ function TestChain33ToEthAssets() {
     hash=$(${Chain33Cli} send evm call -f 1 -a 5 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "lock(${ethDeployAddr}, ${chain33BtyTokenAddr}, 500000000)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 
-    # 原来的地址金额 减少了 5
     result=$(${Chain33Cli} account balance -a "${chain33DeployAddr}" -e evm)
     #    cli_ret "${result}" "balance" ".balance" "$(echo "${balance}-5" | bc)"
     #balance_ret "${result}" "195.0000"
 
-    # chain33BridgeBank 是否增加了 5
     result=$(${Chain33Cli} account balance -a "${chain33BridgeBank}" -e evm)
     balance_ret "${result}" "5.0000"
 
     eth_block_wait 10
 
-    # eth 这端 金额是否增加了 5
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethereumBtyTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "5"
 
@@ -96,17 +90,14 @@ function TestChain33ToEthAssets() {
 
     eth_block_wait 10
 
-    # eth 这端 金额是否减少了 3
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethereumBtyTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "2"
 
     sleep ${maturityDegree}
 
-    # 接收的地址金额 变成了 3
     result=$(${Chain33Cli} account balance -a "${chain33ReceiverAddr}" -e evm)
     balance_ret "${result}" "3.0000"
 
-    # chain33BridgeBank 是否减少了 3
     result=$(${Chain33Cli} account balance -a "${chain33BridgeBank}" -e evm)
     balance_ret "${result}" "2.0000"
 
@@ -130,7 +121,6 @@ function TestChain33ToEthZBCAssets() {
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethBridgeToeknZBCAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # 原来的地址金额
     result=$(${Chain33Cli} evm query -a "${chain33ZBCErc20Addr}" -c "${chain33BridgeBank}" -b "balanceOf(${chain33BridgeBank})")
     is_equal "${result}" "0"
 
@@ -138,13 +128,11 @@ function TestChain33ToEthZBCAssets() {
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "lock(${ethDeployAddr}, ${chain33ZBCErc20Addr}, 900000000)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 
-    # chain33BridgeBank 是否增加了 9
     result=$(${Chain33Cli} evm query -a "${chain33ZBCErc20Addr}" -c "${chain33BridgeBank}" -b "balanceOf(${chain33BridgeBank})")
     is_equal "${result}" "900000000"
 
     eth_block_wait 10
 
-    # eth 这端 金额是否增加了 9
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethBridgeToeknZBCAddr}")
     cli_ret "${result}" "balance" ".balance" "9"
 
@@ -154,17 +142,14 @@ function TestChain33ToEthZBCAssets() {
 
     eth_block_wait 10
 
-    # eth 这端 金额是否减少了 1
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethBridgeToeknZBCAddr}")
     cli_ret "${result}" "balance" ".balance" "1"
 
     sleep ${maturityDegree}
 
-    # 接收的地址金额 变成了 8
     result=$(${Chain33Cli} evm query -a "${chain33ZBCErc20Addr}" -c "${chain33ReceiverAddr}" -b "balanceOf(${chain33ReceiverAddr})")
     is_equal "${result}" "800000000"
 
-    # chain33BridgeBank 是否减少了 1
     result=$(${Chain33Cli} evm query -a "${chain33ZBCErc20Addr}" -c "${chain33BridgeBank}" -b "balanceOf(${chain33BridgeBank})")
     is_equal "${result}" "100000000"
 
@@ -181,33 +166,27 @@ function TestChain33ToEthZBCAssets() {
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# eth to chain33 在以太坊上锁定 ETH 资产,然后在 chain33 上 burn
 function TestETH2Chain33Assets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}=========== eth to chain33 在以太坊上锁定 ETH 资产,然后在 chain33 上 burn ===========${NOC}"
-    # 查询 ETH 这端 bridgeBank 地址原来是 0
+    echo -e "${GRE}=========== eth to chain199 Lock ETH assets on Ethereum, then burn on chain199 ===========${NOC}"
+
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # ETH 这端 lock 11个
     result=$(${CLIA} ethereum lock -m 11 -k "${ethValidatorAddrKeyA}" -r "${chain33ReceiverAddr}")
     cli_ret "${result}" "lock"
 
-    # eth 等待 10 个区块
     eth_block_wait 10
 
-    # 查询 ETH 这端 bridgeBank 地址 11
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
     cli_ret "${result}" "balance" ".balance" "11"
 
     sleep ${maturityDegree}
 
-    # chain33 chain33EthTokenAddr（ETH合约中）查询 lock 金额
     result=$(${Chain33Cli} evm query -a "${chain33EthTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 11 * le8
+
     is_equal "${result}" "1100000000"
 
-    # 原来的数额
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}")
     cli_ret "${result}" "balance" ".balance" "100"
 
@@ -218,14 +197,12 @@ function TestETH2Chain33Assets() {
 
     echo "check the balance on chain33"
     result=$(${Chain33Cli} evm query -a "${chain33EthTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 11-5 * le8
+
     is_equal "${result}" "600000000"
 
-    # 查询 ETH 这端 bridgeBank 地址 0
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
     cli_ret "${result}" "balance" ".balance" "6"
 
-    # 比之前多 5
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}")
     cli_ret "${result}" "balance" ".balance" "105"
 
@@ -241,30 +218,25 @@ function TestETH2Chain33Assets() {
 
 function TestETH2Chain33Ycc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}=========== eth to chain33 在以太坊上锁定 ycc 资产,然后在 chain33 上 burn ===========${NOC}"
-    # 查询 ETH 这端 bridgeBank 地址原来是 0
+    echo -e "${GRE}=========== eth to chain199 Lock ycc assets on Ethereum, then burn on chain199 ===========${NOC}"
+
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # ETH 这端 lock 7个 YCC
     result=$(${CLIA} ethereum lock -m 7 -k "${ethDeployKey}" -r "${chain33ReceiverAddr}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "lock"
 
-    # eth 等待 10 个区块
     eth_block_wait 10
 
-    # 查询 ETH 这端 bridgeBank 地址 7 YCC
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "7"
 
     sleep ${maturityDegree}
 
-    # chain33 chain33EthTokenAddr（ETH合约中）查询 lock 金额
     result=$(${Chain33Cli} evm query -a "${chain33YccTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 7 * le8
+  
     is_equal "${result}" "700000000"
 
-    # 原来的数额 0
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
@@ -275,14 +247,12 @@ function TestETH2Chain33Ycc() {
 
     echo "check the balance on chain33"
     result=$(${Chain33Cli} evm query -a "${chain33YccTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 7-5 * le8
+
     is_equal "${result}" "200000000"
 
-    # 查询 ETH 这端 bridgeBank 地址 2
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "2"
 
-    # 更新后的金额 5
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "5"
 
@@ -313,7 +283,6 @@ function InitAndOfflineDeploy() {
     result=$(${CLIA} ethereum import_privatekey -k "${ethValidatorAddrKeyA}")
     cli_ret "${result}" "ethereum import_privatekey"
 
-    # 在 chain33 上部署合约
     #    ./boss4x chain33 offline create -f 1 -k 0x027ca96466c71c7e7c5d73b7e1f43cb889b3bd65ebd2413eefd31c6709c262ae -n "deploy crossx to chain33" -r "1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ, [1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ, 155ooMPBTF8QQsGAknkK7ei5D78rwDEFe6, 13zBdQwuyDh7cKN79oT2odkxYuDbgQiXFv, 113ZzVamKfAtGt9dq45fX1mNsEoDiN95HG], [25, 25, 25, 25]" --chainID 0
     # shellcheck disable=SC2154
     ${Boss4xCLI} chain33 offline create -f 1 -k "${chain33DeployKey}" -n "deploy crossx to chain33" -r "${chain33ValidatorA}, [${chain33ValidatorA}, ${chain33ValidatorB}, ${chain33ValidatorC}, ${chain33ValidatorD}], [25, 25, 25, 25]" --chainID 0
@@ -328,12 +297,11 @@ function InitAndOfflineDeploy() {
     multisignChain33Addr=$(echo "${result}" | jq -r ".[7].ContractAddr")
     ${CLIA} chain33 multisign set_multiSign -a "${multisignChain33Addr}"
 
-    # 拷贝 BridgeRegistry.abi 和 BridgeBank.abi
+    #  BridgeRegistry.abi  BridgeBank.abi
     cp BridgeRegistry.abi "${BridgeRegistryOnChain33}.abi"
     chain33BridgeBank=$(${Chain33Cli} evm query -c "${chain33DeployAddr}" -b "bridgeBank()" -a "${BridgeRegistryOnChain33}")
     cp Chain33BridgeBank.abi "${chain33BridgeBank}.abi"
 
-    # 在 Eth 上部署合约
     #    ./boss4x ethereum offline create -p "25,25,25,25" -o 0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a -v "0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a,0x0df9a824699bc5878232c9e612fe1a5346a5a368,0xcb074cb21cdddf3ce9c3c0a7ac4497d633c9d9f1,0xd9dab021e74ecf475788ed7b61356056b2095830"
     #    ./boss4x ethereum offline sign -k 8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230
     # shellcheck disable=SC2154
@@ -350,11 +318,11 @@ function InitAndOfflineDeploy() {
     multisignEthAddr=$(echo "${result}" | jq -r ".[7].ContractAddr")
     ${CLIA} ethereum multisign set_multiSign -a "${multisignEthAddr}"
 
-    # 拷贝 BridgeRegistry.abi 和 BridgeBank.abi
+    #  BridgeRegistry.abi  BridgeBank.abi
     cp BridgeRegistry.abi "${BridgeRegistryOnEth}.abi"
     cp EthBridgeBank.abi "${ethBridgeBank}.abi"
 
-    # 修改 relayer.toml 字段
+    #  relayer.toml 
     updata_relayer "BridgeRegistryOnChain33" "${BridgeRegistryOnChain33}" "./relayer.toml"
 
     line=$(delete_line_show "./relayer.toml" "BridgeRegistry=")
@@ -366,8 +334,8 @@ function InitAndOfflineDeploy() {
 }
 
 function offline_deploy_erc20_eth_YCC() {
-    # eth 上 铸币 YCC
-    echo -e "${GRE}======= 在 ethereum 上创建 ERC20 ycc ======${NOC}"
+    # eth  YCC
+    echo -e "${GRE}=======  ethereum  ERC20 ycc ======${NOC}"
     ${Boss4xCLI} ethereum offline create_erc20 -m 33000000000000000000 -s YCC -o "${ethValidatorAddrA}" -d "${ethDeployAddr}"
     ${Boss4xCLI} ethereum offline sign -f "deployErc20YCC.txt" -k "${ethDeployKey}"
     sleep 10
@@ -383,8 +351,8 @@ function offline_deploy_erc20_eth_YCC() {
 }
 
 function offline_create_bridge_token_chain33_YCC() {
-    # 在chain33上创建bridgeToken YCC
-    echo -e "${GRE}======= 在 chain33 上创建 bridgeToken YCC ======${NOC}"
+    # chain199bridgeToken YCC
+    echo -e "${GRE}=======  chain33 bridgeToken YCC ======${NOC}"
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "createNewBridgeToken(YCC)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
     ${Boss4xCLI} chain33 offline create_bridge_token -c "${chain33BridgeBank}" -s YCC -k "${chain33DeployKey}" --chainID "${chain33ID}" -n "create_bridge_token:YCC"
@@ -400,7 +368,7 @@ function offline_create_bridge_token_chain33_YCC() {
 
 function offline_deploy_erc20_chain33_YCC() {
     # chain33 token create YCC
-    echo -e "${GRE}======= 在 chain33 上创建 ERC20 YCC ======${NOC}"
+    echo -e "${GRE}======= chain33 ERC20 YCC ======${NOC}"
     ${Boss4xCLI} chain33 offline create_erc20 -s YCC -k "${chain33DeployKey}" -o "${chain33DeployAddr}" --chainID "${chain33ID}"
     result=$(${Boss4xCLI} chain33 offline send -f "deployErc20YCCChain33.txt")
     hash=$(echo "${result}" | jq -r ".[0].TxHash")
@@ -408,13 +376,13 @@ function offline_deploy_erc20_chain33_YCC() {
     chain33YccErc20Addr=$(echo "${result}" | jq -r ".[0].ContractAddr")
     cp ERC20.abi "${chain33YccErc20Addr}.abi"
 
-    # echo 'YCC.1:增加allowance的设置,或者使用relayer工具进行'
+    # echo 'YCC.1:allowancerelayer'
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33YccErc20Addr}" -p "approve(${chain33BridgeBank}, 330000000000)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
     ${Boss4xCLI} chain33 offline approve_erc20 -a 330000000000 -s "${chain33BridgeBank}" -c "${chain33YccErc20Addr}" -k "${chain33DeployKey}" --chainID "${chain33ID}"
     chain33_offline_send "approve_erc20.txt"
 
-    # echo 'YCC.2:#执行add lock操作:addToken2LockList'
+    # echo 'YCC.2:#add loc:addToken2LockList'
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "addToken2LockList(${chain33YccErc20Addr}, YCC)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
     ${Boss4xCLI} chain33 offline create_add_lock_list -c "${chain33BridgeBank}" -s YCC -t "${chain33YccErc20Addr}" -k "${chain33DeployKey}" --chainID "${chain33ID}"
@@ -423,7 +391,7 @@ function offline_deploy_erc20_chain33_YCC() {
 
 function offline_deploy_erc20_chain33_ZBC() {
     # chain33 token create ZBC
-    echo -e "${GRE}======= 在 chain33 上创建 ERC20 ZBC ======${NOC}"
+    echo -e "${GRE}=======  chain199 ERC20 ZBC ======${NOC}"
     ${Boss4xCLI} chain33 offline create_erc20 -s ZBC -k "${chain33DeployKey}" -o "${chain33DeployAddr}" --chainID "${chain33ID}"
     result=$(${Boss4xCLI} chain33 offline send -f "deployErc20ZBCChain33.txt")
     hash=$(echo "${result}" | jq -r ".[0].TxHash")
@@ -431,13 +399,13 @@ function offline_deploy_erc20_chain33_ZBC() {
     chain33ZBCErc20Addr=$(echo "${result}" | jq -r ".[0].ContractAddr")
     cp ERC20.abi "${chain33ZBCErc20Addr}.abi"
 
-    # echo 'ZBC.1:增加allowance的设置,或者使用relayer工具进行'
+    # echo 'ZBC.1:allowance relayer'
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33ZBCErc20Addr}" -p "approve(${chain33BridgeBank}, 330000000000)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
     ${Boss4xCLI} chain33 offline approve_erc20 -a 330000000000 -s "${chain33BridgeBank}" -c "${chain33ZBCErc20Addr}" -k "${chain33DeployKey}" --chainID "${chain33ID}"
     chain33_offline_send "approve_erc20.txt"
 
-    # echo 'ZBC.2:#执行add lock操作:addToken2LockList'
+    # echo 'ZBC.2:#add lock:addToken2LockList'
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "addToken2LockList(${chain33ZBCErc20Addr}, ZBC)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
     ${Boss4xCLI} chain33 offline create_add_lock_list -c "${chain33BridgeBank}" -s ZBC -t "${chain33ZBCErc20Addr}" -k "${chain33DeployKey}" --chainID "${chain33ID}"
@@ -445,8 +413,8 @@ function offline_deploy_erc20_chain33_ZBC() {
 }
 
 function offline_create_bridge_token_eth_BTY() {
-    # 在 Ethereum 上创建 bridgeToken BTY
-    echo -e "${GRE}======= 在 Ethereum 上创建 bridgeToken BTY ======${NOC}"
+    # Ethereum  bridgeToken BTY
+    echo -e "${GRE}======= Ethereum  bridgeToken BTY ======${NOC}"
     ${Boss4xCLI} ethereum offline create_bridge_token -s BTY -c "${ethBridgeBank}" -d "${ethDeployAddr}"
     ethereum_offline_sign_send "create_bridge_token.txt"
 
@@ -455,8 +423,8 @@ function offline_create_bridge_token_eth_BTY() {
 }
 
 function offline_create_bridge_token_chain33_ETH() {
-    # 在 chain33 上创建 bridgeToken ETH
-    echo -e "${GRE}======= 在 chain33 上创建 bridgeToken ETH ======${NOC}"
+    # chain33 bridgeToken ETH
+    echo -e "${GRE}=======  chain199 bridgeToken ETH ======${NOC}"
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "createNewBridgeToken(ETH)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
     ${Boss4xCLI} chain33 offline create_bridge_token -c "${chain33BridgeBank}" -s ETH -k "${chain33DeployKey}" --chainID "${chain33ID}" -n "create_bridge_token:ETH"
@@ -472,7 +440,7 @@ function offline_create_bridge_token_chain33_ETH() {
 
 function offline_create_bridge_token_eth_YCC() {
     # ethereum create-bridge-token YCC
-    echo -e "${GRE}======= 在 ethereum 上创建 bridgeToken ycc ======${NOC}"
+    echo -e "${GRE}======= ethereum bridgeToken ycc ======${NOC}"
     ${Boss4xCLI} ethereum offline create_bridge_token -s YCC -c "${ethBridgeBank}" -d "${ethDeployAddr}"
     ethereum_offline_sign_send "create_bridge_token.txt"
 
@@ -483,7 +451,7 @@ function offline_create_bridge_token_eth_YCC() {
 
 function offline_create_bridge_token_eth_ZBC() {
     # ethereum create-bridge-token ZBC
-    echo -e "${GRE}======= 在 ethereum 上创建 bridgeToken ZBC ======${NOC}"
+    echo -e "${GRE}=======  ethereum bridgeToken ZBC ======${NOC}"
     ${Boss4xCLI} ethereum offline create_bridge_token -s ZBC -c "${ethBridgeBank}" -d "${ethDeployAddr}"
     ethereum_offline_sign_send "create_bridge_token.txt"
 
@@ -495,7 +463,7 @@ function offline_create_bridge_token_eth_ZBC() {
 function offline_setupChain33Multisign() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}=========== 设置 chain33 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}===========  chain199 ===========${NOC}"
     # shellcheck disable=SC2154
     #    result=$(${CLIA} chain33 multisign setup -k "${chain33DeployKey}" -o "${chain33MultisignA},${chain33MultisignB},${chain33MultisignC},${chain33MultisignD}")
     #    cli_ret "${result}" "chain33 multisign setup"
@@ -511,7 +479,7 @@ function offline_setupChain33Multisign() {
 function offline_setupEthMultisign() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}=========== 设置 ETH 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}===========  ETH ===========${NOC}"
     # shellcheck disable=SC2154
     #    result=$(${CLIA} ethereum multisign setup -k "${ethDeployKey}" -o "${ethMultisignA},${ethMultisignB},${ethMultisignC},${ethMultisignD}")
     #    cli_ret "${result}" "ethereum multisign setup"
@@ -528,27 +496,25 @@ function StartRelayerAndOfflineDeploy() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     kill_all_ebrelayer
 
-    # 修改 relayer.toml 配置文件 pushName 字段
+    # relayer.toml  pushName 
     pushNameChange "./relayer.toml"
     validators_config
 
-    # 删除私钥
+    # 
     delete_line "./relayer.toml" "deployerPrivateKey="
     delete_line "./relayer.toml" "deployerPrivateKey="
 
-    # 启动 ebrelayer
+    #  ebrelayer
     start_ebrelayerA
 
-    # 导入私钥 部署合约 设置 bridgeRegistry 地址
+    #  bridgeRegistry
     InitAndOfflineDeploy
 
-    # 设置离线多签数据
     initMultisignChain33Addr
     offline_setupChain33Multisign
     offline_setupEthMultisign
     transferChain33MultisignFee
 
-    # 重启
     kill_ebrelayer ebrelayer
     start_ebrelayerA
 
@@ -561,7 +527,6 @@ function StartRelayerAndOfflineDeploy() {
     # start ebrelayer B C D
     updata_toml_start_BCD
 
-    # 设置 token 地址
     # InitTokenAddr
     offline_create_bridge_token_eth_BTY
     offline_create_bridge_token_chain33_ETH
@@ -572,14 +537,13 @@ function StartRelayerAndOfflineDeploy() {
     offline_deploy_erc20_chain33_ZBC
     offline_create_bridge_token_eth_ZBC
 
-    # 重启
     restart_ebrelayerA
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
 function restart_ebrelayerA() {
-    # 重启
+
     kill_ebrelayer "./ebrelayer ./relayer.toml"
     start_ebrelayerA
 
@@ -591,7 +555,7 @@ function restart_ebrelayerA() {
 
 function offline_set_offline_token_Eth() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # echo '2:#配置自动转离线钱包(eth, 20, 50%)'
+
     ${Boss4xCLI} ethereum offline set_offline_token -s ETH -m 20 -c "${ethBridgeBank}" -d "${ethDeployAddr}"
     ethereum_offline_sign_send "set_offline_token.txt"
 
@@ -648,7 +612,7 @@ function offline_transfer_multisign_Eth_test() {
 function offline_transfer_multisign_EthYcc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     # transfer
-    # multisignEthAddr 要有手续费
+
     ${CLIA} ethereum transfer -k "${ethDeployKey}" -m 10 -r "${multisignEthAddr}"
     sleep 10
 
@@ -682,12 +646,12 @@ function offline_transfer_multisign_EthYcc() {
 
 function offline_set_offline_token_Bty() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}===== chain33 端 configLockedTokenOfflineSave BTY ======${NOC}"
-    #    echo '2:#配置自动转离线钱包(bty, 1000, 50%)'
-    #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "configLockedTokenOfflineSave(${chain33BtyTokenAddr},BTY,100000000000,50)" --chainID "${chain33ID}")
-    #    check_tx "${Chain33Cli}" "${hash}"
-    ${Boss4xCLI} chain33 offline set_offline_token -c "${chain33BridgeBank}" -s BTY -m 100000000000 -p 50 -k "${chain33DeployKey}" --chainID "${chain33ID}"
-    chain33_offline_send "chain33_set_offline_token.txt"
+    echo -e "${GRE}===== chain199 configLockedTokenOfflineSave BTY ======${NOC}"
+
+    #    hash=$(${Chain199Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "configLockedTokenOfflineSave(${chain33BtyTokenAddr},BTY,100000000000,50)" --chainID "${chain33ID}")
+    #    check_tx "${Chain199Cli}" "${hash}"
+    ${Boss4xCLI} chain199 offline set_offline_token -c "${chain33BridgeBank}" -s BTY -m 100000000000 -p 50 -k "${chain33DeployKey}" --chainID "${chain33ID}"
+    chain199_offline_send "chain199_set_offline_token.txt"
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
@@ -724,8 +688,7 @@ function offline_transfer_multisign_Bty_test() {
 function offline_set_offline_token_Chain33Ycc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}===== chain33 端 configLockedTokenOfflineSave ERC20 YCC ======${NOC}"
-    #    echo '2:#配置自动转离线钱包(YCC, 100, 60%)'
+    echo -e "${GRE}===== chain199 configLockedTokenOfflineSave ERC20 YCC ======${NOC}"
     #    hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "configLockedTokenOfflineSave(${chain33YccErc20Addr},YCC,10000000000,60)" --chainID "${chain33ID}")
     #    check_tx "${Chain33Cli}" "${hash}"
 

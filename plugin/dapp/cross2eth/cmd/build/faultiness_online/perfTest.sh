@@ -39,11 +39,9 @@ privateKeys[12]=0x0504bcb22b21874b85b15f1bfae19ad62fc2ad89caefc5344dc669c57efa60
 privateKeys[13]=0x0c61f5a879d70807686e43eccc1f52987a15230ae0472902834af4d1933674f2
 privateKeys[14]=0x2809477ede1261da21270096776ba7dc68b89c9df5f029965eaa5fe7f0b80697
 
-# ETH 部署合约者的私钥 用于部署合约时签名使用
 #ethDeployAddr="0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a"
 ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
-# chain33 部署合约者的私钥 用于部署合约时签名使用
 chain33DeployAddr="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
 #chain33DeployKey="0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944"
 
