@@ -26,27 +26,26 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// 放贷信息
 type Collateralize struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollateralizeId        string          `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`                 //放贷ID,一期放贷对应一个ID
-	TotalBalance           int64           `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`                      //当期放贷的总金额(ccny)
-	DebtCeiling            int64           `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`                        //单用户可借出的限额(ccny)
-	LiquidationRatio       int64           `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`              //清算比例
-	StabilityFeeRatio      int64           `protobuf:"varint,5,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"`            //稳定费率
-	CreateAddr             string          `protobuf:"bytes,6,opt,name=createAddr,proto3" json:"createAddr,omitempty"`                           //创建人地址
-	Balance                int64           `protobuf:"varint,7,opt,name=balance,proto3" json:"balance,omitempty"`                                //放贷剩余金额(ccny)
-	BorrowRecords          []*BorrowRecord `protobuf:"bytes,8,rep,name=borrowRecords,proto3" json:"borrowRecords,omitempty"`                     //借贷记录
-	InvalidRecords         []*BorrowRecord `protobuf:"bytes,9,rep,name=InvalidRecords,proto3" json:"InvalidRecords,omitempty"`                   //失效的借贷记录
-	Status                 int32           `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`                                 //当期借贷的状态，是否关闭
-	LatestLiquidationPrice int64           `protobuf:"varint,11,opt,name=latestLiquidationPrice,proto3" json:"latestLiquidationPrice,omitempty"` //最高清算价格
-	Period                 int64           `protobuf:"varint,12,opt,name=period,proto3" json:"period,omitempty"`                                 //借贷最大期限
-	LatestExpireTime       int64           `protobuf:"varint,13,opt,name=latestExpireTime,proto3" json:"latestExpireTime,omitempty"`             //最近超期时间
-	CollBalance            int64           `protobuf:"varint,14,opt,name=collBalance,proto3" json:"collBalance,omitempty"`                       //抵押bty
-	PreStatus              int32           `protobuf:"varint,15,opt,name=preStatus,proto3" json:"preStatus,omitempty"`                           //上一个状态
+	CollateralizeId        string          `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`                 
+	TotalBalance           int64           `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`                      
+	DebtCeiling            int64           `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`                        
+	LiquidationRatio       int64           `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`              
+	StabilityFeeRatio      int64           `protobuf:"varint,5,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"`            
+	CreateAddr             string          `protobuf:"bytes,6,opt,name=createAddr,proto3" json:"createAddr,omitempty"`                           
+	Balance                int64           `protobuf:"varint,7,opt,name=balance,proto3" json:"balance,omitempty"`                                
+	BorrowRecords          []*BorrowRecord `protobuf:"bytes,8,rep,name=borrowRecords,proto3" json:"borrowRecords,omitempty"`                     
+	InvalidRecords         []*BorrowRecord `protobuf:"bytes,9,rep,name=InvalidRecords,proto3" json:"InvalidRecords,omitempty"`                   
+	Status                 int32           `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`                                 
+	LatestLiquidationPrice int64           `protobuf:"varint,11,opt,name=latestLiquidationPrice,proto3" json:"latestLiquidationPrice,omitempty"` 
+	Period                 int64           `protobuf:"varint,12,opt,name=period,proto3" json:"period,omitempty"`                                 
+	LatestExpireTime       int64           `protobuf:"varint,13,opt,name=latestExpireTime,proto3" json:"latestExpireTime,omitempty"`             
+	CollBalance            int64           `protobuf:"varint,14,opt,name=collBalance,proto3" json:"collBalance,omitempty"`                       
+	PreStatus              int32           `protobuf:"varint,15,opt,name=preStatus,proto3" json:"preStatus,omitempty"`                           
 }
 
 func (x *Collateralize) Reset() {
@@ -186,24 +185,23 @@ func (x *Collateralize) GetPreStatus() int32 {
 	return 0
 }
 
-// 借出记录
 type BorrowRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AccountAddr      string `protobuf:"bytes,1,opt,name=accountAddr,proto3" json:"accountAddr,omitempty"`            //借贷人地址
-	StartTime        int64  `protobuf:"varint,2,opt,name=startTime,proto3" json:"startTime,omitempty"`               //借贷时间
-	CollateralValue  int64  `protobuf:"varint,3,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`   //抵押物价值(bty)
-	CollateralPrice  int64  `protobuf:"varint,4,opt,name=collateralPrice,proto3" json:"collateralPrice,omitempty"`   //抵押物价格
-	DebtValue        int64  `protobuf:"varint,5,opt,name=debtValue,proto3" json:"debtValue,omitempty"`               //债务价值(ccny)
-	LiquidationPrice int64  `protobuf:"varint,6,opt,name=liquidationPrice,proto3" json:"liquidationPrice,omitempty"` //抵押物清算价格
-	Status           int32  `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`                     //抵押状态，是否被清算
-	LiquidateTime    int64  `protobuf:"varint,8,opt,name=liquidateTime,proto3" json:"liquidateTime,omitempty"`       //清算时间
-	ExpireTime       int64  `protobuf:"varint,9,opt,name=expireTime,proto3" json:"expireTime,omitempty"`             //超时清算时间
-	PreStatus        int32  `protobuf:"varint,10,opt,name=preStatus,proto3" json:"preStatus,omitempty"`              //上一次抵押状态，用于告警恢复
-	RecordId         string `protobuf:"bytes,11,opt,name=recordId,proto3" json:"recordId,omitempty"`                 //借贷id，标识一次借出记录
-	CollateralizeId  string `protobuf:"bytes,12,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`   //放贷id
+	AccountAddr      string `protobuf:"bytes,1,opt,name=accountAddr,proto3" json:"accountAddr,omitempty"`            
+	StartTime        int64  `protobuf:"varint,2,opt,name=startTime,proto3" json:"startTime,omitempty"`               
+	CollateralValue  int64  `protobuf:"varint,3,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`   
+	CollateralPrice  int64  `protobuf:"varint,4,opt,name=collateralPrice,proto3" json:"collateralPrice,omitempty"`   
+	DebtValue        int64  `protobuf:"varint,5,opt,name=debtValue,proto3" json:"debtValue,omitempty"`               
+	LiquidationPrice int64  `protobuf:"varint,6,opt,name=liquidationPrice,proto3" json:"liquidationPrice,omitempty"` 
+	Status           int32  `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`                     
+	LiquidateTime    int64  `protobuf:"varint,8,opt,name=liquidateTime,proto3" json:"liquidateTime,omitempty"`       
+	ExpireTime       int64  `protobuf:"varint,9,opt,name=expireTime,proto3" json:"expireTime,omitempty"`             
+	PreStatus        int32  `protobuf:"varint,10,opt,name=preStatus,proto3" json:"preStatus,omitempty"`              
+	RecordId         string `protobuf:"bytes,11,opt,name=recordId,proto3" json:"recordId,omitempty"`                 
+	CollateralizeId  string `protobuf:"bytes,12,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`   
 }
 
 func (x *BorrowRecord) Reset() {
@@ -322,16 +320,15 @@ func (x *BorrowRecord) GetCollateralizeId() string {
 	return ""
 }
 
-// 资产价格记录
 type AssetPriceRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RecordTime int64 `protobuf:"varint,1,opt,name=recordTime,proto3" json:"recordTime,omitempty"` //价格记录时间
-	BtyPrice   int64 `protobuf:"varint,2,opt,name=btyPrice,proto3" json:"btyPrice,omitempty"`     // bty价格
-	BtcPrice   int64 `protobuf:"varint,3,opt,name=btcPrice,proto3" json:"btcPrice,omitempty"`     // btc价格
-	EthPrice   int64 `protobuf:"varint,4,opt,name=ethPrice,proto3" json:"ethPrice,omitempty"`     // eth价格
+	RecordTime int64 `protobuf:"varint,1,opt,name=recordTime,proto3" json:"recordTime,omitempty"` 
+	BtyPrice   int64 `protobuf:"varint,2,opt,name=btyPrice,proto3" json:"btyPrice,omitempty"`     
+	BtcPrice   int64 `protobuf:"varint,3,opt,name=btcPrice,proto3" json:"btcPrice,omitempty"`     
+	EthPrice   int64 `protobuf:"varint,4,opt,name=ethPrice,proto3" json:"ethPrice,omitempty"`     
 }
 
 func (x *AssetPriceRecord) Reset() {
@@ -512,31 +509,31 @@ type isCollateralizeAction_Value interface {
 }
 
 type CollateralizeAction_Create struct {
-	Create *CollateralizeCreate `protobuf:"bytes,1,opt,name=create,proto3,oneof"` //创建一期借贷
+	Create *CollateralizeCreate `protobuf:"bytes,1,opt,name=create,proto3,oneof"` 
 }
 
 type CollateralizeAction_Borrow struct {
-	Borrow *CollateralizeBorrow `protobuf:"bytes,2,opt,name=borrow,proto3,oneof"` //借贷
+	Borrow *CollateralizeBorrow `protobuf:"bytes,2,opt,name=borrow,proto3,oneof"` 
 }
 
 type CollateralizeAction_Repay struct {
-	Repay *CollateralizeRepay `protobuf:"bytes,3,opt,name=repay,proto3,oneof"` //清算
+	Repay *CollateralizeRepay `protobuf:"bytes,3,opt,name=repay,proto3,oneof"` 
 }
 
 type CollateralizeAction_Append struct {
-	Append *CollateralizeAppend `protobuf:"bytes,4,opt,name=append,proto3,oneof"` //追加
+	Append *CollateralizeAppend `protobuf:"bytes,4,opt,name=append,proto3,oneof"` 
 }
 
 type CollateralizeAction_Feed struct {
-	Feed *CollateralizeFeed `protobuf:"bytes,5,opt,name=feed,proto3,oneof"` //喂价
+	Feed *CollateralizeFeed `protobuf:"bytes,5,opt,name=feed,proto3,oneof"` 
 }
 
 type CollateralizeAction_Retrieve struct {
-	Retrieve *CollateralizeRetrieve `protobuf:"bytes,6,opt,name=retrieve,proto3,oneof"` //收回
+	Retrieve *CollateralizeRetrieve `protobuf:"bytes,6,opt,name=retrieve,proto3,oneof"` 
 }
 
 type CollateralizeAction_Manage struct {
-	Manage *CollateralizeManage `protobuf:"bytes,7,opt,name=manage,proto3,oneof"` //全局配置
+	Manage *CollateralizeManage `protobuf:"bytes,7,opt,name=manage,proto3,oneof"` 
 }
 
 func (*CollateralizeAction_Create) isCollateralizeAction_Value() {}
@@ -558,12 +555,12 @@ type CollateralizeManage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DebtCeiling       int64 `protobuf:"varint,1,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`             //单用户可借出的限额(ccny)
-	LiquidationRatio  int64 `protobuf:"varint,2,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`   //清算比例
-	StabilityFeeRatio int64 `protobuf:"varint,3,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"` //稳定费
-	Period            int64 `protobuf:"varint,4,opt,name=period,proto3" json:"period,omitempty"`                       //合约期限
-	TotalBalance      int64 `protobuf:"varint,5,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`           //放贷总量
-	CurrentTime       int64 `protobuf:"varint,6,opt,name=currentTime,proto3" json:"currentTime,omitempty"`             //设置时间
+	DebtCeiling       int64 `protobuf:"varint,1,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`             
+	LiquidationRatio  int64 `protobuf:"varint,2,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`   
+	StabilityFeeRatio int64 `protobuf:"varint,3,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"` 
+	Period            int64 `protobuf:"varint,4,opt,name=period,proto3" json:"period,omitempty"`                       
+	TotalBalance      int64 `protobuf:"varint,5,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`          
+	CurrentTime       int64 `protobuf:"varint,6,opt,name=currentTime,proto3" json:"currentTime,omitempty"`            
 }
 
 func (x *CollateralizeManage) Reset() {

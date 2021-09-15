@@ -65,15 +65,12 @@ func CreateMultisignTransfer(cmd *cobra.Command, _ []string) {
 	amount, _ := cmd.Flags().GetFloat64("amount")
 	multisign, _ := cmd.Flags().GetString("address")
 
-	//对于平台币转账，这个data只是个占位符，没有作用
 	dataStr := "0x"
 	safeTxGas := int64(10 * 10000)
 	baseGas := 0
 	gasPrice := 0
 	valueStr := relayerutils.ToWei(amount, 8).String()
-	//如果是bty转账,则直接将to地址设置为receiver,而如果是ERC20转账，则需要将其设置为token地址
 	to := receiver
-	//如果是erc20转账，则需要构建data数据
 	if "" != token {
 		parameter := fmt.Sprintf("transfer(%s, %s)", receiver, relayerutils.ToWei(amount, 8).String())
 		_, data, err := evmAbi.Pack(parameter, erc20.ERC20ABI, false)
@@ -81,13 +78,11 @@ func CreateMultisignTransfer(cmd *cobra.Command, _ []string) {
 			fmt.Println("Failed to do abi.Pack due to:", err.Error())
 			return
 		}
-		//对于其他erc20资产，直接将其设置为0
 		valueStr = "0"
 		to = token
 		dataStr = chain33Common.ToHex(data)
 	}
 
-	//获取nonce
 	nonce := getMulSignNonce(multisign, rpcLaddr)
 	parameter2getHash := fmt.Sprintf("getTransactionHash(%s, %s, %s, 0, %d, %d, %d, %s, %s, %d)", to, valueStr, dataStr,
 		safeTxGas, baseGas, gasPrice, ebrelayerTypes.NilAddrChain33, ebrelayerTypes.NilAddrChain33, nonce)
@@ -141,7 +136,6 @@ func MultisignTransfer(cmd *cobra.Command, _ []string) {
 		return
 	}
 
-	//对于平台币转账，这个data只是个占位符，没有作用
 	dataStr := "0x"
 	contentHash, err := chain33Common.FromHex(txinfo.Data)
 	safeTxGas := int64(10 * 10000)

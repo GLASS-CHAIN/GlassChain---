@@ -1,23 +1,21 @@
-# 一、 chain33与以太坊跨链系统
+# One, chain33 and the Ethereum cross-chain system
 
-1.中心化服务relayer(由多个中继器进行协同工作，一般由4个中继器组成)
+1. Centralized service relay (coordinated by multiple repeaters, generally composed of 4 repeaters)
 
-2.运行在以太坊上的合约contract4eth,其中包括多签离线钱包合约(gnosis)
+2. The contract contract4eth running on Ethereum, including multi-signature offline wallet contracts (gnosis)
 
-3.运行在chain33上的合约contract4chain33,其中包括多签离线钱包合约(gnosis)
+3. The contract contract4chain33 running on chain33, including multi-sign offline wallet contracts (gnosis)
 
-# 二、去中心化交易功能
-1.在以太坊上的部署工具
+# 2. Decentralized transaction function
+1. Deployment tools on Ethereum
 
-2.在chain33上的部署工具
+2. Deployment tool on chain33
 
-### 运行环境
-
-```
-没有要求
+### Operating environment
 
 ```
+No requirement
 
-#### 支持make file的平台
+```
 
-
+#### Platforms that support make file
