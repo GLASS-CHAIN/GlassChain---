@@ -28,11 +28,9 @@ import (
 func TestBrigeTokenCreat(t *testing.T) {
 	ctx := context.Background()
 	println("TEST:BridgeToken creation (Chain33 assets)")
-	//1st部署相关合约
 	para, sim, x2EthContracts, x2EthDeployInfo, err := setup.DeployContracts()
 	require.NoError(t, err)
 
-	//2nd：订阅事件
 	eventName := "LogNewBridgeToken"
 	bridgeBankABI := ethtxs.LoadABI(ethtxs.BridgeBankABI)
 	logNewBridgeTokenSig := bridgeBankABI.Events[eventName].ID.Hex()
@@ -62,7 +60,6 @@ func TestBrigeTokenCreat(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, tokenCount.Int64(), int64(0))
 
-	//3rd：创建token
 	auth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 	if nil != err {
 		t.Fatalf("PrepareAuth failed due to:%s", err.Error())
@@ -100,7 +97,6 @@ func TestBrigeTokenCreat(t *testing.T) {
 				t.Logf("token addr:%s, symbol:%s", logEvent.Token.String(), logEvent.Symbol)
 				require.Equal(t, symbol, logEvent.Symbol)
 
-				//tokenCount正确加1
 				tokenCount, err := x2EthContracts.BridgeBank.BridgeTokenCount(opts)
 				require.Nil(t, err)
 				require.Equal(t, tokenCount.Int64(), int64(1))
@@ -111,19 +107,16 @@ func TestBrigeTokenCreat(t *testing.T) {
 	}
 }
 
-//测试在chain33上锁定资产,然后在以太坊上铸币
-//发行token="BTY"
-//铸币NewOracleClaim
-//铸币成功
+
 //Bridge token minting (for locked chain33 assets)
 func TestBrigeTokenMint(t *testing.T) {
 	ctx := context.Background()
 	println("TEST:BridgeToken creation (Chain33 assets)")
-	//1st部署相关合约
+
 	para, sim, x2EthContracts, x2EthDeployInfo, err := setup.DeployContracts()
 	require.NoError(t, err)
 
-	//2nd：订阅事件
+
 	eventName := "LogNewBridgeToken"
 	bridgeBankABI := ethtxs.LoadABI(ethtxs.BridgeBankABI)
 	logNewBridgeTokenSig := bridgeBankABI.Events[eventName].ID.Hex()
@@ -146,7 +139,7 @@ func TestBrigeTokenMint(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, tokenCount.Int64(), int64(0))
 
-	//3rd：创建token
+
 	symbol := "BTY"
 	auth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 	if nil != err {
@@ -181,7 +174,6 @@ func TestBrigeTokenMint(t *testing.T) {
 			//t.Logf("token addr:%s, symbol:%s", logEvent.Token.String(), logEvent.Symbol)
 			require.Equal(t, symbol, logEvent.Symbol)
 
-			//tokenCount正确加1
 			tokenCount, err = x2EthContracts.BridgeBank.BridgeTokenCount(opts)
 			require.Nil(t, err)
 			require.Equal(t, tokenCount.Int64(), int64(1))
@@ -234,16 +226,14 @@ func TestBrigeTokenMint(t *testing.T) {
 	t.Logf("The minted amount is:%d", balance.Int64())
 }
 
-//测试在以太坊上lock数字资产,包括Eth和Erc20
 //Bridge deposit locking (deposit erc20/eth assets)
 func TestBridgeDepositLock(t *testing.T) {
 	ctx := context.Background()
 	println("TEST:Bridge deposit locking (Erc20/Eth assets)")
-	//1st部署相关合约
+
 	para, sim, x2EthContracts, x2EthDeployInfo, err := setup.DeployContracts()
 	require.NoError(t, err)
 
-	//创建token
 	operatorAuth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 	assert.Nil(t, err)
 	symbol := "USDT"
@@ -258,7 +248,6 @@ func TestBridgeDepositLock(t *testing.T) {
 	require.Nil(t, err)
 	sim.Commit()
 
-	//创建实例 为userOne铸币 userOne为bridgebank允许allowance设置数额
 	userOne := para.InitValidators[0]
 	callopts := &bind.CallOpts{
 		Pending: true,
@@ -295,7 +284,6 @@ func TestBridgeDepositLock(t *testing.T) {
 	t.Logf("userOneBalance:%d", userOneBalance.Int64())
 	require.Equal(t, userOneBalance.Int64(), mintAmount)
 
-	// 测试子项目:should allow users to lock ERC20 tokens
 	userOneAuth, err = ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
 
@@ -305,21 +293,18 @@ func TestBridgeDepositLock(t *testing.T) {
 	require.Nil(t, err)
 	sim.Commit()
 
-	//balance减少到900
 	userOneBalance, err = bridgeTokenInstance.BalanceOf(callopts, userOne)
 	require.Nil(t, err)
 	expectAmount := int64(900)
 	require.Equal(t, userOneBalance.Int64(), expectAmount)
 	t.Logf("userOneBalance changes to:%d", userOneBalance.Int64())
 
-	//bridgebank增加了100
 	bridgeBankBalance, err := bridgeTokenInstance.BalanceOf(callopts, x2EthDeployInfo.BridgeBank.Address)
 	require.Nil(t, err)
 	expectAmount = int64(100)
 	require.Equal(t, bridgeBankBalance.Int64(), expectAmount)
 	t.Logf("bridgeBankBalance changes to:%d", bridgeBankBalance.Int64())
 
-	// 测试子项目:锁定ETH，should allow users to lock Ethereum
 	bridgeBankBalance, err = sim.BalanceAt(ctx, x2EthDeployInfo.BridgeBank.Address, nil)
 	require.Nil(t, err)
 	t.Logf("origin eth bridgeBankBalance is:%d", bridgeBankBalance.Int64())
@@ -340,17 +325,14 @@ func TestBridgeDepositLock(t *testing.T) {
 	t.Logf("eth bridgeBankBalance changes to:%d", bridgeBankBalance.Int64())
 }
 
-//测试在以太坊上unlock数字资产,包括Eth和Erc20,
-//即从chain33取回在eth上发行的的ETH或ERC20数字资产，之前通过lock操作发送到了chain33
-//现在则通过NewProphecyClaim 的burn操作将数字资产取回
 //Ethereum/ERC20 token unlocking (for burned chain33 assets)
 func TestBridgeBankUnlock(t *testing.T) {
 	ctx := context.Background()
 	println("TEST:Ethereum/ERC20 token unlocking (for burned chain33 assets)")
-	//1st部署相关合约
+
 	para, sim, x2EthContracts, x2EthDeployInfo, err := setup.DeployContracts()
 	require.NoError(t, err)
-	//1.lockEth资产
+
 	ethAddr := common.Address{}
 	userOneAuth, err := ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
@@ -363,8 +345,6 @@ func TestBridgeBankUnlock(t *testing.T) {
 	require.Nil(t, err)
 	sim.Commit()
 
-	//2.lockErc20资产
-	//创建token
 	operatorAuth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 	assert.Nil(t, err)
 	symbolUsdt := "USDT"
@@ -373,9 +353,7 @@ func TestBridgeBankUnlock(t *testing.T) {
 	sim.Commit()
 	t.Logf("The new creaded symbolUsdt:%s, address:%s", symbolUsdt, bridgeTokenAddr.String())
 
-	//创建实例
-	//为userOne铸币
-	//userOne为bridgebank允许allowance设置数额
+
 	userOne := para.InitValidators[0]
 	callopts := &bind.CallOpts{
 		Pending: true,
@@ -410,7 +388,6 @@ func TestBridgeBankUnlock(t *testing.T) {
 	t.Logf("userOneBalance:%d", userOneBalance.Int64())
 	require.Equal(t, userOneBalance.Int64(), mintAmount)
 
-	//***测试子项目:should allow users to lock ERC20 tokens
 	userOneAuth, err = ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
 
@@ -490,16 +467,14 @@ func TestBridgeBankUnlock(t *testing.T) {
 	require.Equal(t, userUSDTbalance.Int64(), newProphecyAmount)
 }
 
-//测试在以太坊上多次unlock数字资产Eth
 //Ethereum/ERC20 token second unlocking (for burned chain33 assets)
 func TestBridgeBankSecondUnlockEth(t *testing.T) {
 	ctx := context.Background()
 	println("TEST:to be unlocked incrementally by successive burn prophecies (for burned chain33 assets)")
-	//1st部署相关合约
+
 	para, sim, x2EthContracts, x2EthDeployInfo, err := setup.DeployContracts()
 	require.NoError(t, err)
 
-	//1.lockEth资产
 	ethAddr := common.Address{}
 	userOneAuth, err := ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
@@ -512,8 +487,7 @@ func TestBridgeBankSecondUnlockEth(t *testing.T) {
 	require.Nil(t, err)
 	sim.Commit()
 
-	//2.lockErc20资产
-	//创建token
+
 	operatorAuth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 	assert.Nil(t, err)
 	symbolUsdt := "USDT"
@@ -522,9 +496,6 @@ func TestBridgeBankSecondUnlockEth(t *testing.T) {
 	sim.Commit()
 	t.Logf("The new creaded symbolUsdt:%s, address:%s", symbolUsdt, bridgeTokenAddr.String())
 
-	//创建实例
-	//为userOne铸币
-	//userOne为bridgebank允许allowance设置数额
 	userOne := para.InitValidators[0]
 	callopts := &bind.CallOpts{
 		Pending: true,
@@ -559,7 +530,6 @@ func TestBridgeBankSecondUnlockEth(t *testing.T) {
 	t.Logf("userOneBalance:%d", userOneBalance.Int64())
 	require.Equal(t, userOneBalance.Int64(), mintAmount)
 
-	//***测试子项目:should allow users to lock ERC20 tokens
 	userOneAuth, err = ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
 

@@ -1,40 +1,40 @@
-#在chain33部署操作手册
-##步骤一: 离线创建3笔部署router合约的交易
+#Deployment manual on chain33
+##Step 1: Create 3 transactions to deploy router contracts offline
 ```
-交易1: 部署合约: weth9
-交易2: 部署合约: factory
-交易3: 部署合约: router
+Transaction 1: Deployment contract: weth9
+Transaction 2: deploy contract: factory
+Transaction 3: deploy contract: router
 
 ./boss offline chain33 router -f 1 -k 0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944 -n "deploy router to chain33" -a 14KEKbYtKKQm4wMthSK9J4La4nAiidGozt --chainID 33
 
--f, --fee float: 交易费设置，因为只是少量几笔交易，且部署交易消耗gas较多，直接设置1个代币即可
--k, --key string: 部署人的私钥，用于对交易签名
--n, --note string: 备注信息 
--a, --feeToSetter: 设置交易费收费地址（说明：该地址用来指定收取交易费地址的地址，而不是该地址用来收取交易费）
---chainID 平行链的chainID
-生成交易文件：farm.txt：router.txt
+-f, --fee float: transaction fee setting, because there are only a few transactions, and the deployment transaction consumes more gas, just set 1 token directly
+-k, --key string: The private key of the deployer, used to sign the transaction
+-n, --note string: note information
+-a, --feeToSetter: Set the transaction fee charging address (Note: This address is used to specify the address of the address that charges the transaction fee, not the address used to charge the transaction fee)
+--chainID chainID of the parachain
+Generate transaction files: farm.txt: router.txt
 
 ```
 
-##步骤二: 离线创建5笔部署farm合约的交易
+##Step 2: Create 5 offline farm contract transactions
 ```
-交易1: 部署合约: cakeToken
-交易2: 部署合约: SyrupBar
-交易3: 部署合约: masterChef
-交易4: 转移所有权，将cake token的所有权转移给masterchef
-交易5: 转移所有权: 将SyrupBar的所有权转移给masterchef
+Transaction 1: Deploy the contract: cakeToken
+Transaction 2: Deploy the contract: SyrupBar
+Transaction 3: Deployment contract: masterChef
+Transaction 4: Transfer ownership, transfer ownership of cake token to masterchef
+Transaction 5: Transfer ownership: transfer the ownership of SyrupBar to masterchef
 
 
-./boss offline chain33 farm masterChef -f 1 -k 0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944 -n "deploy farm to chain33" -d 14KEKbYtKKQm4wMthSK9J4La4nAiidGozt -s 10 -m 5000000000000000000 --paraName user.p.para.
-生成交易文件：farm.txt
+./boss offline chain33 farm masterChef -f 1 -k 0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944 -n "deploy farm to chain33" -d 14KEKbYtKKQm4wMthSK9J4La4nAi -paraNameoz.
+Generate transaction file: farm.txt
 ```
 
-##步骤三: 离线创建多笔增加lp token的交易
+##Step 3: Create multiple transactions to increase lp token offline
 ```
-./boss offline chain33 farm addPool -f 1 -k 0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944 -p 1000 -l 1HEp4BiA54iaKx5LrgN9iihkgmd3YxC2xM -m 13YwvpqTatoFepe31c5TUXvi26SbNpC3Qq --paraName user.p.para.
+./boss offline chain33 farm addPool -f 1 -k 0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944 -p 1000 -l 1HEp4BiA54iaKx5LrgN9iihkgmd3YxC2xM -m 13Ywpeqparagraph
 ```
 
-##步骤四: 串行发送交易文件中的交易
+##Step 4: Send the transaction in the transaction file serially
 ```
 ./boss offline chain33 send -f xxx.txt
 ```

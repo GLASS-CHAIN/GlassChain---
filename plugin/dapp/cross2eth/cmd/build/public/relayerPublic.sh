@@ -6,7 +6,6 @@ set +e
 
 source "./publicTest.sh"
 
-# ETH 部署合约者的私钥 用于部署合约时签名使用
 ethDeployAddr="0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a"
 ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
@@ -24,7 +23,6 @@ ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
     ethValidatorAddrKeyD="c9fa31d7984edf81b8ef3b40c761f1847f6fcd5711ab2462da97dc458f1f896b"
 }
 
-# chain33 部署合约者的私钥 用于部署合约时签名使用
 #chain33DeployAddr="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
 #chain33DeployKey="0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944"
 chain33DeployAddr="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
@@ -33,7 +31,6 @@ chain33DeployKey="0x027ca96466c71c7e7c5d73b7e1f43cb889b3bd65ebd2413eefd31c6709c2
 chain33ReceiverAddr="12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
 chain33ReceiverAddrKey="4257d8692ef7fe13c68b65d6a52f03933db2fa5ce8faf210b5b8b80c721ced01"
 
-# 新增地址 chain33 需要导入地址 转入 10 bty当收费费
 # shellcheck disable=SC2034
 chain33ValidatorA="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
 chain33ValidatorB="155ooMPBTF8QQsGAknkK7ei5D78rwDEFe6"
@@ -119,28 +116,23 @@ function InitAndDeploy() {
     result=$(${CLIA} ethereum import_privatekey -k "${ethDeployKey}")
     cli_ret "${result}" "ethereum import_privatekey"
 
-    # 在 chain33 上部署合约
     result=$(${CLIA} chain33 deploy)
     cli_ret "${result}" "chain33 deploy"
     BridgeRegistryOnChain33=$(echo "${result}" | jq -r ".msg")
 
-    # 拷贝 BridgeRegistry.abi 和 BridgeBank.abi
     cp BridgeRegistry.abi "${BridgeRegistryOnChain33}.abi"
     chain33BridgeBank=$(${Chain33Cli} evm query -c "${chain33DeployAddr}" -b "bridgeBank()" -a "${BridgeRegistryOnChain33}")
     cp Chain33BridgeBank.abi "${chain33BridgeBank}.abi"
 
-    # 在 Eth 上部署合约
     result=$(${CLIA} ethereum deploy)
     cli_ret "${result}" "ethereum deploy"
     BridgeRegistryOnEth=$(echo "${result}" | jq -r ".msg")
 
-    # 拷贝 BridgeRegistry.abi 和 BridgeBank.abi
     cp BridgeRegistry.abi "${BridgeRegistryOnEth}.abi"
     result=$(${CLIA} ethereum bridgeBankAddr)
     ethBridgeBank=$(echo "${result}" | jq -r ".addr")
     cp EthBridgeBank.abi "${ethBridgeBank}.abi"
 
-    # 修改 relayer.toml 字段
     updata_relayer "BridgeRegistryOnChain33" "${BridgeRegistryOnChain33}" "./relayer.toml"
 
     line=$(delete_line_show "./relayer.toml" "BridgeRegistry=")
@@ -152,8 +144,7 @@ function InitAndDeploy() {
 }
 
 function create_bridge_token_eth_BTY() {
-    # 在 Ethereum 上创建 bridgeToken BTY
-    echo -e "${GRE}======= 在 Ethereum 上创建 bridgeToken BTY ======${NOC}"
+    echo -e "${GRE}======= Ethereum bridgeToken BTY ======${NOC}"
     result=$(${CLIA} ethereum token create-bridge-token -s BTY)
     cli_ret "${result}" "ethereum token create-bridge-token -s BTY"
     # shellcheck disable=SC2034
@@ -161,8 +152,7 @@ function create_bridge_token_eth_BTY() {
 }
 
 function create_bridge_token_chain33_ETH() {
-    # 在 chain33 上创建 bridgeToken ETH
-    echo -e "${GRE}======= 在 chain33 上创建 bridgeToken ETH ======${NOC}"
+    echo -e "${GRE}======= bridgeToken ETH ======${NOC}"
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "createNewBridgeToken(ETH)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
     chain33EthTokenAddr=$(${Chain33Cli} evm query -a "${chain33BridgeBank}" -c "${chain33DeployAddr}" -b "getToken2address(ETH)")
@@ -174,8 +164,7 @@ function create_bridge_token_chain33_ETH() {
 }
 
 function deploy_erc20_eth_YCC() {
-    # eth 上 铸币 YCC
-    echo -e "${GRE}======= 在 ethereum 上创建 ERC20 ycc ======${NOC}"
+    echo -e "${GRE}=======  ERC20 ycc ======${NOC}"
     result=$(${CLIA} ethereum deploy_erc20 -c "${ethDeployAddr}" -n YCC -s YCC -m 33000000000000000000)
     cli_ret "${result}" "ethereum deploy_erc20 -s YCC"
     ethereumYccTokenAddr=$(echo "${result}" | jq -r .msg)
@@ -185,8 +174,7 @@ function deploy_erc20_eth_YCC() {
 }
 
 function create_bridge_token_chain33_YCC() {
-    # 在chain33上创建bridgeToken YCC
-    echo -e "${GRE}======= 在 chain33 上创建 bridgeToken YCC ======${NOC}"
+    echo -e "${GRE}======= bridgeToken YCC ======${NOC}"
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "createNewBridgeToken(YCC)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
     chain33YccTokenAddr=$(${Chain33Cli} evm query -a "${chain33BridgeBank}" -c "${chain33DeployAddr}" -b "getToken2address(YCC)")
@@ -198,18 +186,16 @@ function create_bridge_token_chain33_YCC() {
 }
 
 function deploy_erc20_chain33_YCC() {
-    # chain33 token create YCC
-    echo -e "${GRE}======= 在 chain33 上创建 ERC20 YCC ======${NOC}"
+    # chain199 token create YCC
+    echo -e "${GRE}======= ERC20 YCC ======${NOC}"
     result=$(${CLIA} chain33 token create -s YCC -o "${chain33DeployAddr}")
     cli_ret "${result}" "chain33 token create -s YCC"
     chain33YccErc20Addr=$(echo "${result}" | jq -r .msg)
     cp ERC20.abi "${chain33YccErc20Addr}.abi"
 
-    # echo 'YCC.1:增加allowance的设置,或者使用relayer工具进行'
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33YccErc20Addr}" -p "approve(${chain33BridgeBank}, 330000000000)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 
-    # echo 'YCC.2:#执行add lock操作:addToken2LockList'
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "addToken2LockList(${chain33YccErc20Addr}, YCC)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 }

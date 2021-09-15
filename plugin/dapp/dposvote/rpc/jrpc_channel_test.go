@@ -25,7 +25,6 @@ func init() {
 }
 
 func TestJRPCChannel(t *testing.T) {
-	// 启动RPCmocker
 	mocker := testnode.New("--notset--", nil)
 	cfg := mocker.GetAPI().GetConfig()
 	defer func() {
