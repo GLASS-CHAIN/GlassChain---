@@ -578,7 +578,6 @@ func TestBridgeBankSecondUnlockEth(t *testing.T) {
 	t.Logf("userEthbalance after ProcessBridgeProphecy for addr:%s balance=%d", ethReceiver.String(), userEthbalanceAfter.Int64())
 	require.Equal(t, userEthbalance.Int64()+newProphecyAmount, userEthbalanceAfter.Int64())
 
-	//第二次 newOracleClaim
 	newProphecyAmountSecond := int64(33)
 	claimID = crypto.Keccak256Hash(chain33Sender, ethReceiver.Bytes(), ethAddr.Bytes(), big.NewInt(newProphecyAmountSecond).Bytes())
 	authOracle, err = ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
@@ -608,16 +607,14 @@ func TestBridgeBankSecondUnlockEth(t *testing.T) {
 	require.Equal(t, userEthbalance.Int64()+newProphecyAmountSecond, userEthbalanceAfter.Int64())
 }
 
-//测试在以太坊上多次unlock数字资产Erc20
 //Ethereum/ERC20 token unlocking (for burned chain33 assets)
 func TestBridgeBankSedondUnlockErc20(t *testing.T) {
 	ctx := context.Background()
 	println("TEST:ERC20 to be unlocked incrementally by successive burn prophecies (for burned chain33 assets))")
-	//1st部署相关合约
+
 	para, sim, x2EthContracts, x2EthDeployInfo, err := setup.DeployContracts()
 	require.NoError(t, err)
 
-	//1.lockEth资产
 	userOneAuth, err := ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
 	ethLockAmount := big.NewInt(150)
@@ -628,8 +625,6 @@ func TestBridgeBankSedondUnlockErc20(t *testing.T) {
 	require.Nil(t, err)
 	sim.Commit()
 
-	//2.lockErc20资产
-	//创建token
 	operatorAuth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 	assert.Nil(t, err)
 	symbolUsdt := "USDT"
@@ -638,7 +633,6 @@ func TestBridgeBankSedondUnlockErc20(t *testing.T) {
 	sim.Commit()
 	t.Logf("The new creaded symbolUsdt:%s, address:%s", symbolUsdt, bridgeTokenAddr.String())
 
-	//创建实例 为userOne铸币 userOne为bridgebank允许allowance设置数额
 	userOne := para.InitValidators[0]
 	callopts := &bind.CallOpts{
 		Pending: true,
@@ -678,7 +672,6 @@ func TestBridgeBankSedondUnlockErc20(t *testing.T) {
 	require.Nil(t, err)
 	sim.Commit()
 
-	//测试子项目:should allow users to lock ERC20 tokens
 	userOneAuth, err = ethtxs.PrepareAuth(sim, para.ValidatorPriKey[0], para.InitValidators[0])
 	require.Nil(t, err)
 	//lock 100

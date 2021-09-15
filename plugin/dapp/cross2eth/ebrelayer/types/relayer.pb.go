@@ -21,9 +21,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-//以太坊账户信息
-// 	 privkey : 账户地址对应的私钥
-//	 addr :账户地址
+
 type Account4Relayer struct {
 	Privkey              []byte   `protobuf:"bytes,1,opt,name=privkey,proto3" json:"privkey,omitempty"`
 	Addr                 string   `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
@@ -345,7 +343,7 @@ type EthBridgeClaim struct {
 	Symbol          string `protobuf:"bytes,5,opt,name=symbol,proto3" json:"symbol,omitempty"`
 	EthereumSender  string `protobuf:"bytes,6,opt,name=ethereumSender,proto3" json:"ethereumSender,omitempty"`
 	Chain33Receiver string `protobuf:"bytes,7,opt,name=chain33Receiver,proto3" json:"chain33Receiver,omitempty"`
-	//因为考虑到eth是以wei单位的，需要更大的计数范围，所以使用string类型
+
 	Amount               string   `protobuf:"bytes,9,opt,name=amount,proto3" json:"amount,omitempty"`
 	ClaimType            int32    `protobuf:"varint,10,opt,name=claimType,proto3" json:"claimType,omitempty"`
 	ChainName            string   `protobuf:"bytes,11,opt,name=chainName,proto3" json:"chainName,omitempty"`
@@ -799,7 +797,7 @@ type LockEthErc20 struct {
 	OwnerKey  string `protobuf:"bytes,1,opt,name=ownerKey,proto3" json:"ownerKey,omitempty"`
 	TokenAddr string `protobuf:"bytes,2,opt,name=tokenAddr,proto3" json:"tokenAddr,omitempty"`
 	Amount    string `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount,omitempty"`
-	//将lock住的资产跨链转移到chain33的该账户名下
+
 	Chain33Receiver      string   `protobuf:"bytes,4,opt,name=chain33Receiver,proto3" json:"chain33Receiver,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -862,7 +860,7 @@ func (m *LockEthErc20) GetChain33Receiver() string {
 type LockBTY struct {
 	OwnerKey string `protobuf:"bytes,1,opt,name=ownerKey,proto3" json:"ownerKey,omitempty"`
 	Amount   string `protobuf:"bytes,2,opt,name=amount,proto3" json:"amount,omitempty"`
-	//将lock住的资产跨链转移到ethereum的该账户名下
+
 	EtherumReceiver      string   `protobuf:"bytes,3,opt,name=etherumReceiver,proto3" json:"etherumReceiver,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -1289,11 +1287,11 @@ type Chain33ToEthereumStatics struct {
 	Chain33Txhash  string `protobuf:"bytes,2,opt,name=chain33Txhash,proto3" json:"chain33Txhash,omitempty"`
 	EthereumTxhash string `protobuf:"bytes,3,opt,name=EthereumTxhash,proto3" json:"EthereumTxhash,omitempty"`
 	BurnLock       int32  `protobuf:"varint,4,opt,name=burnLock,proto3" json:"burnLock,omitempty"`
-	//该笔lock或者burn交易的chain33发起人
+
 	Chain33Sender    string `protobuf:"bytes,5,opt,name=chain33Sender,proto3" json:"chain33Sender,omitempty"`
 	EthereumReceiver string `protobuf:"bytes,6,opt,name=ethereumReceiver,proto3" json:"ethereumReceiver,omitempty"`
 	Symbol           string `protobuf:"bytes,7,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	//因为考虑到,eth的单位是以wei计算的，所以使用string类型
+
 	Amount               string   `protobuf:"bytes,8,opt,name=amount,proto3" json:"amount,omitempty"`
 	Nonce                int64    `protobuf:"varint,9,opt,name=nonce,proto3" json:"nonce,omitempty"`
 	TxIndex              int64    `protobuf:"varint,10,opt,name=txIndex,proto3" json:"txIndex,omitempty"`
@@ -1402,11 +1400,11 @@ type Ethereum2Chain33Statics struct {
 	Chain33Txhash   string `protobuf:"bytes,2,opt,name=chain33Txhash,proto3" json:"chain33Txhash,omitempty"`
 	EthereumTxhash  string `protobuf:"bytes,3,opt,name=EthereumTxhash,proto3" json:"EthereumTxhash,omitempty"`
 	BurnLock        int32  `protobuf:"varint,4,opt,name=burnLock,proto3" json:"burnLock,omitempty"`
-	//该笔lock或者burn交易的chain33发起人
+
 	EthereumSender  string `protobuf:"bytes,5,opt,name=ethereumSender,proto3" json:"ethereumSender,omitempty"`
 	Chain33Receiver string `protobuf:"bytes,6,opt,name=chain33Receiver,proto3" json:"chain33Receiver,omitempty"`
 	Symbol          string `protobuf:"bytes,7,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	//因为考虑到,eth的单位是以wei计算的，所以使用string类型
+
 	Amount               string   `protobuf:"bytes,8,opt,name=amount,proto3" json:"amount,omitempty"`
 	Nonce                int64    `protobuf:"varint,9,opt,name=nonce,proto3" json:"nonce,omitempty"`
 	TxIndex              int64    `protobuf:"varint,10,opt,name=txIndex,proto3" json:"txIndex,omitempty"`

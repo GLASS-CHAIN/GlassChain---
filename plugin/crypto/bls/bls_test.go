@@ -30,14 +30,14 @@ func TestGenKey(t *testing.T) {
 func TestSignAndVerify(t *testing.T) {
 	sk, _ := blsDrv.GenKey()
 	pk := sk.PubKey()
-	m1 := []byte("message to be signed. 将要做签名的消息")
+	m1 := []byte("message to be signed. ")
 	// sign and verify
 	sig1 := sk.Sign(m1)
 	ret := pk.VerifyBytes(m1, sig1)
 	assert.Equal(t, true, ret)
 
 	// different message should have different signature
-	m2 := []byte("message to be signed. 将要做签名的消息.")
+	m2 := []byte("message to be signed. ")
 	sig2 := sk.Sign(m2)
 	assert.NotEqual(t, sig1, sig2, "different message got the same signature", sig1, sig2)
 
@@ -62,7 +62,7 @@ func TestPrivKeyFromBytes(t *testing.T) {
 }
 
 func TestAggregate(t *testing.T) {
-	m := []byte("message to be signed. 将要做签名的消息")
+	m := []byte("message to be signed.")
 	n := 8
 	pubs := make([]crypto.PubKey, 0, n)
 	sigs := make([]crypto.Signature, 0, n) //signatures for the same message
@@ -159,7 +159,7 @@ func BenchmarkBLSVerify(b *testing.B) {
 }
 
 func BenchmarkBlsManager_VerifyAggregatedOne(b *testing.B) {
-	m := []byte("message to be signed. 将要做签名的消息")
+	m := []byte("message to be signed.")
 	n := 100
 	pubs := make([]crypto.PubKey, 0, n)
 	sigs := make([]crypto.Signature, 0, n) //signatures for the same message
@@ -178,7 +178,7 @@ func BenchmarkBlsManager_VerifyAggregatedOne(b *testing.B) {
 }
 
 func BenchmarkBlsManager_VerifyAggregatedN(b *testing.B) {
-	m := []byte("message to be signed. 将要做签名的消息")
+	m := []byte("message to be signed. ")
 	n := 100
 	pubs := make([]crypto.PubKey, 0, n)
 	sigs := make([]crypto.Signature, 0, n)

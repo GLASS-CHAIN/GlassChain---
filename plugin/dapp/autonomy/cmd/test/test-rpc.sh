@@ -452,26 +452,25 @@ init() {
     else
         chain33_applyCoins "$propAddr" 1000000000 "${main_ip}"
         chain33_QueryBalance "${propAddr}" "$main_ip"
-        #主链投票账户转帐
+
         handleBoards "$main_ip"
 
         local para_ip="${HTTP}"
         chain33_ImportPrivkey "${propKey}" "${propAddr}" "prop" "$para_ip"
 
-        #平行链中账户转帐
+
         chain33_applyCoinsNOLimit "$propAddr" 100000000000 "$para_ip"
         chain33_QueryBalance "$propAddr" "$para_ip"
         chain33_para_init "$para_ip"
     fi
 
-    # 往合约中转
+
     chain33_SendToAddress "$propAddr" "$EXECTOR_ADDR" 90000000000 "$HTTP"
     chain33_QueryExecBalance "$propAddr" "$EXECTOR" "$HTTP"
 
-    # 往ticket合约中转帐
     chain33_SendToAddress "$voteAddr" "$TICKET_ADDR" 300100000000 "$HTTP"
     chain33_QueryExecBalance "$voteAddr" "$TICKET_EXECTOR" "$HTTP"
-    # 往投票账户中转帐
+
     handleBoards "$HTTP"
 }
 

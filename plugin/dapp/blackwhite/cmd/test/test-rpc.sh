@@ -38,7 +38,6 @@ chain33_NewAccount() {
 chain33_SendTransaction() {
     rawTx=$1
     addr=$2
-    #签名交易
     req='{"method":"Chain33.SignRawTx","params":[{"addr":"'"$addr"'","txHex":"'"$rawTx"'","expire":"120s","fee":10000000,"index":0}]}'
     chain33_Http "$req" ${MAIN_HTTP} '(.error|not)' "Chain33.SignRawTx" ".result"
     signTx=$RETURN_RESP
@@ -47,16 +46,14 @@ chain33_SendTransaction() {
     chain33_Http "$req" ${MAIN_HTTP} '(.error|not)' "$FUNCNAME" ".result"
 
     gResp=$RETURN_RESP
-    #返回交易
     chain33_QueryTx "$RETURN_RESP" "${MAIN_HTTP}"
 }
 
 blackwhite_BlackwhiteCreateTx() {
-    #创建交易
     addr=$1
     req='{"method":"blackwhite.BlackwhiteCreateTx","params":[{"PlayAmount":100000000,"PlayerCount":3,"GameName":"hello","Timeout":600,"Fee":1000000}]}'
     chain33_Http "$req" ${MAIN_HTTP} '(.error|not)' "$FUNCNAME" ".result"
-    #发送交易
+
     chain33_SendTransaction "$RETURN_RESP" "${addr}"
     gID="${gResp}"
 }
@@ -69,7 +66,7 @@ blackwhite_BlackwhitePlayTx() {
     req='{"method":"blackwhite.BlackwhitePlayTx","params":[{"gameID":"'"$gID"'","amount":100000000,"Fee":1000000,"hashValues":["'"$round1"'","'"$round2"'","'"$round3"'"]}]}'
     chain33_Http "$req" ${MAIN_HTTP} '(.error|not)' "$FUNCNAME" ".result"
 
-    #发送交易
+
     chain33_SendTransaction "$RETURN_RESP" "${addr}"
 }
 
@@ -108,14 +105,14 @@ blackwhite_GetBlackwhiteloopResult() {
 }
 
 function run_testcases() {
-    #密钥
+
     sect1="123"
     black1="6vm6gJ2wvEIxC8Yc6r/N6lIU5OZk633YMnIfwcZBD0o="
     black2="6FXx5aeDSCaq1UrhLO8u0H31Hl8TpvzxuHrgGo9WeFk="
     white0="DrNPzA68XiGimZE/igx70kTPJxnIJnVf8NCGnb7XoYU="
     white1="SB5Pnf6Umf2Wba0dqyNOezq5FEqTd22WPVYAhSA6Lxs="
 
-    #先创建账户地址
+
     chain33_NewAccount "label188"
     gameAddr1="${glAddr}"
     chain33_NewAccount "label288"
@@ -123,23 +120,19 @@ function run_testcases() {
     chain33_NewAccount "label388"
     gameAddr3="${glAddr}"
 
-    #给每个账户分别转帐
     origAddr="12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
 
     chain33_GetAccounts "${MAIN_HTTP}"
 
-    #主链中相应账户需要转帐
     M_HTTP=${MAIN_HTTP//8901/8801}
     chain33_SendToAddress "${origAddr}" "${gameAddr1}" 1000000000 "${M_HTTP}"
     chain33_SendToAddress "${origAddr}" "${gameAddr2}" 1000000000 "${M_HTTP}"
     chain33_SendToAddress "${origAddr}" "${gameAddr3}" 1000000000 "${M_HTTP}"
 
-    #平行链相应账户需要转帐
     chain33_SendToAddress "${origAddr}" "${gameAddr1}" 1000000000 "${MAIN_HTTP}"
     chain33_SendToAddress "${origAddr}" "${gameAddr2}" 1000000000 "${MAIN_HTTP}"
     chain33_SendToAddress "${origAddr}" "${gameAddr3}" 1000000000 "${MAIN_HTTP}"
 
-    #给游戏合约中转帐
     chain33_SendToAddress "${gameAddr1}" "${bwExecAddr}" 500000000 "${MAIN_HTTP}"
     chain33_SendToAddress "${gameAddr2}" "${bwExecAddr}" 500000000 "${MAIN_HTTP}"
     chain33_SendToAddress "${gameAddr3}" "${bwExecAddr}" 500000000 "${MAIN_HTTP}"
@@ -155,7 +148,7 @@ function run_testcases() {
     blackwhite_BlackwhiteShowTx "${gameAddr3}" "${sect1}"
 
     blackwhite_BlackwhiteTimeoutDoneTx "$gID"
-    #查询部分
+
     blackwhite_GetBlackwhiteRoundInfo "$gID"
     blackwhite_GetBlackwhiteByStatusAndAddr "${gameAddr1}"
     blackwhite_GetBlackwhiteloopResult "$gID"

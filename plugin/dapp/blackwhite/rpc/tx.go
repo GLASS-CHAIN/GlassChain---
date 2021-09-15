@@ -4,7 +4,6 @@
 
 package rpc
 
-// BlackwhiteCreateTx 创建游戏结构体
 type BlackwhiteCreateTx struct {
 	PlayAmount  int64  `json:"amount"`
 	PlayerCount int32  `json:"playerCount"`
@@ -13,7 +12,6 @@ type BlackwhiteCreateTx struct {
 	Fee         int64  `json:"fee"`
 }
 
-// BlackwhitePlayTx 参与游戏结构体
 type BlackwhitePlayTx struct {
 	GameID     string   `json:"gameID"`
 	Amount     int64    `json:"amount"`
@@ -21,14 +19,12 @@ type BlackwhitePlayTx struct {
 	Fee        int64    `json:"fee"`
 }
 
-// BlackwhiteShowTx 出示密钥结构体
 type BlackwhiteShowTx struct {
 	GameID string `json:"gameID"`
 	Secret string `json:"secret"`
 	Fee    int64  `json:"fee"`
 }
 
-// BlackwhiteTimeoutDoneTx 游戏超时结构体
 type BlackwhiteTimeoutDoneTx struct {
 	GameID string `json:"GameID"`
 	Fee    int64  `json:"fee"`

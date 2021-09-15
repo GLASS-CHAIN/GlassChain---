@@ -21,17 +21,13 @@ import (
 )
 
 const (
-	//ListDESC 表示记录降序排列
 	ListDESC = int32(0)
 
-	//ListASC 表示记录升序排列
 	ListASC = int32(1)
 
-	//DefaultCount 默认一次获取的记录数
 	DefaultCount = int32(10)
 )
 
-//Action 具体动作执行
 type Action struct {
 	coinsAccount *account.DB
 	db           dbm.KV
@@ -45,7 +41,6 @@ type Action struct {
 	mainHeight   int64
 }
 
-//NewAction 生成Action对象
 func NewAction(dpos *DPos, tx *types.Transaction, index int) *Action {
 	hash := tx.Hash()
 	fromAddr := tx.From()
@@ -64,7 +59,6 @@ func NewAction(dpos *DPos, tx *types.Transaction, index int) *Action {
 	}
 }
 
-//CheckExecAccountBalance 检查地址在Dpos合约中的余额是否足够
 func (action *Action) CheckExecAccountBalance(fromAddr string, ToFrozen, ToActive int64) bool {
 	acc := action.coinsAccount.LoadExecAccount(fromAddr, action.execaddr)
 	if acc.GetBalance() >= ToFrozen && acc.GetFrozen() >= ToActive {
@@ -73,7 +67,6 @@ func (action *Action) CheckExecAccountBalance(fromAddr string, ToFrozen, ToActiv
 	return false
 }
 
-//Key State数据库中存储记录的Key值格式转换
 func Key(id string) (key []byte) {
 	//key = append(key, []byte("mavl-"+types.ExecName(pkt.GuessX)+"-")...)
 	key = append(key, []byte("mavl-"+dty.DPosX+"-")...)
@@ -81,14 +74,12 @@ func Key(id string) (key []byte) {
 	return key
 }
 
-//TopNKey State数据库中存储记录的Key值格式转换
 func TopNKey(id string) (key []byte) {
 	key = append(key, []byte("mavl-"+dty.DPosX+"-"+"topn"+"-")...)
 	key = append(key, []byte(id)...)
 	return key
 }
 
-//queryVrfByTime 根据时间信息，查询TopN的受托节点的VRF信息
 func queryVrfByTime(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Message, error) {
 	if req.Ty != dty.QueryVrfByTime {
 		return nil, types.ErrInvalidParam
@@ -170,7 +161,6 @@ func getVrfInfoFromVrfM(vrfM *dty.DposVrfM) *dty.VrfInfo {
 	return vrf
 }
 
-//queryVrfByCycleAndPubkeys 根据Cycle、Pubkeys信息，查询受托节点的VRF信息
 func queryVrfByCycleAndPubkeys(kvdb db.KVDB, pubkeys []string, cycle int64) []*dty.VrfInfo {
 	VrfRPTable := dty.NewDposVrfRPTable(kvdb)
 	query := VrfRPTable.GetQuery(kvdb)
@@ -211,7 +201,6 @@ func queryVrfByCycleAndPubkeys(kvdb db.KVDB, pubkeys []string, cycle int64) []*d
 	return vrfs
 }
 
-//queryVrfByCycleForPubkeys 根据Cycle、Pubkeys信息，查询受托节点的VRF信息
 func queryVrfByCycleForPubkeys(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Message, error) {
 	if req.Ty != dty.QueryVrfByCycleForPubkeys {
 		return nil, types.ErrInvalidParam
@@ -222,7 +211,6 @@ func queryVrfByCycleForPubkeys(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Messa
 	return &dty.DposVrfReply{Vrf: getJSONVrfs(vrfs)}, nil
 }
 
-//queryVrfByCycleForTopN 根据Cycle信息，查询TopN的受托节点的VRF信息
 func queryVrfByCycleForTopN(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Message, error) {
 	if req.Ty != dty.QueryVrfByCycleForTopN {
 		return nil, types.ErrInvalidParam
@@ -251,7 +239,6 @@ func queryVrfByCycleForTopN(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Message,
 	return &dty.DposVrfReply{Vrf: getJSONVrfs(vrfs)}, nil
 }
 
-//queryVrfByCycle 根据Cycle信息，查询所有受托节点的VRF信息
 func queryVrfByCycle(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Message, error) {
 	if req.Ty != dty.QueryVrfByCycle {
 		return nil, types.ErrInvalidParam
@@ -290,7 +277,6 @@ func queryVrfByCycle(kvdb db.KVDB, req *dty.DposVrfQuery) (types.Message, error)
 	return &dty.DposVrfReply{Vrf: getJSONVrfs(vrfs)}, nil
 }
 
-//queryCands 根据候选节点的Pubkey下旬候选节点信息,得票数、状态等
 func queryCands(kvdb db.KVDB, req *dty.CandidatorQuery) (types.Message, error) {
 	var cands []*dty.JSONCandidator
 	candTable := dty.NewDposCandidatorTable(kvdb)
@@ -316,7 +302,6 @@ func queryCands(kvdb db.KVDB, req *dty.CandidatorQuery) (types.Message, error) {
 	return &dty.CandidatorReply{Candidators: cands}, nil
 }
 
-//queryTopNCands 查询得票数TopN的候选节点信息，包括得票数，状态等
 func queryTopNCands(kvdb db.KVDB, req *dty.CandidatorQuery) (types.Message, error) {
 	var cands []*dty.JSONCandidator
 	candTable := dty.NewDposCandidatorTable(kvdb)
@@ -389,7 +374,6 @@ func queryTopNCands(kvdb db.KVDB, req *dty.CandidatorQuery) (types.Message, erro
 	return &dty.CandidatorReply{Candidators: cands}, nil
 }
 
-//isValidPubkey 判断一个公钥是否属于一个公钥集合
 func isValidPubkey(pubkeys []string, pubkey string) bool {
 	if len(pubkeys) == 0 || len(pubkey) == 0 {
 		return false
@@ -404,7 +388,6 @@ func isValidPubkey(pubkeys []string, pubkey string) bool {
 	return false
 }
 
-//queryVote 根据用户地址信息查询用户的投票情况
 func queryVote(kvdb db.KVDB, req *dty.DposVoteQuery) (types.Message, error) {
 	var voters []*dty.JSONDposVoter
 	voteTable := dty.NewDposVoteTable(kvdb)
@@ -427,7 +410,6 @@ func queryVote(kvdb db.KVDB, req *dty.DposVoteQuery) (types.Message, error) {
 		voters = append(voters, jsonVoter)
 	}
 
-	//如果不指定pubkeys，则返回所有；否则，需要判断pubkey是否为指定的值之一。
 	if len(req.Pubkeys) == 0 {
 		return &dty.DposVoteReply{Votes: voters}, nil
 	}
@@ -458,7 +440,6 @@ func (action *Action) getIndex() int64 {
 	return action.height*types.MaxTxsPerBlock + int64(action.index)
 }
 
-//getReceiptLog 根据候选节点信息及投票信息生成收据信息
 func (action *Action) getReceiptLog(candInfo *dty.CandidatorInfo, statusChange bool, voteType int32, vote *dty.DposVoter) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	r := &dty.ReceiptCandicator{}
@@ -498,7 +479,6 @@ func (action *Action) getReceiptLog(candInfo *dty.CandidatorInfo, statusChange b
 	return log
 }
 
-//readCandicatorInfo 根据候选节点的公钥查询候选节点信息
 func (action *Action) readCandicatorInfo(pubkey []byte) (*dty.CandidatorInfo, error) {
 	strPubkey := hex.EncodeToString(pubkey)
 	data, err := action.db.Get(Key(strPubkey))
@@ -516,7 +496,6 @@ func (action *Action) readCandicatorInfo(pubkey []byte) (*dty.CandidatorInfo, er
 	return &cand, nil
 }
 
-// newCandicatorInfo 新建候选节点信息对象
 func (action *Action) newCandicatorInfo(regist *dty.DposCandidatorRegist) *dty.CandidatorInfo {
 	bPubkey, _ := hex.DecodeString(regist.Pubkey)
 	candInfo := &dty.CandidatorInfo{
@@ -527,7 +506,6 @@ func (action *Action) newCandicatorInfo(regist *dty.DposCandidatorRegist) *dty.C
 	return candInfo
 }
 
-//readTopNCandicators 根据版本信息查询特定高度区间的TOPN候选节点信息
 func (action *Action) readTopNCandicators(version int64) (*dty.TopNCandidators, error) {
 	strVersion := fmt.Sprintf("%018d", version)
 	data, err := action.db.Get(TopNKey(strVersion))
@@ -556,7 +534,6 @@ func (action *Action) saveTopNCandicators(topCands *dty.TopNCandidators) (kvset 
 	return kvset
 }
 
-//queryCBInfoByCycle 根据cycle查询stopHeight及stopHash等CBInfo信息，用于VRF计算
 func queryCBInfoByCycle(kvdb db.KVDB, req *dty.DposCBQuery) (types.Message, error) {
 	cbTable := dty.NewDposCBTable(kvdb)
 	query := cbTable.GetQuery(kvdb)
@@ -580,7 +557,6 @@ func queryCBInfoByCycle(kvdb db.KVDB, req *dty.DposCBQuery) (types.Message, erro
 	return &dty.DposCBReply{CbInfo: info}, nil
 }
 
-//queryCBInfoByHeight 根据stopHeight查询stopHash等CBInfo信息，用于VRF计算
 func queryCBInfoByHeight(kvdb db.KVDB, req *dty.DposCBQuery) (types.Message, error) {
 	cbTable := dty.NewDposCBTable(kvdb)
 	query := cbTable.GetQuery(kvdb)
@@ -604,7 +580,6 @@ func queryCBInfoByHeight(kvdb db.KVDB, req *dty.DposCBQuery) (types.Message, err
 	return &dty.DposCBReply{CbInfo: info}, nil
 }
 
-//queryCBInfoByHash 根据stopHash查询CBInfo信息，用于VRF计算
 func queryCBInfoByHash(kvdb db.KVDB, req *dty.DposCBQuery) (types.Message, error) {
 	cbTable := dty.NewDposCBTable(kvdb)
 	query := cbTable.GetQuery(kvdb)
@@ -635,7 +610,6 @@ func queryCBInfoByHash(kvdb db.KVDB, req *dty.DposCBQuery) (types.Message, error
 	return &dty.DposCBReply{CbInfo: info}, nil
 }
 
-//queryTopNByVersion 根据version查询具体周期使用的TopN超级节点信息
 func queryTopNByVersion(db dbm.KV, req *dty.TopNCandidatorsQuery) (types.Message, error) {
 	strVersion := fmt.Sprintf("%018d", req.Version)
 	data, err := db.Get(TopNKey(strVersion))
@@ -658,7 +632,6 @@ func queryTopNByVersion(db dbm.KV, req *dty.TopNCandidatorsQuery) (types.Message
 	return reply, nil
 }
 
-//Regist 注册候选节点
 func (action *Action) Regist(regist *dty.DposCandidatorRegist) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -711,7 +684,6 @@ func (action *Action) Regist(regist *dty.DposCandidatorRegist) (*types.Receipt, 
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//ReRegist 重新注册一个注销的候选节点
 func (action *Action) ReRegist(regist *dty.DposCandidatorRegist) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -774,7 +746,6 @@ func (action *Action) ReRegist(regist *dty.DposCandidatorRegist) (*types.Receipt
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//CancelRegist 撤销一个候选节点的注册
 func (action *Action) CancelRegist(req *dty.DposCandidatorCancelRegist) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -846,7 +817,6 @@ func (action *Action) CancelRegist(req *dty.DposCandidatorCancelRegist) (*types.
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//Vote 为某一个候选节点投票
 func (action *Action) Vote(vote *dty.DposVote) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -913,7 +883,6 @@ func (action *Action) Vote(vote *dty.DposVote) (*types.Receipt, error) {
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//CancelVote 撤销对某个候选节点的投票
 func (action *Action) CancelVote(vote *dty.DposCancelVote) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -974,7 +943,6 @@ func (action *Action) CancelVote(vote *dty.DposCancelVote) (*types.Receipt, erro
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//RegistVrfM 注册受托节点的Vrf M信息（输入信息）
 func (action *Action) RegistVrfM(vrfMReg *dty.DposVrfMRegist) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -1024,7 +992,6 @@ func (action *Action) RegistVrfM(vrfMReg *dty.DposVrfMRegist) (*types.Receipt, e
 	logger.Info("RegistVrfM", "addr", action.fromaddr, "execaddr", action.execaddr, "pubkey", vrfMReg.Pubkey, "cycle", vrfMReg.Cycle, "M", vrfMReg.M, "now", action.blocktime,
 		"info", fmt.Sprintf("cycle:%d,start:%d,middle:%d,stop:%d", cycleInfo.cycle, cycleInfo.cycleStart, middleTime, cycleInfo.cycleStop))
 
-	//todo 还需要检查是否针对这个cycle已经有注册过M了，如果注册过了，也需要提示失败
 	vrfMTable := dty.NewDposVrfMTable(action.localDB)
 	query := vrfMTable.GetQuery(action.localDB)
 	_, err = query.ListIndex("pubkey_cycle", []byte(fmt.Sprintf("%X:%018d", bPubkey, vrfMReg.Cycle)), nil, 1, 0)
@@ -1055,7 +1022,6 @@ func (action *Action) RegistVrfM(vrfMReg *dty.DposVrfMRegist) (*types.Receipt, e
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//RegistVrfRP 注册受托节点的Vrf R/P信息
 func (action *Action) RegistVrfRP(vrfRPReg *dty.DposVrfRPRegist) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -1083,7 +1049,7 @@ func (action *Action) RegistVrfRP(vrfRPReg *dty.DposVrfRPRegist) (*types.Receipt
 
 	cycleInfo := calcCycleByTime(action.blocktime)
 	middleTime := cycleInfo.cycleStart + (cycleInfo.cycleStop-cycleInfo.cycleStart)/2
-	//对于cycle不一致的情况，则不允许注册
+
 	if vrfRPReg.Cycle != cycleInfo.cycle {
 		logger.Error("RegistVrfRP failed", "addr", action.fromaddr, "execaddr", action.execaddr, "cycle is not the same with current blocktime",
 			vrfRPReg.String())
@@ -1097,7 +1063,6 @@ func (action *Action) RegistVrfRP(vrfRPReg *dty.DposVrfRPRegist) (*types.Receipt
 	logger.Info("RegistVrfRP", "addr", action.fromaddr, "execaddr", action.execaddr, "pubkey", vrfRPReg.Pubkey, "cycle", vrfRPReg.Cycle, "R", vrfRPReg.R, "P", vrfRPReg.P,
 		"now", action.blocktime, "info", fmt.Sprintf("cycle:%d,start:%d,middle:%d,stop:%d", cycleInfo.cycle, cycleInfo.cycleStart, middleTime, cycleInfo.cycleStop))
 
-	//从localdb中查找对应的pubkey:cycle的信息，如果没找到，说明对应的M没有发布出来，则也不允许发布R,P。
 	vrfMTable := dty.NewDposVrfMTable(action.localDB)
 	query := vrfMTable.GetQuery(action.localDB)
 	rows, err := query.ListIndex("pubkey_cycle", []byte(fmt.Sprintf("%X:%018d", bPubkey, vrfRPReg.Cycle)), nil, 1, 0)
@@ -1106,9 +1071,7 @@ func (action *Action) RegistVrfRP(vrfRPReg *dty.DposVrfRPRegist) (*types.Receipt
 			vrfRPReg.String())
 		return nil, dty.ErrVrfMNotRegisted
 	}
-	//对于可以注册的R、P，则允许。
 
-	//todo 还需要检查是否针对这个cycle已经有注册过R、P了，如果注册过了，也需要提示失败
 	VrfRPTable := dty.NewDposVrfRPTable(action.localDB)
 	query = VrfRPTable.GetQuery(action.localDB)
 	_, err = query.ListIndex("pubkey_cycle", []byte(fmt.Sprintf("%X:%018d", bPubkey, vrfRPReg.Cycle)), nil, 1, 0)
@@ -1141,7 +1104,6 @@ func (action *Action) RegistVrfRP(vrfRPReg *dty.DposVrfRPRegist) (*types.Receipt
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//RecordCB 记录cycle boundary info
 func (action *Action) RecordCB(cbInfo *dty.DposCBInfo) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -1211,7 +1173,6 @@ func (action *Action) RecordCB(cbInfo *dty.DposCBInfo) (*types.Receipt, error) {
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//RegistTopN 注册TopN节点
 func (action *Action) RegistTopN(regist *dty.TopNCandidatorRegist) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -1243,7 +1204,6 @@ func (action *Action) RegistTopN(regist *dty.TopNCandidatorRegist) (*types.Recei
 			logger.Error("read old TopN failed.", "addr", action.fromaddr, "execaddr", action.execaddr, "version", version)
 
 			if version == 0 {
-				//如果从没有注册过，认为是创世阶段，可信环境，只有可信的节点来注册，可以不做过多的判断。
 				break
 			} else {
 				version--

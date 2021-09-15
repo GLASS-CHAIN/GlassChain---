@@ -7,7 +7,6 @@ set +e
 source "./publicTest.sh"
 source "./relayerPublic.sh"
 
-# ETH 部署合约者的私钥 用于部署合约时签名使用
 #ethDeployAddr="0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a"
 ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
@@ -17,7 +16,6 @@ ethSendPrivateKeys=0x2809477ede1261da21270096776ba7dc68b89c9df5f029965eaa5fe7f0b
 # validatorsAddr=["0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a", "0x0df9a824699bc5878232c9e612fe1a5346a5a368", "0xcb074cb21cdddf3ce9c3c0a7ac4497d633c9d9f1", "0xd9dab021e74ecf475788ed7b61356056b2095830"]
 #ethValidatorAddrKeyA="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
-# chain33 部署合约者的私钥 用于部署合约时签名使用
 chain33DeployAddr="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
 #chain33DeployKey="0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944"
 
@@ -56,16 +54,14 @@ function BurnTestChain33ToEthAssets() {
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# eth to chain33 在以太坊上锁定 ETH 资产,然后在 chain33 上 burn
 function LockTestETH2Chain33Assets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # ETH 这端 lock 11个
+
     result=$(${CLIA} ethereum lock -m 2 -k "${ethSendPrivateKeys}" -r "${chain33ReceiverAddr}")
     cli_ret "${result}" "lock"
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# eth to chain33 在以太坊上锁定 ETH 资产,然后在 chain33 上 burn
 function BurnTestETH2Chain33Assets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     result=$(${CLIA} chain33 burn -m 2 -k "${chain33ReceiverAddrKey}" -r "${ethSendAddress}" -t "${chain33EthTokenAddr}")
@@ -75,7 +71,7 @@ function BurnTestETH2Chain33Assets() {
 
 function LockTestETH2Chain33Ycc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # ETH 这端 lock 7个 YCC
+
     result=$(${CLIA} ethereum lock -m 3 -k "${ethSendPrivateKeys}" -r "${chain33ReceiverAddr}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "lock"
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"

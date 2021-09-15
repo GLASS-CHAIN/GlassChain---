@@ -11,7 +11,7 @@ CLI_A := build/ebcli_A
 CLI_B := build/ebcli_B
 CLI_C := build/ebcli_C
 CLI_D := build/ebcli_D
-EBRELAER := build/ebrelayer   ##通过配置文件启动不同的ebrelayer
+EBRELAER := build/ebrelayer   
 
 LDFLAGS := -ldflags "-w -s"
 proj := "build"

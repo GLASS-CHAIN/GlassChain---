@@ -29,7 +29,6 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(AutonomyX, NewType(cfg))
 }
 
-// NewType 生成新的基础类型
 func NewType(cfg *types.Chain33Config) *AutonomyType {
 	c := &AutonomyType{}
 	c.SetChild(c)
@@ -37,17 +36,14 @@ func NewType(cfg *types.Chain33Config) *AutonomyType {
 	return c
 }
 
-// AutonomyType 基础类型结构体
 type AutonomyType struct {
 	types.ExecTypeBase
 }
 
-// GetName 获取执行器名称
 func (a *AutonomyType) GetName() string {
 	return AutonomyX
 }
 
-// GetLogMap 获得日志类型列表
 func (a *AutonomyType) GetLogMap() map[int64]*types.LogInfo {
 	return map[int64]*types.LogInfo{
 		TyLogPropBoard:      {Ty: reflect.TypeOf(ReceiptProposalBoard{}), Name: "LogPropBoard"},
@@ -75,12 +71,10 @@ func (a *AutonomyType) GetLogMap() map[int64]*types.LogInfo {
 	}
 }
 
-// GetPayload 获得空的Unfreeze 的 Payload
 func (a *AutonomyType) GetPayload() types.Message {
 	return &AutonomyAction{}
 }
 
-// GetTypeMap 获得Action 方法列表
 func (a *AutonomyType) GetTypeMap() map[string]int32 {
 	return map[string]int32{
 		"PropBoard":      AutonomyActionPropBoard,

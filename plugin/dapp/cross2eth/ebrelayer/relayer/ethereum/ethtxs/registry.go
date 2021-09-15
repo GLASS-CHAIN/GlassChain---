@@ -84,7 +84,6 @@ func GetAddressFromBridgeRegistry(client ethinterface.EthClientSpec, sender, reg
 	}
 }
 
-// GetDeployHeight : 获取合约部署高度
 func GetDeployHeight(client ethinterface.EthClientSpec, sender, registry common.Address) (height int64, err error) {
 	header, err := client.HeaderByNumber(context.Background(), nil)
 	if err != nil {

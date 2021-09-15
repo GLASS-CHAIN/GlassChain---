@@ -451,11 +451,9 @@ function lockChain33Ycc() {
 
 function lockEth() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}===== ethereum 端 lock ETH ======${NOC}"
-    # echo '2:#配置自动转离线钱包(eth, 20, 50%)'
+    echo -e "${GRE}===== ethereum lock ETH ======${NOC}"
     offline_set_offline_token_Eth
 
-    # 重启 nonce 会不统一 要重启一下
     restart_ebrelayerA
 
     lock_eth_multisign 19 19 0
@@ -492,31 +490,29 @@ function lockEthYcc() {
 function StartDockerRelayerDeploy() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # 修改 relayer.toml 配置文件 pushName 字段
+
     pushNameChange "./relayer.toml"
-    # 修改 relayer.toml 配置文件 initPowers
     validators_config
 
     # change EthProvider url
     dockerAddr=$(get_docker_addr "${dockerNamePrefix}_ganachetest_1")
 
-    # 修改 relayer.toml 配置文件
     updata_relayer_a_toml "${dockerAddr}" "${dockerNamePrefix}_ebrelayera_1" "./relayer.toml"
 
-    # 删除私钥
+
     delete_line "./relayer.toml" "deployerPrivateKey="
     delete_line "./relayer.toml" "deployerPrivateKey="
 
     # para
     # shellcheck disable=SC2155
     local line=$(delete_line_show "./relayer.toml" "chain33Host")
-    # 在第 line 行后面 新增合约地址
+
     docker_chain33_ip=$(get_docker_addr "${dockerNamePrefix}_chain33_1")
     sed -i ''"${line}"' a chain33Host="http://'"${docker_chain33_ip}"':8901"' "./relayer.toml"
 
     # shellcheck disable=SC2155
     local line=$(delete_line_show "./relayer.toml" "ChainName")
-    # 在第 line 行后面 新增合约地址
+
     sed -i ''"${line}"' a ChainName="user.p.para."' "./relayer.toml"
 
     # shellcheck disable=SC2155
@@ -527,13 +523,10 @@ function StartDockerRelayerDeploy() {
     local line=$(delete_line_show "./relayer.toml" "EthMaturityDegree=10")
     sed -i ''"${line}"' a EthMaturityDegree=1' "./relayer.toml"
 
-    # 启动 ebrelayer
     start_docker_ebrelayerA
 
-    # 部署合约 设置 bridgeRegistry 地址
     InitAndOfflineDeploy
 
-    # 设置离线多签数据
     Chain33Cli=${MainCli}
     initMultisignChain33Addr
     Chain33Cli=${Para8901Cli}
@@ -548,13 +541,12 @@ function StartDockerRelayerDeploy() {
     docker cp "${BridgeRegistryOnEth}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${BridgeRegistryOnEth}.abi
     docker cp "${ethBridgeBank}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${ethBridgeBank}.abi
 
-    # 重启
+
     restart_ebrelayerA
 
     # start ebrelayer B C D
     updata_toml_start_bcd
 
-    # 设置 token 地址
     #    InitTokenAddr
     offline_create_bridge_token_eth_BTY
     offline_create_bridge_token_chain33_ETH
@@ -570,7 +562,6 @@ function StartDockerRelayerDeploy() {
     docker cp "${chain33YccErc20Addr}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${chain33YccErc20Addr}.abi
     docker cp "${ethBridgeToeknYccAddr}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${ethBridgeToeknYccAddr}.abi
 
-    # 重启,因为relayerA的验证人地址和部署人的地址是一样的,所以需要重新启动relayer,更新nonce
     restart_ebrelayerA
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"

@@ -10,10 +10,9 @@ import (
 	"github.com/33cn/chain33/types"
 )
 
-// CreateTx 创建交易
 func (e *Type) CreateTx(action string, message json.RawMessage) (*types.Transaction, error) {
 	elog.Debug("echo.CreateTx", "action", action)
-	// 只接受ping/pang两种交易操作
+
 	cfg := e.GetConfig()
 	if action == "ping" || action == "pang" {
 		var param Tx

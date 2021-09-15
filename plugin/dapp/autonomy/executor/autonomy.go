@@ -25,7 +25,6 @@ var (
 	ticketName   = auty.TicketX
 )
 
-// Init 重命名执行器名称
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	if sub != nil {
 		types.MustDecode(sub, &subcfg)
@@ -42,7 +41,6 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&Autonomy{}))
 }
 
-// Autonomy 执行器结构体
 type Autonomy struct {
 	drivers.DriverBase
 }
@@ -54,12 +52,10 @@ func newAutonomy() drivers.Driver {
 	return t
 }
 
-// GetName 获得执行器名字
 func GetName() string {
 	return newAutonomy().GetName()
 }
 
-// GetDriverName 获得驱动名字
 func (u *Autonomy) GetDriverName() string {
 	return driverName
 }

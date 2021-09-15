@@ -112,31 +112,31 @@ type BlackwhiteRound struct {
 	GameID string `protobuf:"bytes,1,opt,name=gameID,proto3" json:"gameID,omitempty"`
 	// create -> play(timeout) -> show -> done
 	Status int32 `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
-	// 游戏押金可大于
+
 	PlayAmount int64 `protobuf:"varint,3,opt,name=playAmount,proto3" json:"playAmount,omitempty"`
-	// 游戏人数
+
 	PlayerCount int32 `protobuf:"varint,4,opt,name=playerCount,proto3" json:"playerCount,omitempty"`
-	// 当前游戏人数
+
 	CurPlayerCount int32 `protobuf:"varint,5,opt,name=curPlayerCount,proto3" json:"curPlayerCount,omitempty"`
-	// 游戏需要比对次数
+
 	Loop int32 `protobuf:"varint,6,opt,name=loop,proto3" json:"loop,omitempty"`
-	// 当前出示密钥人数
+
 	CurShowCount int32 `protobuf:"varint,7,opt,name=curShowCount,proto3" json:"curShowCount,omitempty"`
-	// 创建游戏时间
+
 	CreateTime int64 `protobuf:"varint,8,opt,name=createTime,proto3" json:"createTime,omitempty"`
-	// 出示密钥开始时间
+
 	ShowTime int64 `protobuf:"varint,9,opt,name=showTime,proto3" json:"showTime,omitempty"`
-	// 超时时间
+
 	Timeout int64 `protobuf:"varint,10,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	// 创建游戏地址
+	
 	CreateAddr string `protobuf:"bytes,11,opt,name=createAddr,proto3" json:"createAddr,omitempty"`
-	// 游戏名称
+
 	GameName string `protobuf:"bytes,12,opt,name=gameName,proto3" json:"gameName,omitempty"`
-	// 游戏加密结果
+
 	AddrResult []*AddressResult `protobuf:"bytes,13,rep,name=addrResult,proto3" json:"addrResult,omitempty"`
-	// 游戏赢家
+
 	Winner []string `protobuf:"bytes,14,rep,name=winner,proto3" json:"winner,omitempty"`
-	// block高度以及索引值
+
 	Index int64 `protobuf:"varint,15,opt,name=index,proto3" json:"index,omitempty"`
 }
 
@@ -685,7 +685,7 @@ type ReceiptBlackwhiteStatus struct {
 
 	GameID string `protobuf:"bytes,1,opt,name=gameID,proto3" json:"gameID,omitempty"`
 	Status int32  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
-	//记录上一次状态
+
 	PrevStatus int32  `protobuf:"varint,3,opt,name=prevStatus,proto3" json:"prevStatus,omitempty"`
 	Addr       string `protobuf:"bytes,4,opt,name=addr,proto3" json:"addr,omitempty"`
 	Index      int64  `protobuf:"varint,5,opt,name=index,proto3" json:"index,omitempty"`
@@ -857,9 +857,7 @@ type ReqBlackwhiteRoundList struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//优先根据status查询,status不可为空
 	Status int32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	//二级搜索，如果要查询一个地址下的所有game信息，可以根据status，分多次查询，这样规避存储数据时的臃余情况
 	Address   string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	Count     int32  `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
 	Direction int32  `protobuf:"varint,4,opt,name=direction,proto3" json:"direction,omitempty"`
@@ -1154,31 +1152,31 @@ type BlackwhiteRoundResult struct {
 	GameID string `protobuf:"bytes,1,opt,name=gameID,proto3" json:"gameID,omitempty"`
 	// create -> play(timeout) -> show -> done
 	Status int32 `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
-	// 游戏押金可大于
+
 	PlayAmount int64 `protobuf:"varint,3,opt,name=playAmount,proto3" json:"playAmount,omitempty"`
-	// 游戏人数
+
 	PlayerCount int32 `protobuf:"varint,4,opt,name=playerCount,proto3" json:"playerCount,omitempty"`
-	// 当前游戏人数
+
 	CurPlayerCount int32 `protobuf:"varint,5,opt,name=curPlayerCount,proto3" json:"curPlayerCount,omitempty"`
-	// 游戏需要比对次数
+
 	Loop int32 `protobuf:"varint,6,opt,name=loop,proto3" json:"loop,omitempty"`
-	// 当前出示密钥人数
+
 	CurShowCount int32 `protobuf:"varint,7,opt,name=curShowCount,proto3" json:"curShowCount,omitempty"`
-	// 创建游戏时间
+
 	CreateTime int64 `protobuf:"varint,8,opt,name=createTime,proto3" json:"createTime,omitempty"`
-	// 出示密钥开始时间
+
 	ShowTime int64 `protobuf:"varint,9,opt,name=showTime,proto3" json:"showTime,omitempty"`
-	// 超时时间
+
 	Timeout int64 `protobuf:"varint,10,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	// 创建游戏地址
+
 	CreateAddr string `protobuf:"bytes,11,opt,name=createAddr,proto3" json:"createAddr,omitempty"`
-	// 游戏名称
+
 	GameName string `protobuf:"bytes,12,opt,name=gameName,proto3" json:"gameName,omitempty"`
-	// 游戏加密结果
+
 	AddrResult []*AddressResult `protobuf:"bytes,13,rep,name=addrResult,proto3" json:"addrResult,omitempty"`
-	// 游戏赢家
+
 	Winner []string `protobuf:"bytes,14,rep,name=winner,proto3" json:"winner,omitempty"`
-	// block高度以及索引值
+
 	Index int64 `protobuf:"varint,15,opt,name=index,proto3" json:"index,omitempty"`
 }
 
@@ -2155,12 +2153,10 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type BlackwhiteClient interface {
-	// blackwhite 对外提供服务的接口
-	//区块链接口
 	Create(ctx context.Context, in *BlackwhiteCreate, opts ...grpc.CallOption) (*types.UnsignTx, error)
-	//获取最新的区块头
+
 	Show(ctx context.Context, in *BlackwhiteShow, opts ...grpc.CallOption) (*types.UnsignTx, error)
-	//交易接口
+
 	Play(ctx context.Context, in *BlackwhitePlay, opts ...grpc.CallOption) (*types.UnsignTx, error)
 	TimeoutDone(ctx context.Context, in *BlackwhiteTimeoutDone, opts ...grpc.CallOption) (*types.UnsignTx, error)
 }
@@ -2211,12 +2207,10 @@ func (c *blackwhiteClient) TimeoutDone(ctx context.Context, in *BlackwhiteTimeou
 
 // BlackwhiteServer is the server API for Blackwhite service.
 type BlackwhiteServer interface {
-	// blackwhite 对外提供服务的接口
-	//区块链接口
 	Create(context.Context, *BlackwhiteCreate) (*types.UnsignTx, error)
-	//获取最新的区块头
+
 	Show(context.Context, *BlackwhiteShow) (*types.UnsignTx, error)
-	//交易接口
+
 	Play(context.Context, *BlackwhitePlay) (*types.UnsignTx, error)
 	TimeoutDone(context.Context, *BlackwhiteTimeoutDone) (*types.UnsignTx, error)
 }

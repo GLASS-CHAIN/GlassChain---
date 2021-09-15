@@ -82,8 +82,8 @@ function lockBty() {
 function set_offline_token_Chain33Ycc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}===== chain33 端 configLockedTokenOfflineSave ERC20 YCC ======${NOC}"
-    #    echo '2:#配置自动转离线钱包(YCC, 100, 60%)'
+    echo -e "${GRE}===== chain199 configLockedTokenOfflineSave ERC20 YCC ======${NOC}"
+
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "configLockedTokenOfflineSave(${chain33YccErc20Addr},YCC,10000000000,60)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 
@@ -119,7 +119,6 @@ function transfer_multisign_Chain33Ycc_test() {
     result=$(${Chain33Cli} evm query -a "${chain33YccErc20Addr}" -c "${multisignChain33Addr}" -b "balanceOf(${multisignChain33Addr})")
     is_equal "${result}" "30300000000"
 
-    # 判断 ETH 这端是否金额一致
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethBridgeToeknYccAddr}")
     cli_ret "${result}" "balance" ".balance" "370"
 
@@ -138,7 +137,7 @@ function lockChain33Ycc() {
 
 function set_offline_token_Eth() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # echo '2:#配置自动转离线钱包(eth, 20, 50%)'
+
     result=$(${CLIA} ethereum multisign set_offline_token -s ETH -m 20)
     cli_ret "${result}" "set_offline_token -s ETH -m 20"
 
@@ -183,7 +182,7 @@ function transfer_multisign_Eth_test() {
 
 function lockEth() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}===== ethereum 端 lock multisign ETH ======${NOC}"
+    echo -e "${GRE}===== ethereum  lock multisign ETH ======${NOC}"
     set_offline_token_Eth
     lock_multisign_Eth_test
     transfer_multisign_Eth_test
@@ -192,7 +191,7 @@ function lockEth() {
 
 function set_offline_token_EthYcc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # echo '2:#配置自动转离线钱包(ycc, 100, 40%)'
+
     result=$(${CLIA} ethereum multisign set_offline_token -s YCC -m 100 -p 40 -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "set_offline_token -s YCC -m 100"
 
@@ -217,7 +216,7 @@ function lock_multisign_EthYcc() {
 function transfer_multisign_EthYcc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     # transfer
-    # multisignEthAddr 要有手续费
+
     ${CLIA} ethereum transfer -k "${ethDeployKey}" -m 10 -r "${multisignEthAddr}"
     sleep 2
 
@@ -241,7 +240,7 @@ function transfer_multisign_EthYcc() {
 
 function lockEthYcc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}===== ethereum 端 lock multisign YCC ======${NOC}"
+    echo -e "${GRE}===== ethereum lock multisign YCC ======${NOC}"
     set_offline_token_EthYcc
     lock_multisign_EthYcc
     transfer_multisign_EthYcc

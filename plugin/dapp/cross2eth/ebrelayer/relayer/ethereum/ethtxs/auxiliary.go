@@ -38,7 +38,6 @@ func CreateBridgeToken(symbol string, client ethinterface.EthClientSpec, para *O
 	if nil == para {
 		return "", errors.New("no operator private key configured")
 	}
-	//订阅事件
 	eventName := "LogNewBridgeToken"
 	bridgeBankABI := LoadABI(BridgeBankABI)
 	logNewBridgeTokenSig := bridgeBankABI.Events[eventName].ID.Hex()
@@ -62,7 +61,6 @@ func CreateBridgeToken(symbol string, client ethinterface.EthClientSpec, para *O
 		}
 	}()
 
-	//创建token
 	auth, err := PrepareAuth(client, para.PrivateKey, para.Address)
 	if nil != err {
 		return "", err
@@ -220,7 +218,6 @@ func Burn(ownerPrivateKeyStr, tokenAddrstr, chain33Receiver string, bridgeBank c
 	if nil != err {
 		return "", err
 	}
-	//chain33bank 是bridgeBank的基类，所以使用bridgeBank的地址
 	tx, err := tokenInstance.Approve(auth, bridgeBank, amount)
 	if nil != err {
 		return "", err
@@ -416,10 +413,8 @@ func LockEthErc20Asset(ownerPrivateKeyStr, tokenAddrStr, chain33Receiver string,
 		}
 	}()
 
-	//ETH转账，空地址，且设置value
 	var tokenAddr common.Address
 	if "" != tokenAddrStr {
-		//如果是eth以外的erc20，则需要先进行approve操作
 		tokenAddr = common.HexToAddress(tokenAddrStr)
 		tokenInstance, err := generated.NewBridgeToken(tokenAddr, client)
 		if nil != err {
@@ -433,7 +428,6 @@ func LockEthErc20Asset(ownerPrivateKeyStr, tokenAddrStr, chain33Receiver string,
 
 		prepareDone = true
 
-		//chain33bank 是bridgeBank的基类，所以使用bridgeBank的地址
 		tx, err := tokenInstance.Approve(auth, bridgeBankAddr, amount)
 		if nil != err {
 			return "", err
@@ -503,7 +497,6 @@ func LockEthErc20AssetAsync(ownerPrivateKeyStr, tokenAddrStr, chain33Receiver st
 	}
 	prepareDone = true
 
-	//ETH转账，空地址，且设置value
 	var tokenAddr common.Address
 	if "" == tokenAddrStr {
 		auth.Value = amount
@@ -655,7 +648,6 @@ func SafeTransfer(ownerPrivateKeyStr, multiSignAddrstr, receiver, token string, 
 		if err != nil {
 			return "", err
 		}
-		//对于erc20这种方式 最后需要将其设置为0
 		value = big.NewInt(0)
 	}
 

@@ -953,7 +953,6 @@ func (action *Action) expireLiquidation(coll *pty.Collateralize) (*types.Receipt
 			logs = append(logs, receipt.Logs...)
 			kv = append(kv, receipt.KV...)
 
-			// 借贷记录清算
 			borrowRecord.LiquidateTime = action.blocktime
 			borrowRecord.PreStatus = borrowRecord.Status
 			borrowRecord.Status = pty.CollateralizeUserStatusExpireLiquidate
@@ -966,7 +965,6 @@ func (action *Action) expireLiquidation(coll *pty.Collateralize) (*types.Receipt
 			continue
 		}
 
-		// 还没记录超时告警，记录告警
 		if borrowRecord.Status != pty.CollateralizeUserStatusExpire {
 			borrowRecord.PreStatus = borrowRecord.Status
 			borrowRecord.Status = pty.CollateralizeUserStatusExpire
@@ -975,12 +973,10 @@ func (action *Action) expireLiquidation(coll *pty.Collateralize) (*types.Receipt
 		}
 	}
 
-	// 删除被清算的记录
 	for _, record := range removeRecord {
 		coll.BorrowRecords = removeLiquidateRecord(coll.BorrowRecords, *record)
 	}
 
-	// 保存
 	coll.LatestLiquidationPrice = getLatestLiquidationPrice(coll)
 	coll.LatestExpireTime = getLatestExpireTime(coll)
 	collDB := &CollateralizeDB{*coll}
@@ -991,7 +987,6 @@ func (action *Action) expireLiquidation(coll *pty.Collateralize) (*types.Receipt
 	return receipt, nil
 }
 
-// 价格计算策略
 func pricePolicy(feed *pty.CollateralizeFeed) int64 {
 	var totalPrice int64
 	var totalVolume int64
@@ -1011,7 +1006,6 @@ func pricePolicy(feed *pty.CollateralizeFeed) int64 {
 	return totalPrice
 }
 
-// CollateralizeFeed 喂价
 func (action *Action) CollateralizeFeed(feed *pty.CollateralizeFeed) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -1021,7 +1015,6 @@ func (action *Action) CollateralizeFeed(feed *pty.CollateralizeFeed) (*types.Rec
 		return nil, types.ErrInvalidParam
 	}
 
-	// 是否后台管理用户
 	if !isRightAddr(issuanceE.PriceFeedKey, action.fromaddr, action.db) {
 		clog.Error("CollateralizePriceFeed", "addr", action.fromaddr, "error", "Address has no permission to feed price")
 		return nil, pty.ErrPermissionDeny
@@ -1045,7 +1038,6 @@ func (action *Action) CollateralizeFeed(feed *pty.CollateralizeFeed) (*types.Rec
 			continue
 		}
 
-		// 超时清算判断
 		if coll.LatestExpireTime-ExpireWarningTime <= action.blocktime {
 			receipt, err := action.expireLiquidation(coll)
 			if err != nil {
@@ -1056,7 +1048,6 @@ func (action *Action) CollateralizeFeed(feed *pty.CollateralizeFeed) (*types.Rec
 			kv = append(kv, receipt.KV...)
 		}
 
-		// 系统清算判断
 		receipt, err := action.systemLiquidation(coll, price)
 		if err != nil {
 			clog.Error("CollateralizePriceFeed", "Collateralize ID", coll.CollateralizeId, "system liquidation error", err)
@@ -1070,7 +1061,6 @@ func (action *Action) CollateralizeFeed(feed *pty.CollateralizeFeed) (*types.Rec
 	priceRecord.BtyPrice = price
 	priceRecord.RecordTime = action.blocktime
 
-	// 最近喂价记录
 	pricekv := &types.KeyValue{Key: PriceKey(), Value: types.Encode(&priceRecord)}
 	action.db.Set(pricekv.Key, pricekv.Value)
 	kv = append(kv, pricekv)
@@ -1079,7 +1069,6 @@ func (action *Action) CollateralizeFeed(feed *pty.CollateralizeFeed) (*types.Rec
 	return receipt, nil
 }
 
-// CollateralizeRetrieve 收回未放贷
 func (action *Action) CollateralizeRetrieve(retrieve *pty.CollateralizeRetrieve) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -1096,13 +1085,11 @@ func (action *Action) CollateralizeRetrieve(retrieve *pty.CollateralizeRetrieve)
 		return nil, pty.ErrPermissionDeny
 	}
 
-	// 收回金额不能大于待放出金额
 	if retrieve.Balance > collateralize.Balance {
 		clog.Error("CollateralizeRetrieve", "CollateralizeId", retrieve.CollateralizeId, "error", "balance error", "retrieve balance", retrieve.Balance, "available balance", collateralize.Balance)
 		return nil, types.ErrAmount
 	}
 
-	// 解冻ccny
 	receipt, err = action.tokenAccount.ExecActive(action.fromaddr, action.execaddr, retrieve.Balance)
 	if err != nil {
 		clog.Error("IssuanceClose.ExecActive", "addr", action.fromaddr, "execaddr", action.execaddr, "balance", retrieve.Balance)
@@ -1129,7 +1116,6 @@ func (action *Action) CollateralizeRetrieve(retrieve *pty.CollateralizeRetrieve)
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-// 查找借贷
 func queryCollateralizeByID(db dbm.KV, collateralizeID string) (*pty.Collateralize, error) {
 	data, err := db.Get(Key(collateralizeID))
 	if err != nil {
@@ -1206,7 +1192,6 @@ func queryCollateralizeByAddr(localdb dbm.KVDB, addr string, status int32, collI
 	return ids, nil
 }
 
-// 精确查找发行记录
 func queryCollateralizeRecordByID(db dbm.KV, collateralizeID string, recordID string) (*pty.BorrowRecord, error) {
 	coll, err := queryCollateralizeByID(db, collateralizeID)
 	if err != nil {

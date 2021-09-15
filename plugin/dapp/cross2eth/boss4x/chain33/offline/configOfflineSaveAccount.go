@@ -17,7 +17,7 @@ func ConfigOfflineSaveAccountCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set_offline_addr",
 		Short: "save config offline account",
-		Run:   ConfigMultisignOfflineSaveAccount, //配置账户
+		Run:   ConfigMultisignOfflineSaveAccount, 
 	}
 	addConfigOfflineSaveAccountFlags(cmd)
 	return cmd

@@ -36,13 +36,13 @@ var relayerLog = log.New("module", "chain33_relayer")
 //Relayer4Chain33 ...
 type Relayer4Chain33 struct {
 	syncEvmTxLogs       *syncTx.EVMTxLogs
-	rpcLaddr            string //用户向指定的blockchain节点进行rpc调用
-	chainName           string //用来区别主链中继还是平行链，主链为空，平行链则是user.p.xxx.
+	rpcLaddr            string 
+	chainName           string 
 	chainID             int32
 	fetchHeightPeriodMs int64
 	db                  dbm.DB
-	lastHeight4Tx       int64 //等待被处理的具有相应的交易回执的高度
-	matDegree           int32 //成熟度         heightSync2App    matDegress   height
+	lastHeight4Tx       int64 
+	matDegree           int32 
 
 	privateKey4Chain33       chain33Crypto.PrivKey
 	privateKey4Chain33_ecdsa *ecdsa.PrivateKey
@@ -54,7 +54,7 @@ type Relayer4Chain33 struct {
 	bridgeBankAbi            abi.ABI
 	deployInfo               *ebTypes.Deploy
 	totalTx4Chain33ToEth     int64
-	//新增//
+
 	ethBridgeClaimChan <-chan *ebTypes.EthBridgeClaim
 	chain33MsgChan     chan<- *events.Chain33Msg
 	bridgeRegistryAddr string
@@ -106,13 +106,13 @@ func StartChain33Relayer(startPara *Chain33StartPara) *Relayer4Chain33 {
 	}
 
 	registrAddrInDB, err := chain33Relayer.getBridgeRegistryAddr()
-	//如果输入的registry地址非空，且和数据库保存地址不一致，则直接使用输入注册地址
+
 	if chain33Relayer.bridgeRegistryAddr != "" && nil == err && registrAddrInDB != chain33Relayer.bridgeRegistryAddr {
 		relayerLog.Error("StartChain33Relayer", "BridgeRegistry is setted already with value", registrAddrInDB,
 			"but now setting to", startPara.BridgeRegistryAddr)
 		_ = chain33Relayer.setBridgeRegistryAddr(startPara.BridgeRegistryAddr)
 	} else if startPara.BridgeRegistryAddr == "" && registrAddrInDB != "" {
-		//输入地址为空，且数据库中保存地址不为空，则直接使用数据库中的地址
+
 		chain33Relayer.bridgeRegistryAddr = registrAddrInDB
 	}
 
@@ -135,11 +135,9 @@ func (chain33Relayer *Relayer4Chain33) syncProc(syncCfg *ebTypes.SyncTxReceiptCo
 		return
 	}
 	setChainID(chain33Relayer.chainID)
-	//如果该中继器的bridgeRegistryAddr为空，就说明合约未部署，需要等待部署成功之后再继续
 	if "" == chain33Relayer.bridgeRegistryAddr {
 		<-chain33Relayer.unlockChan
 	}
-	//如果oracleAddr为空，则通过bridgeRegistry合约进行查询
 	if "" != chain33Relayer.bridgeRegistryAddr && "" == chain33Relayer.oracleAddr {
 		oracleAddr, bridgeBankAddr := recoverContractAddrFromRegistry(chain33Relayer.bridgeRegistryAddr, chain33Relayer.rpcLaddr)
 		if "" == oracleAddr || "" == bridgeBankAddr {
@@ -185,9 +183,7 @@ func (chain33Relayer *Relayer4Chain33) getCurrentHeight() int64 {
 }
 
 func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
-	//检查已经提交的交易结果
 
-	//未达到足够的成熟度，不进行处理
 	//  +++++++++||++++++++++++||++++++++++||
 	//           ^             ^           ^
 	// lastHeight4Tx    matDegress   currentHeight
@@ -208,7 +204,6 @@ func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
 		for _, txAndLog := range txAndLogs {
 			tx := txAndLog.Tx
 
-			//确认订阅的evm交易类型和合约地址
 			if !strings.Contains(string(tx.Execer), "evm") {
 				relayerLog.Error("onNewHeightProc received logs not from evm tx", "tx.Execer", string(tx.Execer))
 				continue
@@ -221,7 +216,6 @@ func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
 				continue
 			}
 
-			//确认监听的合约地址
 			if evmAction.ContractAddr != chain33Relayer.bridgeBankAddr {
 				relayerLog.Error("onNewHeightProc received logs not from bridgeBank", "evmAction.ContractAddr", evmAction.ContractAddr)
 				continue
@@ -263,7 +257,6 @@ func (chain33Relayer *Relayer4Chain33) handleBurnLockEvent(evmEventType events.C
 	return nil
 }
 
-//DeployContrcts 部署以太坊合约
 func (chain33Relayer *Relayer4Chain33) DeployContracts() (bridgeRegistry string, err error) {
 	bridgeRegistry = ""
 	if nil == chain33Relayer.deployInfo {
@@ -276,7 +269,6 @@ func (chain33Relayer *Relayer4Chain33) DeployContracts() (bridgeRegistry string,
 		return bridgeRegistry, errors.New("the number of validator must be not less than 3")
 	}
 
-	//已经设置了注册合约地址，说明已经部署了相关的合约，不再重复部署
 	if chain33Relayer.bridgeRegistryAddr != "" {
 		return bridgeRegistry, errors.New("contract deployed already")
 	}
@@ -317,7 +309,7 @@ func (chain33Relayer *Relayer4Chain33) DeployContracts() (bridgeRegistry string,
 	chain33Relayer.deployResult = x2EthDeployInfo
 	bridgeRegistry = x2EthDeployInfo.BridgeRegistry.Address.String()
 	_ = chain33Relayer.setBridgeRegistryAddr(bridgeRegistry)
-	//设置注册合约地址，同时设置启动中继服务的信号
+
 	chain33Relayer.bridgeRegistryAddr = bridgeRegistry
 	chain33Relayer.oracleAddr = x2EthDeployInfo.Oracle.Address.String()
 	chain33Relayer.bridgeBankAddr = x2EthDeployInfo.BridgeBank.Address.String()
@@ -328,7 +320,6 @@ func (chain33Relayer *Relayer4Chain33) DeployContracts() (bridgeRegistry string,
 	return bridgeRegistry, nil
 }
 
-//DeployContrcts 部署以太坊合约
 func (chain33Relayer *Relayer4Chain33) DeployMulsign() (mulsign string, err error) {
 	mulsign, err = deployMulSign2Chain33(chain33Relayer.rpcLaddr, chain33Relayer.chainName, chain33Relayer.deployInfo.OperatorAddr)
 	if err != nil {
@@ -369,7 +360,7 @@ func (chain33Relayer *Relayer4Chain33) relayLockBurnToChain33(claim *ebTypes.Eth
 
 	var tokenAddr string
 	if int32(events.ClaimTypeBurn) == claim.ClaimType {
-		//burn 分支
+
 		if ebTypes.SYMBOL_BTY == claim.Symbol {
 			tokenAddr = ebTypes.BTYAddrChain33
 		} else {
@@ -381,7 +372,7 @@ func (chain33Relayer *Relayer4Chain33) relayLockBurnToChain33(claim *ebTypes.Eth
 		}
 
 	} else {
-		//lock 分支
+
 		var exist bool
 		tokenAddr, exist = chain33Relayer.symbol2Addr[claim.Symbol]
 		if !exist {
@@ -404,7 +395,6 @@ func (chain33Relayer *Relayer4Chain33) relayLockBurnToChain33(claim *ebTypes.Eth
 		}
 	}
 
-	//因为发行的合约的精度为8，所以需要缩小，在进行burn的时候，再进行倍乘,在函数ParseBurnLock4chain33进行
 	if ebTypes.SYMBOL_ETH == claim.Symbol {
 		bigAmount.Div(bigAmount, big.NewInt(int64(1e10)))
 		claim.Amount = bigAmount.String()
@@ -429,7 +419,6 @@ func (chain33Relayer *Relayer4Chain33) relayLockBurnToChain33(claim *ebTypes.Eth
 	}
 	relayerLog.Info("relayLockBurnToChain33", "tx is sent to relay lock or burn with hash", txhash)
 
-	//保存交易hash，方便查询
 	atomic.AddInt64(&chain33Relayer.totalTx4Chain33ToEth, 1)
 	txIndex := atomic.LoadInt64(&chain33Relayer.totalTx4Chain33ToEth)
 	if err = chain33Relayer.updateTotalTxAmount2Eth(txIndex); nil != err {
@@ -483,7 +472,6 @@ func (chain33Relayer *Relayer4Chain33) ShowStatics(request ebTypes.TokenStaticsR
 	if nil != err {
 		return nil, err
 	}
-	//todo:完善分页显示功能
 	for _, data := range datas {
 		var statics ebTypes.Ethereum2Chain33Statics
 		_ = chain33Types.Decode(data, &statics)
@@ -515,7 +503,7 @@ func (chain33Relayer *Relayer4Chain33) updateSingleTxStatus(claimType events.Cla
 		var statics ebTypes.Chain33ToEthereumStatics
 		_ = chain33Types.Decode(data, &statics)
 		result := getTxStatusByHashesRpc(statics.Chain33Txhash, chain33Relayer.rpcLaddr)
-		//当前处理机制比较简单，如果发现该笔交易未执行，就不再产寻后续交易的回执
+
 		if ebTypes.Invalid_Chain33Tx_Status == result {
 			break
 		}

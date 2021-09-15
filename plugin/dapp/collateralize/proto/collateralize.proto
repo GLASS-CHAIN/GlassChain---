@@ -84,25 +84,22 @@ message CollateralizeRepay {
 }
 
 message CollateralizeAppend {
-    string collateralizeId = 1; //借贷期数ID
-    string recordId        = 2; //借贷ID
-    int64  collateralValue = 3; //追加价值(bty)
+    string collateralizeId = 1; 
+    string recordId        = 2; 
+    int64  collateralValue = 3; 
 }
 
-// 喂价
 message CollateralizeFeed {
-    int32    collType     = 1; //抵押物价格类型(1，bty，2，btc，3，eth...)
-    repeated int64 price  = 2; //喂价
-    repeated int64 volume = 3; //成交量
+    int32    collType     = 1; 
+    repeated int64 price  = 2; 
+    repeated int64 volume = 3; 
 }
 
-// 收回
 message CollateralizeRetrieve {
-    string collateralizeId = 1; //借贷期数ID
-    int64  balance         = 2; //收回金额
+    string collateralizeId = 1; 
+    int64  balance         = 2; 
 }
 
-// exec_local 放贷信息
 message ReceiptCollateralize {
     string collateralizeId = 1;
     string accountAddr     = 3;
@@ -110,60 +107,51 @@ message ReceiptCollateralize {
     int32  status          = 5;
 }
 
-// exec_local 放贷记录信息列表
 message CollateralizeRecords {
     repeated ReceiptCollateralize records = 1;
 }
 
-// 根据ID查询一期放贷信息
 message ReqCollateralizeInfo {
     string collateralizeId = 1;
 }
 
-// 返回一期放贷信息
 message RepCollateralizeCurrentInfo {
-    int32    status                     = 1;  //当期借贷的状态，是否关闭
-    int64    totalBalance               = 2;  //当期可借贷的总金额(ccny)
-    int64    debtCeiling                = 3;  //单用户可借出的限额(ccny)
-    int64    liquidationRatio           = 4;  //清算比例
-    int64    stabilityFeeRatio          = 5;  //稳定费
-    string   createAddr                 = 6;  //创建人地址
-    int64    balance                    = 7;  //剩余可借贷金额(ccny)
-    int64    period                     = 8;  //合约期限
-    string   collateralizeId            = 9;  //放贷ID
-    int64    collBalance                = 10; //抵押bty
-    repeated BorrowRecord borrowRecords = 11; //借贷记录
+    int32    status                     = 1;  
+    int64    totalBalance               = 2;  
+    int64    debtCeiling                = 3;  
+    int64    liquidationRatio           = 4;  
+    int64    stabilityFeeRatio          = 5;  
+    string   createAddr                 = 6;  
+    int64    balance                    = 7;  
+    int64    period                     = 8;  
+    string   collateralizeId            = 9;  
+    int64    collBalance                = 10; 
+    repeated BorrowRecord borrowRecords = 11; 
 }
 
-// 根据ID列表查询多期放贷信息
 message ReqCollateralizeInfos {
     repeated string collateralizeIds = 1;
 }
 
-// 返回多期放贷信息
 message RepCollateralizeCurrentInfos {
     repeated RepCollateralizeCurrentInfo infos = 1;
 }
 
-// 根据放贷状态查询
 message ReqCollateralizeByStatus {
     int32  status = 1;
     string collID = 2;
 }
 
-// 根据用户地址查询
 message ReqCollateralizeByAddr {
     string addr   = 1;
     int32  status = 2;
     string collID = 3;
 }
 
-// 返回放贷ID列表
 message RepCollateralizeIDs {
     repeated string IDs = 1;
 }
 
-// 根据地址和借贷ID混合查询具体借贷记录
 message ReqCollateralizeRecordByAddr {
     string collateralizeId = 1;
     string addr            = 2;
@@ -171,46 +159,39 @@ message ReqCollateralizeRecordByAddr {
     string recordId        = 4;
 }
 
-// 根据状态和借贷ID混合查询具体借贷记录
 message ReqCollateralizeRecordByStatus {
     string collateralizeId = 1;
     int32  status          = 2;
     string recordId        = 3;
 }
 
-// 返回借贷记录
 message RepCollateralizeRecords {
     repeated BorrowRecord records = 1;
 }
 
-// 精确查找借贷记录
 message ReqCollateralizeRecord {
     string collateralizeId = 1;
     string recordId        = 2;
 }
 
-// 返回借贷记录
 message RepCollateralizeRecord {
     BorrowRecord record = 1;
 }
 
-// 返回放贷配置
 message RepCollateralizeConfig {
-    int64 debtCeiling       = 1; //单用户可借出的限额(ccny)
-    int64 liquidationRatio  = 2; //清算比例
-    int64 stabilityFeeRatio = 3; //稳定费
-    int64 period            = 4; //合约期限
-    int64 totalBalance      = 5; //放贷总量
-    int64 balance           = 6; //剩余放贷额度
-    int64 currentTime       = 7; //设置时间
+    int64 debtCeiling       = 1; 
+    int64 liquidationRatio  = 2; 
+    int64 stabilityFeeRatio = 3; 
+    int64 period            = 4; 
+    int64 totalBalance      = 5; 
+    int64 balance           = 6; 
+    int64 currentTime       = 7; 
 }
 
-// 返回最新抵押物价格
 message RepCollateralizePrice {
-    int64 price = 1; //当前抵押物最新价格
+    int64 price = 1; 
 }
 
-// 返回用户借贷总额
 message RepCollateralizeUserBalance {
-    int64 balance = 1; //返回用户借贷总额
+    int64 balance = 1; 
 }

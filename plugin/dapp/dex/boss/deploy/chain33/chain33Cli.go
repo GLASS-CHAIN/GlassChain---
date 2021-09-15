@@ -114,7 +114,6 @@ func deployMulticallContract(cmd *cobra.Command, args []string) {
 	}
 }
 
-// 创建ERC20合约
 func deployERC20ContractCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deployERC20",

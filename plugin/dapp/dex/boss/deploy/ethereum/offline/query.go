@@ -21,7 +21,7 @@ func (q *queryCmd) queryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query address", //first step
 		Short: " query gasPrice,nonce from the spec address",
-		Run:   q.query, //对要部署的factory合约进行签名
+		Run:   q.query, 
 	}
 	q.addQueryFlags(cmd)
 	return cmd
@@ -76,7 +76,7 @@ func (d *DeployContract) DeployCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "send", //first step
 		Short: " send signed raw tx",
-		Run:   d.send, //对要部署的factory合约进行签名
+		Run:   d.send, 
 	}
 	d.addSendFlags(cmd)
 	return cmd
@@ -91,7 +91,7 @@ func (d *DeployContract) send(cmd *cobra.Command, args []string) {
 	_ = args
 	filePath, _ := cmd.Flags().GetString("file")
 	url, _ := cmd.Flags().GetString("rpc_laddr")
-	//解析文件数据
+
 	fmt.Println("file", filePath)
 	var rdata = make([]*DeployContract, 0)
 	err := paraseFile(filePath, &rdata)

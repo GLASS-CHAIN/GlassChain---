@@ -26,7 +26,6 @@ import (
 
 	_ "github.com/33cn/chain33/system"
 
-	// 需要显示引用系统插件，以加载系统内置合约
 	"github.com/33cn/chain33/client/mocks"
 	"github.com/stretchr/testify/mock"
 )
@@ -159,7 +158,6 @@ func newMock33() *testnode.Chain33Mock {
 	var he = types.Header{Height: 10000}
 
 	mockapi := &mocks.QueueProtocolAPI{}
-	// 这里对需要mock的方法打桩,Close是必须的，其它方法根据需要
 	mockapi.On("Close").Return()
 	mockapi.On("AddPushSubscribe", mock.Anything).Return(&ret, nil)
 	mockapi.On("GetLastHeader", mock.Anything).Return(&he, nil)
@@ -167,7 +165,6 @@ func newMock33() *testnode.Chain33Mock {
 	mock33 := testnode.New("", mockapi)
 	//defer mock33.Close()
 	rpcCfg := mock33.GetCfg().RPC
-	// 这里必须设置监听端口，默认的是无效值
 	rpcCfg.JrpcBindAddr = "127.0.0.1:8801"
 	mock33.GetRPC().Listen()
 

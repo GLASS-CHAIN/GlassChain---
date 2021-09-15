@@ -20,8 +20,8 @@ import (
 )
 
 const (
-	testProjectAmount int64 = types.DefaultCoinPrecision * 100  // 工程需要资金
-	testFundAmount    int64 = types.DefaultCoinPrecision * 1000 // 工程需要资金
+	testProjectAmount int64 = types.DefaultCoinPrecision * 100  
+	testFundAmount    int64 = types.DefaultCoinPrecision * 1000 
 )
 
 func InitBoard(stateDB dbm.KV) {
@@ -151,7 +151,7 @@ func TestPubVoteProposalProject(t *testing.T) {
 	// voteProposalProject
 	voteProposalProject(t, env, exec, stateDB, kvdb, true)
 	// pubVoteProposalProject
-	pubVoteProposalProject(t, env, exec, stateDB, kvdb, true) // 未通过全体持票人投票
+	pubVoteProposalProject(t, env, exec, stateDB, kvdb, true) 
 	// terminate
 	// check
 	checkPubVoteProposalProjectResult(t, stateDB, env.txHash)
@@ -245,7 +245,6 @@ func testPropProject(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB db
 		}
 	}
 
-	// 更新tahash
 	env.txHash = common.ToHex(pbtx.Hash())
 	env.startHeight = opt1.StartBlockHeight
 	env.endHeight = opt1.EndBlockHeight
@@ -345,7 +344,6 @@ func voteProposalProject(t *testing.T, env *ExecEnv, exec drivers.Driver, stateD
 	exec.SetAPI(api)
 
 	proposalID := env.txHash
-	// 4人参与投票，3人赞成票，1人反对票
 	type record struct {
 		priv string
 		appr bool
@@ -377,7 +375,6 @@ func voteProposalProject(t *testing.T, env *ExecEnv, exec drivers.Driver, stateD
 		assert.NoError(t, err)
 		tx, err = signTx(tx, record.priv)
 		assert.NoError(t, err)
-		// 设定当前高度为投票高度
 		exec.SetEnv(env.startHeight, env.blockTime, env.difficulty)
 
 		receipt, err := exec.Exec(tx, int(1))
@@ -402,7 +399,6 @@ func voteProposalProject(t *testing.T, env *ExecEnv, exec drivers.Driver, stateD
 		assert.NoError(t, err)
 		assert.NotNil(t, set)
 
-		// 每次需要重新设置
 		acc := &types.Account{
 			Currency: 0,
 			Frozen:   total,
@@ -444,7 +440,7 @@ func checkVoteProposalProjectResult(t *testing.T, stateDB dbm.KV, proposalID str
 	assert.Equal(t, proposalAmount*types.DefaultCoinPrecision, account.Balance)
 	account = accCoin.LoadExecAccount(AddrD, autonomyAddr)
 	assert.Equal(t, testProjectAmount, account.Balance)
-	// 更新董事会累计审批金
+
 	value, err = stateDB.Get(activeBoardID())
 	assert.NoError(t, err)
 	aBd := &auty.ActiveBoard{}
@@ -480,7 +476,6 @@ func pubVoteProposalProject(t *testing.T, env *ExecEnv, exec drivers.Driver, sta
 	exec.SetAPI(api)
 
 	proposalID := env.txHash
-	// 3人参与投票，2人赞成票，1人反对票
 	type record struct {
 		priv   string
 		appr   bool
@@ -502,7 +497,6 @@ func pubVoteProposalProject(t *testing.T, env *ExecEnv, exec drivers.Driver, sta
 		assert.NoError(t, err)
 		tx, err = signTx(tx, record.priv)
 		assert.NoError(t, err)
-		// 设定当前高度为投票高度
 		exec.SetEnv(env.startHeight, env.blockTime, env.difficulty)
 
 		receipt, err := exec.Exec(tx, int(1))
@@ -527,7 +521,6 @@ func pubVoteProposalProject(t *testing.T, env *ExecEnv, exec drivers.Driver, sta
 		assert.NoError(t, err)
 		assert.NotNil(t, set)
 
-		// 每次需要重新设置,对于下一个是多个授权地址的需要设置多次
 		if i+1 < len(records) {
 			for j := 0; j < len(records[i+1].origin); j++ {
 				acc := &types.Account{
@@ -563,7 +556,6 @@ func checkPubVoteProposalProjectResult(t *testing.T, stateDB dbm.KV, proposalID 
 	account = accCoin.LoadExecAccount(autonomyAddr, autonomyAddr)
 	assert.Equal(t, proposalAmount*types.DefaultCoinPrecision, account.Balance)
 
-	// 更新董事会累计审批金
 	value, err = stateDB.Get(activeBoardID())
 	assert.NoError(t, err)
 	aBd := &auty.ActiveBoard{}

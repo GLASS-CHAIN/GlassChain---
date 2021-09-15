@@ -4,12 +4,7 @@
 
 package executor
 
-/*
-coins 是一个货币的exec。内置货币的执行器。
 
-主要提供两种操作：
-EventTransfer -> 转移资产
-*/
 
 // package none execer for unknow execer
 // all none transaction exec ok, execept nofee

@@ -22,7 +22,6 @@ func (c *Coinsx) Exec_Transfer(transfer *types.AssetsTransfer, tx *types.Transac
 	if !checkTransferEnable(c.GetAPI().GetConfig(), c.GetStateDB(), from, to) {
 		return nil, errors.Wrapf(types.ErrNotAllow, "transfer is limited from=%s to=%s", from, to)
 	}
-	//to 是 execs 合约地址
 	if drivers.IsDriverAddress(to, c.GetHeight()) {
 		return c.GetCoinsAccount().TransferToExec(from, to, transfer.Amount)
 	}
@@ -38,7 +37,6 @@ func (c *Coinsx) Exec_TransferToExec(transfer *types.AssetsTransferToExec, tx *t
 	}
 	from := tx.From()
 	to := tx.GetRealToAddr()
-	//to 是 execs 合约地址
 	if !isExecAddrMatch(transfer.ExecName, to) {
 		return nil, types.ErrToAddrNotSameToExecAddr
 	}
@@ -60,7 +58,6 @@ func (c *Coinsx) Exec_Withdraw(withdraw *types.AssetsWithdraw, tx *types.Transac
 	if !checkTransferEnable(cfg, c.GetStateDB(), from, to) {
 		return nil, errors.Wrapf(types.ErrNotAllow, "withdraw is limited from=%s to=%s", from, to)
 	}
-	//to 是 execs 合约地址
 	if drivers.IsDriverAddress(tx.GetRealToAddr(), c.GetHeight()) || isExecAddrMatch(withdraw.ExecName, tx.GetRealToAddr()) {
 		return c.GetCoinsAccount().TransferWithdraw(from, tx.GetRealToAddr(), withdraw.Amount)
 	}

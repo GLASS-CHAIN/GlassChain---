@@ -81,9 +81,6 @@ minerwhitelist=["*"]
 enableStat=false
 
 [exec.sub.cert]
-# 是否启用证书验证和签名
 enable=true
-# 加密文件路径
 cryptoPath="./test/authdir/crypto"
-# 带证书签名类型，支持"secp256r1", "sm2"
 signType="sm2"

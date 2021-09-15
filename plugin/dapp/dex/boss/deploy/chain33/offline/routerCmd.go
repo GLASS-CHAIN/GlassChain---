@@ -16,7 +16,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// 创建ERC20合约
 func createERC20ContractCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "erc20",

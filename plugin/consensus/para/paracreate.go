@@ -61,7 +61,6 @@ func (client *client) getLocalBlockSeq(height int64) (int64, []byte, error) {
 		return -2, nil, err
 	}
 
-	//如果当前mainHash对应seq获取不到，返回0 seq，和当前hash，去switchLocalHashMatchedBlock里面回溯查找
 	mainSeq, err := client.GetSeqByHashOnMainChain(lastBlock.MainHash)
 	if err != nil {
 		return 0, lastBlock.MainHash, nil
@@ -70,7 +69,6 @@ func (client *client) getLocalBlockSeq(height int64) (int64, []byte, error) {
 
 }
 
-//根据匹配上的chainblock，设置当前localdb block
 func (client *client) alignLocalBlock2ChainBlock(chainBlock *types.Block) error {
 	localBlock := &pt.ParaLocalDbBlock{
 		Height:     chainBlock.Height,
@@ -83,8 +81,7 @@ func (client *client) alignLocalBlock2ChainBlock(chainBlock *types.Block) error 
 
 }
 
-//如果localBlock被删除了，就从chain block获取，如果block能获取到，但远程seq获取不到，则返回当前块主链hash和错误的seq=0,
-//然后请求交易校验不过会进入循环匹配切换场景
+
 func (client *client) getLastLocalBlockSeq() (int64, []byte, error) {
 	height, err := client.getLastLocalHeight()
 	if err == nil {
@@ -95,13 +92,11 @@ func (client *client) getLastLocalBlockSeq() (int64, []byte, error) {
 	}
 
 	plog.Info("Parachain getLastLocalBlockSeq from block")
-	//说明localDb获取存在错误，从chain获取
 	mainSeq, chainBlock, err := client.getLastBlockMainInfo()
 	if err != nil {
 		return -2, nil, err
 	}
 
-	//chain block中获取成功，设置last local block和找到的chainBlock main高度和mainhash对齐
 	err = client.alignLocalBlock2ChainBlock(chainBlock)
 	if err != nil {
 		return -2, nil, err
@@ -151,7 +146,6 @@ func (client *client) getMatchedBlockOnChain(startHeight int64) (int64, *types.B
 		if err != nil {
 			return -2, nil, err
 		}
-		//当前block结构已经有mainHash和MainHeight但是从blockchain获取的block还没有写入，以后如果获取到，可以替换从minerTx获取
 		plog.Info("switchHashMatchedBlock", "lastParaBlockHeight", height, "mainHeight",
 			block.MainHeight, "mainHash", hex.EncodeToString(block.MainHash))
 		mainSeq, err := client.GetSeqByHashOnMainChain(block.MainHash)
@@ -184,7 +178,6 @@ func (client *client) switchMatchedBlockOnChain(startHeight int64) (int64, []byt
 	if err != nil {
 		return -2, nil, err
 	}
-	//chain block中获取成功，设置last local block和找到的chainBlock main高度和mainhash对齐
 	err = client.alignLocalBlock2ChainBlock(chainBlock)
 	if err != nil {
 		return -2, nil, err
@@ -213,7 +206,6 @@ func (client *client) switchLocalHashMatchedBlock() (int64, *pt.ParaLocalDbBlock
 		if err != nil {
 			return -2, nil, err
 		}
-		//当前block结构已经有mainHash和MainHeight但是从blockchain获取的block还没有写入，以后如果获取到，可以替换从minerTx获取
 		plog.Info("switchLocalHashMatchedBlock", "height", height, "mainHeight", block.MainHeight, "mainHash", hex.EncodeToString(block.MainHash))
 		mainHash, err := client.GetHashByHeightOnMainChain(block.MainHeight)
 		if err != nil || !bytes.Equal(mainHash, block.MainHash) {
@@ -362,7 +354,6 @@ func (client *client) requestFilterParaTxs(currSeq int64, count int64, preMainBl
 		plog.Error("requestFilterParaTxs", "curSeq", currSeq, "count", count, "preMainBlockHash", hex.EncodeToString(preMainBlockHash))
 		return nil, err
 	}
-	//至少应该返回１个
 	if len(details.Items) == 0 {
 		plog.Error("requestFilterParaTxs ret nil", "curSeq", currSeq, "count", count, "preMainBlockHash", hex.EncodeToString(preMainBlockHash))
 		return nil, types.ErrNotFound
@@ -476,7 +467,6 @@ func (client *client) procLocalAddBlock(mainBlock *types.ParaTxDetail, lastBlock
 
 }
 
-//只同步只有AddType的block，比如在当前高度１w高度前的主链blocks，默认没有分叉，只获取addType类型的，如果有分叉，也会在后面常规同步时候纠正过来
 func (client *client) procLocalAddBlocks(mainBlocks *types.ParaTxDetails) error {
 	var blocks []*pt.ParaLocalDbBlock
 	lastBlock, err := client.getLastLocalBlock()
@@ -551,21 +541,18 @@ out:
 				plog.Debug("para CreateBlock count not match", "count", count, "items", len(paraTxs.Items))
 				count = int64(len(paraTxs.Items))
 			}
-			//如果当前正在追赶，暂不处理
 			if client.commitMsgClient.authAccount != "" && client.isCaughtUp() && len(paraTxs.Items) > 0 {
-				//在追赶上之后，每次seq只请求一个，只检查第一个即可
+
 				client.commitMsgClient.commitTxCheckNotify(paraTxs.Items[0])
 			}
 
 			err = client.procLocalBlocks(paraTxs)
 			if err != nil {
-				//根据localblock，重新搜索匹配
 				lastSeqMainHash = nil
 				plog.Error("para CreateBlock.procLocalBlocks", "err", err.Error())
 				continue
 			}
 
-			//重新设定seq和lastSeqMainHash
 			lastSeqMainHash = paraTxs.Items[count-1].Header.Hash
 			if paraTxs.Items[count-1].Type == types.DelBlock {
 				lastSeqMainHash = paraTxs.Items[count-1].Header.ParentHash

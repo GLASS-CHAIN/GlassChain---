@@ -26,22 +26,21 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// CandidatorInfo 候选节点信息
 type CandidatorInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkey      []byte       `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   //候选节点的公钥
-	Address     string       `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` //后续节点的地址
-	IP          string       `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           //候选节点的运行IP
-	Votes       int64        `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`    //候选节点的投票数
-	Status      int64        `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`  //候选节点的状态，0:注册,1:当选,2:取消注册
+	Pubkey      []byte       `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   
+	Address     string       `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` 
+	IP          string       `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           
+	Votes       int64        `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`    
+	Status      int64        `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`  
 	PreStatus   int64        `protobuf:"varint,6,opt,name=preStatus,proto3" json:"preStatus,omitempty"`
-	StartTime   int64        `protobuf:"varint,7,opt,name=startTime,proto3" json:"startTime,omitempty"`     //创建候选者的时间
-	StartHeight int64        `protobuf:"varint,8,opt,name=startHeight,proto3" json:"startHeight,omitempty"` //创建候选者的时间
-	StartTxHash string       `protobuf:"bytes,9,opt,name=startTxHash,proto3" json:"startTxHash,omitempty"`  //创建候选者的交易hash
-	StartIndex  int64        `protobuf:"varint,10,opt,name=startIndex,proto3" json:"startIndex,omitempty"`  //创建候选者的交易index
+	StartTime   int64        `protobuf:"varint,7,opt,name=startTime,proto3" json:"startTime,omitempty"`     
+	StartHeight int64        `protobuf:"varint,8,opt,name=startHeight,proto3" json:"startHeight,omitempty"` 
+	StartTxHash string       `protobuf:"bytes,9,opt,name=startTxHash,proto3" json:"startTxHash,omitempty"`  
+	StartIndex  int64        `protobuf:"varint,10,opt,name=startIndex,proto3" json:"startIndex,omitempty"`  
 	Index       int64        `protobuf:"varint,11,opt,name=index,proto3" json:"index,omitempty"`
 	PreIndex    int64        `protobuf:"varint,12,opt,name=preIndex,proto3" json:"preIndex,omitempty"`
 	Voters      []*DposVoter `protobuf:"bytes,13,rep,name=voters,proto3" json:"voters,omitempty"`
@@ -170,15 +169,14 @@ func (x *CandidatorInfo) GetVoters() []*DposVoter {
 	return nil
 }
 
-// DposVoter 投票者信息
 type DposVoter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	FromAddr string `protobuf:"bytes,1,opt,name=fromAddr,proto3" json:"fromAddr,omitempty"`
-	Pubkey   []byte `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"` //候选节点的公钥
-	Votes    int64  `protobuf:"varint,3,opt,name=votes,proto3" json:"votes,omitempty"`  //投给候选节点的票数，不能超过锁在合约中的未使用票数
+	Pubkey   []byte `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"` 
+	Votes    int64  `protobuf:"varint,3,opt,name=votes,proto3" json:"votes,omitempty"`  
 	Index    int64  `protobuf:"varint,4,opt,name=index,proto3" json:"index,omitempty"`
 	Time     int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
 }
@@ -250,17 +248,16 @@ func (x *DposVoter) GetTime() int64 {
 	return 0
 }
 
-// Candidator 候选节点信息
 type Candidator struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkey  []byte `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   //候选节点的公钥
-	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` //后续节点的地址
-	IP      string `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           //候选节点的运行IP
-	Votes   int64  `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`    //候选节点的投票数
-	Status  int64  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`  //候选节点的状态，0:注册,1:当选,2:取消注册
+	Pubkey  []byte `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` 
+	IP      string `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           
+	Votes   int64  `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`    
+	Status  int64  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`  
 }
 
 func (x *Candidator) Reset() {
@@ -330,15 +327,14 @@ func (x *Candidator) GetStatus() int64 {
 	return 0
 }
 
-// DposCandidatorRegist 注册Dpos候选节点，必须抵押一定数量的币，比如：10000个币
 type DposCandidatorRegist struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkey  string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   //候选节点的公钥
-	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` //候选节点的地址
-	IP      string `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           //候选节点的共识IP地址
+	Pubkey  string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` 
+	IP      string `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`          
 }
 
 func (x *DposCandidatorRegist) Reset() {
@@ -394,14 +390,13 @@ func (x *DposCandidatorRegist) GetIP() string {
 	return ""
 }
 
-// DposCandidatorCancelRegist 注销Dpos候选节点，解冻抵押的币
 type DposCandidatorCancelRegist struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkey  string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   //候选节点的公钥
-	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` //候选节点的地址
+	Pubkey  string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` 
 }
 
 func (x *DposCandidatorCancelRegist) Reset() {
@@ -450,15 +445,14 @@ func (x *DposCandidatorCancelRegist) GetAddress() string {
 	return ""
 }
 
-// DposVote 为Dpos候选节点投票
 type DposVote struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	FromAddr string `protobuf:"bytes,1,opt,name=fromAddr,proto3" json:"fromAddr,omitempty"`
-	Pubkey   string `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"` //候选节点的公钥
-	Votes    int64  `protobuf:"varint,3,opt,name=votes,proto3" json:"votes,omitempty"`  //投给候选节点的票数，不能超过锁在合约中的未使用票数
+	Pubkey   string `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"` 
+	Votes    int64  `protobuf:"varint,3,opt,name=votes,proto3" json:"votes,omitempty"`  
 }
 
 func (x *DposVote) Reset() {
@@ -514,13 +508,12 @@ func (x *DposVote) GetVotes() int64 {
 	return 0
 }
 
-// DposCancelVote 撤销为Dpos候选节点投票
 type DposCancelVote struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkey string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"` //候选节点的公钥
+	Pubkey string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"` 
 	Index  int64  `protobuf:"varint,3,opt,name=index,proto3" json:"index,omitempty"`
 }
 
@@ -570,7 +563,6 @@ func (x *DposCancelVote) GetIndex() int64 {
 	return 0
 }
 
-// DposVoteAction DposVote动作
 type DposVoteAction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -827,15 +819,15 @@ func (*DposVoteAction_RegistTopN) isDposVoteAction_Value() {}
 
 func (*DposVoteAction_TopNQuery) isDposVoteAction_Value() {}
 
-// CandidatorQuery 候选节点查询
+
 type CandidatorQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkeys []string `protobuf:"bytes,1,rep,name=pubkeys,proto3" json:"pubkeys,omitempty"` //候选节点公钥集合
-	TopN    int32    `protobuf:"varint,2,opt,name=topN,proto3" json:"topN,omitempty"`      // topN
-	Ty      int32    `protobuf:"varint,3,opt,name=ty,proto3" json:"ty,omitempty"`          // 1:按公钥集合查询，2：按topN票数查询
+	Pubkeys []string `protobuf:"bytes,1,rep,name=pubkeys,proto3" json:"pubkeys,omitempty"` 
+	TopN    int32    `protobuf:"varint,2,opt,name=topN,proto3" json:"topN,omitempty"`      
+	Ty      int32    `protobuf:"varint,3,opt,name=ty,proto3" json:"ty,omitempty"`          
 }
 
 func (x *CandidatorQuery) Reset() {
@@ -891,17 +883,17 @@ func (x *CandidatorQuery) GetTy() int32 {
 	return 0
 }
 
-// JSONCandidator 候选节点Json格式信息
+
 type JSONCandidator struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkey  string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   //候选节点的公钥
-	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` //后续节点的地址
-	IP      string `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           //候选节点的运行IP
-	Votes   int64  `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`    //候选节点的投票数
-	Status  int64  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`  //候选节点的状态，0:注册,1:当选,2:取消注册
+	Pubkey  string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`   
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` 
+	IP      string `protobuf:"bytes,3,opt,name=IP,proto3" json:"IP,omitempty"`           
+	Votes   int64  `protobuf:"varint,4,opt,name=votes,proto3" json:"votes,omitempty"`    
+	Status  int64  `protobuf:"varint,5,opt,name=status,proto3" json:"status,omitempty"`  
 }
 
 func (x *JSONCandidator) Reset() {
@@ -971,13 +963,12 @@ func (x *JSONCandidator) GetStatus() int64 {
 	return 0
 }
 
-// CandidatorReply 候选节点查询响应
 type CandidatorReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Candidators []*JSONCandidator `protobuf:"bytes,1,rep,name=candidators,proto3" json:"candidators,omitempty"` //候选节点
+	Candidators []*JSONCandidator `protobuf:"bytes,1,rep,name=candidators,proto3" json:"candidators,omitempty"` 
 }
 
 func (x *CandidatorReply) Reset() {
@@ -1019,14 +1010,14 @@ func (x *CandidatorReply) GetCandidators() []*JSONCandidator {
 	return nil
 }
 
-// DposVoteQuery 投票查询
+
 type DposVoteQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pubkeys []string `protobuf:"bytes,1,rep,name=pubkeys,proto3" json:"pubkeys,omitempty"` //候选节点的公钥，如果为空，则查询所有，否则，查询该地址给具体候选节点的投票
-	Addr    string   `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`       //要查询的地址
+	Pubkeys []string `protobuf:"bytes,1,rep,name=pubkeys,proto3" json:"pubkeys,omitempty"` 
+	Addr    string   `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`      
 }
 
 func (x *DposVoteQuery) Reset() {
@@ -1075,15 +1066,15 @@ func (x *DposVoteQuery) GetAddr() string {
 	return ""
 }
 
-// JSONDposVoter Json格式的投票者信息
+
 type JSONDposVoter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	FromAddr string `protobuf:"bytes,1,opt,name=fromAddr,proto3" json:"fromAddr,omitempty"`
-	Pubkey   string `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"` //候选节点的公钥
-	Votes    int64  `protobuf:"varint,3,opt,name=votes,proto3" json:"votes,omitempty"`  //投给候选节点的票数，不能超过锁在合约中的未使用票数
+	Pubkey   string `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"` 
+	Votes    int64  `protobuf:"varint,3,opt,name=votes,proto3" json:"votes,omitempty"`  
 	Index    int64  `protobuf:"varint,4,opt,name=index,proto3" json:"index,omitempty"`
 	Time     int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
 }
@@ -1155,13 +1146,12 @@ func (x *JSONDposVoter) GetTime() int64 {
 	return 0
 }
 
-// DposVoteReply 投票查询响应
 type DposVoteReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Votes []*JSONDposVoter `protobuf:"bytes,1,rep,name=votes,proto3" json:"votes,omitempty"` //某地址对具体候选节点的投票情况
+	Votes []*JSONDposVoter `protobuf:"bytes,1,rep,name=votes,proto3" json:"votes,omitempty"` 
 }
 
 func (x *DposVoteReply) Reset() {
@@ -1203,7 +1193,7 @@ func (x *DposVoteReply) GetVotes() []*JSONDposVoter {
 	return nil
 }
 
-// ReceiptCandicator 候选者收据信息
+
 type ReceiptCandicator struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1331,7 +1321,6 @@ func (x *ReceiptCandicator) GetTime() int64 {
 	return 0
 }
 
-// DposVrfM VrfM信息
 type DposVrfM struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1341,7 +1330,7 @@ type DposVrfM struct {
 	Pubkey      []byte `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
 	Cycle       int64  `protobuf:"varint,3,opt,name=cycle,proto3" json:"cycle,omitempty"`
 	Height      int64  `protobuf:"varint,4,opt,name=height,proto3" json:"height,omitempty"`
-	M           []byte `protobuf:"bytes,5,opt,name=m,proto3" json:"m,omitempty"` // vrf的输入
+	M           []byte `protobuf:"bytes,5,opt,name=m,proto3" json:"m,omitempty"` 
 	Time        int64  `protobuf:"varint,6,opt,name=time,proto3" json:"time,omitempty"`
 	CycleStart  int64  `protobuf:"varint,7,opt,name=cycleStart,proto3" json:"cycleStart,omitempty"`
 	CycleMiddle int64  `protobuf:"varint,8,opt,name=cycleMiddle,proto3" json:"cycleMiddle,omitempty"`
@@ -1443,7 +1432,7 @@ func (x *DposVrfM) GetCycleStop() int64 {
 	return 0
 }
 
-// DposVrfRP VrfRP信息
+
 type DposVrfRP struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1453,9 +1442,9 @@ type DposVrfRP struct {
 	Pubkey      []byte `protobuf:"bytes,2,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
 	Cycle       int64  `protobuf:"varint,3,opt,name=cycle,proto3" json:"cycle,omitempty"`
 	Height      int64  `protobuf:"varint,4,opt,name=height,proto3" json:"height,omitempty"`
-	M           []byte `protobuf:"bytes,5,opt,name=m,proto3" json:"m,omitempty"` // vrf的输入
-	R           []byte `protobuf:"bytes,6,opt,name=r,proto3" json:"r,omitempty"` // vrf的hash
-	P           []byte `protobuf:"bytes,7,opt,name=p,proto3" json:"p,omitempty"` // vrf的hash的proof
+	M           []byte `protobuf:"bytes,5,opt,name=m,proto3" json:"m,omitempty"` 
+	R           []byte `protobuf:"bytes,6,opt,name=r,proto3" json:"r,omitempty"` 
+	P           []byte `protobuf:"bytes,7,opt,name=p,proto3" json:"p,omitempty"` 
 	Time        int64  `protobuf:"varint,8,opt,name=time,proto3" json:"time,omitempty"`
 	CycleStart  int64  `protobuf:"varint,9,opt,name=cycleStart,proto3" json:"cycleStart,omitempty"`
 	CycleMiddle int64  `protobuf:"varint,10,opt,name=cycleMiddle,proto3" json:"cycleMiddle,omitempty"`
@@ -1571,7 +1560,6 @@ func (x *DposVrfRP) GetCycleStop() int64 {
 	return 0
 }
 
-// DposVrfMRegist VrfM注册请求
 type DposVrfMRegist struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1579,7 +1567,7 @@ type DposVrfMRegist struct {
 
 	Pubkey string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
 	Cycle  int64  `protobuf:"varint,2,opt,name=cycle,proto3" json:"cycle,omitempty"`
-	M      string `protobuf:"bytes,3,opt,name=m,proto3" json:"m,omitempty"` // vrf的输入
+	M      string `protobuf:"bytes,3,opt,name=m,proto3" json:"m,omitempty"` 
 }
 
 func (x *DposVrfMRegist) Reset() {
@@ -1635,7 +1623,6 @@ func (x *DposVrfMRegist) GetM() string {
 	return ""
 }
 
-// DposVrfRPRegist VrfRP注册请求
 type DposVrfRPRegist struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1643,8 +1630,8 @@ type DposVrfRPRegist struct {
 
 	Pubkey string `protobuf:"bytes,1,opt,name=pubkey,proto3" json:"pubkey,omitempty"`
 	Cycle  int64  `protobuf:"varint,2,opt,name=cycle,proto3" json:"cycle,omitempty"`
-	R      string `protobuf:"bytes,3,opt,name=r,proto3" json:"r,omitempty"` // vrf的hash
-	P      string `protobuf:"bytes,4,opt,name=p,proto3" json:"p,omitempty"` // vrf的hash的proof
+	R      string `protobuf:"bytes,3,opt,name=r,proto3" json:"r,omitempty"` 
+	P      string `protobuf:"bytes,4,opt,name=p,proto3" json:"p,omitempty"` 
 }
 
 func (x *DposVrfRPRegist) Reset() {
@@ -1707,7 +1694,6 @@ func (x *DposVrfRPRegist) GetP() string {
 	return ""
 }
 
-// ReceiptVrf vrf收据信息
 type ReceiptVrf struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1843,7 +1829,6 @@ func (x *ReceiptVrf) GetCycleStop() int64 {
 	return 0
 }
 
-// VrfInfo vrf信息
 type VrfInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1947,7 +1932,6 @@ func (x *VrfInfo) GetTime() int64 {
 	return 0
 }
 
-// DposVrfQuery vrf查询请求
 type DposVrfQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2019,7 +2003,6 @@ func (x *DposVrfQuery) GetCycle() int64 {
 	return 0
 }
 
-// JSONVrfInfo json格式的vrf信息
 type JSONVrfInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2123,7 +2106,6 @@ func (x *JSONVrfInfo) GetTime() int64 {
 	return 0
 }
 
-// DposVrfReply vrf查询响应
 type DposVrfReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2171,7 +2153,6 @@ func (x *DposVrfReply) GetVrf() []*JSONVrfInfo {
 	return nil
 }
 
-// DposCycleBoundaryInfo cycle边界信息
 type DposCycleBoundaryInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2251,7 +2232,6 @@ func (x *DposCycleBoundaryInfo) GetSignature() []byte {
 	return nil
 }
 
-// DposCBInfo cycle边界记录请求消息
 type DposCBInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2331,7 +2311,6 @@ func (x *DposCBInfo) GetSignature() string {
 	return ""
 }
 
-// DposCBQuery cycle边界记录查询请求
 type DposCBQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2403,7 +2382,6 @@ func (x *DposCBQuery) GetTy() int32 {
 	return 0
 }
 
-// DposCBReply cycle边界记录查询响应
 type DposCBReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2451,7 +2429,6 @@ func (x *DposCBReply) GetCbInfo() *DposCBInfo {
 	return nil
 }
 
-// ReceiptCB CycleBoundary收据信息
 type ReceiptCB struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2571,7 +2548,6 @@ func (x *ReceiptCB) GetCbInfo() *DposCycleBoundaryInfo {
 	return nil
 }
 
-// TopNCandidator topN候选者
 type TopNCandidator struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2651,7 +2627,6 @@ func (x *TopNCandidator) GetSignature() []byte {
 	return nil
 }
 
-// TopNCandidators topN候选者(复数)
 type TopNCandidators struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2723,7 +2698,6 @@ func (x *TopNCandidators) GetFinalCands() []*Candidator {
 	return nil
 }
 
-// TopNCandidatorRegist topN候选者注册请求
 type TopNCandidatorRegist struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2771,7 +2745,6 @@ func (x *TopNCandidatorRegist) GetCand() *TopNCandidator {
 	return nil
 }
 
-// TopNCandidatorsQuery topN候选者查询请求
 type TopNCandidatorsQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2819,7 +2792,6 @@ func (x *TopNCandidatorsQuery) GetVersion() int64 {
 	return 0
 }
 
-// TopNCandidatorsReply topN候选者查询响应
 type TopNCandidatorsReply struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2867,7 +2839,6 @@ func (x *TopNCandidatorsReply) GetTopN() *TopNCandidators {
 	return nil
 }
 
-// ReceiptTopN topN注册的收据信息
 type ReceiptTopN struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

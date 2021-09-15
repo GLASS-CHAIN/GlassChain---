@@ -36,15 +36,15 @@ type AutonomyProposalProject struct {
 	unknownFields protoimpl.UnknownFields
 
 	PropProject *ProposalProject `protobuf:"bytes,1,opt,name=propProject,proto3" json:"propProject,omitempty"`
-	// 投票该提案的规则
+
 	CurRule *RuleConfig `protobuf:"bytes,2,opt,name=curRule,proto3" json:"curRule,omitempty"`
-	// 投票该提案的董事会成员
+
 	Boards []string `protobuf:"bytes,3,rep,name=boards,proto3" json:"boards,omitempty"`
-	// 董事会投票结果
+
 	BoardVoteRes *VoteResult `protobuf:"bytes,4,opt,name=boardVoteRes,proto3" json:"boardVoteRes,omitempty"`
-	// 公示投票
+
 	PubVote *PublicVote `protobuf:"bytes,5,opt,name=pubVote,proto3" json:"pubVote,omitempty"`
-	// 状态
+
 	Status     int32  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
 	Address    string `protobuf:"bytes,7,opt,name=address,proto3" json:"address,omitempty"`
 	Height     int64  `protobuf:"varint,8,opt,name=height,proto3" json:"height,omitempty"`
@@ -159,25 +159,25 @@ type ProposalProject struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 提案时间
+
 	Year  int32 `protobuf:"varint,1,opt,name=year,proto3" json:"year,omitempty"`
 	Month int32 `protobuf:"varint,2,opt,name=month,proto3" json:"month,omitempty"`
 	Day   int32 `protobuf:"varint,3,opt,name=day,proto3" json:"day,omitempty"`
-	// 项目相关
-	FirstStage   string `protobuf:"bytes,4,opt,name=firstStage,proto3" json:"firstStage,omitempty"`      // 第一阶段提案项目hash
-	LastStage    string `protobuf:"bytes,5,opt,name=lastStage,proto3" json:"lastStage,omitempty"`        // 上一阶段提案项目hash
-	Production   string `protobuf:"bytes,6,opt,name=production,proto3" json:"production,omitempty"`      // 项目地址
-	Description  string `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`    // 项目阶段性简述
-	Contractor   string `protobuf:"bytes,8,opt,name=contractor,proto3" json:"contractor,omitempty"`      // 承包人
-	Amount       int64  `protobuf:"varint,9,opt,name=amount,proto3" json:"amount,omitempty"`             // 项目经费
-	AmountDetail string `protobuf:"bytes,10,opt,name=amountDetail,proto3" json:"amountDetail,omitempty"` // 经费细则
-	// 支付相关
-	ToAddr string `protobuf:"bytes,11,opt,name=toAddr,proto3" json:"toAddr,omitempty"` // 收款地址
-	// 投票相关
-	StartBlockHeight    int64 `protobuf:"varint,12,opt,name=startBlockHeight,proto3" json:"startBlockHeight,omitempty"`       // 提案开始投票高度
-	EndBlockHeight      int64 `protobuf:"varint,13,opt,name=endBlockHeight,proto3" json:"endBlockHeight,omitempty"`           // 提案结束投票高度
-	RealEndBlockHeight  int64 `protobuf:"varint,14,opt,name=realEndBlockHeight,proto3" json:"realEndBlockHeight,omitempty"`   // 实际提案结束投票高度
-	ProjectNeedBlockNum int32 `protobuf:"varint,15,opt,name=projectNeedBlockNum,proto3" json:"projectNeedBlockNum,omitempty"` // 以提案结束投票高度为准，需要项目需要消耗的区块数目所对应的时间
+
+	FirstStage   string `protobuf:"bytes,4,opt,name=firstStage,proto3" json:"firstStage,omitempty"`      
+	LastStage    string `protobuf:"bytes,5,opt,name=lastStage,proto3" json:"lastStage,omitempty"`        
+	Production   string `protobuf:"bytes,6,opt,name=production,proto3" json:"production,omitempty"`      
+	Description  string `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`    
+	Contractor   string `protobuf:"bytes,8,opt,name=contractor,proto3" json:"contractor,omitempty"`      
+	Amount       int64  `protobuf:"varint,9,opt,name=amount,proto3" json:"amount,omitempty"`             
+	AmountDetail string `protobuf:"bytes,10,opt,name=amountDetail,proto3" json:"amountDetail,omitempty"` 
+
+	ToAddr string `protobuf:"bytes,11,opt,name=toAddr,proto3" json:"toAddr,omitempty"` 
+
+	StartBlockHeight    int64 `protobuf:"varint,12,opt,name=startBlockHeight,proto3" json:"startBlockHeight,omitempty"`       
+	EndBlockHeight      int64 `protobuf:"varint,13,opt,name=endBlockHeight,proto3" json:"endBlockHeight,omitempty"`           
+	RealEndBlockHeight  int64 `protobuf:"varint,14,opt,name=realEndBlockHeight,proto3" json:"realEndBlockHeight,omitempty"`   
+	ProjectNeedBlockNum int32 `protobuf:"varint,15,opt,name=projectNeedBlockNum,proto3" json:"projectNeedBlockNum,omitempty"` 
 }
 
 func (x *ProposalProject) Reset() {

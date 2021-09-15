@@ -111,7 +111,6 @@ func (a *action) configTransfer(config *coinTy.TransferFlagConfig) (*types.Recei
 
 }
 
-//过滤重复地址
 func filterAddrs(addrs []string) []string {
 	f := make(map[string]bool)
 	var newAddrs []string
@@ -144,7 +143,6 @@ func (a *action) addAccounts(addrs []string) (*types.Receipt, error) {
 
 }
 
-//删除掉指定地址
 func filterByAddrs(curr, del []string) []string {
 	f := make(map[string]bool)
 	for _, k := range del {
@@ -190,7 +188,6 @@ func (a *action) configAccounts(config *coinTy.ManagerAccountsConfig) (*types.Re
 func (a *action) config(config *coinTy.CoinsConfig, tx *types.Transaction, index int) (*types.Receipt, error) {
 	cfg := a.api.GetConfig()
 	from := tx.From()
-	//from 必须是超级管理员
 	if !isSuperManager(cfg, from) {
 		return nil, errors.Wrapf(types.ErrNotAllow, "from=%s is not super manager", from)
 	}
@@ -213,14 +210,8 @@ func isManager(addr string, managers []string) bool {
 	return false
 }
 
-/*
-   p2p转账受限规则，to执行器也受限制
-1. 超级管理员或者配置了管理员账号 转账不受限
-2. 如果未配置转账使能标志或配置为DISABLE，都受限制
-3. 配置ENABLE,则不受限
-*/
 func checkTransferEnable(cfg *types.Chain33Config, db dbm.KV, from, to string) bool {
-	//节点配置的超级管理员转账不受限
+
 	suppers := getSuperManager(cfg)
 	if isManager(from, suppers) || isManager(to, suppers) {
 		return true
@@ -228,11 +219,11 @@ func checkTransferEnable(cfg *types.Chain33Config, db dbm.KV, from, to string) b
 
 	stat, err := getManagerStatus(db)
 	if stat != nil {
-		//如果转账不受限，则可以任意转账
+
 		if stat.TransferFlag == coinTy.TransferFlag_ENABLE {
 			return true
 		}
-		//如果转账受限，则任一方是管理员才允许转账
+
 		if isManager(from, stat.ManagerAccounts) || isManager(to, stat.ManagerAccounts) {
 			return true
 		}

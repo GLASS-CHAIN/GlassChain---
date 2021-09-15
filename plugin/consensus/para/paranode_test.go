@@ -21,7 +21,7 @@ func TestParaNode(t *testing.T) {
 	para := node.NewParaNode(nil, nil)
 	defer para.Close()
 	cfg := para.Para.GetClient().GetConfig()
-	//通过rpc 发生信息
+
 	genesis := para.Main.GetGenesisAddress()
 	genesisKey := para.Main.GetGenesisKey()
 	block := para.Main.GetBlock(0)

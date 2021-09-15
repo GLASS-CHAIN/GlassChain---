@@ -22,7 +22,6 @@ import (
 
 var logger = log.New("module", "tools")
 
-// NewFileBasedKeyStore 创建key存储器
 func NewFileBasedKeyStore(pwd []byte, path string, readOnly bool) (KeyStore, error) {
 	ks := &fileBasedKeyStore{}
 	return ks, ks.Init(pwd, path, readOnly)

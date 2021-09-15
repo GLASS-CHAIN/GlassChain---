@@ -14,31 +14,20 @@ import (
 )
 
 const (
-	// 最小董事会赞成率
 	minBoardApproveRatio = 50
-	// 最大董事会赞成率
 	maxBoardApproveRatio = 66
-	// 最小全体持票人否决率
 	minPubOpposeRatio = 33
-	// 最大全体持票人否决率
 	maxPubOpposeRatio = 50
-	// 最小公示周期
 	minPublicPeriod int32 = 17280 * 7
-	// 最大公示周期
 	maxPublicPeriod int32 = 17280 * 14
-	// 最小重大项目阈值(coin)
 	minLargeProjectAmount = 100 * 10000
-	// 最大重大项目阈值(coin)
 	maxLargeProjectAmount = 300 * 10000
-	// 最小提案金(coin)
 	minProposalAmount = 20
-	// 最大提案金(coin)
 	maxProposalAmount = 2000
 )
 
 func (a *action) propRule(prob *auty.ProposalRule) (*types.Receipt, error) {
 	cfg := a.api.GetConfig()
-	//如果全小于等于0,则说明该提案规则参数不正确
 	if prob.RuleCfg == nil || prob.RuleCfg.BoardApproveRatio <= 0 && prob.RuleCfg.PubOpposeRatio <= 0 &&
 		prob.RuleCfg.ProposalAmount <= 0 && prob.RuleCfg.LargeProjectAmount <= 0 && prob.RuleCfg.PublicPeriod <= 0 {
 		alog.Error("propRule ", "ProposalRule RuleCfg invaild or have no modify param", prob.RuleCfg)
@@ -60,7 +49,6 @@ func (a *action) propRule(prob *auty.ProposalRule) (*types.Receipt, error) {
 		return nil, auty.ErrSetBlockHeight
 	}
 
-	// 获取当前生效提案规则,并且将不修改的规则补齐
 	rule, err := a.getActiveRule()
 	if err != nil {
 		alog.Error("propRule ", "addr", a.fromaddr, "execaddr", a.execaddr, "getActiveRule failed", err)
@@ -109,7 +97,6 @@ func (a *action) rvkPropRule(rvkProb *auty.RevokeProposalRule) (*types.Receipt, 
 	}
 	pre := copyAutonomyProposalRule(cur)
 
-	// 检查当前状态
 	if cur.Status != auty.AutonomyStatusProposalRule {
 		err := auty.ErrProposalStatus
 		alog.Error("rvkPropRule ", "addr", a.fromaddr, "status", cur.Status, "status is not match",
@@ -162,7 +149,6 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 	}
 	pre := copyAutonomyProposalRule(cur)
 
-	// 检查当前状态
 	if cur.Status == auty.AutonomyStatusRvkPropRule ||
 		cur.Status == auty.AutonomyStatusTmintPropRule {
 		err := auty.ErrProposalStatus
@@ -188,7 +174,6 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 				return nil, types.ErrInvalidAddress
 			}
 		}
-		// 挖矿地址验证
 		addr, err := a.verifyMinerAddr(voteProb.OriginAddr, a.fromaddr)
 		if err != nil {
 			alog.Error("votePropRule ", "from addr", a.fromaddr, "error addr", addr, "ProposalID",
@@ -197,7 +182,6 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 		}
 	}
 
-	// 本次参与投票地址
 	var addrs []string
 	if len(voteProb.OriginAddr) == 0 {
 		addrs = append(addrs, a.fromaddr)
@@ -205,17 +189,15 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 		addrs = append(addrs, voteProb.OriginAddr...)
 	}
 
-	// 检查是否已经参与投票
 	votes, err := a.checkVotesRecord(addrs, votesRecord(voteProb.ProposalID))
 	if err != nil {
 		alog.Error("votePropRule ", "addr", a.fromaddr, "execaddr", a.execaddr, "checkVotesRecord failed",
 			voteProb.ProposalID, "err", err)
 		return nil, err
 	}
-	// 更新投票记录
 	votes.Address = append(votes.Address, addrs...)
 
-	if cur.GetVoteResult().TotalVotes == 0 { //需要统计票数
+	if cur.GetVoteResult().TotalVotes == 0 { 
 		vtCouts, err := a.getTotalVotes(start)
 		if err != nil {
 			return nil, err
@@ -223,7 +205,6 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 		cur.VoteResult.TotalVotes = vtCouts
 	}
 
-	// 获取可投票数
 	vtCouts, err := a.batchGetAddressVotes(addrs, start)
 	if err != nil {
 		alog.Error("votePropRule ", "addr", a.fromaddr, "execaddr", a.execaddr, "batchGetAddressVotes failed",
@@ -239,7 +220,6 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 首次进入投票期,即将提案金转入自治系统地址
 	if cur.Status == auty.AutonomyStatusProposalRule {
 		receipt, err := a.coinsAccount.ExecTransferFrozen(cur.Address, a.execaddr, a.execaddr, cur.CurRule.ProposalAmount)
 		if err != nil {
@@ -265,10 +245,8 @@ func (a *action) votePropRule(voteProb *auty.VoteProposalRule) (*types.Receipt, 
 	}
 	kv = append(kv, &types.KeyValue{Key: key, Value: types.Encode(cur)})
 
-	// 更新VotesRecord
 	kv = append(kv, &types.KeyValue{Key: votesRecord(voteProb.ProposalID), Value: types.Encode(votes)})
 
-	// 更新系统规则
 	if cur.VoteResult.Pass {
 		upRule := upgradeRule(cur.CurRule, cur.PropRule.RuleCfg)
 		kv = append(kv, &types.KeyValue{Key: activeRuleID(), Value: types.Encode(upRule)})
@@ -294,7 +272,6 @@ func (a *action) tmintPropRule(tmintProb *auty.TerminateProposalRule) (*types.Re
 
 	pre := copyAutonomyProposalRule(cur)
 
-	// 检查当前状态
 	if cur.Status == auty.AutonomyStatusTmintPropRule ||
 		cur.Status == auty.AutonomyStatusRvkPropRule {
 		err := auty.ErrProposalStatus
@@ -312,7 +289,7 @@ func (a *action) tmintPropRule(tmintProb *auty.TerminateProposalRule) (*types.Re
 		return nil, err
 	}
 
-	if cur.GetVoteResult().TotalVotes == 0 { //需要统计票数
+	if cur.GetVoteResult().TotalVotes == 0 { 
 		vtCouts, err := a.getTotalVotes(start)
 		if err != nil {
 			return nil, err
@@ -331,7 +308,6 @@ func (a *action) tmintPropRule(tmintProb *auty.TerminateProposalRule) (*types.Re
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 未进行投票情况下，符合提案关闭的也需要扣除提案费用
 	if cur.Status == auty.AutonomyStatusProposalRule {
 		receipt, err := a.coinsAccount.ExecTransferFrozen(cur.Address, a.execaddr, a.execaddr, cur.CurRule.ProposalAmount)
 		if err != nil {
@@ -347,7 +323,6 @@ func (a *action) tmintPropRule(tmintProb *auty.TerminateProposalRule) (*types.Re
 
 	kv = append(kv, &types.KeyValue{Key: propRuleID(tmintProb.ProposalID), Value: types.Encode(cur)})
 
-	// 更新系统规则
 	if cur.VoteResult.Pass {
 		upRule := upgradeRule(cur.CurRule, cur.PropRule.RuleCfg)
 		kv = append(kv, &types.KeyValue{Key: activeRuleID(), Value: types.Encode(upRule)})
@@ -412,8 +387,7 @@ func (a *action) getProposalRule(ID string) (*auty.AutonomyProposalRule, error) 
 	return cur, nil
 }
 
-// getReceiptLog 根据提案信息获取log
-// 状态变化：
+
 func getRuleReceiptLog(pre, cur *auty.AutonomyProposalRule, ty int32) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	log.Ty = ty

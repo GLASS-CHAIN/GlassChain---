@@ -7,13 +7,8 @@ import (
 	et "github.com/33cn/plugin/plugin/dapp/accountmanager/types"
 )
 
-/*
- * 执行器相关定义
- * 重载基类相关接口
- */
 
 var (
-	//日志
 	elog = log.New("module", "accountmanager.executor")
 )
 
@@ -53,14 +48,12 @@ func (a *Accountmanager) GetDriverName() string {
 	return driverName
 }
 
-//ExecutorOrder Exec 的时候 同时执行 ExecLocal
 func (a *Accountmanager) ExecutorOrder() int64 {
 	return drivers.ExecLocalSameTime
 }
 
-// CheckTx 实现自定义检验交易接口，供框架调用
 func (a *Accountmanager) CheckTx(tx *types.Transaction, index int) error {
-	//发送交易的时候就检查payload,做严格的参数检查
+
 	var ama et.AccountmanagerAction
 	err := types.Decode(tx.GetPayload(), &ama)
 	if err != nil {

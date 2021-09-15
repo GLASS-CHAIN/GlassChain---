@@ -13,7 +13,7 @@ import (
 )
 
 func (a *action) propChange(prob *auty.ProposalChange) (*types.Receipt, error) {
-	//如果全小于等于0,则说明该提案规则参数不正确
+
 	if prob == nil || len(prob.Changes) == 0 {
 		alog.Error("propChange ", "ProposalChange ChangeCfg invaild or have no modify param", prob)
 		return nil, types.ErrInvalidParam
@@ -30,14 +30,13 @@ func (a *action) propChange(prob *auty.ProposalChange) (*types.Receipt, error) {
 		alog.Error("propChange ", "addr", a.fromaddr, "execaddr", a.execaddr, "getActiveBoard failed", err)
 		return nil, err
 	}
-	// 检查是否符合提案修改
+
 	new, err := a.checkChangeable(act, prob.Changes)
 	if err != nil {
 		alog.Error("propChange ", "addr", a.fromaddr, "execaddr", a.execaddr, "checkChangeable failed", err)
 		return nil, err
 	}
 
-	// 获取当前生效提案规则,并且将不修改的规则补齐
 	rule, err := a.getActiveRule()
 	if err != nil {
 		alog.Error("propChange ", "addr", a.fromaddr, "execaddr", a.execaddr, "getActiveRule failed", err)
@@ -87,7 +86,6 @@ func (a *action) rvkPropChange(rvkProb *auty.RevokeProposalChange) (*types.Recei
 	}
 	pre := copyAutonomyProposalChange(cur)
 
-	// 检查当前状态
 	if cur.Status != auty.AutonomyStatusProposalChange {
 		err := auty.ErrProposalStatus
 		alog.Error("rvkPropChange ", "addr", a.fromaddr, "status", cur.Status, "status is not match",
@@ -140,7 +138,6 @@ func (a *action) votePropChange(voteProb *auty.VoteProposalChange) (*types.Recei
 	}
 	pre := copyAutonomyProposalChange(cur)
 
-	// 检查当前状态
 	if cur.Status == auty.AutonomyStatusRvkPropChange ||
 		cur.Status == auty.AutonomyStatusTmintPropChange {
 		err := auty.ErrProposalStatus
@@ -159,7 +156,6 @@ func (a *action) votePropChange(voteProb *auty.VoteProposalChange) (*types.Recei
 		return nil, err
 	}
 
-	// 检查是否已经参与投票
 	votes, err := a.checkVotesRecord([]string{a.fromaddr}, votesRecord(voteProb.ProposalID))
 	if err != nil {
 		alog.Error("votePropChange ", "addr", a.fromaddr, "execaddr", a.execaddr, "checkVotesRecord failed",
@@ -167,7 +163,6 @@ func (a *action) votePropChange(voteProb *auty.VoteProposalChange) (*types.Recei
 		return nil, err
 	}
 
-	// 董事会成员验证
 	mpBd := make(map[string]struct{})
 	for _, b := range cur.Board.Boards {
 		mpBd[b] = struct{}{}
@@ -188,7 +183,6 @@ func (a *action) votePropChange(voteProb *auty.VoteProposalChange) (*types.Recei
 		return nil, err
 	}
 
-	// 更新投票记录
 	votes.Address = append(votes.Address, a.fromaddr)
 
 	if voteProb.Approve {
@@ -200,7 +194,6 @@ func (a *action) votePropChange(voteProb *auty.VoteProposalChange) (*types.Recei
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 首次进入投票期,即将提案金转入自治系统地址
 	if cur.Status == auty.AutonomyStatusProposalChange {
 		receipt, err := a.coinsAccount.ExecTransferFrozen(cur.Address, a.execaddr, a.execaddr, cur.CurRule.ProposalAmount)
 		if err != nil {
@@ -224,10 +217,8 @@ func (a *action) votePropChange(voteProb *auty.VoteProposalChange) (*types.Recei
 	}
 	kv = append(kv, &types.KeyValue{Key: key, Value: types.Encode(cur)})
 
-	// 更新VotesRecord
 	kv = append(kv, &types.KeyValue{Key: votesRecord(voteProb.ProposalID), Value: types.Encode(votes)})
 
-	// 更新activeBoard
 	if cur.VoteResult.Pass {
 		kv = append(kv, &types.KeyValue{Key: activeBoardID(), Value: types.Encode(cur.Board)})
 	}
@@ -252,7 +243,7 @@ func (a *action) tmintPropChange(tmintProb *auty.TerminateProposalChange) (*type
 
 	pre := copyAutonomyProposalChange(cur)
 
-	// 检查当前状态
+
 	if cur.Status == auty.AutonomyStatusTmintPropChange ||
 		cur.Status == auty.AutonomyStatusRvkPropChange {
 		err := auty.ErrProposalStatus
@@ -280,7 +271,6 @@ func (a *action) tmintPropChange(tmintProb *auty.TerminateProposalChange) (*type
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 未进行投票情况下，符合提案关闭的也需要扣除提案费用
 	if cur.Status == auty.AutonomyStatusProposalChange {
 		receipt, err := a.coinsAccount.ExecTransferFrozen(cur.Address, a.execaddr, a.execaddr, cur.CurRule.ProposalAmount)
 		if err != nil {
@@ -296,7 +286,6 @@ func (a *action) tmintPropChange(tmintProb *auty.TerminateProposalChange) (*type
 
 	kv = append(kv, &types.KeyValue{Key: propChangeID(tmintProb.ProposalID), Value: types.Encode(cur)})
 
-	// 更新系统规则
 	if cur.VoteResult.Pass {
 		kv = append(kv, &types.KeyValue{Key: activeBoardID(), Value: types.Encode(cur.Board)})
 	}
@@ -333,14 +322,12 @@ func (a *action) checkChangeable(act *auty.ActiveBoard, change []*auty.Change) (
 			if _, ok := mpBd[ch.Addr]; !ok {
 				return nil, auty.ErrChangeBoardAddr
 			}
-			// 将删除的加入对端
 			delete(mpBd, ch.Addr)
 			mpRbd[ch.Addr] = struct{}{}
 		} else {
 			if _, ok := mpRbd[ch.Addr]; !ok {
 				return nil, auty.ErrChangeBoardAddr
 			}
-			// 将删除的加入对端
 			delete(mpRbd, ch.Addr)
 			mpBd[ch.Addr] = struct{}{}
 		}
@@ -363,8 +350,6 @@ func (a *action) checkChangeable(act *auty.ActiveBoard, change []*auty.Change) (
 	return new, nil
 }
 
-// getReceiptLog 根据提案信息获取log
-// 状态变化：
 func getChangeReceiptLog(pre, cur *auty.AutonomyProposalChange, ty int32) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	log.Ty = ty

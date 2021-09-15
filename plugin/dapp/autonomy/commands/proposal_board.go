@@ -16,7 +16,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// AutonomyCmd 自治系统命令行
 func AutonomyCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "autonomy",
@@ -72,7 +71,6 @@ func AutonomyCmd() *cobra.Command {
 	return cmd
 }
 
-// ProposalBoardCmd 创建提案命令
 func ProposalBoardCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "proposalBoard",
@@ -138,7 +136,6 @@ func proposalBoard(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// RevokeProposalBoardCmd 撤销提案
 func RevokeProposalBoardCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revokeBoard",
@@ -177,7 +174,6 @@ func revokeProposalBoard(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// VoteProposalBoardCmd 投票提案
 func VoteProposalBoardCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "voteBoard",
@@ -234,7 +230,6 @@ func voteProposalBoard(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// TerminateProposalBoardCmd 终止提案
 func TerminateProposalBoardCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "terminateBoard",
@@ -274,7 +269,6 @@ func terminateProposalBoard(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// ShowProposalBoardCmd 显示提案查询信息
 func ShowProposalBoardCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showBoard",
@@ -337,7 +331,6 @@ func showProposalBoard(cmd *cobra.Command, args []string) {
 	ctx.Run()
 }
 
-// ShowActiveBoardCmd 显示提案查询信息
 func ShowActiveBoardCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showActiveBoard",

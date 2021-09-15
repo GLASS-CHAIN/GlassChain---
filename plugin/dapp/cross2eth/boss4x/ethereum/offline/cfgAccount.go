@@ -38,7 +38,7 @@ func CreateCfgAccountTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set_offline_addr",
 		Short: "save config offline account",
-		Run:   cfgAccountTx, //配置账户
+		Run:   cfgAccountTx, 
 	}
 	addCfgTxFlags(cmd)
 	return cmd

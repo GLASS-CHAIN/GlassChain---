@@ -4,32 +4,22 @@ CoinSymbol="bty"
 TxHeight=true
 ChainID=33
 
-# crypto模块配置
 [crypto]
-enableTypes=[]    #设置启用的加密插件名称，不配置启用所有
-[crypto.enableHeight]  #配置已启用插件的启用高度，不配置采用默认高度0， 负数表示不启用
+enableTypes=[]    
+[crypto.enableHeight]  
 secp256k1=0
-[crypto.sub.secp256k1] #支持插件子配置
+[crypto.sub.secp256k1] 
 
 [log]
-# 日志级别，支持debug(dbug)/info/warn/error(eror)/crit
 loglevel = "debug"
 logConsoleLevel = "info"
-# 日志文件名，可带目录，所有生成的日志文件都放到此目录下
 logFile = "logs/chain33.log"
-# 单个日志文件的最大值（单位：兆）
 maxFileSize = 20
-# 最多保存的历史日志文件个数
 maxBackups = 20
-# 最多保存的历史日志消息（单位：天）
 maxAge = 28
-# 日志文件名是否使用本地事件（否则使用UTC时间）
 localTime = true
-# 历史日志文件是否压缩（压缩格式为gz）
 compress = false
-# 是否打印调用源文件和行号
 callerFile = true
-# 是否打印调用方法
 callerFunction = true
 
 [blockchain]
@@ -46,17 +36,11 @@ batchsync=false
 isRecordBlockSequence=true
 isParaChain=false
 enableTxQuickIndex=true
-# 使能精简localdb
 enableReduceLocaldb=false
-# 关闭分片存储,默认false为开启分片存储;平行链不需要分片需要修改此默认参数为true
 disableShard=false
-# 分片存储中每个大块包含的区块数
 chunkblockNum=1000
-# 使能从P2pStore中获取数据
 enableFetchP2pstore=false
-# 使能假设已删除已归档数据后,获取数据情况
 enableIfDelLocalChunk=false
-# 开启推送功能
 enablePushSubscribe=true
 
 [p2p]
@@ -83,11 +67,8 @@ keyFile="key.pem"
 [mempool]
 name="timeline"
 poolCacheSize=10240
-# 最小得交易手续费率，这个没有默认值，必填，一般是0.001 coins
 minTxFeeRate=100000
-# 最大的交易手续费率, 0.1 coins
 maxTxFeeRate=10000000
-# 单笔交易最大的手续费, 10 coins
 maxTxFee=1000000000
 maxTxNumPerAccount=100
 isLevelFee=false
@@ -97,9 +78,9 @@ poolCacheSize=10240
 
 [mempool.sub.score]
 poolCacheSize=10240
-timeParam=1      #时间占价格比例
-priceConstant=1544  #手续费相对于时间的一个合适的常量,取当前unxi时间戳前四位数,排序时手续费高1e-5~=快1s
-pricePower=1     #常量比例
+timeParam=1      
+priceConstant=1544  
+pricePower=1     
 
 [mempool.sub.price]
 poolCacheSize=10240
@@ -176,11 +157,8 @@ enableMavlPrefix=false
 enableMVCC=false
 enableMavlPrune=false
 pruneHeight=10000
-# 是否使能mavl数据载入内存
 enableMemTree=false
-# 是否使能mavl叶子节点数据载入内存
 enableMemVal=false
-# 缓存close ticket数目，该缓存越大同步速度越快，最大设置到1500000
 tkCloseCacheLen=100000
 
 [wallet]
@@ -213,11 +191,8 @@ tokenApprs = [
 genesis="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
 
 [exec.sub.cert]
-# 是否启用证书验证和签名
 enable=false
-# 加密文件路径
 cryptoPath="authdir/crypto"
-# 带证书签名类型，支持"auth_ecdsa", "auth_sm2"
 signType="auth_ecdsa"
 
 [exec.sub.manage]
@@ -237,13 +212,10 @@ checkInterval=1
 unSyncMaxTimes=2
 
 [metrics]
-#是否使能发送metrics数据的发送
 enableMetrics=false
-#数据保存模式
 dataEmitMode="influxdb"
 
 [metrics.sub.influxdb]
-#以纳秒为单位的发送间隔
 duration=1000000000
 url="http://influxdb:8086"
 database="chain33metrics"

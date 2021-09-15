@@ -506,13 +506,12 @@ func (m *SyncTxReceiptConfig) GetContracts() []string {
 }
 
 type Deploy struct {
-	//操作管理员地址
 	OperatorAddr string `protobuf:"bytes,1,opt,name=operatorAddr,proto3" json:"operatorAddr,omitempty"`
-	//合约部署人员私钥，用于部署合约时签名使用
+
 	DeployerPrivateKey string `protobuf:"bytes,2,opt,name=deployerPrivateKey,proto3" json:"deployerPrivateKey,omitempty"`
-	//验证人地址
+
 	ValidatorsAddr []string `protobuf:"bytes,3,rep,name=validatorsAddr,proto3" json:"validatorsAddr,omitempty"`
-	//验证人权重
+
 	InitPowers           []int64  `protobuf:"varint,4,rep,packed,name=initPowers,proto3" json:"initPowers,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

@@ -21,7 +21,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ProposalRuleCmd 创建提案命令
 func ProposalRuleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "proposalRule",
@@ -41,7 +40,6 @@ func addProposalRuleFlags(cmd *cobra.Command) {
 	cmd.Flags().Int64P("endBlock", "e", 0, "end block height")
 	cmd.MarkFlagRequired("endBlock")
 
-	// 可修改规则
 	cmd.Flags().Int32P("boardApproveRatio", "r", 0, "board approve ratio(unit is %)")
 	cmd.Flags().Int32P("pubOpposeRatio", "o", 0, "public oppose ratio(unit is %)")
 	cmd.Flags().Int64P("proposalAmount", "p", 0, "proposal cost amount")
@@ -101,7 +99,6 @@ func proposalRule(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// RevokeProposalRuleCmd 撤销提案
 func RevokeProposalRuleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revokeRule",
@@ -140,7 +137,6 @@ func revokeProposalRule(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// VoteProposalRuleCmd 投票提案
 func VoteProposalRuleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "voteRule",
@@ -196,7 +192,6 @@ func voteProposalRule(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// TerminateProposalRuleCmd 终止提案
 func TerminateProposalRuleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "terminateRule",
@@ -235,7 +230,7 @@ func terminateProposalRule(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// ShowProposalRuleCmd 显示提案查询信息
+
 func ShowProposalRuleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showRule",
@@ -298,7 +293,7 @@ func showProposalRule(cmd *cobra.Command, args []string) {
 	ctx.Run()
 }
 
-// ShowActiveRuleCmd 显示提案查询信息
+
 func ShowActiveRuleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showActiveRule",
@@ -321,7 +316,6 @@ func showActiveRule(cmd *cobra.Command, args []string) {
 	ctx.Run()
 }
 
-// TransferFundCmd 资金转入自治系统合约中
 func TransferFundCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "transferFund",
@@ -368,7 +362,6 @@ func transferFund(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CommentProposalCmd 评论提案
 func CommentProposalCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "comment",
@@ -414,7 +407,6 @@ func commentProposal(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// ShowProposalCommentCmd 显示提案评论查询信息
 func ShowProposalCommentCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showComment",

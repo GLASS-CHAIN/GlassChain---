@@ -21,7 +21,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// BlackwhiteCmd 黑白配游戏命令行
 func BlackwhiteCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "blackwhite",
@@ -40,7 +39,6 @@ func BlackwhiteCmd() *cobra.Command {
 	return cmd
 }
 
-// BlackwhiteCreateRawTxCmd 创建黑白配游戏交易命令
 func BlackwhiteCreateRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -70,7 +68,6 @@ func blackwhiteCreate(cmd *cobra.Command, args []string) {
 	gameName, _ := cmd.Flags().GetString("gameName")
 	fee, _ := cmd.Flags().GetFloat64("fee")
 
-	//如果配置精度不是1e8，需要做相应修改，这里不明白fee的意思，使用时候再做修改
 	feeInt64 := int64(fee * 1e4)
 
 	if timeout == 0 {
@@ -97,7 +94,6 @@ func blackwhiteCreate(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// BlackwhitePlayRawTxCmd 参与玩黑白配游戏
 func BlackwhitePlayRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "play",
@@ -162,7 +158,6 @@ func blackwhitePlay(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// BlackwhiteShowRawTxCmd 出示密钥
 func BlackwhiteShowRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "show",
@@ -201,7 +196,6 @@ func blackwhiteShow(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// BlackwhiteTimeoutDoneTxCmd 触发游戏超时，由外部触发
 func BlackwhiteTimeoutDoneTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "timeoutDone",
@@ -234,7 +228,6 @@ func blackwhiteTimeoutDone(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// ShowBlackwhiteInfoCmd 显示黑白配游戏查询信息
 func ShowBlackwhiteInfoCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showInfo",

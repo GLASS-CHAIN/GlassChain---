@@ -107,7 +107,6 @@ func testPropChange(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB dbm
 		}
 	}
 
-	// 更新tahash
 	env.txHash = common.ToHex(pbtx.Hash())
 	env.startHeight = opt1.StartBlockHeight
 	env.endHeight = opt1.EndBlockHeight
@@ -239,7 +238,6 @@ func voteProposalChange(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB
 		assert.NoError(t, err)
 		tx, err = signTx(tx, record.priv)
 		assert.NoError(t, err)
-		// 设定当前高度为投票高度
 		exec.SetEnv(env.startHeight, env.blockTime, env.difficulty)
 
 		receipt, err := exec.Exec(tx, int(1))
@@ -264,7 +262,6 @@ func voteProposalChange(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB
 		assert.NoError(t, err)
 		assert.NotNil(t, set)
 
-		// 每次需要重新设置
 		acc := &types.Account{
 			Currency: 0,
 			Frozen:   total,
@@ -362,7 +359,6 @@ func voteErrorProposalChange(t *testing.T, env *ExecEnv, exec drivers.Driver, st
 		assert.NoError(t, err)
 		tx, err = signTx(tx, record.priv)
 		assert.NoError(t, err)
-		// 设定当前高度为投票高度
 		exec.SetEnv(env.startHeight, env.blockTime, env.difficulty)
 
 		receipt, err := exec.Exec(tx, int(1))
@@ -390,7 +386,6 @@ func voteErrorProposalChange(t *testing.T, env *ExecEnv, exec drivers.Driver, st
 			assert.NoError(t, err)
 			assert.NotNil(t, set)
 
-			// 每次需要重新设置
 			acc := &types.Account{
 				Currency: 0,
 				Frozen:   total,
@@ -538,14 +533,12 @@ func TestCheckChangeable(t *testing.T) {
 		Boards: boards,
 	}
 
-	// 正常撤销一个地址
 	changes := []*auty.Change{{Cancel: true, Addr: AddrA}}
 	cur, err := action.checkChangeable(act, changes)
 	assert.NoError(t, err)
 	assert.Equal(t, len(cur.Boards), len(boards)-1)
 	assert.Equal(t, cur.Revboards[0], AddrA)
 
-	// 恢复撤销地址
 	changes = []*auty.Change{
 		{Cancel: false, Addr: AddrA},
 	}
@@ -554,7 +547,6 @@ func TestCheckChangeable(t *testing.T) {
 	assert.Equal(t, len(ncur.Boards), len(boards))
 	assert.Equal(t, len(ncur.Revboards), 0)
 
-	// 撤销两个地址，撤销不够最小minBoards
 	changes = []*auty.Change{
 		{Cancel: true, Addr: AddrA},
 		{Cancel: true, Addr: AddrB},
@@ -562,14 +554,12 @@ func TestCheckChangeable(t *testing.T) {
 	_, err = action.checkChangeable(act, changes)
 	assert.Equal(t, err, auty.ErrBoardNumber)
 
-	// 恢复一个没有被撤销的地址
 	changes = []*auty.Change{
 		{Cancel: false, Addr: AddrA},
 	}
 	_, err = action.checkChangeable(act, changes)
 	assert.Equal(t, err, auty.ErrChangeBoardAddr)
 
-	// 撤销一个不存在地址
 	changes = []*auty.Change{
 		{Cancel: true, Addr: "1111111111"},
 	}

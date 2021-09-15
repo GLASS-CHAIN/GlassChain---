@@ -37,7 +37,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// ping操作action
 type Ping struct {
 	Msg string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 }
@@ -54,7 +53,6 @@ func (m *Ping) GetMsg() string {
 	return ""
 }
 
-// pang操作action
 type Pang struct {
 	Msg string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 }
@@ -71,7 +69,6 @@ func (m *Pang) GetMsg() string {
 	return ""
 }
 
-// 本执行器的统一Action结构
 type EchoAction struct {
 	// Types that are valid to be assigned to Value:
 	//	*EchoAction_Ping
@@ -201,7 +198,6 @@ func _EchoAction_OneofSizer(msg proto.Message) (n int) {
 	return n
 }
 
-// ping操作生成的日志结构
 type PingLog struct {
 	Msg   string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 	Echo  string `protobuf:"bytes,2,opt,name=echo" json:"echo,omitempty"`
@@ -234,7 +230,6 @@ func (m *PingLog) GetCount() int32 {
 	return 0
 }
 
-// pang操作生成的日志结构
 type PangLog struct {
 	Msg   string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 	Echo  string `protobuf:"bytes,2,opt,name=echo" json:"echo,omitempty"`
@@ -267,7 +262,6 @@ func (m *PangLog) GetCount() int32 {
 	return 0
 }
 
-// 查询请求结构
 type Query struct {
 	Msg string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 }
@@ -284,7 +278,6 @@ func (m *Query) GetMsg() string {
 	return ""
 }
 
-// 查询结果结构
 type QueryResult struct {
 	Msg   string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
 	Count int32  `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`

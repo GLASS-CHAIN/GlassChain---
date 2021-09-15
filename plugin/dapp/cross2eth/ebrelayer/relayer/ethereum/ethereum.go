@@ -115,12 +115,10 @@ func StartEthereumRelayer(startPara *EthereumStartPara) *Relayer4Ethereum {
 	}
 
 	registrAddrInDB, err := ethRelayer.getBridgeRegistryAddr()
-	//如果输入的registry地址非空，且和数据库保存地址不一致，则直接使用输入注册地址
 	if startPara.BridgeRegistryAddr != "" && nil == err && registrAddrInDB != startPara.BridgeRegistryAddr {
 		relayerLog.Error("StartEthereumRelayer", "BridgeRegistry is setted already with value", registrAddrInDB, "but now setting to", startPara.BridgeRegistryAddr)
 		_ = ethRelayer.setBridgeRegistryAddr(startPara.BridgeRegistryAddr)
 	} else if startPara.BridgeRegistryAddr == "" && registrAddrInDB != "" {
-		//输入地址为空，且数据库中保存地址不为空，则直接使用数据库中的地址
 		ethRelayer.bridgeRegistryAddr = common.HexToAddress(registrAddrInDB)
 	}
 	ethRelayer.eventLogIndex = ethRelayer.getLastBridgeBankProcessedHeight()
@@ -166,7 +164,6 @@ func (ethRelayer *Relayer4Ethereum) recoverDeployPara() (err error) {
 	return nil
 }
 
-//DeployContrcts 部署以太坊合约
 func (ethRelayer *Relayer4Ethereum) DeployContrcts() (bridgeRegistry string, err error) {
 	bridgeRegistry = ""
 	if nil == ethRelayer.deployInfo {
@@ -185,7 +182,6 @@ func (ethRelayer *Relayer4Ethereum) DeployContrcts() (bridgeRegistry string, err
 
 	nilAddr := common.Address{}
 
-	//已经设置了注册合约地址，说明已经部署了相关的合约，不再重复部署
 	if ethRelayer.bridgeRegistryAddr != nilAddr {
 		return bridgeRegistry, errors.New("contract deployed already")
 	}
@@ -226,7 +222,7 @@ func (ethRelayer *Relayer4Ethereum) DeployContrcts() (bridgeRegistry string, err
 	ethRelayer.x2EthContracts = x2EthContracts
 	bridgeRegistry = x2EthDeployInfo.BridgeRegistry.Address.String()
 	_ = ethRelayer.setBridgeRegistryAddr(bridgeRegistry)
-	//设置注册合约地址，同时设置启动中继服务的信号
+
 	ethRelayer.bridgeRegistryAddr = x2EthDeployInfo.BridgeRegistry.Address
 	ethRelayer.rwLock.Unlock()
 	ethRelayer.unlockchan <- start
@@ -235,7 +231,6 @@ func (ethRelayer *Relayer4Ethereum) DeployContrcts() (bridgeRegistry string, err
 	return bridgeRegistry, nil
 }
 
-//GetBalance ：获取某一个币种的余额
 func (ethRelayer *Relayer4Ethereum) GetBalance(tokenAddr, owner string) (string, error) {
 	return ethtxs.GetBalance(ethRelayer.clientSpec, tokenAddr, owner)
 }
@@ -400,7 +395,7 @@ func (ethRelayer *Relayer4Ethereum) ShowTxReceipt(hash string) (*types.Receipt, 
 }
 
 func (ethRelayer *Relayer4Ethereum) proc() {
-	//等待用户导入
+
 	relayerLog.Info("Please unlock or import private key for Ethereum relayer")
 	if err := ethRelayer.RestoreTokenAddress(); nil != err {
 		relayerLog.Info("Failed to RestoreTokenAddress")
@@ -435,7 +430,7 @@ func (ethRelayer *Relayer4Ethereum) proc() {
 		if nil != privateKey4Ethereum && nilAddr != ethRelayer.bridgeRegistryAddr {
 			relayerLog.Info("Ethereum relayer starts to run...")
 			ethRelayer.prePareSubscribeEvent()
-			//向bridgeBank订阅事件
+
 			ethRelayer.subscribeEvent()
 			ethRelayer.filterLogEvents()
 			relayerLog.Info("Ethereum relayer starts to process online log event...")
@@ -470,7 +465,7 @@ func (ethRelayer *Relayer4Ethereum) handleChain33Msg(chain33Msg *events.Chain33M
 		tokenAddr, exist = ethRelayer.symbol2Addr[prophecyClaim.Symbol]
 		if !exist {
 			relayerLog.Info("handleChain33Msg", "Query address from ethereum for symbol", prophecyClaim.Symbol)
-			//因为是lock操作，则需要从创建的bridgeToken中进行查询
+
 			addr, err := ethRelayer.ShowTokenAddrBySymbol(prophecyClaim.Symbol)
 			if err != nil {
 				panic(fmt.Sprintf("Pls create bridge token in advance for token:%s", prophecyClaim.Symbol))
@@ -482,7 +477,6 @@ func (ethRelayer *Relayer4Ethereum) handleChain33Msg(chain33Msg *events.Chain33M
 			}
 			err = ethRelayer.SetTokenAddress(token2set)
 			if nil != err {
-				// 尽管设置数据失败，但是不影响运行，只是relayer启动时，每次从节点远程获取bridge token地址而已
 				relayerLog.Error("handleChain33Msg", "Failed to SetTokenAddress due to", err.Error())
 			}
 			tokenAddr = common.HexToAddress(addr)
@@ -490,7 +484,6 @@ func (ethRelayer *Relayer4Ethereum) handleChain33Msg(chain33Msg *events.Chain33M
 	} else {
 		tokenAddr, exist = ethRelayer.symbol2LockAddr[prophecyClaim.Symbol]
 		if !exist {
-			//因为是burn操作，必须从允许lock的token地址中进行查询
 			addr, err := ethRelayer.ShowLockedTokenAddress(prophecyClaim.Symbol)
 			if err != nil {
 				panic(fmt.Sprintf("Pls create lock token in advance for token:%s", prophecyClaim.Symbol))
@@ -515,7 +508,6 @@ func (ethRelayer *Relayer4Ethereum) handleChain33Msg(chain33Msg *events.Chain33M
 	}
 	relayerLog.Info("handleChain33Msg", "RelayOracleClaimToEthereum with tx hash", txhash)
 
-	//保存交易hash，方便查询
 	atomic.AddInt64(&ethRelayer.totalTx4Eth2Chain33, 1)
 	txIndex := atomic.LoadInt64(&ethRelayer.totalTx4Eth2Chain33)
 	if err = ethRelayer.updateTotalTxAmount2chain33(txIndex); nil != err {
@@ -557,7 +549,6 @@ func (ethRelayer *Relayer4Ethereum) procNewHeight(ctx context.Context, continueF
 	currentHeight := head.Number.Uint64()
 	relayerLog.Info("procNewHeight", "currentHeight", currentHeight, "ethRelayer.eventLogIndex.Height", ethRelayer.eventLogIndex.Height, "uint64(ethRelayer.maturityDegree)", uint64(ethRelayer.maturityDegree))
 
-	//一次最大只获取10个logEvent进行处理
 	fetchCnt := int32(10)
 	for ethRelayer.eventLogIndex.Height+uint64(ethRelayer.maturityDegree)+1 <= currentHeight {
 		logs, err := ethRelayer.getNextValidEthTxEventLogs(ethRelayer.eventLogIndex.Height, ethRelayer.eventLogIndex.Index, fetchCnt)
@@ -579,13 +570,11 @@ func (ethRelayer *Relayer4Ethereum) procNewHeight(ctx context.Context, continueF
 			//firstHeight := logs[0].BlockNumber
 			lastHeight := logs[cnt-1].BlockNumber
 			index := logs[cnt-1].TxIndex
-			//获取的数量小于批量获取数量，则认为直接
 			ethRelayer.setBridgeBankProcessedHeight(lastHeight, uint32(index))
 			ethRelayer.eventLogIndex.Height = lastHeight
 			ethRelayer.eventLogIndex.Index = uint32(index)
 		}
 
-		//当前需要处理的event数量已经少于10个，直接返回
 		if cnt < fetchCnt {
 			return
 		}
@@ -593,10 +582,7 @@ func (ethRelayer *Relayer4Ethereum) procNewHeight(ctx context.Context, continueF
 }
 
 func (ethRelayer *Relayer4Ethereum) storeBridgeBankLogs(vLog types.Log, setBlockNumber bool) {
-	//lock,用于捕捉 (ETH/ERC20----->chain33) 跨链转移
-	//burn,用于捕捉 (chain33 token----->chain33) 实现chain33资产withdraw操作，之后在chain33上实现unlock操作
 	if vLog.Topics[0].Hex() == ethRelayer.bridgeBankEventLockSig {
-		//先进行数据的持久化，等到一定的高度成熟度之后再进行处理
 		relayerLog.Info("Relayer4Ethereum storeBridgeBankLogs", "^_^ ^_^ Received bridgeBankLog for event", "lock",
 			"Block number:", vLog.BlockNumber, "tx Index", vLog.TxIndex, "log Index", vLog.Index, "Tx hash:", vLog.TxHash.Hex())
 		if err := ethRelayer.setEthTxEvent(vLog); nil != err {
@@ -610,7 +596,6 @@ func (ethRelayer *Relayer4Ethereum) storeBridgeBankLogs(vLog types.Log, setBlock
 		}
 	}
 
-	//确定是否需要更新保存同步日志高度
 	if setBlockNumber {
 		if err := ethRelayer.setHeight4BridgeBankLogAt(vLog.BlockNumber); nil != err {
 			panic(err.Error())
@@ -631,20 +616,17 @@ func (ethRelayer *Relayer4Ethereum) procBridgeBankLogs(vLog types.Log) {
 		}
 	}()
 
-	//检查当前交易是否因为区块回退而导致交易丢失
 	receipt, err := ethRelayer.clientSpec.TransactionReceipt(context.Background(), vLog.TxHash)
 	if nil != err {
 		relayerLog.Error("procBridgeBankLogs", "Failed to get tx receipt with hash", vLog.TxHash.String())
 		return
 	}
 
-	//检查当前的交易是否成功执行
 	if receipt.Status != types.ReceiptStatusSuccessful {
 		relayerLog.Error("procBridgeBankLogs", "tx not successful with status", receipt.Status)
 		return
 	}
 
-	//lock,用于捕捉 (ETH/ERC20----->chain33) 跨链转移
 	if vLog.Topics[0].Hex() == ethRelayer.bridgeBankEventLockSig {
 		eventName := events.LogLock.String()
 		relayerLog.Info("Relayer4Ethereum proc", "Going to process", eventName,
@@ -656,7 +638,6 @@ func (ethRelayer *Relayer4Ethereum) procBridgeBankLogs(vLog types.Log) {
 			panic(errinfo)
 		}
 	} else if vLog.Topics[0].Hex() == ethRelayer.bridgeBankEventBurnSig {
-		//burn,用于捕捉 (chain33 token----->chain33) 实现chain33资产withdraw操作，之后在chain33上实现unlock操作
 		eventName := events.LogChain33TokenBurn.String()
 		relayerLog.Info("Relayer4Ethereum proc", "Going to process", eventName,
 			"Block number:", vLog.BlockNumber, "Tx hash:", vLog.TxHash.Hex())
@@ -698,7 +679,6 @@ func (ethRelayer *Relayer4Ethereum) filterLogEvents() {
 		case vLog := <-bridgeBankLog:
 			ethRelayer.storeBridgeBankLogs(vLog, true)
 		case vLog := <-ethRelayer.bridgeBankLog:
-			//因为此处是同步保存信息，防止未同步完成出现panic时，直接将其设置为最新高度，中间出现部分信息不同步的情况
 			ethRelayer.storeBridgeBankLogs(vLog, false)
 		case <-done:
 			relayerLog.Info("Finshed offline logs processed")
@@ -744,7 +724,6 @@ func (ethRelayer *Relayer4Ethereum) filterLogEventsProc(logchan chan<- types.Log
 			relayerLog.Info(title, "get unprocessed log with topic:", logv.Topics[0].String(),
 				"BlockNumber", logv.BlockNumber)
 		}
-		//更新
 		if err := ethRelayer.setHeight4BridgeBankLogAt(query.ToBlock.Uint64()); nil != err {
 			panic(err.Error())
 		}
@@ -760,7 +739,6 @@ func (ethRelayer *Relayer4Ethereum) filterLogEventsProc(logchan chan<- types.Log
 
 func (ethRelayer *Relayer4Ethereum) prePareSubscribeEvent() {
 	var eventName string
-	//bridgeBank处理
 	contactAbi := ethtxs.LoadABI(ethtxs.BridgeBankABI)
 	ethRelayer.bridgeBankAbi = contactAbi
 	eventName = events.LogLock.String()
@@ -928,7 +906,7 @@ func (ethRelayer *Relayer4Ethereum) updateSingleTxStatus(claimType events.ClaimT
 		var statics ebTypes.Chain33ToEthereumStatics
 		_ = chain33Types.Decode(data, &statics)
 		receipt, _ := ethRelayer.clientSpec.TransactionReceipt(context.Background(), common.HexToHash(statics.EthereumTxhash))
-		//当前处理机制比较简单，如果发现该笔交易未执行，就不再产寻后续交易的回执
+
 		if nil == receipt {
 			break
 		}

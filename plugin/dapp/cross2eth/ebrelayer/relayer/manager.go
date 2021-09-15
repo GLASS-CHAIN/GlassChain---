@@ -41,9 +41,7 @@ type Manager struct {
 	decimalLru     *lru.Cache
 }
 
-//NewRelayerManager ...
-//1.验证人的私钥需要通过cli命令行进行导入，且chain33和ethereum两种不同的验证人需要分别导入
-//2.显示或者重新替换原有的私钥首先需要通过passpin进行unlock的操作
+
 func NewRelayerManager(chain33Relayer *chain33.Relayer4Chain33, ethRelayer *ethereum.Relayer4Ethereum, db dbm.DB) *Manager {
 	l, _ := lru.New(4096)
 	manager := &Manager{
@@ -65,24 +63,20 @@ func (manager *Manager) SetPassphase(setPasswdReq relayerTypes.ReqSetPasswd, res
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
 
-	// 第一次设置密码的时候才使用 后面用 ChangePasswd
 	if EncryptEnable == manager.encryptFlag {
 		return errors.New("passphase alreade exists")
 	}
 
-	// 密码合法性校验
 	if !utils.IsValidPassWord(setPasswdReq.Passphase) {
 		return chain33Types.ErrInvalidPassWord
 	}
 
-	//使用密码生成passwdhash用于下次密码的验证
 	newBatch := manager.store.NewBatch(true)
 	err := manager.store.SetPasswordHash(setPasswdReq.Passphase, newBatch)
 	if err != nil {
 		mlog.Error("SetPassphase", "SetPasswordHash err", err)
 		return err
 	}
-	//设置钱包加密标志位
 	err = manager.store.SetEncryptionFlag(newBatch)
 	if err != nil {
 		mlog.Error("SetPassphase", "SetEncryptionFlag err", err)
@@ -111,11 +105,9 @@ func (manager *Manager) ChangePassphase(setPasswdReq relayerTypes.ReqChangePassw
 	if setPasswdReq.OldPassphase == setPasswdReq.NewPassphase {
 		return errors.New("the old password is the same as the new one")
 	}
-	// 新密码合法性校验
 	if !utils.IsValidPassWord(setPasswdReq.NewPassphase) {
 		return chain33Types.ErrInvalidPassWord
 	}
-	//保存钱包的锁状态，需要暂时的解锁，函数退出时再恢复回去
 	tempislock := atomic.LoadInt32(&manager.isLocked)
 	atomic.CompareAndSwapInt32(&manager.isLocked, Locked, Unlocked)
 
@@ -124,7 +116,6 @@ func (manager *Manager) ChangePassphase(setPasswdReq relayerTypes.ReqChangePassw
 		atomic.CompareAndSwapInt32(&manager.isLocked, Unlocked, tempislock)
 	}()
 
-	// 钱包已经加密需要验证oldpass的正确性
 	if len(manager.passphase) == 0 && manager.encryptFlag == EncryptEnable {
 		isok := manager.store.VerifyPasswordHash(setPasswdReq.OldPassphase)
 		if !isok {
@@ -138,14 +129,12 @@ func (manager *Manager) ChangePassphase(setPasswdReq relayerTypes.ReqChangePassw
 		return chain33Types.ErrVerifyOldpasswdFail
 	}
 
-	//使用新的密码生成passwdhash用于下次密码的验证
 	newBatch := manager.store.NewBatch(true)
 	err := manager.store.SetPasswordHash(setPasswdReq.NewPassphase, newBatch)
 	if err != nil {
 		mlog.Error("ChangePassphase", "SetPasswordHash err", err)
 		return err
 	}
-	//设置钱包加密标志位
 	err = manager.store.SetEncryptionFlag(newBatch)
 	if err != nil {
 		mlog.Error("ChangePassphase", "SetEncryptionFlag err", err)
@@ -179,7 +168,6 @@ func (manager *Manager) ChangePassphase(setPasswdReq relayerTypes.ReqChangePassw
 	return nil
 }
 
-//Unlock 进行unlok操作
 func (manager *Manager) Unlock(passphase string, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -214,7 +202,6 @@ func (manager *Manager) Unlock(passphase string, result *interface{}) error {
 	return nil
 }
 
-//Lock 锁定操作，该操作一旦执行，就不能替换验证人的私钥，需要重新unlock之后才能修改
 func (manager *Manager) Lock(param interface{}, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -229,7 +216,6 @@ func (manager *Manager) Lock(param interface{}, result *interface{}) error {
 	return nil
 }
 
-//ImportChain33RelayerPrivateKey 导入chain33relayer验证人的私钥,该私钥实际用于向ethereum提交验证交易时签名使用
 func (manager *Manager) ImportChain33RelayerPrivateKey(importKeyReq relayerTypes.ImportKeyReq, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -250,7 +236,6 @@ func (manager *Manager) ImportChain33RelayerPrivateKey(importKeyReq relayerTypes
 	return nil
 }
 
-//GenerateEthereumPrivateKey 生成以太坊私钥
 func (manager *Manager) GenerateEthereumPrivateKey(param interface{}, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -267,7 +252,6 @@ func (manager *Manager) GenerateEthereumPrivateKey(param interface{}, result *in
 	return nil
 }
 
-//ImportEthereumPrivateKey4EthRelayer 为ethrelayer导入chain33私钥，为向chain33发送交易时进行签名使用
 func (manager *Manager) ImportEthereumPrivateKey4EthRelayer(privateKey string, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -287,7 +271,6 @@ func (manager *Manager) ImportEthereumPrivateKey4EthRelayer(privateKey string, r
 	return nil
 }
 
-//ShowChain33RelayerValidator 显示在chain33中以验证人validator身份进行登录的地址
 func (manager *Manager) ShowChain33RelayerValidator(param interface{}, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -300,7 +283,6 @@ func (manager *Manager) ShowChain33RelayerValidator(param interface{}, result *i
 	return nil
 }
 
-//ShowEthRelayerValidator 显示在Ethereum中以验证人validator身份进行登录的地址
 func (manager *Manager) ShowEthRelayerValidator(param interface{}, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -550,7 +532,6 @@ func (manager *Manager) BurnAsync(burn relayerTypes.Burn, result *interface{}) e
 	return nil
 }
 
-// SimBurnFromEth : 模拟从eth销毁资产，提币回到chain33,使用LockBTY仅为测试使用
 func (manager *Manager) SimBurnFromEth(burn relayerTypes.Burn, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()
@@ -567,7 +548,6 @@ func (manager *Manager) SimBurnFromEth(burn relayerTypes.Burn, result *interface
 	return nil
 }
 
-// SimLockFromEth : 模拟从eth锁住eth/erc20，转移到chain33
 func (manager *Manager) SimLockFromEth(lock relayerTypes.LockEthErc20, result *interface{}) error {
 	manager.mtx.Lock()
 	defer manager.mtx.Unlock()

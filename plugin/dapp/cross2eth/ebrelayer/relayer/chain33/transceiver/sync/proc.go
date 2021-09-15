@@ -46,8 +46,8 @@ func pushTxReceipts(evmTxLogsInBlks *types.EVMTxLogsInBlks) error {
 //EVMTxLogs ...
 type EVMTxLogs struct {
 	db     dbm.DB
-	seqNum int64 //当前同步的序列号
-	height int64 //当前区块高度
+	seqNum int64 
+	height int64 
 	quit   chan struct{}
 }
 
@@ -64,7 +64,6 @@ func NewSyncTxReceipts(db dbm.DB) *EVMTxLogs {
 	return sync
 }
 
-//此处添加一个高度为0的空块，只是为了查找下一个比较方便，并不需要使用其信息
 func (syncTx *EVMTxLogs) initSyncReceiptDataBase() {
 	txLogs0, _ := syncTx.GetTxLogs(0)
 	if nil != txLogs0 {
@@ -94,24 +93,12 @@ func (syncTx *EVMTxLogs) SaveAndSyncTxs2Relayer() {
 	}
 }
 
-// 保存区块步骤
-// 1. 记录 seqNumber ->  seq
-// 2. 记录 lastseq
-// 3. 更新高度
-//
-// 重启恢复
-// 1. 看高度， 对应高度是已经完成的
-// 2. 继续重新下一个高度即可。 重复写， 幂等
-// 所以不需要恢复过程， 读出高度即可
-
-// 处理输入流程
 func (syncTx *EVMTxLogs) dealEVMTxLogs(evmTxLogsInBlks *types.EVMTxLogsInBlks) {
 	count, start, evmTxLogsParsed, err := parseEvmTxLogsInBlks(evmTxLogsInBlks)
 	if err != nil {
 		resultCh <- err
 	}
 
-	//正常情况下，本次开始的的seq不能小于上次结束的seq
 	if start < syncTx.seqNum {
 		log.Error("dealEVMTxLogs err: the tx and receipt pushed is old", "start", start, "current_seq", syncTx.seqNum)
 		resultCh <- errors.New("The tx and receipt pushed is old")
@@ -126,16 +113,13 @@ func (syncTx *EVMTxLogs) dealEVMTxLogs(evmTxLogsInBlks *types.EVMTxLogsInBlks) {
 			syncTx.setBlockHeight(txsPerBlock.Height)
 			height = txsPerBlock.Height
 		} else {
-			//删除分叉区块处理
 			syncTx.delTxReceipts(txsPerBlock.Height)
 			syncTx.setBlockLastSequence(txsPerBlock.SeqNum)
 			height = txsPerBlock.Height - 1
-			//删除区块不需要通知新的高度，因为这只会降低未处理区块的成熟度
 			syncTx.setBlockHeight(height)
 		}
 	}
-	//syncTx.syncReceiptChan <- height
-	//发送回复，确认接收成功
+
 	resultCh <- nil
 	log.Debug("dealEVMTxLogs", "seqStart", start, "count", count, "maxBlockHeight", height)
 }
@@ -154,7 +138,6 @@ func (syncTx *EVMTxLogs) setBlockLastSequence(newSequence int64) {
 	if err := syncTx.db.Set(lastSequences, Sequencebytes); nil != err {
 		panic("setBlockLastSequence failed due to cause:" + err.Error())
 	}
-	//同时更新内存中的seq
 	syncTx.updateSequence(newSequence)
 }
 
@@ -212,7 +195,6 @@ func (syncTx *EVMTxLogs) delTxReceipts(height int64) {
 	_ = syncTx.db.Set(key, nil)
 }
 
-// 检查输入是否有问题, 并解析输入
 func parseEvmTxLogsInBlks(evmTxLogs *types.EVMTxLogsInBlks) (count int, start int64, txsWithReceipt []*types.EVMTxLogPerBlk, err error) {
 	count = len(evmTxLogs.Logs4EVMPerBlk)
 	txsWithReceipt = make([]*types.EVMTxLogPerBlk, 0)

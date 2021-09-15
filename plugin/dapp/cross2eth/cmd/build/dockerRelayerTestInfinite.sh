@@ -544,13 +544,13 @@ function StartDockerRelayerDeploy() {
     # para
     # shellcheck disable=SC2155
     local line=$(delete_line_show "./relayer.toml" "chain33Host")
-    # 在第 line 行后面 新增合约地址
+
     docker_chain33_ip=$(get_docker_addr "${dockerNamePrefix}_chain33_1")
     sed -i ''"${line}"' a chain33Host="http://'"${docker_chain33_ip}"':8901"' "./relayer.toml"
 
     # shellcheck disable=SC2155
     local line=$(delete_line_show "./relayer.toml" "ChainName")
-    # 在第 line 行后面 新增合约地址
+
     sed -i ''"${line}"' a ChainName="user.p.para."' "./relayer.toml"
 
     # shellcheck disable=SC2155
@@ -561,13 +561,10 @@ function StartDockerRelayerDeploy() {
     local line=$(delete_line_show "./relayer.toml" "EthMaturityDegree=10")
     sed -i ''"${line}"' a EthMaturityDegree=1' "./relayer.toml"
 
-    # 启动 ebrelayer
     start_docker_ebrelayerA
 
-    # 部署合约 设置 bridgeRegistry 地址
     InitAndOfflineDeploy
 
-    # 设置离线多签数据
     #    Chain33Cli=${MainCli}
     #    initMultisignChain33Addr
     #    Chain33Cli=${Para8901Cli}
@@ -582,13 +579,11 @@ function StartDockerRelayerDeploy() {
     #    docker cp "${BridgeRegistryOnEth}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${BridgeRegistryOnEth}.abi
     #    docker cp "${ethBridgeBank}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${ethBridgeBank}.abi
 
-    # 重启
     restart_ebrelayerA
 
     # start ebrelayer B C D
     updata_toml_start_bcd
 
-    # 设置 token 地址
     #    InitTokenAddr
     offline_create_bridge_token_eth_BTY
     #    offline_create_bridge_token_chain33_ETH
@@ -604,7 +599,6 @@ function StartDockerRelayerDeploy() {
     #    docker cp "${chain33YccErc20Addr}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${chain33YccErc20Addr}.abi
     #    docker cp "${ethBridgeToeknYccAddr}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${ethBridgeToeknYccAddr}.abi
 
-    # 重启
     restart_ebrelayerA
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"

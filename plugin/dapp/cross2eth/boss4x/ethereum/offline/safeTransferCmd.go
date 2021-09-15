@@ -42,7 +42,7 @@ type safeTxData struct {
 ./boss4x ethereum offline send -f deploysigntxs.txt
 */
 
-// PrepareCreateMultisignTransferTxCmd 预备创建一个多签转帐交易 在线
+// PrepareCreateMultisignTransferTxCmd 
 func PrepareCreateMultisignTransferTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "multisign_transfer_prepare", //first step
@@ -143,7 +143,6 @@ func prepareCreateMultisignTransferTx(cmd *cobra.Command, _ []string) {
 			fmt.Println("Pack Err:", err)
 			return
 		}
-		//对于erc20这种方式 最后需要将其设置为0
 		value = big.NewInt(0)
 	}
 
@@ -153,7 +152,7 @@ func prepareCreateMultisignTransferTx(cmd *cobra.Command, _ []string) {
 	msg.From = common.HexToAddress(sendAddr)
 	msg.To = &contracAddr
 	msg.Value = big.NewInt(0)
-	//估算gas
+
 	gasLimit, err := client.EstimateGas(context.Background(), msg)
 	if err != nil {
 		fmt.Println("EstimateGas Err:", err)
@@ -190,7 +189,7 @@ func prepareCreateMultisignTransferTx(cmd *cobra.Command, _ []string) {
 	writeToFile(txdata.name+".txt", txdata)
 }
 
-// PreliminarySignMultisignTransferTxCmd 多签转帐交易 多签多个地址签名 离线
+
 func PreliminarySignMultisignTransferTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "sign_multisign_tx", //first step
@@ -207,7 +206,7 @@ func addPreliminarySignMultisignTransferTxFlag(cmd *cobra.Command) {
 	_ = cmd.MarkFlagRequired("keys")
 }
 
-//签名交易
+
 func preliminarySignMultisignTransferTx(cmd *cobra.Command, _ []string) {
 	txFilePath, _ := cmd.Flags().GetString("file")
 	keys, _ := cmd.Flags().GetString("keys")
@@ -229,7 +228,7 @@ func preliminarySignMultisignTransferTx(cmd *cobra.Command, _ []string) {
 	writeToFile("sign_multisign_tx.txt", txinfo)
 }
 
-// CreateMultisignTransferTxCmd 创建多签转帐交易
+// CreateMultisignTransferTxCmd 
 func CreateMultisignTransferTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create_multisign_tx",

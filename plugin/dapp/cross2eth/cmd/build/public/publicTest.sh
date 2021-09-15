@@ -530,7 +530,6 @@ function updata_relayer() {
     sed -i ''"${line}"' a '"${keyName}"'="'"${newData}"'"' "${file}"
 }
 
-# 判断结果 $1 和 $2 是否相等
 function is_equal() {
     set +x
     if [[ $# -lt 2 ]]; then

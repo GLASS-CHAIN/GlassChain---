@@ -4,7 +4,6 @@
 
 package core
 
-// Validator 证书校验器
 type Validator interface {
 	Setup(config *AuthConfig) error
 
@@ -15,7 +14,6 @@ type Validator interface {
 	GetCertSnFromSignature(signature []byte) ([]byte, error)
 }
 
-// AuthConfig 校验器配置
 type AuthConfig struct {
 	RootCerts         [][]byte
 	IntermediateCerts [][]byte

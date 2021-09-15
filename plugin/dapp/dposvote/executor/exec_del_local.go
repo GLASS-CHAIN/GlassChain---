@@ -17,13 +17,11 @@ func (d *DPos) rollbackCand(cand *dty.CandidatorInfo, log *dty.ReceiptCandicator
 		return
 	}
 
-	//如果状态发生了变化，则需要将状态恢复到前一状态
 	if log.StatusChange {
 		cand.Status = log.PreStatus
 		cand.Index = cand.PreIndex
 	}
 
-	//如果投票了，则需要把投票回滚
 	if log.VoteType == dty.VoteTypeVote {
 		for i := 0; i < len(cand.Voters); i++ {
 			if cand.Voters[i].Index == log.Vote.Index && cand.Voters[i].FromAddr == log.Vote.FromAddr && bytes.Equal(cand.Voters[i].Pubkey, log.Vote.Pubkey) {
@@ -44,7 +42,7 @@ func (d *DPos) rollbackCandVote(log *dty.ReceiptCandicator) (kvs []*types.KeyVal
 	}
 
 	if log.Status == dty.CandidatorStatusRegist {
-		//注册回滚,cand表删除记录
+
 		err = candTable.Del(log.Pubkey)
 		if err != nil {
 			return nil, err
@@ -52,11 +50,10 @@ func (d *DPos) rollbackCandVote(log *dty.ReceiptCandicator) (kvs []*types.KeyVal
 		kvs, err = candTable.Save()
 		return kvs, err
 	} else if log.Status == dty.CandidatorStatusVoted {
-		//投票阶段回滚，回滚状态，回滚投票
+
 		candInfo := log.CandInfo
 		log.CandInfo = nil
 
-		//先回滚候选节点信息
 		d.rollbackCand(candInfo, log)
 
 		err = candTable.Replace(candInfo)
@@ -87,11 +84,11 @@ func (d *DPos) rollbackCandVote(log *dty.ReceiptCandicator) (kvs []*types.KeyVal
 
 		kvs = append(kvs1, kvs2...)
 	} else if log.Status == dty.CandidatorStatusCancelRegist {
-		//撤销投票回滚，需要将撤销的投票还回来
+
 		candInfo := log.CandInfo
 		log.CandInfo = nil
 
-		//先回滚候选节点信息
+
 		d.rollbackCand(candInfo, log)
 
 		err = candTable.Replace(candInfo)
@@ -119,7 +116,7 @@ func (d *DPos) rollbackCandVote(log *dty.ReceiptCandicator) (kvs []*types.KeyVal
 
 		kvs = append(kvs1, kvs2...)
 	} else if log.Status == dty.CandidatorStatusReRegist {
-		//注册回滚,cand表删除记录
+
 		err = candTable.Del(log.Pubkey)
 		if err != nil {
 			return nil, err
@@ -135,7 +132,6 @@ func (d *DPos) rollbackVrf(log *dty.ReceiptVrf) (kvs []*types.KeyValue, err erro
 	if log.Status == dty.VrfStatusMRegist {
 		vrfMTable := dty.NewDposVrfMTable(d.GetLocalDB())
 
-		//注册回滚,cand表删除记录
 		err = vrfMTable.Del([]byte(fmt.Sprintf("%018d", log.Index)))
 		if err != nil {
 			return nil, err
@@ -160,7 +156,7 @@ func (d *DPos) rollbackCBInfo(log *dty.ReceiptCB) (kvs []*types.KeyValue, err er
 	if log.Status == dty.CBStatusRecord {
 		cbTable := dty.NewDposCBTable(d.GetLocalDB())
 
-		//注册回滚,cand表删除记录
+
 		err = cbTable.Del([]byte(fmt.Sprintf("%018d", log.Cycle)))
 		if err != nil {
 			return nil, err

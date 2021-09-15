@@ -22,7 +22,6 @@ var optDposVoter = &table.Option{
 	Index:   []string{"addr", "pubkey"},
 }
 
-//NewDposVoteTable 新建表
 func NewDposVoteTable(kvdb db.KV) *table.Table {
 	rowmeta := NewDposVoterRow()
 	table, err := table.NewTable(rowmeta, kvdb, optDposVoter)
@@ -32,22 +31,18 @@ func NewDposVoteTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//DposVoterRow table meta 结构
 type DposVoterRow struct {
 	*DposVoter
 }
 
-//NewDposVoterRow 新建一个meta 结构
 func NewDposVoterRow() *DposVoterRow {
 	return &DposVoterRow{DposVoter: &DposVoter{}}
 }
 
-//CreateRow 新建数据行
 func (tx *DposVoterRow) CreateRow() *table.Row {
 	return &table.Row{Data: &DposVoter{}}
 }
 
-//SetPayload 设置数据
 func (tx *DposVoterRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*DposVoter); ok {
 		tx.DposVoter = txdata
@@ -56,7 +51,6 @@ func (tx *DposVoterRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *DposVoterRow) Get(key string) ([]byte, error) {
 	if key == "index" {
 		return []byte(fmt.Sprintf("%018d", tx.Index)), nil
@@ -76,7 +70,6 @@ var optDposCandidator = &table.Option{
 	Index:   []string{"status"},
 }
 
-//NewDposCandidatorTable 新建表
 func NewDposCandidatorTable(kvdb db.KV) *table.Table {
 	rowmeta := NewDposCandidatorRow()
 	table, err := table.NewTable(rowmeta, kvdb, optDposCandidator)
@@ -86,22 +79,18 @@ func NewDposCandidatorTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//DposCandidatorRow table meta 结构
 type DposCandidatorRow struct {
 	*CandidatorInfo
 }
 
-//NewDposCandidatorRow 新建一个meta 结构
 func NewDposCandidatorRow() *DposCandidatorRow {
 	return &DposCandidatorRow{CandidatorInfo: &CandidatorInfo{}}
 }
 
-//CreateRow 新建数据行
 func (tx *DposCandidatorRow) CreateRow() *table.Row {
 	return &table.Row{Data: &CandidatorInfo{}}
 }
 
-//SetPayload 设置数据
 func (tx *DposCandidatorRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*CandidatorInfo); ok {
 		tx.CandidatorInfo = txdata
@@ -110,7 +99,6 @@ func (tx *DposCandidatorRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *DposCandidatorRow) Get(key string) ([]byte, error) {
 	if key == "pubkey" {
 		return tx.Pubkey, nil
@@ -128,7 +116,6 @@ var optDposVrfm = &table.Option{
 	Index:   []string{"pubkey_cycle", "cycle"},
 }
 
-//NewDposVrfMTable 新建表
 func NewDposVrfMTable(kvdb db.KV) *table.Table {
 	rowmeta := NewDposVrfMRow()
 	table, err := table.NewTable(rowmeta, kvdb, optDposVrfm)
@@ -138,22 +125,18 @@ func NewDposVrfMTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//DposVrfMRow table meta 结构
 type DposVrfMRow struct {
 	*DposVrfM
 }
 
-//NewDposVrfMRow 新建一个meta 结构
 func NewDposVrfMRow() *DposVrfMRow {
 	return &DposVrfMRow{DposVrfM: &DposVrfM{}}
 }
 
-//CreateRow 新建数据行
 func (tx *DposVrfMRow) CreateRow() *table.Row {
 	return &table.Row{Data: &DposVrfM{}}
 }
 
-//SetPayload 设置数据
 func (tx *DposVrfMRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*DposVrfM); ok {
 		tx.DposVrfM = txdata
@@ -162,7 +145,6 @@ func (tx *DposVrfMRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *DposVrfMRow) Get(key string) ([]byte, error) {
 	if key == "index" {
 		return []byte(fmt.Sprintf("%018d", tx.Index)), nil
@@ -182,7 +164,6 @@ var optDposVrfrp = &table.Option{
 	Index:   []string{"pubkey_cycle", "cycle"},
 }
 
-//NewDposVrfRPTable 新建表
 func NewDposVrfRPTable(kvdb db.KV) *table.Table {
 	rowmeta := NewDposVrfRPRow()
 	table, err := table.NewTable(rowmeta, kvdb, optDposVrfrp)
@@ -192,22 +173,18 @@ func NewDposVrfRPTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//DposVrfRPRow table meta 结构
 type DposVrfRPRow struct {
 	*DposVrfRP
 }
 
-//NewDposVrfRPRow 新建一个meta 结构
 func NewDposVrfRPRow() *DposVrfRPRow {
 	return &DposVrfRPRow{DposVrfRP: &DposVrfRP{}}
 }
 
-//CreateRow 新建数据行
 func (tx *DposVrfRPRow) CreateRow() *table.Row {
 	return &table.Row{Data: &DposVrfRP{}}
 }
 
-//SetPayload 设置数据
 func (tx *DposVrfRPRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*DposVrfRP); ok {
 		tx.DposVrfRP = txdata
@@ -216,7 +193,6 @@ func (tx *DposVrfRPRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *DposVrfRPRow) Get(key string) ([]byte, error) {
 	if key == "index" {
 		return []byte(fmt.Sprintf("%018d", tx.Index)), nil
@@ -236,7 +212,6 @@ var optDposCb = &table.Option{
 	Index:   []string{"height", "hash"},
 }
 
-//NewDposCBTable 新建表
 func NewDposCBTable(kvdb db.KV) *table.Table {
 	rowmeta := NewDposCBRow()
 	table, err := table.NewTable(rowmeta, kvdb, optDposCb)
@@ -246,22 +221,18 @@ func NewDposCBTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//DposCBRow table meta 结构
 type DposCBRow struct {
 	*DposCycleBoundaryInfo
 }
 
-//NewDposCBRow 新建一个meta 结构
 func NewDposCBRow() *DposCBRow {
 	return &DposCBRow{DposCycleBoundaryInfo: &DposCycleBoundaryInfo{}}
 }
 
-//CreateRow 新建数据行
 func (tx *DposCBRow) CreateRow() *table.Row {
 	return &table.Row{Data: &DposCycleBoundaryInfo{}}
 }
 
-//SetPayload 设置数据
 func (tx *DposCBRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*DposCycleBoundaryInfo); ok {
 		tx.DposCycleBoundaryInfo = txdata
@@ -270,7 +241,6 @@ func (tx *DposCBRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *DposCBRow) Get(key string) ([]byte, error) {
 	if key == "cycle" {
 		return []byte(fmt.Sprintf("%018d", tx.Cycle)), nil

@@ -16,7 +16,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//SignFactoryCmd 构造部署factory 合约的交易，并对其签名输出到文件中
 type SignCmd struct {
 	From        string
 	Nonce       uint64
@@ -34,7 +33,7 @@ func (s *SignCmd) signCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "sign contract", //first step
 		Short: "sign pancake and farm contract to ethereum ",
-		Run:   s.signContract, //对要部署的factory合约进行签名
+		Run:   s.signContract, 
 	}
 	s.addFlags(cmd)
 	return cmd
@@ -218,7 +217,6 @@ func (s *SignCmd) signContractTx(fee2setter string, key *ecdsa.PrivateKey, gasPr
 	return nil
 }
 
-//构造交易，签名交易 factory
 func (s *SignCmd) reWriteDeplopyPancakeFactory(nonce uint64, gasPrice *big.Int, key *ecdsa.PrivateKey, fee2addr common.Address, param ...interface{}) (signedTx, hash string, err error) {
 	parsed, err := abi.JSON(strings.NewReader(pancakeFactory.PancakeFactoryABI))
 	if err != nil {

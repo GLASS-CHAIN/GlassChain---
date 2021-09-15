@@ -642,7 +642,7 @@ type CollateralizeAddr struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	SuperAddrs []string `protobuf:"bytes,1,rep,name=superAddrs,proto3" json:"superAddrs,omitempty"` //大户地址
+	SuperAddrs []string `protobuf:"bytes,1,rep,name=superAddrs,proto3" json:"superAddrs,omitempty"` 
 }
 
 func (x *CollateralizeAddr) Reset() {
@@ -684,13 +684,12 @@ func (x *CollateralizeAddr) GetSuperAddrs() []string {
 	return nil
 }
 
-// 创建放贷
 type CollateralizeCreate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TotalBalance int64 `protobuf:"varint,1,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"` //可借贷总金额
+	TotalBalance int64 `protobuf:"varint,1,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"` 
 }
 
 func (x *CollateralizeCreate) Reset() {
@@ -732,14 +731,13 @@ func (x *CollateralizeCreate) GetTotalBalance() int64 {
 	return 0
 }
 
-// 质押借出
 type CollateralizeBorrow struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"` //借贷期数ID
-	Value           int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`                    //借贷价值(ccny)
+	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"` 
+	Value           int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`                    
 }
 
 func (x *CollateralizeBorrow) Reset() {
@@ -788,14 +786,13 @@ func (x *CollateralizeBorrow) GetValue() int64 {
 	return 0
 }
 
-// 质押清算
 type CollateralizeRepay struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"` //借贷期数ID
-	RecordId        string `protobuf:"bytes,2,opt,name=recordId,proto3" json:"recordId,omitempty"`               //借贷ID
+	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"` 
+	RecordId        string `protobuf:"bytes,2,opt,name=recordId,proto3" json:"recordId,omitempty"`               
 }
 
 func (x *CollateralizeRepay) Reset() {
@@ -844,15 +841,14 @@ func (x *CollateralizeRepay) GetRecordId() string {
 	return ""
 }
 
-// 追加抵押物
 type CollateralizeAppend struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`  //借贷期数ID
-	RecordId        string `protobuf:"bytes,2,opt,name=recordId,proto3" json:"recordId,omitempty"`                //借贷ID
-	CollateralValue int64  `protobuf:"varint,3,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"` //追加价值(bty)
+	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`  
+	RecordId        string `protobuf:"bytes,2,opt,name=recordId,proto3" json:"recordId,omitempty"`                
+	CollateralValue int64  `protobuf:"varint,3,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"` 
 }
 
 func (x *CollateralizeAppend) Reset() {
@@ -908,15 +904,14 @@ func (x *CollateralizeAppend) GetCollateralValue() int64 {
 	return 0
 }
 
-// 喂价
 type CollateralizeFeed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollType int32   `protobuf:"varint,1,opt,name=collType,proto3" json:"collType,omitempty"`    //抵押物价格类型(1，bty，2，btc，3，eth...)
-	Price    []int64 `protobuf:"varint,2,rep,packed,name=price,proto3" json:"price,omitempty"`   //喂价
-	Volume   []int64 `protobuf:"varint,3,rep,packed,name=volume,proto3" json:"volume,omitempty"` //成交量
+	CollType int32   `protobuf:"varint,1,opt,name=collType,proto3" json:"collType,omitempty"`    
+	Price    []int64 `protobuf:"varint,2,rep,packed,name=price,proto3" json:"price,omitempty"`   
+	Volume   []int64 `protobuf:"varint,3,rep,packed,name=volume,proto3" json:"volume,omitempty"` 
 }
 
 func (x *CollateralizeFeed) Reset() {
@@ -972,14 +967,13 @@ func (x *CollateralizeFeed) GetVolume() []int64 {
 	return nil
 }
 
-// 收回
 type CollateralizeRetrieve struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"` //借贷期数ID
-	Balance         int64  `protobuf:"varint,2,opt,name=balance,proto3" json:"balance,omitempty"`                //收回金额
+	CollateralizeId string `protobuf:"bytes,1,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"` 
+	Balance         int64  `protobuf:"varint,2,opt,name=balance,proto3" json:"balance,omitempty"`                
 }
 
 func (x *CollateralizeRetrieve) Reset() {
@@ -1028,7 +1022,7 @@ func (x *CollateralizeRetrieve) GetBalance() int64 {
 	return 0
 }
 
-// exec_local 放贷信息
+
 type ReceiptCollateralize struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1100,7 +1094,7 @@ func (x *ReceiptCollateralize) GetStatus() int32 {
 	return 0
 }
 
-// exec_local 放贷记录信息列表
+
 type CollateralizeRecords struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1148,7 +1142,6 @@ func (x *CollateralizeRecords) GetRecords() []*ReceiptCollateralize {
 	return nil
 }
 
-// 根据ID查询一期放贷信息
 type ReqCollateralizeInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1196,23 +1189,22 @@ func (x *ReqCollateralizeInfo) GetCollateralizeId() string {
 	return ""
 }
 
-// 返回一期放贷信息
 type RepCollateralizeCurrentInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status            int32           `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`                       //当期借贷的状态，是否关闭
-	TotalBalance      int64           `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`           //当期可借贷的总金额(ccny)
-	DebtCeiling       int64           `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`             //单用户可借出的限额(ccny)
-	LiquidationRatio  int64           `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`   //清算比例
-	StabilityFeeRatio int64           `protobuf:"varint,5,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"` //稳定费
-	CreateAddr        string          `protobuf:"bytes,6,opt,name=createAddr,proto3" json:"createAddr,omitempty"`                //创建人地址
-	Balance           int64           `protobuf:"varint,7,opt,name=balance,proto3" json:"balance,omitempty"`                     //剩余可借贷金额(ccny)
-	Period            int64           `protobuf:"varint,8,opt,name=period,proto3" json:"period,omitempty"`                       //合约期限
-	CollateralizeId   string          `protobuf:"bytes,9,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`      //放贷ID
-	CollBalance       int64           `protobuf:"varint,10,opt,name=collBalance,proto3" json:"collBalance,omitempty"`            //抵押bty
-	BorrowRecords     []*BorrowRecord `protobuf:"bytes,11,rep,name=borrowRecords,proto3" json:"borrowRecords,omitempty"`         //借贷记录
+	Status            int32           `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`                       
+	TotalBalance      int64           `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`           
+	DebtCeiling       int64           `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`             
+	LiquidationRatio  int64           `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`  
+	StabilityFeeRatio int64           `protobuf:"varint,5,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"` 
+	CreateAddr        string          `protobuf:"bytes,6,opt,name=createAddr,proto3" json:"createAddr,omitempty"`                
+	Balance           int64           `protobuf:"varint,7,opt,name=balance,proto3" json:"balance,omitempty"`                     
+	Period            int64           `protobuf:"varint,8,opt,name=period,proto3" json:"period,omitempty"`                       
+	CollateralizeId   string          `protobuf:"bytes,9,opt,name=collateralizeId,proto3" json:"collateralizeId,omitempty"`      
+	CollBalance       int64           `protobuf:"varint,10,opt,name=collBalance,proto3" json:"collBalance,omitempty"`            
+	BorrowRecords     []*BorrowRecord `protobuf:"bytes,11,rep,name=borrowRecords,proto3" json:"borrowRecords,omitempty"`         
 }
 
 func (x *RepCollateralizeCurrentInfo) Reset() {
@@ -1324,7 +1316,6 @@ func (x *RepCollateralizeCurrentInfo) GetBorrowRecords() []*BorrowRecord {
 	return nil
 }
 
-// 根据ID列表查询多期放贷信息
 type ReqCollateralizeInfos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1372,7 +1363,6 @@ func (x *ReqCollateralizeInfos) GetCollateralizeIds() []string {
 	return nil
 }
 
-// 返回多期放贷信息
 type RepCollateralizeCurrentInfos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1420,7 +1410,6 @@ func (x *RepCollateralizeCurrentInfos) GetInfos() []*RepCollateralizeCurrentInfo
 	return nil
 }
 
-// 根据放贷状态查询
 type ReqCollateralizeByStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1476,7 +1465,6 @@ func (x *ReqCollateralizeByStatus) GetCollID() string {
 	return ""
 }
 
-// 根据用户地址查询
 type ReqCollateralizeByAddr struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1540,7 +1528,6 @@ func (x *ReqCollateralizeByAddr) GetCollID() string {
 	return ""
 }
 
-// 返回放贷ID列表
 type RepCollateralizeIDs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1588,7 +1575,6 @@ func (x *RepCollateralizeIDs) GetIDs() []string {
 	return nil
 }
 
-// 根据地址和借贷ID混合查询具体借贷记录
 type ReqCollateralizeRecordByAddr struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1660,7 +1646,6 @@ func (x *ReqCollateralizeRecordByAddr) GetRecordId() string {
 	return ""
 }
 
-// 根据状态和借贷ID混合查询具体借贷记录
 type ReqCollateralizeRecordByStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1724,7 +1709,6 @@ func (x *ReqCollateralizeRecordByStatus) GetRecordId() string {
 	return ""
 }
 
-// 返回借贷记录
 type RepCollateralizeRecords struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1772,7 +1756,6 @@ func (x *RepCollateralizeRecords) GetRecords() []*BorrowRecord {
 	return nil
 }
 
-// 精确查找借贷记录
 type ReqCollateralizeRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1828,7 +1811,6 @@ func (x *ReqCollateralizeRecord) GetRecordId() string {
 	return ""
 }
 
-// 返回借贷记录
 type RepCollateralizeRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1876,19 +1858,18 @@ func (x *RepCollateralizeRecord) GetRecord() *BorrowRecord {
 	return nil
 }
 
-// 返回放贷配置
 type RepCollateralizeConfig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DebtCeiling       int64 `protobuf:"varint,1,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`             //单用户可借出的限额(ccny)
-	LiquidationRatio  int64 `protobuf:"varint,2,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`   //清算比例
-	StabilityFeeRatio int64 `protobuf:"varint,3,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"` //稳定费
-	Period            int64 `protobuf:"varint,4,opt,name=period,proto3" json:"period,omitempty"`                       //合约期限
-	TotalBalance      int64 `protobuf:"varint,5,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`           //放贷总量
-	Balance           int64 `protobuf:"varint,6,opt,name=balance,proto3" json:"balance,omitempty"`                     //剩余放贷额度
-	CurrentTime       int64 `protobuf:"varint,7,opt,name=currentTime,proto3" json:"currentTime,omitempty"`             //设置时间
+	DebtCeiling       int64 `protobuf:"varint,1,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`             
+	LiquidationRatio  int64 `protobuf:"varint,2,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`   
+	StabilityFeeRatio int64 `protobuf:"varint,3,opt,name=stabilityFeeRatio,proto3" json:"stabilityFeeRatio,omitempty"` 
+	Period            int64 `protobuf:"varint,4,opt,name=period,proto3" json:"period,omitempty"`                      
+	TotalBalance      int64 `protobuf:"varint,5,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`           
+	Balance           int64 `protobuf:"varint,6,opt,name=balance,proto3" json:"balance,omitempty"`                    
+	CurrentTime       int64 `protobuf:"varint,7,opt,name=currentTime,proto3" json:"currentTime,omitempty"`            
 }
 
 func (x *RepCollateralizeConfig) Reset() {
@@ -1972,13 +1953,12 @@ func (x *RepCollateralizeConfig) GetCurrentTime() int64 {
 	return 0
 }
 
-// 返回最新抵押物价格
 type RepCollateralizePrice struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Price int64 `protobuf:"varint,1,opt,name=price,proto3" json:"price,omitempty"` //当前抵押物最新价格
+	Price int64 `protobuf:"varint,1,opt,name=price,proto3" json:"price,omitempty"` 
 }
 
 func (x *RepCollateralizePrice) Reset() {
@@ -2020,13 +2000,12 @@ func (x *RepCollateralizePrice) GetPrice() int64 {
 	return 0
 }
 
-// 返回用户借贷总额
 type RepCollateralizeUserBalance struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Balance int64 `protobuf:"varint,1,opt,name=balance,proto3" json:"balance,omitempty"` //返回用户借贷总额
+	Balance int64 `protobuf:"varint,1,opt,name=balance,proto3" json:"balance,omitempty"` 
 }
 
 func (x *RepCollateralizeUserBalance) Reset() {

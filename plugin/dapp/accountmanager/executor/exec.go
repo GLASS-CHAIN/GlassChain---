@@ -5,10 +5,6 @@ import (
 	aty "github.com/33cn/plugin/plugin/dapp/accountmanager/types"
 )
 
-/*
- * 实现交易的链上执行接口
- * 关键数据上链（statedb）并生成交易回执（log）
- */
 
 //Exec_Register ...
 func (a *Accountmanager) Exec_Register(payload *aty.Register, tx *types.Transaction, index int) (*types.Receipt, error) {

@@ -31,7 +31,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//EvmCmd 是Evm命令行入口
 func EvmCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "evm",
@@ -140,7 +139,6 @@ func addEvmBalanceFlags(cmd *cobra.Command) {
 }
 
 func evmBalance(cmd *cobra.Command, args []string) {
-	// 直接复用coins的查询余额命令
 	//balance(cmd, args)
 
 	rpcLaddr, _ := cmd.Flags().GetString("rpc_laddr")
@@ -175,15 +173,13 @@ func evmBalance(cmd *cobra.Command, args []string) {
 	ctx.RunExt(cfg)
 }
 
-// AccountResult 账户余额查询出来之后进行单位转换
 type AccountResult struct {
-	// 货币
 	Currency int32 `json:"currency,omitempty"`
-	// 余额
+
 	Balance string `json:"balance,omitempty"`
-	// 冻结余额
+
 	Frozen string `json:"frozen,omitempty"`
-	// 账户地址
+
 	Addr string `json:"addr,omitempty"`
 }
 
@@ -226,7 +222,6 @@ func addCalcNewContractAddrFlags(cmd *cobra.Command) {
 	_ = cmd.MarkFlagRequired("hash")
 }
 
-// 创建EVM合约
 func createContractCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -344,7 +339,6 @@ func createEvmTx(cfg *rpctypes.ChainConfigInfo, action proto.Message, execer, ca
 	return res, nil
 }
 
-// 调用EVM合约
 func callContractCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "call",
@@ -431,7 +425,6 @@ func addCallContractFlags(cmd *cobra.Command) {
 	_ = cmd.MarkFlagRequired("parameter")
 }
 
-// abi命令
 func queryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",
@@ -527,7 +520,6 @@ func addEstimateGasFlags(cmd *cobra.Command) {
 	_ = cmd.MarkFlagRequired("caller")
 }
 
-// 估算合约消耗
 func estimateGasCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "estimate",
@@ -538,7 +530,6 @@ func estimateGasCmd() *cobra.Command {
 	return cmd
 }
 
-// 检查地址是否为EVM合约
 func checkContractAddrCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "check",
@@ -569,7 +560,6 @@ func checkContractAddr(cmd *cobra.Command, args []string) {
 	}
 }
 
-// 查询或设置EVM调试开关
 func evmDebugCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "debug",
@@ -629,7 +619,6 @@ func evmDebugRPC(cmd *cobra.Command, flag int32) {
 	}
 }
 
-// 向EVM合约地址转账
 func evmTransferCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "transfer",
@@ -727,7 +716,6 @@ func sendQuery(rpcAddr, funcName string, request types.Message, result proto.Mes
 	return true
 }
 
-// 这里实现 EIP55中提及的以太坊地址表示方式（增加Checksum）
 func checksumAddr(address []byte) string {
 	unchecksummed := hex.EncodeToString(address[:])
 	sha := sha3.NewKeccak256()

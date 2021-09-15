@@ -244,7 +244,7 @@ type isAutonomyAction_Value interface {
 }
 
 type AutonomyAction_PropBoard struct {
-	// 提案董事会相关
+
 	PropBoard *ProposalBoard `protobuf:"bytes,1,opt,name=propBoard,proto3,oneof"`
 }
 
@@ -261,7 +261,7 @@ type AutonomyAction_TmintPropBoard struct {
 }
 
 type AutonomyAction_PropProject struct {
-	// 提案项目相关
+
 	PropProject *ProposalProject `protobuf:"bytes,5,opt,name=propProject,proto3,oneof"`
 }
 
@@ -282,7 +282,7 @@ type AutonomyAction_TmintPropProject struct {
 }
 
 type AutonomyAction_PropRule struct {
-	// 提案规则修改相关
+
 	PropRule *ProposalRule `protobuf:"bytes,10,opt,name=propRule,proto3,oneof"`
 }
 
@@ -299,7 +299,7 @@ type AutonomyAction_TmintPropRule struct {
 }
 
 type AutonomyAction_Transfer struct {
-	// 发展基金转自治系统合约
+
 	Transfer *TransferFund `protobuf:"bytes,14,opt,name=transfer,proto3,oneof"`
 }
 
@@ -308,7 +308,7 @@ type AutonomyAction_CommentProp struct {
 }
 
 type AutonomyAction_PropChange struct {
-	// 提案改变董事会成员
+
 	PropChange *ProposalChange `protobuf:"bytes,16,opt,name=propChange,proto3,oneof"`
 }
 

@@ -25,12 +25,11 @@ import (
 ./boss4x ethereum offline send -f deploysigntxs.txt
 */
 
-// CreateCmd 查询deploy 私钥的nonce信息，并输出到文件中
 func CreateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create", //first step
 		Short: "create and sign all the offline cross to ethereum contracts(inclue valset,ethereumBridge,bridgeBank,oracle,bridgeRegistry,mulSign)",
-		Run:   createTx, //对要部署的factory合约进行签名
+		Run:   createTx, 
 	}
 	addCreateFlags(cmd)
 	return cmd
@@ -169,14 +168,13 @@ func NewTxWrite(infos []*DeployInfo, deployerAddr common.Address, url, fileName 
 	if err != nil {
 		return err
 	}
-	//预估gas,批量构造交易
 	for i, info := range infos {
 		var msg ethereum.CallMsg
 		msg.From = deployerAddr
 		msg.To = info.To
 		msg.Value = big.NewInt(0)
 		msg.Data = info.PackData
-		//估算gas
+
 		gasLimit, err := client.EstimateGas(ctx, msg)
 		if err != nil {
 			return err
@@ -313,7 +311,7 @@ func CreateWithFileCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create_file", //first step
 		Short: "create deploy tx with file",
-		Run:   createWithFileTx, //对要部署的factory合约进行签名
+		Run:   createWithFileTx, 
 	}
 	addCreateWithFileFlags(cmd)
 	return cmd

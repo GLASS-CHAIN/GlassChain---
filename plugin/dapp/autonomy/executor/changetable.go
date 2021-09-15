@@ -24,7 +24,6 @@ var changeOpt = &table.Option{
 	Index:   []string{"addr", "status", "addr_status"},
 }
 
-//NewChangeTable 新建表
 func NewChangeTable(kvdb db.KV) *table.Table {
 	rowmeta := NewChangeRow()
 	table, err := table.NewTable(rowmeta, kvdb, changeOpt)
@@ -34,22 +33,18 @@ func NewChangeTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//ChangeRow table meta 结构
 type ChangeRow struct {
 	*auty.AutonomyProposalChange
 }
 
-//NewChangeRow 新建一个meta 结构
 func NewChangeRow() *ChangeRow {
 	return &ChangeRow{AutonomyProposalChange: &auty.AutonomyProposalChange{}}
 }
 
-//CreateRow 新建数据行(注意index 数据一定也要保存到数据中,不能就保存heightindex)
 func (r *ChangeRow) CreateRow() *table.Row {
 	return &table.Row{Data: &auty.AutonomyProposalChange{}}
 }
 
-//SetPayload 设置数据
 func (r *ChangeRow) SetPayload(data types.Message) error {
 	if d, ok := data.(*auty.AutonomyProposalChange); ok {
 		r.AutonomyProposalChange = d
@@ -58,7 +53,6 @@ func (r *ChangeRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (r *ChangeRow) Get(key string) ([]byte, error) {
 	if key == "heightindex" {
 		return []byte(dapp.HeightIndexStr(r.Height, int64(r.Index))), nil

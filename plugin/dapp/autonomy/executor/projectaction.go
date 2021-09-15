@@ -41,28 +41,27 @@ func (a *action) propProject(prob *auty.ProposalProject) (*types.Receipt, error)
 		alog.Error("propProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "get getActiveBoard failed", err)
 		return nil, err
 	}
-	// 检查是否可以对已审批额度归0,如果可以则设置kv
 	var kva *types.KeyValue
 	if a.height > pboard.StartHeight+boardPeriod {
 		pboard.StartHeight = a.height
 		pboard.Amount = 0
 		kva = &types.KeyValue{Key: activeBoardID(), Value: types.Encode(pboard)}
 	}
-	// 检查额度
+
 	pass := a.checkPeriodAmount(pboard, prob.Amount)
 	if !pass {
 		err = auty.ErrNoPeriodAmount
 		alog.Error("propProject ", "addr", a.fromaddr, "cumsum amount", pboard.Amount, "this period board have enough amount", err)
 		return nil, err
 	}
-	// 获取当前生效提案规则
+
 	rule, err := a.getActiveRule()
 	if err != nil {
 		alog.Error("propProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "getActiveRule failed", err)
 		return nil, err
 	}
 
-	// 判断基金中是否有足够资金
+
 	account := a.coinsAccount.LoadAccount(a.execaddr)
 	if account == nil || account.Balance < prob.Amount {
 		err = auty.ErrNotEnoughFund
@@ -73,7 +72,7 @@ func (a *action) propProject(prob *auty.ProposalProject) (*types.Receipt, error)
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 冻结提案金
+
 	receipt, err := a.coinsAccount.ExecFrozen(a.fromaddr, a.execaddr, rule.ProposalAmount)
 	if err != nil {
 		alog.Error("propProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "ExecFrozen proposal amount", rule.ProposalAmount, "error", err)
@@ -117,7 +116,7 @@ func (a *action) rvkPropProject(rvkProb *auty.RevokeProposalProject) (*types.Rec
 	}
 	pre := copyAutonomyProposalProject(cur)
 
-	// 检查当前状态
+
 	if cur.Status != auty.AutonomyStatusProposalProject {
 		err := auty.ErrProposalStatus
 		alog.Error("rvkPropProject ", "addr", a.fromaddr, "status", cur.Status, "status is not match",
@@ -143,7 +142,7 @@ func (a *action) rvkPropProject(rvkProb *auty.RevokeProposalProject) (*types.Rec
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 解冻提案金
+
 	receipt, err := a.coinsAccount.ExecActive(a.fromaddr, a.execaddr, cur.CurRule.ProposalAmount)
 	if err != nil {
 		alog.Error("rvkPropProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "ExecActive amount", cur.CurRule.ProposalAmount, "err", err)
@@ -171,7 +170,7 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 	}
 	pre := copyAutonomyProposalProject(cur)
 
-	// 检查当前状态
+
 	if cur.Status == auty.AutonomyStatusRvkPropProject ||
 		cur.Status == auty.AutonomyStatusPubVotePropProject ||
 		cur.Status == auty.AutonomyStatusTmintPropProject {
@@ -191,7 +190,6 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 		return nil, err
 	}
 
-	// 董事会成员验证
 	var isBoard bool
 	for _, addr := range cur.Boards {
 		if addr == a.fromaddr {
@@ -206,7 +204,6 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 		return nil, err
 	}
 
-	// 检查是否已经参与投票
 	votes, err := a.checkVotesRecord([]string{a.fromaddr}, boardVotesRecord(voteProb.ProposalID))
 	if err != nil {
 		alog.Error("votePropProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "checkVotesRecord boardVotesRecord failed",
@@ -214,9 +211,8 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 		return nil, err
 	}
 
-	// 更新已经投票地址
 	votes.Address = append(votes.Address, a.fromaddr)
-	// 更新投票结果
+
 	if voteProb.Approve {
 		cur.BoardVoteRes.ApproveVotes++
 	} else {
@@ -226,7 +222,6 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 首次进入投票期,即将提案金转入自治系统地址
 	if cur.Status == auty.AutonomyStatusProposalProject {
 		receipt, err := a.coinsAccount.ExecTransferFrozen(cur.Address, a.execaddr, a.execaddr, cur.CurRule.ProposalAmount)
 		if err != nil {
@@ -246,13 +241,11 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 	key := propProjectID(voteProb.ProposalID)
 	cur.Status = auty.AutonomyStatusVotePropProject
 	if cur.BoardVoteRes.Pass {
-		if cur.PubVote.Publicity { // 进入公示
+		if cur.PubVote.Publicity { 
 			cur.Status = auty.AutonomyStatusPubVotePropProject
-			// 进入公示期默认为该提案通过，只有反对票达到三分之一才不会通过该提案
 			cur.PubVote.PubPass = true
 		} else {
 			cur.Status = auty.AutonomyStatusTmintPropProject
-			// 提案通过，将工程金额从基金付款给承包商
 			receipt, err := a.coinsAccount.ExecDeposit(cur.PropProject.ToAddr, a.execaddr, cur.PropProject.Amount)
 			if err != nil {
 				alog.Error("votePropProject ", "addr", cur.PropProject.ToAddr, "execaddr", a.execaddr, "Transfer to contractor project amount fail", err)
@@ -261,7 +254,6 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 
 			logs = append(logs, receipt.Logs...)
 			kv = append(kv, receipt.KV...)
-			// 需要更新该董事会的累计审批金
 			pakv, err := a.updatePeriodAmount(cur.PropProject.Amount)
 			if err != nil {
 				alog.Error("votePropProject ", "addr", cur.Address, "execaddr", a.execaddr, "updatePeriodAmount fail", err)
@@ -272,7 +264,6 @@ func (a *action) votePropProject(voteProb *auty.VoteProposalProject) (*types.Rec
 	}
 	kv = append(kv, &types.KeyValue{Key: key, Value: types.Encode(cur)})
 
-	// 更新VotesRecord
 	kv = append(kv, &types.KeyValue{Key: boardVotesRecord(voteProb.ProposalID), Value: types.Encode(votes)})
 
 	ty := auty.TyLogVotePropProject
@@ -298,7 +289,6 @@ func (a *action) pubVotePropProject(voteProb *auty.PubVoteProposalProject) (*typ
 	}
 	pre := copyAutonomyProposalProject(cur)
 
-	// 检查当前状态
 	if cur.Status != auty.AutonomyStatusPubVotePropProject {
 		err := auty.ErrProposalStatus
 		alog.Error("pubVotePropProject ", "addr", a.fromaddr, "status", cur.Status, "ProposalID",
@@ -321,7 +311,7 @@ func (a *action) pubVotePropProject(voteProb *auty.PubVoteProposalProject) (*typ
 				return nil, types.ErrInvalidAddress
 			}
 		}
-		// 挖矿地址验证
+
 		addr, err := a.verifyMinerAddr(voteProb.OriginAddr, a.fromaddr)
 		if err != nil {
 			alog.Error("pubVotePropProject ", "from addr", a.fromaddr, "error addr", addr, "ProposalID",
@@ -330,7 +320,6 @@ func (a *action) pubVotePropProject(voteProb *auty.PubVoteProposalProject) (*typ
 		}
 	}
 
-	// 本次参与投票地址
 	var addrs []string
 	if len(voteProb.OriginAddr) == 0 {
 		addrs = append(addrs, a.fromaddr)
@@ -338,17 +327,15 @@ func (a *action) pubVotePropProject(voteProb *auty.PubVoteProposalProject) (*typ
 		addrs = append(addrs, voteProb.OriginAddr...)
 	}
 
-	// 检查是否已经参与投票
 	votes, err := a.checkVotesRecord(addrs, votesRecord(voteProb.ProposalID))
 	if err != nil {
 		alog.Error("pubVotePropProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "checkVotesRecord failed",
 			voteProb.ProposalID, "err", err)
 		return nil, err
 	}
-	// 更新投票记录
 	votes.Address = append(votes.Address, addrs...)
 
-	if cur.GetPubVote().TotalVotes == 0 { //需要统计总票数
+	if cur.GetPubVote().TotalVotes == 0 { 
 		vtCouts, err := a.getTotalVotes(start)
 		if err != nil {
 			return nil, err
@@ -356,14 +343,13 @@ func (a *action) pubVotePropProject(voteProb *auty.PubVoteProposalProject) (*typ
 		cur.PubVote.TotalVotes = vtCouts
 	}
 
-	// 获取该地址票数
 	vtCouts, err := a.batchGetAddressVotes(addrs, start)
 	if err != nil {
 		alog.Error("pubVotePropProject ", "addr", a.fromaddr, "execaddr", a.execaddr, "batchGetAddressVotes failed",
 			voteProb.ProposalID, "err", err)
 		return nil, err
 	}
-	if voteProb.Oppose { //投反对票
+	if voteProb.Oppose { 
 		cur.PubVote.OpposeVotes += vtCouts
 	}
 
@@ -386,7 +372,6 @@ func (a *action) pubVotePropProject(voteProb *auty.PubVoteProposalProject) (*typ
 	}
 	kv = append(kv, &types.KeyValue{Key: key, Value: types.Encode(cur)})
 
-	// 更新VotesRecord
 	kv = append(kv, &types.KeyValue{Key: votesRecord(voteProb.ProposalID), Value: types.Encode(votes)})
 
 	receiptLog := getProjectReceiptLog(pre, cur, int32(ty))
@@ -404,7 +389,6 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 	}
 	pre := copyAutonomyProposalProject(cur)
 
-	// 检查当前状态
 	if cur.Status == auty.AutonomyStatusTmintPropProject ||
 		cur.Status == auty.AutonomyStatusRvkPropProject {
 		err := auty.ErrProposalStatus
@@ -413,7 +397,6 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 		return nil, err
 	}
 
-	// 公示期间不能终止
 	if cur.PubVote.Publicity && cur.PubVote.PubPass &&
 		a.height <= cur.PropProject.RealEndBlockHeight+int64(cur.CurRule.PublicPeriod) {
 		err := auty.ErrTerminatePeriod
@@ -422,7 +405,6 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 		return nil, err
 	}
 
-	// 董事会投票期间不能终止
 	start := cur.GetPropProject().StartBlockHeight
 	end := cur.GetPropProject().EndBlockHeight
 	if !cur.BoardVoteRes.Pass && a.height <= end {
@@ -440,7 +422,7 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 	}
 
 	if cur.PubVote.Publicity {
-		if cur.PubVote.TotalVotes == 0 { //需要统计总票数
+		if cur.PubVote.TotalVotes == 0 {
 			vtCouts, err := a.getTotalVotes(start)
 			if err != nil {
 				return nil, err
@@ -458,7 +440,6 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 
-	// 如果为提案状态，则判断是否需要扣除提案费
 	if cur.Status == auty.AutonomyStatusProposalProject && a.height > end {
 		receipt, err := a.coinsAccount.ExecTransferFrozen(cur.Address, a.execaddr, a.execaddr, cur.CurRule.ProposalAmount)
 		if err != nil {
@@ -469,9 +450,9 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 		kv = append(kv, receipt.KV...)
 	}
 
-	if (cur.PubVote.Publicity && cur.PubVote.PubPass) || // 需要公示且公示通过
-		(!cur.PubVote.Publicity && cur.BoardVoteRes.Pass) { // 不需要公示且董事会通过
-		// 提案通过，将工程金额从基金付款给承包商
+	if (cur.PubVote.Publicity && cur.PubVote.PubPass) || 
+		(!cur.PubVote.Publicity && cur.BoardVoteRes.Pass) { 
+
 		receipt, err := a.coinsAccount.ExecDeposit(cur.PropProject.ToAddr, a.execaddr, cur.PropProject.Amount)
 		if err != nil {
 			alog.Error("tmintPropProject ", "addr", cur.PropProject.ToAddr, "execaddr", a.execaddr, "Transfer to contractor project amount fail", err)
@@ -480,7 +461,6 @@ func (a *action) tmintPropProject(tmintProb *auty.TerminateProposalProject) (*ty
 
 		logs = append(logs, receipt.Logs...)
 		kv = append(kv, receipt.KV...)
-		// 需要更新该董事会的累计审批金
 		pakv, err := a.updatePeriodAmount(cur.PropProject.Amount)
 		if err != nil {
 			alog.Error("tmintPropProject ", "addr", cur.Address, "execaddr", a.execaddr, "updatePeriodAmount fail", err)
@@ -529,8 +509,6 @@ func (a *action) getActiveBoard() (*auty.ActiveBoard, error) {
 	return pboard, nil
 }
 
-// getProjectReceiptLog 根据提案信息获取log
-// 状态变化：
 func getProjectReceiptLog(pre, cur *auty.AutonomyProposalProject, ty int32) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	log.Ty = ty

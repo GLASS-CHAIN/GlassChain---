@@ -5,9 +5,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-/*
- * 实现合约对应客户端
- */
+
 
 // Cmd accountmanager client command
 func Cmd() *cobra.Command {

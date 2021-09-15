@@ -34,7 +34,6 @@ type gmValidator struct {
 	CRL []*pkix.CertificateList
 }
 
-// NewGmValidator 创建国密证书校验器
 func NewGmValidator() Validator {
 	return &gmValidator{}
 }
@@ -339,7 +338,7 @@ func (validator *gmValidator) getValidityOptsForCert(cert *sm2.Certificate) sm2.
 }
 
 func (validator *gmValidator) GetCertFromSignature(signature []byte) ([]byte, error) {
-	// 从proto中解码signature
+
 	cert, err := utils.DecodeCertFromSignature(signature)
 	if err != nil {
 		authLogger.Error(fmt.Sprintf("unmashal certificate from signature failed. %s", err.Error()))

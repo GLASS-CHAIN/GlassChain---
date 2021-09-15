@@ -50,7 +50,6 @@ func NewType(cfg *types.Chain33Config) *CollateralizeType {
 	return c
 }
 
-// GetName 获取执行器名称
 func (collateralize *CollateralizeType) GetName() string {
 	return CollateralizeX
 }

@@ -16,9 +16,9 @@ var logger = log.New("module", "execs.dposvote")
 var driverName = dty.DPosX
 
 var (
-	dposDelegateNum          int64 = 3 //委托节点个数，从配置读取，以后可以根据投票结果来定
-	dposBlockInterval        int64 = 3 //出块间隔，当前按3s
-	dposContinueBlockNum     int64 = 6 //一个委托节点当选后，一次性持续出块数量
+	dposDelegateNum          int64 = 3 
+	dposBlockInterval        int64 = 3 
+	dposContinueBlockNum     int64 = 6 
 	dposCycle                      = dposDelegateNum * dposBlockInterval * dposContinueBlockNum
 	dposPeriod                     = dposBlockInterval * dposContinueBlockNum
 	blockNumToUpdateDelegate int64 = 20000
@@ -58,7 +58,6 @@ func Init(name string, cfg *types.Chain33Config, sub []byte) {
 
 	drivers.Register(cfg, driverName, newDposVote, cfg.GetDappFork(driverName, "Enable"))
 
-	//读取一下配置项，用于和共识模块一致计算cycle
 	dposDelegateNum = types.Conf(cfg, "config.consensus.sub.dpos").GInt("delegateNum")
 	dposBlockInterval = types.Conf(cfg, "config.consensus.sub.dpos").GInt("blockInterval")
 	dposContinueBlockNum = types.Conf(cfg, "config.consensus.sub.dpos").GInt("continueBlockNum")
@@ -76,7 +75,6 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&DPos{}))
 }
 
-//DPos 执行器，用于Dpos候选节点注册、投票，VRF信息注册管理等功能
 type DPos struct {
 	drivers.DriverBase
 }
@@ -88,17 +86,14 @@ func newDposVote() drivers.Driver {
 	return t
 }
 
-//GetName 获取DPos执行器的名称
 func GetName() string {
 	return newDposVote().GetName()
 }
 
-//ExecutorOrder Exec 的时候 同时执行 ExecLocal
 func (g *DPos) ExecutorOrder() int64 {
 	return drivers.ExecLocalSameTime
 }
 
-//GetDriverName 获取DPos执行器的名称
 func (g *DPos) GetDriverName() string {
 	return dty.DPosX
 }

@@ -27,7 +27,7 @@ var deployerAddr common.Address
 const (
 	// GasLimit : the gas limit in Gwei used for transactions sent with TransactOpts
 	GasLimit        = uint64(100 * 10000)
-	GasLimit4Deploy = uint64(0)                                    //此处需要设置为0,让交易自行估计,否则将会导致部署失败,TODO:其他解决途径后续调研解决
+	GasLimit4Deploy = uint64(0)                                    
 	fee2setter      = "0x0f2e821517D4f64a012a04b668a6b1aa3B262e08" //private Key:f934e9171c5cf13b35e6c989e95f5e95fa471515730af147b66d60fbcd664b7c
 )
 
@@ -55,7 +55,7 @@ func SetupWebsocketEthClient(ethURL string) (*ethclient.Client, error) {
 }
 
 func GetBalance(tokenAddr, owner string) (string, error) {
-	//查询ERC20余额
+
 	//if tokenAddr != "" {
 	//	bridgeToken, err := generated.NewBridgeToken(common.HexToAddress(tokenAddr), client)
 	//	if nil != err {
@@ -74,7 +74,6 @@ func GetBalance(tokenAddr, owner string) (string, error) {
 	//	return balance.String(), nil
 	//}
 
-	//查询ETH余额
 	balance, err := ethClient.BalanceAt(context.Background(), common.HexToAddress(owner), nil)
 	if nil != err {
 		return "", err
@@ -147,7 +146,6 @@ func DeployPancake(key string) error {
 	}
 
 deployWeth9:
-	//部署合约 PancakeRouter
 	auth, err = PrepareAuth(privateKey, deployerAddr)
 	if nil != err {
 		return err
@@ -180,7 +178,6 @@ deployWeth9:
 	}
 
 deployPancakeRouter:
-	//部署合约 PancakeRouter
 	auth, err = PrepareAuth(privateKey, deployerAddr)
 	if nil != err {
 		return err

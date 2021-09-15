@@ -39,12 +39,10 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(BlackwhiteX, NewType(cfg))
 }
 
-// BlackwhiteType 执行器基类结构体
 type BlackwhiteType struct {
 	types.ExecTypeBase
 }
 
-// NewType 创建执行器类型
 func NewType(cfg *types.Chain33Config) *BlackwhiteType {
 	c := &BlackwhiteType{}
 	c.SetChild(c)
@@ -52,27 +50,22 @@ func NewType(cfg *types.Chain33Config) *BlackwhiteType {
 	return c
 }
 
-// GetPayload 获取blackwhite action
 func (b *BlackwhiteType) GetPayload() types.Message {
 	return &BlackwhiteAction{}
 }
 
-// GetName 获取执行器名称
 func (b *BlackwhiteType) GetName() string {
 	return BlackwhiteX
 }
 
-// GetLogMap 获取log的映射对应关系
 func (b *BlackwhiteType) GetLogMap() map[int64]*types.LogInfo {
 	return logInfo
 }
 
-// GetTypeMap 根据action的name获取type
 func (b *BlackwhiteType) GetTypeMap() map[string]int32 {
 	return actionName
 }
 
-// ActionName 根据交易的payLoad获取blackwhite的action的name
 func (b BlackwhiteType) ActionName(tx *types.Transaction) string {
 	var g BlackwhiteAction
 	err := types.Decode(tx.Payload, &g)
@@ -96,8 +89,6 @@ func (b BlackwhiteType) Amount(tx *types.Transaction) (int64, error) {
 	return 0, nil
 }
 
-// CreateTx ...
-// TODO 暂时不修改实现， 先完成结构的重构
 func (b BlackwhiteType) CreateTx(action string, message json.RawMessage) (*types.Transaction, error) {
 	glog.Debug("Blackwhite.CreateTx", "action", action)
 	var tx *types.Transaction

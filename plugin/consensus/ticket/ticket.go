@@ -777,9 +777,7 @@ func (client *Client) CreateBlock() {
 			if err == queue.ErrIsQueueClosed {
 				break
 			}
-			//加入新的txs, 继续挖矿
 			lasttime := block.BlockTime
-			//只有时间增加了1s影响，影响难度计算了，才会去更新区块
 			for lasttime >= types.Now().Unix() {
 				time.Sleep(time.Second / 10)
 			}

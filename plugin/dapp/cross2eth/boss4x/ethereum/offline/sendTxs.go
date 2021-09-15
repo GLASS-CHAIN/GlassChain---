@@ -32,7 +32,7 @@ func sendTxsFlags(cmd *cobra.Command) {
 func sendTxs(cmd *cobra.Command, _ []string) {
 	url, _ := cmd.Flags().GetString("rpc_laddr_ethereum")
 	filePath, _ := cmd.Flags().GetString("file")
-	//解析文件数据
+
 	var rdata = make([]*DeployInfo, 0)
 	err := paraseFile(filePath, &rdata)
 	if err != nil {

@@ -14,7 +14,6 @@ import (
 	"github.com/tjfoc/gmsm/sm2"
 )
 
-// CreateCertificateToMem 证书转mem
 func CreateCertificateToMem(template, parent *sm2.Certificate, key crypto.Signer) ([]byte, error) {
 	pub, _ := template.PublicKey.(*sm2.PublicKey)
 
@@ -35,7 +34,6 @@ func CreateCertificateToMem(template, parent *sm2.Certificate, key crypto.Signer
 	return pem.EncodeToMemory(block), nil
 }
 
-// CreateCertificateToPem 证书转pem
 func CreateCertificateToPem(FileName string, template, parent *sm2.Certificate, key crypto.Signer) error {
 	pub, _ := template.PublicKey.(*sm2.PublicKey)
 	var puk sm2.PublicKey
@@ -65,7 +63,6 @@ func CreateCertificateToPem(FileName string, template, parent *sm2.Certificate, 
 	return nil
 }
 
-// ParseX509CertificateToSm2 解析x509格式为sm2格式证书
 func ParseX509CertificateToSm2(x509Cert *x509.Certificate) *sm2.Certificate {
 	sm2cert := &sm2.Certificate{
 		Raw:                     x509Cert.Raw,
@@ -125,7 +122,6 @@ func ParseX509CertificateToSm2(x509Cert *x509.Certificate) *sm2.Certificate {
 	return sm2cert
 }
 
-// ParseSm2CertificateToX509 解析sm2格式证书为x509格式
 func ParseSm2CertificateToX509(sm2Cert *sm2.Certificate) *x509.Certificate {
 	if sm2Cert == nil {
 		return nil

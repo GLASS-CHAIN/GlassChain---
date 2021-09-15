@@ -60,10 +60,7 @@ func startHTTPService(url string, clientHost string) {
 			if !checkClient(client, clientHost) {
 				log.Error("HandlerFunc", "client", r.RemoteAddr, "expect", clientHost)
 				_, _ = w.Write([]byte(`{"errcode":"-1","result":null,"msg":"reject"}`))
-				// unbind 逻辑有问题， 需要的外部处理
-				//  切换外部服务时， 可能换 name
-				// 收到一个不是client 的请求，很有可能是以前注册过的， 取消掉
-				//unbind(client)
+
 				return
 			}
 
@@ -119,9 +116,7 @@ func checkClient(addr string, expectClient string) bool {
 	return addr == expectClient
 }
 
-//向chain33节点的注册推送交易回执，AddSubscribeTxReceipt具有2种功能：
-//首次注册功能，如果没有进行过注册，则进行首次注册
-//如果已经注册，则继续推送
+
 func bindOrResumePush(cfg *relayerTypes.SyncTxReceiptConfig) {
 	contract := make(map[string]bool)
 	for _, name := range cfg.Contracts {

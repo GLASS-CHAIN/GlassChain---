@@ -11,15 +11,10 @@ option go_package = "../types";
 
 message AutonomyProposalProject {
     ProposalProject propProject = 1;
-    // 投票该提案的规则
     RuleConfig curRule = 2;
-    // 投票该提案的董事会成员
     repeated string boards = 3;
-    // 董事会投票结果
     VoteResult boardVoteRes = 4;
-    // 公示投票
     PublicVote pubVote = 5;
-    // 状态
     int32  status     = 6;
     string address    = 7;
     int64  height     = 8;
@@ -28,28 +23,24 @@ message AutonomyProposalProject {
 }
 
 message ProposalProject {
-    // 提案时间
     int32 year  = 1;
     int32 month = 2;
     int32 day   = 3;
 
-    // 项目相关
-    string firstStage   = 4;  // 第一阶段提案项目hash
-    string lastStage    = 5;  // 上一阶段提案项目hash
-    string production   = 6;  // 项目地址
-    string description  = 7;  // 项目阶段性简述
-    string contractor   = 8;  // 承包人
-    int64  amount       = 9;  // 项目经费
-    string amountDetail = 10; // 经费细则
+    string firstStage   = 4;  
+    string lastStage    = 5;  
+    string production   = 6;  
+    string description  = 7;  
+    string contractor   = 8;  
+    int64  amount       = 9;  
+    string amountDetail = 10; 
 
-    // 支付相关
-    string toAddr = 11; // 收款地址
+    string toAddr = 11; 
 
-    // 投票相关
-    int64 startBlockHeight    = 12; // 提案开始投票高度
-    int64 endBlockHeight      = 13; // 提案结束投票高度
-    int64 realEndBlockHeight  = 14; // 实际提案结束投票高度
-    int32 projectNeedBlockNum = 15; // 以提案结束投票高度为准，需要项目需要消耗的区块数目所对应的时间
+    int64 startBlockHeight    = 12; 
+    int64 endBlockHeight      = 13; 
+    int64 realEndBlockHeight  = 14; 
+    int32 projectNeedBlockNum = 15; 
 }
 
 message RevokeProposalProject {

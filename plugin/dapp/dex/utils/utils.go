@@ -79,7 +79,7 @@ func CreateAndSignEvmTx(chainID int32, action proto.Message, execer, privateKeyS
 		if expireInt64 < int64(time.Second*120) {
 			expireInt64 = int64(time.Second * 120)
 		}
-		//用秒数来表示的时间
+
 		tx.Expire = types.Now().Unix() + expireInt64/int64(time.Second)
 	} else {
 		tx.Expire = expireInt64

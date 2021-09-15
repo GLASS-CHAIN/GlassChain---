@@ -7,11 +7,9 @@ set +e
 source "./publicTest.sh"
 source "./relayerPublic.sh"
 
-# ETH 部署合约者的私钥 用于部署合约时签名使用
 #ethDeployAddr="0x8afdadfc88a1087c9a1d6c0f5dd04634b87f303a"
 ethDeployKey="8656d2bc732a8a816a461ba5e2d8aac7c7f85c26a813df30d5327210465eb230"
 
-# chain33 部署合约者的私钥 用于部署合约时签名使用
 chain33DeployAddr="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
 chain33DeployKey="0xcc38546e9e659d15e6b4893f0ab32a06d103931a8230b0bde71459d2b27d6944"
 
@@ -55,14 +53,13 @@ function deployMultisign() {
         # shellcheck disable=SC2154
         check_addr "${result}" "${chain33Multisign}"
 
-        # chain33Multisign 要有手续费
         hash=$(${Chain33Cli} send coins transfer -a 10 -t "${chain33Multisign}" -k "${chain33DeployAddr}")
         check_tx "${Chain33Cli}" "${hash}"
         result=$(${Chain33Cli} account balance -a "${chain33Multisign}" -e coins)
         balance_ret "${result}" "10.0000"
     done
 
-    echo -e "${GRE}=========== 部署 chain33 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}=========== Deploy chain199 offline wallet contract ===========${NOC}"
     result=$(${CLIA} chain33 multisign deploy)
     cli_ret "${result}" "chain33 multisign deploy"
     multisignChain33Addr=$(echo "${result}" | jq -r ".msg")
@@ -71,7 +68,6 @@ function deployMultisign() {
     result=$(${CLIA} chain33 multisign setup -k "${chain33DeployKey}" -o "${chain33MultisignA},${chain33MultisignB},${chain33MultisignC},${chain33MultisignD}")
     cli_ret "${result}" "chain33 multisign setup"
 
-    # multisignChain33Addr 要有手续费
     hash=$(${Chain33Cli} send coins transfer -a 10 -t "${multisignChain33Addr}" -k "${chain33DeployAddr}")
     check_tx "${Chain33Cli}" "${hash}"
     result=$(${Chain33Cli} account balance -a "${multisignChain33Addr}" -e coins)
@@ -80,7 +76,6 @@ function deployMultisign() {
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "configOfflineSaveAccount(${multisignChain33Addr})" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 
-    #    echo -e "${GRE}=========== 部署 ETH 离线钱包合约 ===========${NOC}"
     #    result=$(${CLIA} ethereum multisign deploy)
     #    cli_ret "${result}" "ethereum multisign deploy"
     #    multisignEthAddr=$(echo "${result}" | jq -r ".msg")
@@ -102,7 +97,6 @@ function lock_eth_balance() {
     result=$(${CLIA} ethereum lock -m "${lockAmount}" -k "${ethValidatorAddrKeyA}" -r "${chain33ReceiverAddr}")
     cli_ret "${result}" "lock"
 
-    # eth 等待 10 个区块
     eth_block_wait 2
 
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
@@ -114,7 +108,6 @@ function lock_eth_balance() {
 function lockEth() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # echo '2:#配置自动转离线钱包(BNB, 4, 50%)'
     #    result=$(${CLIA} ethereum multisign set_offline_token -s ETH -m 4)
     #    cli_ret "${result}" "set_offline_token -s ETH -m 4"
 
@@ -149,7 +142,6 @@ function lock_eth_ycc_balance() {
     result=$(${CLIA} ethereum lock -m "${lockAmount}" -k "${ethDeployKey}" -r "${chain33ReceiverAddr}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "lock"
 
-    # eth 等待 10 个区块
     eth_block_wait 2
 
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
@@ -161,7 +153,6 @@ function lock_eth_ycc_balance() {
 function lockEthYcc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # echo '2:#配置自动转离线钱包(ycc, 100, 40%)'
     result=$(${CLIA} ethereum multisign set_offline_token -s YCC -m 100 -p 40 -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "set_offline_token -s YCC -m 100"
 
@@ -174,8 +165,6 @@ function lockEthYcc() {
     lock_eth_ycc_balance 30 60 40
     lock_eth_ycc_balance 60 72 88
 
-    # transfer
-    # multisignEthAddr 要有手续费
     ./ebcli_A ethereum transfer -k "${ethDeployKey}" -m 10 -r "${multisignEthAddr}"
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
@@ -220,13 +209,10 @@ function mainTest() {
     #    StartRelayer_A
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # 修改 relayer.toml 配置文件 pushName 字段
     pushNameChange "./relayer.toml"
 
-    # 启动 ebrelayer
     start_ebrelayerA
 
-    # 导入私钥 部署合约 设置 bridgeRegistry 地址
     #    InitAndDeploy
     {
         echo -e "${GRE}=========== InitAndDeploy begin ===========${NOC}"
@@ -243,28 +229,23 @@ function mainTest() {
         result=$(${CLIA} ethereum import_privatekey -k "${ethDeployKey}")
         cli_ret "${result}" "ethereum import_privatekey"
 
-        # 在 chain33 上部署合约
         result=$(${CLIA} chain33 deploy)
         cli_ret "${result}" "chain33 deploy"
         BridgeRegistryOnChain33=$(echo "${result}" | jq -r ".msg")
 
-        # 拷贝 BridgeRegistry.abi 和 BridgeBank.abi
         cp BridgeRegistry.abi "${BridgeRegistryOnChain33}.abi"
         chain33BridgeBank=$(${Chain33Cli} evm query -c "${chain33DeployAddr}" -b "bridgeBank()" -a "${BridgeRegistryOnChain33}")
         cp Chain33BridgeBank.abi "${chain33BridgeBank}.abi"
 
-        # 在 Eth 上部署合约
         #    result=$(${CLIA} ethereum deploy)
         #    cli_ret "${result}" "ethereum deploy"
         #    BridgeRegistryOnEth=$(echo "${result}" | jq -r ".msg")
 
-        # 拷贝 BridgeRegistry.abi 和 BridgeBank.abi
         #    cp BridgeRegistry.abi "${BridgeRegistryOnEth}.abi"
         #    result=$(${CLIA} ethereum bridgeBankAddr)
         #    ethBridgeBank=$(echo "${result}" | jq -r ".addr")
         cp EthBridgeBank.abi "${ethBridgeBank}.abi"
 
-        # 修改 relayer.toml 字段
         updata_relayer "BridgeRegistryOnChain33" "${BridgeRegistryOnChain33}" "./relayer.toml"
 
         line=$(delete_line_show "./relayer.toml" "BridgeRegistry=")
@@ -275,7 +256,6 @@ function mainTest() {
         echo -e "${GRE}=========== InitAndDeploy end ===========${NOC}"
     }
 
-    # 重启
     kill_ebrelayer ebrelayer
     start_ebrelayerA
 

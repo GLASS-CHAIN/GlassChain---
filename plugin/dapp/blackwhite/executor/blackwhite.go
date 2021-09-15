@@ -20,7 +20,7 @@ var (
 	driverName     = gt.BlackwhiteX
 )
 
-// Init 重命名执行器名称
+// Init
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	driverName = name
 	gt.BlackwhiteX = driverName
@@ -36,7 +36,7 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&Blackwhite{}))
 }
 
-// Blackwhite 几类执行器结构体
+// Blackwhite 
 type Blackwhite struct {
 	drivers.DriverBase
 }
@@ -48,12 +48,12 @@ func newBlackwhite() drivers.Driver {
 	return c
 }
 
-// GetName 获取执行器别名
+// GetName
 func GetName() string {
 	return newBlackwhite().GetName()
 }
 
-// GetDriverName 获取执行器名字
+// GetDriverName 
 func (c *Blackwhite) GetDriverName() string {
 	return driverName
 }
@@ -124,7 +124,7 @@ func (c *Blackwhite) delHeightIndex(res *gt.ReceiptBlackwhiteStatus) (kvs []*typ
 	return kvs
 }
 
-// GetBlackwhiteRoundInfo 获取当前游戏信息
+// GetBlackwhiteRoundInfo
 func (c *Blackwhite) GetBlackwhiteRoundInfo(req *gt.ReqBlackwhiteRoundInfo) (types.Message, error) {
 	gameID := req.GameID
 	key := calcMavlRoundKey(gameID)
@@ -138,7 +138,7 @@ func (c *Blackwhite) GetBlackwhiteRoundInfo(req *gt.ReqBlackwhiteRoundInfo) (typ
 	if err != nil {
 		return nil, err
 	}
-	//密钥不显示
+
 	for _, addRes := range round.AddrResult {
 		addRes.ShowSecret = ""
 	}
@@ -164,7 +164,6 @@ func (c *Blackwhite) GetBlackwhiteRoundInfo(req *gt.ReqBlackwhiteRoundInfo) (typ
 	return &rep, nil
 }
 
-// GetBwRoundListInfo 根据要求获取游戏信息，包括游戏所处状态，或者参与者地址
 func (c *Blackwhite) GetBwRoundListInfo(req *gt.ReqBlackwhiteRoundList) (types.Message, error) {
 	var key []byte
 	var values [][]byte
@@ -185,7 +184,7 @@ func (c *Blackwhite) GetBwRoundListInfo(req *gt.ReqBlackwhiteRoundList) (types.M
 		if len(values) == 0 {
 			return nil, types.ErrNotFound
 		}
-	} else { //翻页查找指定的txhash列表
+	} else { 
 		heightstr := genHeightIndexStr(req.GetIndex())
 		if 0 == req.Status {
 			key = calcRoundKey4AddrHeight(req.Address, heightstr)
@@ -216,7 +215,6 @@ func (c *Blackwhite) GetBwRoundListInfo(req *gt.ReqBlackwhiteRoundList) (types.M
 		if err != nil {
 			return nil, err
 		}
-		//密钥不显示
 		for _, addRes := range round.AddrResult {
 			addRes.ShowSecret = ""
 		}
@@ -242,7 +240,7 @@ func (c *Blackwhite) GetBwRoundListInfo(req *gt.ReqBlackwhiteRoundList) (types.M
 	return &rep, nil
 }
 
-// GetBwRoundLoopResult 获取游戏中每轮的胜负结果
+// GetBwRoundLoopResult
 func (c *Blackwhite) GetBwRoundLoopResult(req *gt.ReqLoopResult) (types.Message, error) {
 	localDb := c.GetLocalDB()
 	values, err := localDb.Get(calcRoundKey4LoopResult(req.GameID))
@@ -259,7 +257,7 @@ func (c *Blackwhite) GetBwRoundLoopResult(req *gt.ReqLoopResult) (types.Message,
 		return nil, err
 	}
 
-	if req.LoopSeq > 0 { //取出具体一轮
+	if req.LoopSeq > 0 { 
 		if len(result.Results) < int(req.LoopSeq) {
 			return nil, gt.ErrNoLoopSeq
 		}
@@ -273,7 +271,7 @@ func (c *Blackwhite) GetBwRoundLoopResult(req *gt.ReqLoopResult) (types.Message,
 		res.Results = append(res.Results, perRes)
 		return res, nil
 	}
-	return &result, nil //将所有轮数取出
+	return &result, nil 
 }
 
 func genHeightIndexStr(index int64) string {
@@ -284,7 +282,6 @@ func heightIndexToIndex(height int64, index int32) int64 {
 	return height*types.MaxTxsPerBlock + int64(index)
 }
 
-// GetPayloadValue 获取执行器action结构体
 func (c *Blackwhite) GetPayloadValue() types.Message {
 	return &gt.BlackwhiteAction{}
 }

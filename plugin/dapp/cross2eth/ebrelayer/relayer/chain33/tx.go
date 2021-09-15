@@ -88,11 +88,10 @@ func relayEvmTx2Chain33(privateKey chain33Crypto.PrivKey, claim *ebrelayerTypes.
 
 	action := evmtypes.EVMContractAction{Amount: 0, GasLimit: 0, GasPrice: 0, Note: note, Para: packData, ContractAddr: oracleAddr}
 
-	//TODO: 交易费超大问题需要调查，hezhengjun on 20210420
 	feeInt64 := int64(1 * 1e6)
 	wholeEvm := getExecerName(claim.ChainName)
 	toAddr := address.ExecAddress(wholeEvm)
-	//name表示发给哪个执行器
+
 	data := createEvmTx(privateKey, &action, wholeEvm, toAddr, feeInt64)
 	params := rpctypes.RawParm{
 		Token: "BTY",
@@ -318,7 +317,7 @@ func sendEvmTx(privateKey chain33Crypto.PrivKey, contractAddr, chainName, rpcURL
 	feeInt64 := int64(1e7)
 	wholeEvm := getExecerName(chainName)
 	toAddr := address.ExecAddress(wholeEvm)
-	//name表示发给哪个执行器
+
 	data := createEvmTx(privateKey, &action, wholeEvm, toAddr, feeInt64)
 	params := rpctypes.RawParm{
 		Token: "",
@@ -442,15 +441,12 @@ func safeTransfer(ownerPrivateKeyStr, mulSign, chainName, rpcURL, receiver, toke
 	//	bytes memory signatures
 	//)
 
-	//对于平台币转账，这个data只是个占位符，没有作用
 	dataStr := "0x"
 	safeTxGas := int64(10 * 10000)
 	baseGas := 0
 	gasPrice := 0
 	valueStr := utils.ToWei(amount, 8).String()
-	//如果是bty转账,则直接将to地址设置为receiver,而如果是ERC20转账，则需要将其设置为token地址
 	to := receiver
-	//如果是erc20转账，则需要构建data数据
 	if "" != token {
 		parameter := fmt.Sprintf("transfer(%s, %s)", receiver, utils.ToWei(amount, 8).String())
 		_, data, err := evmAbi.Pack(parameter, erc20.ERC20ABI, false)
@@ -459,15 +455,14 @@ func safeTransfer(ownerPrivateKeyStr, mulSign, chainName, rpcURL, receiver, toke
 		}
 		chain33txLog.Info("safeTransfer", "evmAbi.Pack with parameter", parameter,
 			"data", common.ToHex(data))
-		//对于其他erc20资产，直接将其设置为0
+
 		valueStr = "0"
 		to = token
 		dataStr = common.ToHex(data)
 	}
 
-	//获取nonce
 	nonce := getMulSignNonce(mulSign, rpcURL)
-	//构造getTransactionHash参数
+
 	//function getTransactionHash(
 	//	address to,
 	//	uint256 value,
@@ -518,7 +513,6 @@ func safeTransfer(ownerPrivateKeyStr, mulSign, chainName, rpcURL, receiver, toke
 		sigs = append(sigs, sig...)
 	}
 
-	//构造execTransaction参数
 	parameter2Exec := fmt.Sprintf("execTransaction(%s, %s, %s, 0, %d, %d, %d, %s, %s, %s)", to, valueStr, dataStr,
 		safeTxGas, baseGas, gasPrice,
 		ebrelayerTypes.NilAddrChain33, ebrelayerTypes.NilAddrChain33, common.ToHex(sigs))

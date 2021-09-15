@@ -183,7 +183,6 @@ func Perf(host, txsize, num, sleepinterval, totalduration string) {
 			gcli := types.NewChain33Client(conn)
 
 			for tx := range txChan {
-				//发送交易
 				_, err := gcli.SendTransaction(context.Background(), tx, grpc.UseCompressor("gzip"))
 
 				txPool.Put(tx)
@@ -217,9 +216,9 @@ func Perf(host, txsize, num, sleepinterval, totalduration string) {
 	for k := 0; k < numThread*2; k++ {
 		<-chSend
 	}
-	//打印发送的交易总数
+
 	log.Info("sendtx total tx", "total", total)
-	//打印成功发送的交易总数
+
 	log.Info("sendtx success tx", "success", success)
 }
 

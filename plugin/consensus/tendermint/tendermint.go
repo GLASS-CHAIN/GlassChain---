@@ -257,7 +257,6 @@ func (client *Client) SetQueueClient(q queue.Client) {
 
 // StartConsensus a routine that make the consensus start
 func (client *Client) StartConsensus() {
-	//进入共识前先同步到最大高度
 	hint := time.NewTicker(5 * time.Second)
 	beg := time.Now()
 OuterLoop:
@@ -364,7 +363,7 @@ func (client *Client) CreateGenesisTx() (ret []*types.Transaction) {
 }
 
 func (client *Client) getBlockInfoTx(current *types.Block) (*tmtypes.ValNodeAction, error) {
-	//检查第一笔交易
+
 	if len(current.Txs) == 0 {
 		return nil, types.ErrEmptyTx
 	}
@@ -375,18 +374,15 @@ func (client *Client) getBlockInfoTx(current *types.Block) (*tmtypes.ValNodeActi
 	if err != nil {
 		return nil, err
 	}
-	//检查交易类型
 	if valAction.GetTy() != tmtypes.ValNodeActionBlockInfo {
 		return nil, ttypes.ErrBaseTxType
 	}
-	//检查交易内容
 	if valAction.GetBlockInfo() == nil {
 		return nil, ttypes.ErrBlockInfoTx
 	}
 	return &valAction, nil
 }
 
-// CheckBlock 检查区块
 func (client *Client) CheckBlock(parent *types.Block, current *types.BlockDetail) error {
 	cfg := client.GetAPI().GetConfig()
 	if current.Block.Difficulty != cfg.GetP(0).PowLimitBits {
@@ -399,7 +395,6 @@ func (client *Client) CheckBlock(parent *types.Block, current *types.BlockDetail
 	if parent.Height+1 != current.Block.Height {
 		return types.ErrBlockHeight
 	}
-	//判断exec 是否成功
 	if current.Receipts[0].Ty != types.ExecOk {
 		return ttypes.ErrBaseExecErr
 	}
@@ -506,7 +501,7 @@ func (client *Client) BuildBlock() *types.Block {
 	newblock.ParentHash = lastBlock.Hash(cfg)
 	newblock.Height = lastBlock.Height + 1
 	client.AddTxsToBlock(&newblock, txs)
-	//固定难度
+
 	newblock.Difficulty = cfg.GetP(0).PowLimitBits
 	newblock.BlockTime = types.Now().Unix()
 	if lastBlock.BlockTime >= newblock.BlockTime {
@@ -687,7 +682,6 @@ func (client *Client) Query_NodeInfo(req *types.ReqNil) (types.Message, error) {
 	return &tmtypes.ValNodeInfoSet{Nodes: nodes}, nil
 }
 
-// CmpBestBlock 比较newBlock是不是最优区块
 func (client *Client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block) bool {
 	return false
 }

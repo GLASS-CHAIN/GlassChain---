@@ -89,36 +89,21 @@ const (
 )
 
 const (
-	// GetProposalBoard 用于在cmd里面的区分不同的查询
 	GetProposalBoard = "GetProposalBoard"
-	// ListProposalBoard 查询多个
 	ListProposalBoard = "ListProposalBoard"
-	// GetActiveBoard 查询当前的
 	GetActiveBoard = "GetActiveBoard"
-	// GetProposalProject 用于在cmd里面的区分不同的查询
 	GetProposalProject = "GetProposalProject"
-	// ListProposalProject 查询多个
 	ListProposalProject = "ListProposalProject"
-	// GetProposalRule 用于在cmd里面的区分不同的查询
 	GetProposalRule = "GetProposalRule"
-	// ListProposalRule 查询多个
 	ListProposalRule = "ListProposalRule"
-	// GetActiveRule 查询当前的
 	GetActiveRule = "GetActiveRule"
-	// ListProposalComment 查询多个
 	ListProposalComment = "ListProposalComment"
-	// GetProposalChange 用于在cmd里面的区分不同的查询
 	GetProposalChange = "GetProposalChange"
-	// ListProposalChange 查询多个
 	ListProposalChange = "ListProposalChange"
 )
 
-//包的名字可以通过配置文件来配置
-//建议用github的组织名称，或者用户名字开头, 再加上自己的插件的名字
-//如果发生重名，可以通过配置文件修改这些名字
 var (
 	AutonomyX      = "autonomy"
 	ExecerAutonomy = []byte(AutonomyX)
-	// TicketX 该模块需要查询ticket合约下的账户余额
 	TicketX = "ticket"
 )

@@ -724,7 +724,6 @@ function offline_transfer_multisign_Chain33Ycc_test() {
     result=$(${Chain33Cli} evm query -a "${chain33YccErc20Addr}" -c "${multisignChain33Addr}" -b "balanceOf(${multisignChain33Addr})")
     is_equal "${result}" "30300000000"
 
-    # 判断 ETH 这端是否金额一致
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethBridgeToeknYccAddr}")
     cli_ret "${result}" "balance" ".balance" "370"
 
@@ -753,9 +752,8 @@ function lockAndtransfer_multisign_chain33Ycc() {
 
 function lockAndtransfer_multisign_ethereumEth() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}===== ethereum 端 lock multisign ETH ======${NOC}"
+    echo -e "${GRE}===== ethereum lock multisign ETH ======${NOC}"
     offline_set_offline_token_Eth
-    # 重启 nonce 会不统一 要重启一下
     restart_ebrelayerA
     lock_multisign_Eth_test
     offline_transfer_multisign_Eth_test
@@ -764,9 +762,9 @@ function lockAndtransfer_multisign_ethereumEth() {
 
 function lockAndtransfer_multisign_ethereumBty() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    echo -e "${GRE}===== ethereum 端 lock multisign YCC ======${NOC}"
+    echo -e "${GRE}===== ethereum lock multisign YCC ======${NOC}"
     offline_set_offline_token_EthYcc
-    # 重启
+
     restart_ebrelayerA
     lock_multisign_EthYcc
     offline_transfer_multisign_EthYcc

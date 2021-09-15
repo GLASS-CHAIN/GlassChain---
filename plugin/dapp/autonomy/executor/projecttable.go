@@ -24,7 +24,6 @@ var projectOpt = &table.Option{
 	Index:   []string{"addr", "status", "addr_status"},
 }
 
-//NewProjectTable 新建表
 func NewProjectTable(kvdb db.KV) *table.Table {
 	rowmeta := NewProjectRow()
 	table, err := table.NewTable(rowmeta, kvdb, projectOpt)
@@ -34,22 +33,18 @@ func NewProjectTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//ProjectRow table meta 结构
 type ProjectRow struct {
 	*auty.AutonomyProposalProject
 }
-
-//NewProjectRow 新建一个meta 结构
+ 
 func NewProjectRow() *ProjectRow {
 	return &ProjectRow{AutonomyProposalProject: &auty.AutonomyProposalProject{}}
 }
 
-//CreateRow 新建数据行(注意index 数据一定也要保存到数据中,不能就保存heightindex)
 func (r *ProjectRow) CreateRow() *table.Row {
 	return &table.Row{Data: &auty.AutonomyProposalProject{}}
 }
 
-//SetPayload 设置数据
 func (r *ProjectRow) SetPayload(data types.Message) error {
 	if d, ok := data.(*auty.AutonomyProposalProject); ok {
 		r.AutonomyProposalProject = d
@@ -58,7 +53,6 @@ func (r *ProjectRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (r *ProjectRow) Get(key string) ([]byte, error) {
 	if key == "heightindex" {
 		return []byte(dapp.HeightIndexStr(r.Height, int64(r.Index))), nil

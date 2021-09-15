@@ -79,9 +79,7 @@ func signtxs(priv crypto.PrivKey, cert []byte) {
 	signtx(tx13, priv, cert)
 }
 
-/**
-初始化Author实例和userloader
-*/
+
 func initEnv() (*types.Chain33Config, error) {
 	cfg := types.NewChain33Config(types.ReadFile("./test/chain33.auth.test.toml"))
 	sub := cfg.GetSubConfig()
@@ -114,9 +112,7 @@ func initEnv() (*types.Chain33Config, error) {
 	return cfg, nil
 }
 
-/**
-TestCase01 带证书的交易验签
-*/
+
 func TestChckSign(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -128,9 +124,6 @@ func TestChckSign(t *testing.T) {
 	assert.Equal(t, true, tx1.CheckSign(0))
 }
 
-/**
-TestCase10 带证书的多交易验签
-*/
 func TestChckSigns(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -147,9 +140,6 @@ func TestChckSigns(t *testing.T) {
 	}
 }
 
-/**
-TestCase02 带证书的交易并行验签
-*/
 func TestChckSignsPara(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -166,9 +156,7 @@ func TestChckSignsPara(t *testing.T) {
 	}
 }
 
-/**
-TestCase03 不带证书，公链签名算法验证
-*/
+
 func TestChckSignWithNoneAuth(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -184,9 +172,7 @@ func TestChckSignWithNoneAuth(t *testing.T) {
 	}
 }
 
-/**
-TestCase04 不带证书，SM2签名验证
-*/
+
 func TestChckSignWithSm2(t *testing.T) {
 	sm2, err := crypto.New(types.GetSignName("cert", ct.AuthSM2))
 	assert.Nil(t, err)
@@ -209,9 +195,7 @@ func TestChckSignWithSm2(t *testing.T) {
 	}
 }
 
-/**
-TestCase05 不带证书，secp256r1签名验证
-*/
+
 func TestChckSignWithEcdsa(t *testing.T) {
 	ecdsacrypto, _ := crypto.New(types.GetSignName("cert", ct.AuthECDSA))
 	privKeyecdsa, _ := ecdsacrypto.PrivKeyFromBytes(privRaw)
@@ -233,9 +217,7 @@ func TestChckSignWithEcdsa(t *testing.T) {
 	}
 }
 
-/**
-TestCase 06 证书检验
-*/
+
 func TestValidateCert(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -254,9 +236,7 @@ func TestValidateCert(t *testing.T) {
 	}
 }
 
-/**
-Testcase07 noneimpl校验器验证（回滚到未开启证书验证的区块使用）
-*/
+
 func TestValidateTxWithNoneAuth(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -276,9 +256,7 @@ func TestValidateTxWithNoneAuth(t *testing.T) {
 	}
 }
 
-/**
-Testcase08 重载历史证书
-*/
+
 func TestReloadCert(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -298,9 +276,7 @@ func TestReloadCert(t *testing.T) {
 	}
 }
 
-/**
-Testcase09 根据高度重载历史证书
-*/
+
 func TestReloadByHeight(t *testing.T) {
 	cfg, err := initEnv()
 	if err != nil {
@@ -315,7 +291,6 @@ func TestReloadByHeight(t *testing.T) {
 	}
 }
 
-//FIXME 有并发校验的场景需要考虑竞争，暂时没有并发校验的场景
 /*
 func TestValidateCerts(t *testing.T) {
 	err := initEnv()

@@ -29,9 +29,9 @@ import (
 
 const (
 	consensusInterval = 10 //about 1 new block interval
-	minerInterval     = 10 //5s的主块间隔后分叉概率增加，10s可以消除一些分叉回退
+	minerInterval     = 10 
 
-	waitBlocks4CommitMsg int32  = 5 //commit msg共识发送后等待几个块没确认则重发
+	waitBlocks4CommitMsg int32  = 5 
 	waitConsensStopTimes uint32 = 3 //3*10s
 )
 
@@ -42,8 +42,8 @@ type paraSelfConsEnable struct {
 
 type commitMsgClient struct {
 	paraClient           *client
-	waitMainBlocks       int32  //等待平行链共识消息在主链上链并成功的块数，超出会重发共识消息
-	waitConsensStopTimes uint32 //共识高度低于完成高度， reset高度重发等待的次数
+	waitMainBlocks       int32  
+	waitConsensStopTimes uint32 
 	resetCh              chan interface{}
 	sendMsgCh            chan *types.Transaction
 	minerSwitch          int32
@@ -52,13 +52,13 @@ type commitMsgClient struct {
 	sendingHeight        int64
 	consensHeight        int64
 	consensDoneHeight    int64
-	selfConsensError     int32 //自共识比主链共识更高的异常场景，需要等待自共识<=主链共识再发送
+	selfConsensError     int32 
 	authAccount          string
 	authAccountIn        bool
 	isRollBack           int32
 	checkTxCommitTimes   int32
 	txFeeRate            int64
-	selfConsEnableList   []*paraSelfConsEnable //适配在自共识合约配置前有自共识的平行链项目，fork之后，采用合约配置
+	selfConsEnableList   []*paraSelfConsEnable 
 	privateKey           crypto.PrivKey
 	quit                 chan struct{}
 	mutex                sync.Mutex
@@ -88,16 +88,14 @@ func newCommitMsgCli(para *client, cfg *subConfig) *commitMsgClient {
 		cli.waitConsensStopTimes = cfg.WaitConsensStopTimes
 	}
 
-	// 设置平行链共识起始高度，在共识高度为-1也就是从未共识过的环境中允许从设置的非0起始高度开始共识
-	//note：只有在主链LoopCheckCommitTxDoneForkHeight之后才支持设置ParaConsensStartHeight
+	
+	
 	if cfg.ParaConsensStartHeight > 0 {
 		cli.consensDoneHeight = cfg.ParaConsensStartHeight - 1
 	}
 	return cli
 }
 
-// 1. 链高度回滚，低于当前发送高度，需要重新计算当前发送高度,不然不会重新发送回滚的高度
-// 2. 定时轮询是在比如锁定解锁钱包这类外部条件变化时候，其他输入条件不会触发时候及时响应，不然任何一个外部条件变化都触发一下发送，可能条件比较多
 func (client *commitMsgClient) handler() {
 	var readTick <-chan time.Time
 	checkParams := &commitCheckParams{}
@@ -118,11 +116,9 @@ func (client *commitMsgClient) handler() {
 out:
 	for {
 		select {
-		//出错场景入口，需要reset 重发
 		case <-client.resetCh:
 			client.resetSend()
 			client.createCommitTx()
-		//例行检查发送入口,及时触发未发送共识
 		case <-readTick:
 			client.procChecks(checkParams)
 			client.createCommitTx()
@@ -135,7 +131,6 @@ out:
 	client.paraClient.wg.Done()
 }
 
-//chain height更新时候入口
 func (client *commitMsgClient) updateChainHeightNotify(height int64, isDel bool) {
 	if isDel {
 		atomic.StoreInt32(&client.isRollBack, 1)
@@ -153,12 +148,10 @@ func (client *commitMsgClient) setInitChainHeight(height int64) {
 	atomic.StoreInt64(&client.chainHeight, height)
 }
 
-// reset notify 提供重设发送参数，发送tx的入口
 func (client *commitMsgClient) resetNotify() {
 	client.resetCh <- 1
 }
 
-//新的区块产生，检查是否有commitTx正在发送入口
 func (client *commitMsgClient) commitTxCheckNotify(block *types.ParaTxDetail) {
 	if client.checkCommitTxSuccess(block) {
 		client.createCommitTx()
@@ -176,7 +169,6 @@ func (client *commitMsgClient) resetSend() {
 	client.resetSendEnv()
 }
 
-//自共识后直接从本地获取最新共识高度，没有自共识，获取主链的共识高度
 func (client *commitMsgClient) getConsensusHeight() int64 {
 	status, err := client.getSelfConsensus()
 	if err != nil {
@@ -202,14 +194,11 @@ func (client *commitMsgClient) createCommitTx() {
 	client.pushCommitTx(tx)
 }
 
-//四个触发：1,新增区块 2,10s tick例行检查 3,发送交易成功上链 4,异常重发
-//1&2　只要共识高度追赶上了sendingHeight，就可以继续发送，即便当前节点发送交易仍未上链也直接取消发送新交易
 func (client *commitMsgClient) getCommitTx() *types.Transaction {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
 
 	consensHeight := client.getConsensusHeight()
-	//只有从未共识过，才可以设置从初始起始高度跳跃
 	if consensHeight == -1 && consensHeight < client.consensDoneHeight {
 		consensHeight = client.consensDoneHeight
 	}
@@ -228,13 +217,11 @@ func (client *commitMsgClient) getCommitTx() *types.Transaction {
 		return nil
 	}
 
-	//1.如果是在主链共识场景，共识高度可能大于平行链的链高度
-	//2.已发送，未共识场景
 	if sendingHeight > consensHeight || consensHeight > chainHeight || sendingHeight >= chainHeight {
 		return nil
 	}
 
-	//满足　sendingHeight <= consensHeight <= chainHeight && sendingHeight < chainHeight
+	//　sendingHeight <= consensHeight <= chainHeight && sendingHeight < chainHeight
 	signTx, count := client.getSendingTx(sendingHeight, chainHeight)
 	if signTx == nil {
 		return nil
@@ -244,8 +231,6 @@ func (client *commitMsgClient) getCommitTx() *types.Transaction {
 
 }
 
-//client.checkTxCommitTimes和client.sendingHeight锁的场景可以区分
-//发送commitTx，可能跟checkCommitTxSuccess获取全局变量冲突，加锁，　如果有仍未成功上链的交易，直接覆盖重置
 func (client *commitMsgClient) pushCommitTx(signTx *types.Transaction) {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
@@ -270,7 +255,7 @@ func (client *commitMsgClient) sendCommitActions(acts []*pt.ParacrossCommitActio
 }
 
 func (client *commitMsgClient) checkTxIn(block *types.ParaTxDetail, tx *types.Transaction) bool {
-	//committx是平行链交易
+
 	if types.IsParaExecName(string(tx.Execer)) {
 		for _, tx := range block.TxDetails {
 			if bytes.HasSuffix(tx.Tx.Execer, []byte(pt.ParaX)) && tx.Receipt.Ty == types.ExecOk {
@@ -280,7 +265,6 @@ func (client *commitMsgClient) checkTxIn(block *types.ParaTxDetail, tx *types.Tr
 		return false
 	}
 
-	//主链交易，向主链查询,平行链获取到的只是过滤了的平行链交易
 	receipt, _ := client.paraClient.QueryTxOnMainByHash(tx.Hash())
 	if receipt != nil && receipt.Receipt.Ty == types.ExecOk {
 		return true
@@ -297,7 +281,6 @@ func (client *commitMsgClient) checkCommitTxSuccess(block *types.ParaTxDetail) b
 		return false
 	}
 
-	//当前addType是回滚，则不计数，如果有累计则撤销上次累计次数，重新计数
 	if block.Type != types.AddBlock {
 		if client.checkTxCommitTimes > 0 {
 			client.checkTxCommitTimes--
@@ -323,7 +306,6 @@ func (client *commitMsgClient) reSendCommitTx(tx *types.Transaction) bool {
 	return true
 }
 
-//如果共识高度一直没有追上发送高度，超出等待时间后，说明共识一直没达成，安全起见，超过停止次数后，重发
 func (client *commitMsgClient) checkConsensusStop(checks *commitCheckParams) {
 	client.mutex.Lock()
 	defer client.mutex.Unlock()
@@ -346,7 +328,6 @@ func (client *commitMsgClient) checkAuthAccountIn() {
 	}
 	authExist := strings.Contains(nodeStr, client.authAccount)
 
-	//如果授权节点重新加入，需要从当前共识高度重新发送
 	if !client.authAccountIn && authExist {
 		client.resetSend()
 	}
@@ -623,8 +604,6 @@ out:
 	client.paraClient.wg.Done()
 }
 
-//当前未考虑获取key非常多失败的场景， 如果获取height非常多，block模块会比较大，但是使用完了就释放了
-//如果有必要也可以考虑每次最多取20个一个txgroup，发送共识部分循环获取发送也没问题
 func (client *commitMsgClient) getNodeStatus(start, end int64) ([]*pt.ParacrossNodeStatus, error) {
 	var ret []*pt.ParacrossNodeStatus
 	if start == 0 {
@@ -702,10 +681,7 @@ func (client *commitMsgClient) getNodeStatus(start, end int64) ([]*pt.ParacrossN
 		ret = append(ret, nodeList[req.Start+int64(i)])
 		needSentTxs += nodeList[req.Start+int64(i)].NonCommitTxCounts
 	}
-	//1.如果是只有commit tx的空块，推迟发送，直到等到一个完全没有commit tx的空块或者其他tx的块
-	//2,如果20个块都是 commit tx的空块，20个块打包一次发送，尽量减少commit tx造成的空块
-	//3,如果形如xxoxx的块排列，x代表commit空块，o代表实际的块，即只要不全部是commit块，也要全部打包一起发出去
-	//如果=0 意味着全部是paracross commit tx，延迟发送
+
 	if needSentTxs == 0 && len(ret) < int(types.MaxTxGroupSize) {
 		plog.Debug("para commitmsg all self-consensus commit tx,send delay", "start", start, "end", end)
 		return nil, nil
@@ -791,7 +767,6 @@ out:
 				continue
 			}
 
-			//如果主链的共识高度小于自共识高度，需要等待自共识回滚
 			if mainStatus.Height < selfHeight {
 				atomic.StoreInt32(&client.selfConsensError, 1)
 			} else {
@@ -800,7 +775,6 @@ out:
 
 			preHeight := atomic.LoadInt64(&client.consensHeight)
 			atomic.StoreInt64(&client.consensHeight, mainStatus.Height)
-			//如果主链的共识高度产生了回滚，本地链也需要重新检查共识高度,不然可能会一直等待共识追赶上来
 			if mainStatus.Height < preHeight {
 				client.resetNotify()
 			}
@@ -827,7 +801,6 @@ func (client *commitMsgClient) GetProperFeeRate() error {
 	return nil
 }
 
-//在自共识阶段获取共识高度
 func (client *commitMsgClient) getSelfConsensus() (*pt.ParacrossStatus, error) {
 	block, err := client.paraClient.getLastBlockInfo()
 	if err != nil {
@@ -852,7 +825,6 @@ func (client *commitMsgClient) getSelfConsensus() (*pt.ParacrossStatus, error) {
 		if err != nil {
 			return nil, err
 		}
-		//开启自共识后也要等到自共识真正切换之后再使用，如果本地区块已经过了自共识高度，但自共识的高度还没达成，就会导致共识机制出错
 		if resp.Height > stage.StartHeight {
 			return resp, nil
 		}
@@ -860,7 +832,6 @@ func (client *commitMsgClient) getSelfConsensus() (*pt.ParacrossStatus, error) {
 	return nil, types.ErrNotFound
 }
 
-//从本地查询共识高度
 func (client *commitMsgClient) getSelfConsensusStatus() (*pt.ParacrossStatus, error) {
 	cfg := client.paraClient.GetAPI().GetConfig()
 	ret, err := client.paraClient.GetAPI().QueryChain(&types.ChainExecutor{
@@ -881,14 +852,13 @@ func (client *commitMsgClient) getSelfConsensusStatus() (*pt.ParacrossStatus, er
 
 }
 
-//通过grpc获取主链状态可能耗时，放在定时器里面处理
 func (client *commitMsgClient) getMainConsensusStatus() (*pt.ParacrossStatus, error) {
 	block, err := client.paraClient.getLastBlockInfo()
 	if err != nil {
 		return nil, err
 	}
 	cfg := client.paraClient.GetAPI().GetConfig()
-	//去主链获取共识高度
+
 	reply, err := client.paraClient.grpcClient.QueryChain(context.Background(), &types.ChainExecutor{
 		Driver:   "paracross",
 		FuncName: "GetTitleByHash",
@@ -912,7 +882,6 @@ func (client *commitMsgClient) getMainConsensusStatus() (*pt.ParacrossStatus, er
 
 }
 
-//node group会在主链和平行链都同时配置,只本地查询就可以
 func (client *commitMsgClient) getNodeGroupAddrs() (string, error) {
 	cfg := client.paraClient.GetAPI().GetConfig()
 	ret, err := client.paraClient.GetAPI().QueryChain(&types.ChainExecutor{
@@ -1055,7 +1024,6 @@ func (client *commitMsgClient) setSelfConsEnable() error {
 	return nil
 }
 
-//适配在自共识合约配置前有自共识的平行链项目，fork之后，采用合约配置
 func (client *commitMsgClient) isSelfConsEnable(height int64) bool {
 	for _, v := range client.selfConsEnableList {
 		if height >= v.startHeight && height <= v.endHeight {

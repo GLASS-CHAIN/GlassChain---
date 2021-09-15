@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CollateralizeCmd 斗牛游戏命令行
+// CollateralizeCmd
 func CollateralizeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "collateralize",
@@ -33,7 +33,7 @@ func CollateralizeCmd() *cobra.Command {
 	return cmd
 }
 
-// CollateralizeCreateRawTxCmd 生成开始交易命令行
+// CollateralizeCreateRawTxCmd 
 func CollateralizeCreateRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -66,7 +66,7 @@ func CollateralizeCreate(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CollateralizeBorrowRawTxCmd 生成开始交易命令行
+// CollateralizeBorrowRawTxCmd 
 func CollateralizeBorrowRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "borrow",
@@ -102,7 +102,7 @@ func CollateralizeBorrow(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CollateralizeAppendRawTxCmd 生成开始交易命令行
+// CollateralizeAppendRawTxCmd
 func CollateralizeAppendRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "append",
@@ -141,7 +141,7 @@ func CollateralizeAppend(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CollateralizeRepayRawTxCmd 生成开始交易命令行
+// CollateralizeRepayRawTxCmd
 func CollateralizeRepayRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "repay",
@@ -177,7 +177,7 @@ func CollateralizeRepay(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CollateralizePriceFeedRawTxCmd 生成开始交易命令行
+// CollateralizePriceFeedRawTxCmd
 func CollateralizePriceFeedRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "feed",
@@ -213,7 +213,7 @@ func CollateralizePriceFeed(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CollateralizeRetrieveRawTxCmd 生成开始交易命令行
+// CollateralizeRetrieveRawTxCmd
 func CollateralizeRetrieveRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "retrieve",
@@ -249,7 +249,7 @@ func CollateralizeRetrieve(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// CollateralizeManageRawTxCmd 生成开始交易命令行
+// CollateralizeManageRawTxCmd
 func CollateralizeManageRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "manage",
@@ -370,7 +370,7 @@ func CollateralizeQueryUserBalance(cmd *cobra.Command, args []string) {
 	ctx.Run()
 }
 
-// CollateralizeQueryCmd 查询命令行
+// CollateralizeQueryCmd
 func CollateralizeQueryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",

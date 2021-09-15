@@ -39,7 +39,6 @@ var (
 )
 
 func TestAccountManager(t *testing.T) {
-	//环境准备
 	cfg := types.NewChain33Config(types.GetDefaultCfgstring())
 	cfg.SetTitleOnlyForTest("chain33")
 	Init(et.AccountmanagerX, cfg, nil)
@@ -110,7 +109,6 @@ func TestAccountManager(t *testing.T) {
 	}
 	stateDB.Set([]byte(item3.Key), types.Encode(item3))
 
-	//注册
 	tx1, err := CreateRegister(&et.Register{AccountID: "harrylee2015"}, PrivKeyB)
 	assert.Equal(t, err, nil)
 	err = Exec_Block(t, stateDB, kvdb, env, tx1)
@@ -126,28 +124,28 @@ func TestAccountManager(t *testing.T) {
 	tx3, err := CreateRegister(&et.Register{AccountID: "harrylee2020"}, PrivKeyC)
 	assert.Nil(t, err)
 	Exec_Block(t, stateDB, kvdb, env, tx3)
-	//转账
+
 	tx4, err := CreateTransfer(&et.Transfer{FromAccountID: "harrylee2015", ToAccountID: "harrylee2020", Asset: &types.Asset{Exec: "coins", Symbol: "bty", Amount: 1e8}}, PrivKeyB)
 	assert.Equal(t, err, nil)
 	err = Exec_Block(t, stateDB, kvdb, env, tx4)
 	assert.Equal(t, err, nil)
-	//重置公钥
+
 	tx5, err := CreateReset(&et.ResetKey{Addr: "1MCftFynyvG2F4ED5mdHYgziDxx6vDrScs", AccountID: "harrylee2015"}, PrivKeyA)
 	assert.Equal(t, err, nil)
 	err = Exec_Block(t, stateDB, kvdb, env, tx5)
 	assert.Nil(t, err)
-	//在锁定期内撤回请求
+
 	tx6, err := CreateApply(&et.Apply{Op: et.RevokeReset, AccountID: "harrylee2015"}, PrivKeyB)
 	assert.Equal(t, err, nil)
 	err = Exec_Block(t, stateDB, kvdb, env, tx6)
 	assert.Equal(t, err, nil)
-	//重置公钥
+
 	tx5, err = CreateReset(&et.ResetKey{Addr: "1MCftFynyvG2F4ED5mdHYgziDxx6vDrScs", AccountID: "harrylee2015"}, PrivKeyA)
 	assert.Equal(t, err, nil)
 	err = Exec_Block(t, stateDB, kvdb, env, tx5)
 	assert.Nil(t, err)
 	time.Sleep(time.Second)
-	//过了锁定期，申请生效
+
 	tx6, err = CreateApply(&et.Apply{Op: et.EnforceReset, AccountID: "harrylee2015"}, PrivKeyD)
 	assert.Equal(t, err, nil)
 	err = Exec_Block(t, stateDB, kvdb, env, tx6)
@@ -160,35 +158,35 @@ func TestAccountManager(t *testing.T) {
 	assert.Equal(t, err, nil)
 	assert.Equal(t, balance.Balance, 199*types.DefaultCoinPrecision)
 
-	//将某个账户冻结
+
 	tx8, _ := CreateSupervise(&et.Supervise{
 		AccountIDs: []string{"harrylee2015"},
 		Op:         et.Freeze,
 	}, PrivKeyA)
 	err = Exec_Block(t, stateDB, kvdb, env, tx8)
 	assert.Equal(t, err, nil)
-	//根据状态查询
+
 	accounts, err := Exec_QueryAccountsByStatus(et.Frozen, stateDB, kvdb)
 	assert.Equal(t, err, nil)
 	assert.Equal(t, accounts.Accounts[0].Status, et.Frozen)
 
-	//解冻账户
+
 	tx9, _ := CreateSupervise(&et.Supervise{
 		AccountIDs: []string{"harrylee2015"},
 		Op:         et.UnFreeze,
 	}, PrivKeyA)
 	err = Exec_Block(t, stateDB, kvdb, env, tx9)
 	assert.Equal(t, err, nil)
-	//根据状态查询
+
 	accounts, err = Exec_QueryAccountsByStatus(et.Frozen, stateDB, kvdb)
 	assert.NotEqual(t, err, nil)
 
-	//过期账户查询
+
 	time.Sleep(11 * time.Second)
 	accounts, err = Exec_QueryExpiredAccounts(time.Now().Unix(), stateDB, kvdb)
 	assert.Equal(t, err, nil)
 	assert.Equal(t, 2, len(accounts.Accounts))
-	//账户延期
+
 	tx10, _ := CreateSupervise(&et.Supervise{
 		AccountIDs: []string{"harrylee2015"},
 		Op:         et.AddExpire,
@@ -198,7 +196,7 @@ func TestAccountManager(t *testing.T) {
 	accounts, err = Exec_QueryExpiredAccounts(time.Now().Unix(), stateDB, kvdb)
 	assert.Equal(t, err, nil)
 	assert.Equal(t, 1, len(accounts.Accounts))
-	//账户授权
+
 	tx11, _ := CreateSupervise(&et.Supervise{
 		AccountIDs: []string{"harrylee2015"},
 		Op:         et.Authorize,
@@ -307,7 +305,7 @@ func CreateApply(apply *et.Apply, privKey string) (tx *types.Transaction, err er
 	return tx, nil
 }
 
-//模拟区块中交易得执行过程
+
 func Exec_Block(t *testing.T, stateDB db.DB, kvdb db.KVDB, env *execEnv, txs ...*types.Transaction) error {
 	cfg := types.NewChain33Config(types.GetDefaultCfgstring())
 	cfg.SetTitleOnlyForTest("chain33")

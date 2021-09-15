@@ -14,9 +14,9 @@ type Chain33EvmEvent int
 
 const (
 	UnsupportedEvent Chain33EvmEvent = iota
-	//在chain33的evm合约中产生了lock事件
+
 	Chain33EventLogLock
-	//在chain33的evm合约中产生了burn事件
+
 	Chain33EventLogBurn
 )
 
@@ -37,7 +37,6 @@ type Chain33Msg struct {
 	Nonce                int64
 }
 
-// 发生在chain33evm上的lock事件，当bty跨链转移到eth时会发生该种事件
 type LockEventOnChain33 struct {
 	From   chain33EvmCommon.Hash160Address
 	To     []byte
@@ -47,7 +46,6 @@ type LockEventOnChain33 struct {
 	Nonce  *big.Int
 }
 
-// 发生在chain33evm上的burn事件，当eth/erc20资产需要提币回到以太坊链上时，会发生该种事件
 type BurnEventOnChain33 struct {
 	Token            chain33EvmCommon.Hash160Address
 	Symbol           string

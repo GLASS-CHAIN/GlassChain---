@@ -202,7 +202,7 @@ function deploy_erc20_chain33_YCC() {
 
 function create_bridge_token_eth_YCC() {
     # ethereum create-bridge-token YCC
-    echo -e "${GRE}======= 在 ethereum 上创建 bridgeToken ycc ======${NOC}"
+    echo -e "${GRE}======= bridgeToken ycc ======${NOC}"
     result=$(${CLIA} ethereum token create-bridge-token -s YCC)
     cli_ret "${result}" "ethereum token create -s YCC"
     ethBridgeToeknYccAddr=$(echo "${result}" | jq -r .addr)
@@ -211,24 +211,22 @@ function create_bridge_token_eth_YCC() {
 
 function deploy_erc20_chain33_ZBC() {
     # chain33 token create ZBC
-    echo -e "${GRE}======= 在 chain33 上创建 ERC20 ZBC ======${NOC}"
+    echo -e "${GRE}======= ERC20 ZBC ======${NOC}"
     result=$(${CLIA} chain33 token create -s ZBC -o "${chain33DeployAddr}")
     cli_ret "${result}" "chain33 token create -s ZBC"
     chain33ZBCErc20Addr=$(echo "${result}" | jq -r .msg)
     cp ERC20.abi "${chain33ZBCErc20Addr}.abi"
 
-    # echo 'ZBC.1:增加allowance的设置,或者使用relayer工具进行'
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33ZBCErc20Addr}" -p "approve(${chain33BridgeBank}, 330000000000)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 
-    # echo 'ZBC.2:#执行add lock操作:addToken2LockList'
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "addToken2LockList(${chain33ZBCErc20Addr}, ZBC)" --chainID "${chain33ID}")
     check_tx "${Chain33Cli}" "${hash}"
 }
 
 function create_bridge_token_eth_ZBC() {
     # ethereum create-bridge-token ZBC
-    echo -e "${GRE}======= 在 ethereum 上创建 bridgeToken ZBC ======${NOC}"
+    echo -e "${GRE}=======bridgeToken ZBC ======${NOC}"
     result=$(${CLIA} ethereum token create-bridge-token -s ZBC)
     cli_ret "${result}" "ethereum token create -s ZBC"
     ethBridgeToeknZBCAddr=$(echo "${result}" | jq -r .addr)
@@ -262,7 +260,6 @@ function updata_toml_start_BCD() {
         local file="./relayer_$name/relayer.toml"
         cp './relayer.toml' "${file}"
 
-        # 删除配置文件中不需要的字段
         for deleteName in "deploy4chain33" "deployerPrivateKey" "operatorAddr" "validatorsAddr" "initPowers" "deploy" "deployerPrivateKey" "operatorAddr" "validatorsAddr" "initPowers"; do
             delete_line "${file}" "${deleteName}"
         done
@@ -309,7 +306,6 @@ function updata_toml_start_BCD() {
 }
 
 function validators_config() {
-    # 修改 relayer.toml 配置文件 initPowers
     # shellcheck disable=SC2155
     line=$(delete_line_show "./relayer.toml" 'initPowers=\[96, 1, 1, 1\]')
     if [ "${line}" ]; then
@@ -340,17 +336,13 @@ function validators_config() {
 function StartRelayerAndDeploy() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # 修改 relayer.toml 配置文件 pushName 字段
     pushNameChange "./relayer.toml"
     validators_config
 
-    # 启动 ebrelayer
     start_ebrelayerA
 
-    # 导入私钥 部署合约 设置 bridgeRegistry 地址
     InitAndDeploy
 
-    # 重启
     kill_ebrelayer ebrelayer
     start_ebrelayerA
 
@@ -360,13 +352,11 @@ function StartRelayerAndDeploy() {
     # start ebrelayer B C D
     updata_toml_start_BCD
 
-    # 设置 token 地址
     InitTokenAddr
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# chian33 初始化准备
 function InitChain33() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
@@ -383,24 +373,20 @@ function InitChain33() {
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# chian33 初始化准备
 function InitChain33Validator() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # 转帐到 DeployAddr
     result=$(${Chain33Cli} account import_key -k "${chain33DeployKey}" -l "DeployAddr")
     check_addr "${result}" "${chain33DeployAddr}"
     hash=$(${Chain33Cli} send coins transfer -a 6000 -n test -t "${chain33DeployAddr}" -k 4257d8692ef7fe13c68b65d6a52f03933db2fa5ce8faf210b5b8b80c721ced01)
     check_tx "${Chain33Cli}" "${hash}"
 
-    # 转账到 EVM  合约中
     hash=$(${Chain33Cli} send coins send_exec -e evm -a 3000 -k "${chain33DeployAddr}")
     check_tx "${Chain33Cli}" "${hash}"
 
     result=$(${Chain33Cli} account balance -a "${chain33DeployAddr}" -e evm)
     #    balance_ret "${result}" "4000.0000"
 
-    # 导入 chain33Validators 私钥生成地址
     for name in B C D; do
         eval chain33ValidatorKey=\$chain33ValidatorKey${name}
         eval chain33Validator=\$chain33Validator${name}
@@ -408,7 +394,6 @@ function InitChain33Validator() {
         # shellcheck disable=SC2154
         check_addr "${result}" "${chain33Validator}"
 
-        # chain33Validator 要有手续费
         hash=$(${Chain33Cli} send coins transfer -a 100 -t "${chain33Validator}" -k "${chain33DeployAddr}")
         check_tx "${Chain33Cli}" "${hash}"
         #        result=$(${Chain33Cli} account balance -a "${chain33Validator}" -e coins)
@@ -444,23 +429,18 @@ function StartOneRelayer() {
     sleep 10
     rm datadir/ logs/ -rf
 
-    # 修改 relayer.toml 配置文件 pushName 字段
     pushNameChange "./relayer.toml"
 
-    # 启动 ebrelayer
     start_ebrelayerA
 
-    # 导入私钥 部署合约 设置 bridgeRegistry 地址
     InitAndDeploy
 
-    # 重启
     kill_ebrelayer ebrelayer
     start_ebrelayerA
 
     result=$(${CLIA} unlock -p 123456hzj)
     cli_ret "${result}" "unlock"
 
-    # 设置 token 地址
     InitTokenAddr
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
@@ -504,7 +484,6 @@ function initMultisignChain33Addr() {
         # shellcheck disable=SC2154
         check_addr "${result}" "${chain33Multisign}"
 
-        # chain33Multisign 要有手续费
         hash=$(${Chain33Cli} send coins transfer -a 10 -t "${chain33Multisign}" -k "${chain33DeployAddr}")
         check_tx "${Chain33Cli}" "${hash}"
         result=$(${Chain33Cli} account balance -a "${chain33Multisign}" -e coins)
@@ -517,12 +496,12 @@ function initMultisignChain33Addr() {
 function deployChain33AndEthMultisign() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}=========== 部署 chain33 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}===========  ===========${NOC}"
     result=$(${CLIA} chain33 multisign deploy)
     cli_ret "${result}" "chain33 multisign deploy"
     multisignChain33Addr=$(echo "${result}" | jq -r ".msg")
 
-    echo -e "${GRE}=========== 部署 ETH 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}===========  ===========${NOC}"
     result=$(${CLIA} ethereum multisign deploy)
     cli_ret "${result}" "ethereum multisign deploy"
     multisignEthAddr=$(echo "${result}" | jq -r ".msg")
@@ -533,7 +512,7 @@ function deployChain33AndEthMultisign() {
 function setupChain33Multisign() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}=========== 设置 chain33 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}===========  ===========${NOC}"
     result=$(${CLIA} chain33 multisign setup -k "${chain33DeployKey}" -o "${chain33MultisignA},${chain33MultisignB},${chain33MultisignC},${chain33MultisignD}")
     cli_ret "${result}" "chain33 multisign setup"
 
@@ -546,7 +525,7 @@ function setupChain33Multisign() {
 function setupEthMultisign() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    echo -e "${GRE}=========== 设置 ETH 离线钱包合约 ===========${NOC}"
+    echo -e "${GRE}===========  ===========${NOC}"
     result=$(${CLIA} ethereum multisign setup -k "${ethDeployKey}" -o "${ethMultisignA},${ethMultisignB},${ethMultisignC},${ethMultisignD}")
     cli_ret "${result}" "ethereum multisign setup"
 
@@ -559,7 +538,7 @@ function setupEthMultisign() {
 function transferChain33MultisignFee() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # multisignChain33Addr 要有手续费
+    # multisignChain33Addr 
     hash=$(${Chain33Cli} send coins transfer -a 10 -t "${multisignChain33Addr}" -k "${chain33DeployAddr}")
     check_tx "${Chain33Cli}" "${hash}"
     result=$(${Chain33Cli} account balance -a "${multisignChain33Addr}" -e coins)
@@ -578,7 +557,6 @@ function deployMultisign() {
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# lock bty 判断是否转入多签地址金额是否正确
 function lock_bty_multisign() {
     local lockAmount=$1
     local lockAmount2="${1}00000000"
@@ -596,7 +574,6 @@ function lock_bty_multisign() {
     fi
 }
 
-# lock chain33 ycc erc20 判断是否转入多签地址金额是否正确
 function lock_chain33_ycc_multisign() {
     local lockAmount="${1}00000000"
     hash=$(${Chain33Cli} send evm call -f 1 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "lock(${ethDeployAddr}, ${chain33YccErc20Addr}, ${lockAmount})" --chainID "${chain33ID}")
@@ -616,7 +593,6 @@ function lock_chain33_ycc_multisign() {
     fi
 }
 
-# lock eth 判断是否转入多签地址金额是否正确
 function lock_eth_multisign() {
     local lockAmount=$1
     result=$(${CLIA} ethereum lock -m "${lockAmount}" -k "${ethDeployKey}" -r "${chain33ReceiverAddr}")
@@ -625,7 +601,7 @@ function lock_eth_multisign() {
     if [[ $# -eq 3 ]]; then
         local bridgeBankBalance=$2
         local multisignBalance=$3
-        # eth 等待 2 个区块
+    
         sleep 4
         #        eth_block_wait 2
 
@@ -636,7 +612,6 @@ function lock_eth_multisign() {
     fi
 }
 
-# lock ethereum ycc erc20 判断是否转入多签地址金额是否正确
 function lock_ethereum_ycc_multisign() {
     local lockAmount=$1
     result=$(${CLIA} ethereum lock -m "${lockAmount}" -k "${ethDeployKey}" -r "${chain33ReceiverAddr}" -t "${ethereumYccTokenAddr}")
@@ -646,7 +621,6 @@ function lock_ethereum_ycc_multisign() {
         local bridgeBankBalance=$2
         local multisignBalance=$3
 
-        # eth 等待 2 个区块
         sleep 4
         #        eth_block_wait 2
 
@@ -657,7 +631,6 @@ function lock_ethereum_ycc_multisign() {
     fi
 }
 
-# 检查交易是否执行成功 $1:交易hash
 function check_eth_tx() {
     local tx=${1}
     ty=$(${CLIA} ethereum receipt -s "${tx}" | jq .status | sed 's/\"//g')

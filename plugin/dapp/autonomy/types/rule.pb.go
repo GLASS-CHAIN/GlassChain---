@@ -37,9 +37,9 @@ type AutonomyProposalRule struct {
 
 	PropRule *ProposalRule `protobuf:"bytes,1,opt,name=propRule,proto3" json:"propRule,omitempty"`
 	CurRule  *RuleConfig   `protobuf:"bytes,2,opt,name=curRule,proto3" json:"curRule,omitempty"`
-	// 全体持票人投票结果
+
 	VoteResult *VoteResult `protobuf:"bytes,3,opt,name=voteResult,proto3" json:"voteResult,omitempty"`
-	// 状态
+
 	Status     int32  `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	Address    string `protobuf:"bytes,5,opt,name=address,proto3" json:"address,omitempty"`
 	Height     int64  `protobuf:"varint,6,opt,name=height,proto3" json:"height,omitempty"`
@@ -140,16 +140,16 @@ type ProposalRule struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 提案时间
+
 	Year  int32 `protobuf:"varint,1,opt,name=year,proto3" json:"year,omitempty"`
 	Month int32 `protobuf:"varint,2,opt,name=month,proto3" json:"month,omitempty"`
 	Day   int32 `protobuf:"varint,3,opt,name=day,proto3" json:"day,omitempty"`
-	// 规则可修改项,如果某项不修改则置为-1
+
 	RuleCfg *RuleConfig `protobuf:"bytes,4,opt,name=ruleCfg,proto3" json:"ruleCfg,omitempty"`
-	// 投票相关
-	StartBlockHeight   int64 `protobuf:"varint,5,opt,name=startBlockHeight,proto3" json:"startBlockHeight,omitempty"`     // 提案开始投票高度
-	EndBlockHeight     int64 `protobuf:"varint,6,opt,name=endBlockHeight,proto3" json:"endBlockHeight,omitempty"`         // 提案结束投票高度
-	RealEndBlockHeight int64 `protobuf:"varint,7,opt,name=realEndBlockHeight,proto3" json:"realEndBlockHeight,omitempty"` // 实际提案结束投票高度
+
+	StartBlockHeight   int64 `protobuf:"varint,5,opt,name=startBlockHeight,proto3" json:"startBlockHeight,omitempty"`     
+	EndBlockHeight     int64 `protobuf:"varint,6,opt,name=endBlockHeight,proto3" json:"endBlockHeight,omitempty"`         
+	RealEndBlockHeight int64 `protobuf:"varint,7,opt,name=realEndBlockHeight,proto3" json:"realEndBlockHeight,omitempty"` 
 }
 
 func (x *ProposalRule) Reset() {

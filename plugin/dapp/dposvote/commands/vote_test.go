@@ -56,24 +56,15 @@ var (
 	config  = `Title="local"
 [crypto]
 [log]
-# 日志级别，支持debug(dbug)/info/warn/error(eror)/crit
 loglevel = "debug"
 logConsoleLevel = "info"
-# 日志文件名，可带目录，所有生成的日志文件都放到此目录下
 logFile = "logs/chain33.log"
-# 单个日志文件的最大值（单位：兆）
 maxFileSize = 300
-# 最多保存的历史日志文件个数
 maxBackups = 100
-# 最多保存的历史日志消息（单位：天）
 maxAge = 28
-# 日志文件名是否使用本地事件（否则使用UTC时间）
 localTime = true
-# 历史日志文件是否压缩（压缩格式为gz）
 compress = true
-# 是否打印调用源文件和行号
 callerFile = false
-# 是否打印调用方法
 callerFunction = false
 
 [blockchain]
@@ -152,9 +143,7 @@ blockInterval=2
 continueBlockNum=12
 isValidator=true
 rpcAddr="http://localhost:9801"
-#shuffleType为1表示使用固定出块顺序，为2表示使用vrf信息进行出块顺序洗牌
 shuffleType=1
-#是否更新topN，如果为true，根据下面几个配置项定期更新topN节点;如果为false，则一直使用初始配置的节点，不关注投票结果
 whetherUpdateTopN=false
 blockNumToUpdateDelegate=20000
 registTopNHeightLimit=100
@@ -188,11 +177,8 @@ alias=["token1:token","token2:token","token3:token"]
 saveTokenTxList=false
 
 [exec.sub.cert]
-# 是否启用证书验证和签名
 enable=false
-# 加密文件路径
 cryptoPath="authdir/crypto"
-# 带证书签名类型，支持"auth_ecdsa", "auth_sm2"
 signType="auth_ecdsa"
 `
 )

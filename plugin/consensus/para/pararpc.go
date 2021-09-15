@@ -44,14 +44,11 @@ func (client *client) GetBlockHeaders(req *types.ReqBlocks) (*types.Headers, err
 	return headers, nil
 }
 
-// 获取当前平行链block对应主链seq，hash信息
-// 对于云端主链节点，创世区块记录seq在不同主链节点上差异很大，通过记录的主链hash获取真实seq使用
 func (client *client) getLastBlockMainInfo() (int64, *types.Block, error) {
 	lastBlock, err := client.getLastBlockInfo()
 	if err != nil {
 		return -2, nil, err
 	}
-	//如果在云端节点获取不到对应MainHash，切换到switchLocalHashMatchedBlock 去循环查找
 	mainSeq, err := client.GetSeqByHashOnMainChain(lastBlock.MainHash)
 	if err != nil {
 		return 0, lastBlock, nil
@@ -163,7 +160,6 @@ func (client *client) GetParaTxByHeight(req *types.ReqParaTxByHeight) (*types.Pa
 		return nil, err
 	}
 
-	//可以小于等于，不能大于
 	if len(blocks.Items) > len(req.Items) {
 		plog.Error("GetParaTxByHeight get blocks more than req")
 		return nil, types.ErrInvalidParam

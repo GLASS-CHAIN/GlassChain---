@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// CoinsxCmd coinsx 命令行
+// CoinsxCmd coinsx 
 func CoinsxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "coinsx",

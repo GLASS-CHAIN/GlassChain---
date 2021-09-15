@@ -15,17 +15,17 @@ import (
 )
 
 var (
-	// ConfNameActiveTime 有效期
+	// ConfNameActiveTime
 	ConfNameActiveTime = et.AccountmanagerX + "-" + "activeTime"
-	// ConfNameLockTime 密钥重置锁定期
+	// ConfNameLockTime 
 	ConfNameLockTime = et.AccountmanagerX + "-" + "lockTime"
-	// ConfNameManagerAddr 管理员地址
+	// ConfNameManagerAddr 
 	ConfNameManagerAddr = et.AccountmanagerX + "-" + "managerAddr"
-	// DefaultActiveTime 默认有效期
+	// DefaultActiveTime
 	DefaultActiveTime = int64(5 * 360 * 24 * 3600)
-	// DefaultLockTime 默认密钥重置锁定期
+	// DefaultLockTime 
 	DefaultLockTime = int64(15 * 24 * 3600)
-	// DefaultManagerAddr 默认管理员地址
+	// DefaultManagerAddr 
 	DefaultManagerAddr = "12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv"
 )
 
@@ -50,7 +50,7 @@ func NewAction(e *Accountmanager, tx *types.Transaction, index int) *Action {
 		e.GetBlockTime(), e.GetHeight(), dapp.ExecAddress(string(tx.Execer)), e.GetLocalDB(), index, e.GetAPI()}
 }
 
-//GetIndex get index 主键索引,实际上是以过期时间为主键
+//GetIndex get index,
 func (a *Action) GetIndex() int64 {
 	return a.blocktime*types.MaxTxsPerBlock + int64(a.index)
 }
@@ -69,7 +69,6 @@ func (a *Action) Register(payload *et.Register) (*types.Receipt, error) {
 		return nil, et.ErrAccountIDExist
 	}
 
-	//默认有效期时五年
 	cfg := a.api.GetConfig()
 	defaultActiveTime := getConfValue(cfg, a.statedb, ConfNameActiveTime, DefaultActiveTime)
 	account := &et.Account{
@@ -92,7 +91,7 @@ func (a *Action) Register(payload *et.Register) (*types.Receipt, error) {
 	return receipts, nil
 }
 
-//Reset 为了避免别人恶意重置别人的帐号,这个操作仅有系统管理员有权限去操作
+//Reset
 func (a *Action) Reset(payload *et.ResetKey) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	cfg := a.api.GetConfig()
@@ -104,7 +103,6 @@ func (a *Action) Reset(payload *et.ResetKey) (*types.Receipt, error) {
 	if err != nil {
 		return nil, et.ErrAccountIDNotExist
 	}
-	//重置公钥锁定期暂定15天,可以由管理员去配置
 	defaultLockTime := getConfValue(cfg, a.statedb, ConfNameLockTime, DefaultLockTime)
 	account.Status = et.Locked
 	account.LockTime = a.blocktime + defaultLockTime
@@ -133,7 +131,6 @@ func (a *Action) Transfer(payload *et.Transfer) (*types.Receipt, error) {
 		elog.Error("Transfer", "fromaddr", a.fromaddr, "err", et.ErrAccountIDNotPermiss)
 		return nil, et.ErrAccountIDNotPermiss
 	}
-	//如果prevAddr地址不为空，先查看余额，将该地址下面得资产划转到新得公钥地址下
 	if account1.PrevAddr != "" {
 		assetDB, err := account.NewAccountDB(cfg, payload.Asset.GetExec(), payload.Asset.GetSymbol(), a.statedb)
 		if err != nil {
@@ -199,7 +196,7 @@ func (a *Action) Transfer(payload *et.Transfer) (*types.Receipt, error) {
 
 //Supervise ...
 func (a *Action) Supervise(payload *et.Supervise) (*types.Receipt, error) {
-	//鉴权，看一下地址是否时管理员地址
+
 	cfg := a.api.GetConfig()
 	managerAddr := getManagerAddr(cfg, a.statedb, ConfNameManagerAddr, DefaultManagerAddr)
 	if managerAddr != a.fromaddr {
@@ -216,7 +213,6 @@ func (a *Action) Supervise(payload *et.Supervise) (*types.Receipt, error) {
 		}
 		switch payload.Op {
 		case et.Freeze:
-			//TODO 冻结操作交给外部其他执行器去控制,处于freeze状态的地址禁止操作
 			accountM.Status = et.Frozen
 
 		case et.UnFreeze:
@@ -267,7 +263,7 @@ func (a *Action) Apply(payload *et.Apply) (*types.Receipt, error) {
 		}
 		accountM.LockTime = 0
 		accountM.Status = et.Normal
-		//TODO 这里只做coins主笔资产得自动划转，token资产转移,放在转transfer中执行 fromAccountID == toAccountID
+
 		cfg := a.api.GetConfig()
 		coinsAssetDB, err := account.NewAccountDB(cfg, cfg.GetCoinExec(), cfg.GetCoinSymbol(), a.statedb)
 		if err != nil {
@@ -310,7 +306,6 @@ func getConfValue(cfg *types.Chain33Config, db dbm.KV, key string, defaultValue 
 		elog.Debug("accountmanager getConfValue", "can't get value from values arr. key:", key)
 		return defaultValue
 	}
-	//取数组最后一位，作为最新配置项的值
 	v, err := strconv.ParseInt(values[len(values)-1], 10, 64)
 	if err != nil {
 		elog.Debug("accountmanager getConfValue", "Type conversion error:", err.Error())
@@ -343,7 +338,7 @@ func getManageKey(cfg *types.Chain33Config, key string, db dbm.KV) ([]byte, erro
 	manageKey := types.ManageKey(key)
 	value, err := db.Get([]byte(manageKey))
 	if err != nil {
-		if cfg.IsPara() { //平行链只有一种存储方式
+		if cfg.IsPara() { 
 			elog.Debug("accountmanager getManage", "can't get value from db,key:", key, "err", err.Error())
 			return nil, err
 		}
@@ -363,12 +358,11 @@ func getConfigKey(key string, db dbm.KV) ([]byte, error) {
 	return value, nil
 }
 
-//正序遍历数据，与传入时间进行对比，看是否逾期
 func findAccountListByIndex(localdb dbm.KV, expireTime int64, primaryKey string) (*et.ReplyAccountList, error) {
 	table := NewAccountTable(localdb)
 	var rows []*tab.Row
 	var err error
-	if primaryKey == "" { //第一次查询,默认展示最新得成交记录
+	if primaryKey == "" { 
 		rows, err = table.ListIndex("index", nil, nil, et.Count, et.ListASC)
 	} else {
 		rows, err = table.ListIndex("index", nil, []byte(primaryKey), et.Count, et.ListASC)
@@ -383,11 +377,11 @@ func findAccountListByIndex(localdb dbm.KV, expireTime int64, primaryKey string)
 		if account.ExpireTime > expireTime {
 			break
 		}
-		//状态变成逾期状态
+
 		account.Status = et.Expired
 		reply.Accounts = append(reply.Accounts, account)
 	}
-	//设置主键索引
+
 	if len(rows) == int(et.Count) {
 		reply.PrimaryKey = string(rows[len(rows)-1].Primary)
 	}
@@ -397,7 +391,7 @@ func findAccountListByIndex(localdb dbm.KV, expireTime int64, primaryKey string)
 func findAccountByID(localdb dbm.KV, accountID string) (*et.Account, error) {
 	table := NewAccountTable(localdb)
 	prefix := []byte(accountID)
-	//第一次查询,默认展示最新得成交记录
+
 	rows, err := table.ListIndex("accountID", prefix, nil, 1, et.ListDESC)
 	if err != nil {
 		elog.Debug("findAccountByID.", "accountID", accountID, "err", err.Error())
@@ -413,7 +407,6 @@ func findAccountByID(localdb dbm.KV, accountID string) (*et.Account, error) {
 func findAccountByAddr(localdb dbm.KV, addr string) (*et.Account, error) {
 	table := NewAccountTable(localdb)
 	prefix := []byte(addr)
-	//第一次查询,默认展示最新得成交记录
 	rows, err := table.ListIndex("addr", prefix, nil, 1, et.ListDESC)
 	if err != nil {
 		elog.Error("findAccountByAddr.", "addr", addr, "err", err.Error())
@@ -435,7 +428,7 @@ func findAccountListByStatus(localdb dbm.KV, status, direction int32, primaryKey
 
 	var rows []*tab.Row
 	var err error
-	if primaryKey == "" { //第一次查询,默认展示最新得成交记录
+	if primaryKey == "" { 
 		rows, err = table.ListIndex("status", prefix, nil, et.Count, direction)
 	} else {
 		rows, err = table.ListIndex("status", prefix, []byte(primaryKey), et.Count, direction)
@@ -449,7 +442,7 @@ func findAccountListByStatus(localdb dbm.KV, status, direction int32, primaryKey
 		account := row.Data.(*et.Account)
 		reply.Accounts = append(reply.Accounts, account)
 	}
-	//设置主键索引
+
 	if len(rows) == int(et.Count) {
 		reply.PrimaryKey = string(rows[len(rows)-1].Primary)
 	}

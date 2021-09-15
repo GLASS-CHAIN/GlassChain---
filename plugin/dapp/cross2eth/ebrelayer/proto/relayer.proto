@@ -2,9 +2,6 @@ syntax = "proto3";
 
 package types;
 
-//以太坊账户信息
-// 	 privkey : 账户地址对应的私钥
-//	 addr :账户地址
 message Account4Relayer {
     bytes privkey    = 1;
     string addr      = 2;
@@ -46,7 +43,6 @@ message EthBridgeClaim {
     string symbol        = 5;
     string ethereumSender = 6;
     string chain33Receiver = 7;
-    //因为考虑到eth是以wei单位的，需要更大的计数范围，所以使用string类型
     string amount = 9;
     int32 claimType = 10;
     string chainName = 11;
@@ -94,14 +90,12 @@ message LockEthErc20 {
     string ownerKey        = 1;
     string tokenAddr       = 2;
     string amount           = 3;
-    //将lock住的资产跨链转移到chain33的该账户名下
     string chain33Receiver = 4;
 }
 
 message LockBTY {
     string ownerKey        = 1;
     string amount          = 2;
-    //将lock住的资产跨链转移到ethereum的该账户名下
     string etherumReceiver = 3;
 }
 
@@ -151,11 +145,9 @@ message Chain33ToEthereumStatics {
     string chain33Txhash = 2;
     string EthereumTxhash = 3;
     int32  burnLock = 4;
-    //该笔lock或者burn交易的chain33发起人
     string chain33Sender = 5;
     string ethereumReceiver = 6;
     string symbol = 7;
-    //因为考虑到,eth的单位是以wei计算的，所以使用string类型
     string amount = 8;
     int64 nonce   = 9;
     int64 txIndex = 10;
@@ -166,11 +158,9 @@ message Ethereum2Chain33Statics {
     string chain33Txhash = 2;
     string EthereumTxhash = 3;
     int32  burnLock = 4;
-    //该笔lock或者burn交易的chain33发起人
     string ethereumSender = 5;
     string chain33Receiver = 6;
     string symbol = 7;
-    //因为考虑到,eth的单位是以wei计算的，所以使用string类型
     string amount = 8;
     int64 nonce   = 9;
     int64 txIndex = 10;

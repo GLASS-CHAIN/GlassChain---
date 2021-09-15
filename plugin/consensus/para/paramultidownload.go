@@ -17,12 +17,12 @@ import (
 )
 
 const (
-	maxRollbackHeight      = 10000    // 据当前主链高度回滚的余量
-	defaultInvNumPerJob    = 20       // 20inv task per job
-	defaultJobBufferNum    = 20       // channel buffer num for done job process
-	maxBlockSize           = 20000000 // 单次1000block size累积超过20M 需保存到localdb
-	downTimesFastThreshold = 450      //  单个server 下载超过450次，平均20次用20s来计算，下载7分钟左右检查有没有差别比较大的
-	downTimesSlowThreshold = 30       //  慢的server小于30次，则小于快server的15倍，需要剔除
+	maxRollbackHeight      = 10000    
+	defaultInvNumPerJob    = 20       
+	defaultJobBufferNum    = 20       
+	maxBlockSize           = 20000000 
+	downTimesFastThreshold = 450      
+	downTimesSlowThreshold = 30       
 	maxServerRspTimeout    = 15
 )
 
@@ -33,7 +33,6 @@ type connectCli struct {
 	timeout   uint32
 }
 
-//invertory 是每次请求的最小单位，每次请求最多MaxBlockCountPerTime
 type inventory struct {
 	start     int64
 	end       int64
@@ -177,7 +176,6 @@ func (m *multiDldClient) getConns(inv *inventory) error {
 	return nil
 }
 
-//缺省不打开，因为有些节点下载时间不稳定，容易超时出错，后面看怎么优化
 func (m *multiDldClient) tryMultiServerDownload() {
 	curMainHeight, err := m.paraClient.GetLastHeightOnMainChain()
 	if err != nil {
@@ -185,14 +183,12 @@ func (m *multiDldClient) tryMultiServerDownload() {
 		return
 	}
 
-	//如果切换不成功，则不进行多服务下载
 	_, localBlock, err := m.paraClient.switchLocalHashMatchedBlock()
 	if err != nil {
 		plog.Error("tryMultiServerDownload switch local height", "err", err.Error())
 		return
 	}
 
-	//获取批量下载区间和数量，给curMainHeight留10000的回滚buffer
 	totalInvs := m.getInvs(localBlock.MainHeight+1, curMainHeight-maxRollbackHeight)
 	totalInvsNum := int64(len(totalInvs))
 	if totalInvsNum == 0 {
@@ -200,7 +196,6 @@ func (m *multiDldClient) tryMultiServerDownload() {
 		return
 	}
 
-	//获取可用IP 链接
 	err = m.getConns(totalInvs[0])
 	if err != nil {
 		return
@@ -295,7 +290,6 @@ func (d *downloadJob) process() {
 			}
 			d.mDldCli.paraClient.blockSyncClient.handleLocalChangedMsg()
 		} else {
-			//block需要严格顺序执行，数据库错误，panic 重新来过
 			err := d.mDldCli.paraClient.procLocalAddBlocks(inv.txs)
 			if err != nil {
 				panic(err)
@@ -321,14 +315,14 @@ func (d *downloadJob) getPreVerifyBlock(inv *inventory) (*types.ParaTxDetail, er
 }
 
 func (d *downloadJob) verifyDownloadBlock(inv *inventory, blocks *types.ParaTxDetails) error {
-	//返回区块内部校验
+
 	err := verifyMainBlocksInternal(blocks)
 	if err != nil {
 		plog.Error("verifyDownloadBlock internal", "ip", inv.connCli.ip)
 		return err
 	}
 
-	//跟已下载的区块校验
+
 	verifyBlock, err := d.getPreVerifyBlock(inv)
 	if err != nil {
 		plog.Error("verifyDownloadBlock.getPreVerifyBlock", "ip", inv.connCli.ip)
@@ -357,7 +351,6 @@ func (d *downloadJob) checkInv(lastRetry, pre *types.ParaTxDetail, inv *inventor
 
 }
 
-// 对一个job里面的invs之间头尾做校验， 如果后一个跟之前的校验不过，放入retry，retry后面的一个inv暂时跳过校验，继续和后面的做校验
 func (d *downloadJob) verifyInvs() []*inventory {
 	var retryItems []*inventory
 	pre := d.parentBlock
@@ -417,7 +410,6 @@ func requestMainBlocks(cfg *types.Chain33Config, inv *inventory) (*types.ParaTxD
 		}
 	}
 
-	//只获取最前面的有效交易
 	return validMainBlocks(txs), nil
 }
 
@@ -471,7 +463,6 @@ func (d *downloadJob) getInvBlocks(inv *inventory, connPool chan *connectCli) {
 			return
 		}
 
-		//save  之前save到db，后面区块全部save到db
 		if inv.isSaveDb {
 			d.mDldCli.paraClient.saveBatchMainBlocks(txs)
 		} else {
@@ -511,7 +502,6 @@ func (d *downloadJob) getInvs(invs []*inventory) {
 		go d.getInvBlocks(inv, connPool)
 
 	}
-	//等待下载任务
 	d.wg.Wait()
 }
 

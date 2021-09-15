@@ -30,12 +30,12 @@ const (
 func TestPropRule(t *testing.T) {
 	env, exec, _, _ := InitEnv()
 	opts := []*auty.ProposalRule{
-		{ // 全0测试
+		{ 
 			RuleCfg:          &auty.RuleConfig{},
 			StartBlockHeight: env.blockHeight + 5,
 			EndBlockHeight:   env.blockHeight + startEndBlockPeriod + 10,
 		},
-		{ // 边界测试
+		{ 
 			RuleCfg: &auty.RuleConfig{
 				BoardApproveRatio:  maxBoardApproveRatio,
 				PubOpposeRatio:     maxPubOpposeRatio,
@@ -68,7 +68,7 @@ func TestPropRule(t *testing.T) {
 			StartBlockHeight: env.blockHeight + 5,
 			EndBlockHeight:   env.blockHeight + startEndBlockPeriod + 10,
 		},
-		{ // 边界测试
+		{ 
 			RuleCfg: &auty.RuleConfig{
 				BoardApproveRatio:  maxBoardApproveRatio + 1,
 				PubOpposeRatio:     maxPubOpposeRatio + 1,
@@ -79,7 +79,7 @@ func TestPropRule(t *testing.T) {
 			StartBlockHeight: env.blockHeight + 5,
 			EndBlockHeight:   env.blockHeight + startEndBlockPeriod + 10,
 		},
-		{ // 配置参数其中之一不合法
+		{ 
 			RuleCfg: &auty.RuleConfig{
 				BoardApproveRatio:  1,
 				PubOpposeRatio:     minPubOpposeRatio + 1,
@@ -177,7 +177,7 @@ func testPropRule(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB dbm.K
 		}
 	}
 
-	// 更新tahash
+	
 	env.txHash = common.ToHex(pbtx.Hash())
 	env.startHeight = opt1.StartBlockHeight
 	env.endHeight = opt1.EndBlockHeight
@@ -289,7 +289,7 @@ func voteProposalRule(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB d
 	exec.SetAPI(api)
 
 	proposalID := env.txHash
-	// 4人参与投票，3人赞成票，1人反对票
+	
 	type record struct {
 		priv   string
 		appr   bool
@@ -311,7 +311,7 @@ func voteProposalRule(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB d
 		assert.NoError(t, err)
 		tx, err = signTx(tx, record.priv)
 		assert.NoError(t, err)
-		// 设定当前高度为投票高度
+		
 		exec.SetEnv(env.startHeight, env.blockTime, env.difficulty)
 
 		receipt, err := exec.Exec(tx, int(1))
@@ -336,7 +336,7 @@ func voteProposalRule(t *testing.T, env *ExecEnv, exec drivers.Driver, stateDB d
 		assert.NoError(t, err)
 		assert.NotNil(t, set)
 
-		// 每次需要重新设置,对于下一个是多个授权地址的需要设置多次
+		
 		if i+1 < len(records) {
 			for j := 0; j < len(records[i+1].origin); j++ {
 				acc := &types.Account{

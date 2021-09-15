@@ -46,7 +46,6 @@ func DeployContrctsCmd() *cobra.Command {
 }
 
 func addDeployFlags(cmd *cobra.Command) {
-	//私钥的优先权大于配置文件的
 	cmd.Flags().StringP("privkey", "p", "", "deployer privatekey")
 	_ = cmd.MarkFlagRequired("privkey")
 	cmd.Flags().StringP("file", "f", "", "deploy config")

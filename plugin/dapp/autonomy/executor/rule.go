@@ -133,7 +133,7 @@ func (a *Autonomy) getActiveRule() (types.Message, error) {
 		if err != nil {
 			return nil, err
 		}
-	} else { // 载入系统默认值
+	} else { 
 		rule.BoardApproveRatio = boardApproveRatio
 		rule.PubOpposeRatio = pubOpposeRatio
 		rule.ProposalAmount = proposalAmount * cfg.GetCoinPrecision()
@@ -201,7 +201,7 @@ func (a *Autonomy) listProposalComment(req *auty.ReqQueryProposalComment) (types
 	localDb := a.GetLocalDB()
 	if req.Height <= 0 {
 		key = nil
-	} else { //翻页查找指定的txhash列表
+	} else { 
 		heightstr := dapp.HeightIndexStr(req.Height, int64(req.Index))
 		key = calcCommentHeight(req.ProposalID, heightstr)
 	}

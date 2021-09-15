@@ -39,19 +39,19 @@ func DeployOfflineContractsCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		CreateCmd(), //构造交易
+		CreateCmd(), 
 		CreateWithFileCmd(),
 		DeployERC20Cmd(),
-		CreateCfgAccountTxCmd(), // set_offline_addr 设置离线多签地址
+		CreateCfgAccountTxCmd(), 
 		SetupCmd(),
 		ConfigLockedTokenOfflineSaveCmd(),
 		CreateAddToken2LockListTxCmd(),
 		CreateBridgeTokenTxCmd(),
-		PrepareCreateMultisignTransferTxCmd(),   // 预备创建一个多签转帐交易 在线
-		PreliminarySignMultisignTransferTxCmd(), // 多签转帐交易 多签多个地址签名 离线
-		CreateMultisignTransferTxCmd(),          // 创建多签转帐交易
-		SignCmd(),                               // 签名交易 sign deploy contract tx
-		SendTxsCmd(),                            // 发送交易 send all kinds of tx
+		PrepareCreateMultisignTransferTxCmd(),   
+		PreliminarySignMultisignTransferTxCmd(), 
+		CreateMultisignTransferTxCmd(),          
+		SignCmd(),                               
+		SendTxsCmd(),                            
 	)
 
 	return cmd
@@ -98,7 +98,7 @@ func CreateTxInfoAndWrite(abiData []byte, deployAddr, contract, name, url string
 	msg.From = common.HexToAddress(deployAddr)
 	msg.To = &contracAddr
 	msg.Value = big.NewInt(0)
-	//估算gas
+
 	gasLimit, err := client.EstimateGas(context.Background(), msg)
 	if err != nil {
 		fmt.Println("EstimateGas Err:", err)

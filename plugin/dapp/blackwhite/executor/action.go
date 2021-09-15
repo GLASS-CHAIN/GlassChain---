@@ -110,7 +110,7 @@ func (a *action) Create(create *gt.BlackwhiteCreate) (*types.Receipt, error) {
 }
 
 func (a *action) Play(play *gt.BlackwhitePlay) (*types.Receipt, error) {
-	// 获取GameID
+
 	value, err := a.db.Get(calcMavlRoundKey(play.GameID))
 	if err != nil {
 		clog.Error("blackwhite play ", "addr", a.fromaddr, "execaddr", a.execaddr, "get round failed",
@@ -125,7 +125,6 @@ func (a *action) Play(play *gt.BlackwhitePlay) (*types.Receipt, error) {
 		return nil, err
 	}
 
-	// 检查当前状态
 	if gt.BlackwhiteStatusPlay != round.Status && gt.BlackwhiteStatusCreate != round.Status {
 		err := gt.ErrIncorrectStatus
 		clog.Error("blackwhite play ", "addr", a.fromaddr, "round status", round.Status, "status is not match, GameID ",
@@ -133,7 +132,6 @@ func (a *action) Play(play *gt.BlackwhitePlay) (*types.Receipt, error) {
 		return nil, err
 	}
 
-	// 检查是否有重复
 	for _, addrResult := range round.AddrResult {
 		if addrResult.Addr == a.fromaddr {
 			err := gt.ErrRepeatPlayerAddr
@@ -170,12 +168,10 @@ func (a *action) Play(play *gt.BlackwhitePlay) (*types.Receipt, error) {
 	round.CurPlayerCount++
 
 	if round.CurPlayerCount >= round.PlayerCount {
-		// 触发进入到公布阶段
 		round.ShowTime = a.blocktime
 		round.Status = gt.BlackwhiteStatusShow
-		// 需要更新全部地址状态
 		for _, addr := range round.AddrResult {
-			if addr.Addr != round.CreateAddr { //对创建者地址单独进行设置
+			if addr.Addr != round.CreateAddr { 
 				receiptLog := a.GetReceiptLog(&round, addr.Addr)
 				logs = append(logs, receiptLog)
 			}
@@ -191,7 +187,6 @@ func (a *action) Play(play *gt.BlackwhitePlay) (*types.Receipt, error) {
 	value1 := types.Encode(&round)
 	cfg := a.api.GetConfig()
 	if cfg.IsDappFork(a.height, gt.BlackwhiteX, "ForkBlackWhiteV2") {
-		//将当前游戏状态保存，便于同一区块中游戏参数的累加
 		a.db.Set(key1, value1)
 	}
 	kv = append(kv, &types.KeyValue{Key: key1, Value: value1})
@@ -200,7 +195,7 @@ func (a *action) Play(play *gt.BlackwhitePlay) (*types.Receipt, error) {
 }
 
 func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
-	// 获取GameID
+
 	value, err := a.db.Get(calcMavlRoundKey(show.GameID))
 	if err != nil {
 		clog.Error("blackwhite show ", "addr", a.fromaddr, "execaddr", a.execaddr, "get round failed",
@@ -214,7 +209,7 @@ func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
 			show.GameID, "err", err)
 		return nil, err
 	}
-	// 检查当前状态
+
 	if gt.BlackwhiteStatusShow != round.Status {
 		err := gt.ErrIncorrectStatus
 		clog.Error("blackwhite show ", "addr", a.fromaddr, "round status", round.Status, "status is not match, GameID ",
@@ -222,7 +217,6 @@ func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
 		return nil, err
 	}
 
-	// 检查是否存在该地址押金
 	bIsExist := false
 	index := 0
 	for i, addrResult := range round.AddrResult {
@@ -238,9 +232,8 @@ func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
 			show.GameID, "err", err)
 		return nil, err
 	}
-	//更新信息
 	if 0 == len(round.AddrResult[index].ShowSecret) {
-		round.CurShowCount++ //重复show不累加，但是可以修改私钥
+		round.CurShowCount++ 
 	}
 	round.Status = gt.BlackwhiteStatusShow
 	round.AddrResult[index].ShowSecret = show.Secret
@@ -249,7 +242,7 @@ func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
 	var kv []*types.KeyValue
 
 	if round.CurShowCount >= round.PlayerCount {
-		// 已经集齐有所有密钥
+	
 		round.Status = gt.BlackwhiteStatusDone
 		receipt, err := a.StatTransfer(&round)
 		if err != nil {
@@ -258,9 +251,9 @@ func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
 		}
 		logs = append(logs, receipt.Logs...)
 		kv = append(kv, receipt.KV...)
-		// 需要更新全部地址状态
+
 		for _, addr := range round.AddrResult {
-			if addr.Addr != round.CreateAddr { //对创建者地址单独进行设置
+			if addr.Addr != round.CreateAddr { 
 				receiptLog := a.GetReceiptLog(&round, addr.Addr)
 				logs = append(logs, receiptLog)
 			}
@@ -276,7 +269,7 @@ func (a *action) Show(show *gt.BlackwhiteShow) (*types.Receipt, error) {
 	value1 := types.Encode(&round)
 	cfg := a.api.GetConfig()
 	if cfg.IsDappFork(a.height, gt.BlackwhiteX, "ForkBlackWhiteV2") {
-		//将当前游戏状态保存，便于同一区块中游戏参数的累加
+		
 		a.db.Set(key1, value1)
 	}
 	kv = append(kv, &types.KeyValue{Key: key1, Value: value1})
@@ -304,10 +297,10 @@ func (a *action) TimeoutDone(done *gt.BlackwhiteTimeoutDone) (*types.Receipt, er
 	var kv []*types.KeyValue
 
 	cfg := a.api.GetConfig()
-	// 检查当前状态
+
 	if gt.BlackwhiteStatusPlay == round.Status {
 		if a.blocktime >= round.Timeout+round.CreateTime {
-			//进行超时play超时处理，即将所有冻结资金都解冻，然后游戏结束
+
 			for i, addrRes := range round.AddrResult {
 				receipt, err := a.coinsAccount.ExecActive(addrRes.Addr, a.execaddr, addrRes.Amount)
 				if err != nil {
@@ -328,7 +321,6 @@ func (a *action) TimeoutDone(done *gt.BlackwhiteTimeoutDone) (*types.Receipt, er
 			if cfg.GetCoinPrecision() < lockAmount {
 				return nil, errors.Wrapf(types.ErrInvalidParam, "coinPrecison=%d < lockAmount=100", cfg.GetCoinPrecision())
 			}
-			// 将创建游戏者解冻
 			receipt, err := a.coinsAccount.ExecActive(round.CreateAddr, a.execaddr, cfg.GetCoinPrecision()/lockAmount)
 			if err != nil {
 				for _, addrR := range round.AddrResult {
@@ -350,7 +342,6 @@ func (a *action) TimeoutDone(done *gt.BlackwhiteTimeoutDone) (*types.Receipt, er
 		}
 	} else if gt.BlackwhiteStatusShow == round.Status {
 		if a.blocktime >= showTimeout+round.ShowTime {
-			//show私钥超时,有私钥的进行开奖
 			round.Status = gt.BlackwhiteStatusDone
 			receipt, err := a.StatTransfer(&round)
 			if err != nil {
@@ -376,14 +367,14 @@ func (a *action) TimeoutDone(done *gt.BlackwhiteTimeoutDone) (*types.Receipt, er
 	key1 := calcMavlRoundKey(round.GameID)
 	value1 := types.Encode(&round)
 	if cfg.IsDappFork(a.height, gt.BlackwhiteX, "ForkBlackWhiteV2") {
-		//将当前游戏状态保存，便于同一区块中游戏参数的累加
+
 		a.db.Set(key1, value1)
 	}
 	kv = append(kv, &types.KeyValue{Key: key1, Value: value1})
 
-	// 需要更新全部地址状态
+
 	for _, addr := range round.AddrResult {
-		if addr.Addr != round.CreateAddr { //对创建者地址单独进行设置
+		if addr.Addr != round.CreateAddr { 
 			receiptLog := a.GetReceiptLog(&round, addr.Addr)
 			logs = append(logs, receiptLog)
 		}
@@ -404,7 +395,7 @@ func (a *action) StatTransfer(round *gt.BlackwhiteRound) (*types.Receipt, error)
 	var averAmount int64
 
 	if len(winers) == 0 || len(Losers) == 0 {
-		// 将所有参与人员都解冻
+
 		for i, addrRes := range round.AddrResult {
 			receipt, err := a.coinsAccount.ExecActive(addrRes.Addr, a.execaddr, addrRes.Amount)
 			if err != nil {
@@ -426,7 +417,7 @@ func (a *action) StatTransfer(round *gt.BlackwhiteRound) (*types.Receipt, error)
 
 		var sumAmount int64
 		for i, Loser := range Losers {
-			// 将其转入黑白配合约的合约地址
+
 			sumAmount += Loser.amount
 			receipt, err := a.coinsAccount.ExecTransferFrozen(Loser.addr, blackwhiteAddr, a.execaddr, Loser.amount)
 			if err != nil {
@@ -448,7 +439,7 @@ func (a *action) StatTransfer(round *gt.BlackwhiteRound) (*types.Receipt, error)
 
 		winNum := int64(len(winers))
 		averAmount = sumAmount / winNum
-		// 从公共账户转帐给它获胜用户
+
 		for i, winer := range winers {
 			receipt, err := a.coinsAccount.ExecTransfer(blackwhiteAddr, winer.addr, a.execaddr, averAmount)
 			if err != nil {
@@ -471,7 +462,7 @@ func (a *action) StatTransfer(round *gt.BlackwhiteRound) (*types.Receipt, error)
 			kv = append(kv, receipt.KV...)
 		}
 
-		// 胜利人员都解冻
+
 		for i, winer := range winers {
 			receipt, err := a.coinsAccount.ExecActive(winer.addr, a.execaddr, winer.amount)
 			if err != nil {
@@ -506,7 +497,7 @@ func (a *action) StatTransfer(round *gt.BlackwhiteRound) (*types.Receipt, error)
 	if cfg.GetCoinPrecision() < lockAmount {
 		return nil, errors.Wrapf(types.ErrInvalidParam, "coinPrecison=%d < lockAmount=100", cfg.GetCoinPrecision())
 	}
-	// 将创建游戏者解冻
+
 	receipt, err := a.coinsAccount.ExecActive(round.CreateAddr, a.execaddr, cfg.GetCoinPrecision()/lockAmount)
 	if err != nil {
 		// rollback
@@ -532,7 +523,7 @@ func (a *action) StatTransfer(round *gt.BlackwhiteRound) (*types.Receipt, error)
 	logs = append(logs, receipt.Logs...)
 	kv = append(kv, receipt.KV...)
 
-	// 将每一轮次的结果保存
+
 	logs = append(logs, &types.ReceiptLog{Ty: gt.TyLogBlackwhiteLoopInfo, Log: types.Encode(loopResults)})
 
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
@@ -551,8 +542,7 @@ func (a *action) getWinner(round *gt.BlackwhiteRound) ([]*addrResult, *gt.ReplyL
 	for _, address := range addrRes {
 		if len(address.ShowSecret) > 0 && len(address.HashValues) == loop {
 			var isBlack []bool
-			// 加入分叉高度判断：分叉高度在ForkV25BlackWhite到ForkV25BlackWhiteV2之间的执行原来逻辑，大于ForkV25BlackWhiteV2执行新逻辑，
-			// 小于ForkV25BlackWhite则无法进入
+
 			if !cfg.IsDappFork(a.height, gt.BlackwhiteX, "ForkBlackWhiteV2") {
 				for _, hash := range address.HashValues {
 					if bytes.Equal(common.Sha256([]byte(address.ShowSecret+black)), hash) {
@@ -612,7 +602,7 @@ func (a *action) getWinner(round *gt.BlackwhiteRound) ([]*addrResult, *gt.ReplyL
 		}
 
 		winNum := 0
-		var perRes gt.PerLoopResult // 每一轮获胜者
+		var perRes gt.PerLoopResult 
 		for _, addr := range addresXs {
 			if addr.IsWin {
 				winNum++
@@ -666,13 +656,12 @@ func (a *action) getLoser(round *gt.BlackwhiteRound) []*addrResult {
 	return results
 }
 
-// GetReceiptLog 根据游戏信息获取log
-// 状态变化：
-// staus == BlackwhiteStatusCreate  (创建，开始游戏）
-// status == BlackwhiteStatusPlay (参与)
-// status == BlackwhiteStatusShow (展示密钥)
-// status == BlackwhiteStatusTime (超时退出情况)
-// status == BlackwhiteStatusDone (结束情况)
+// GetReceiptLog 
+// staus == BlackwhiteStatusCreate  
+// status == BlackwhiteStatusPlay 
+// status == BlackwhiteStatusShow 
+// status == BlackwhiteStatusTime 
+// status == BlackwhiteStatusDone 
 func (a *action) GetReceiptLog(round *gt.BlackwhiteRound, addr string) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	r := &gt.ReceiptBlackwhiteStatus{}

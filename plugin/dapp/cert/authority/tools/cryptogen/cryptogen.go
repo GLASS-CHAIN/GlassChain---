@@ -19,9 +19,7 @@ import (
 )
 
 const (
-	// CONFIGFILENAME 配置文件名
 	CONFIGFILENAME = "chain33.cryptogen.yaml"
-	// OUTPUTDIR 证书文件输出路径
 	OUTPUTDIR = "./authdir/crypto"
 )
 

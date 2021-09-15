@@ -177,7 +177,6 @@ func testexecDelLocalBoard(t *testing.T) {
 		},
 	}
 
-	// 先执行local然后进行删除
 
 	tx, err := types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
@@ -214,9 +213,7 @@ func testexecDelLocalBoard(t *testing.T) {
 		Logs: []*types.ReceiptLog{
 			{Ty: auty.TyLogVotePropBoard, Log: types.Encode(receiptBoard2)},
 		}}
-	// 先执行local然后进行删除
 
-	// 自动回退测试时候，需要先设置一个前置状态
 	tx, err = types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err = au.execAutoLocalBoard(tx, receipt)
@@ -224,7 +221,7 @@ func testexecDelLocalBoard(t *testing.T) {
 	assert.NotNil(t, set)
 	saveKvs(sdb, set.KV)
 
-	// 正常测试退回
+	
 	tx, err = types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err = au.execAutoLocalBoard(tx, recpt)
@@ -291,7 +288,6 @@ func TestListProposalBoard(t *testing.T) {
 		Index:      2,
 	}
 
-	//将数据保存下去
 	var kvs []*types.KeyValue
 	table := NewBoardTable(kvdb)
 	for _, tcase := range testcase {
@@ -307,7 +303,6 @@ func TestListProposalBoard(t *testing.T) {
 	}
 
 	saveKvs(sdb, kvs)
-	// 反向查找
 	req := &auty.ReqQueryProposalBoard{
 		Status:    auty.AutonomyStatusProposalBoard,
 		Count:     10,
@@ -324,7 +319,6 @@ func TestListProposalBoard(t *testing.T) {
 		k--
 	}
 
-	// 正向查找
 	req = &auty.ReqQueryProposalBoard{
 		Status:    auty.AutonomyStatusProposalBoard,
 		Count:     10,
@@ -339,7 +333,6 @@ func TestListProposalBoard(t *testing.T) {
 		assert.Equal(t, rsp.(*auty.ReplyQueryProposalBoard).PropBoards[i].Index, int32(tcase.index))
 	}
 
-	// 翻页查找
 	req = &auty.ReqQueryProposalBoard{
 		Status:    auty.AutonomyStatusProposalBoard,
 		Count:     1,

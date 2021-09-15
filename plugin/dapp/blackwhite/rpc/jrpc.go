@@ -12,7 +12,6 @@ import (
 	bw "github.com/33cn/plugin/plugin/dapp/blackwhite/types"
 )
 
-// BlackwhiteCreateTx 创建游戏RPC接口
 func (c *Jrpc) BlackwhiteCreateTx(parm *bw.BlackwhiteCreateTxReq, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam
@@ -31,7 +30,6 @@ func (c *Jrpc) BlackwhiteCreateTx(parm *bw.BlackwhiteCreateTxReq, result *interf
 	return nil
 }
 
-// BlackwhiteShowTx 出示游戏密钥的RPC接口
 func (c *Jrpc) BlackwhiteShowTx(parm *BlackwhiteShowTx, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam
@@ -48,7 +46,6 @@ func (c *Jrpc) BlackwhiteShowTx(parm *BlackwhiteShowTx, result *interface{}) err
 	return nil
 }
 
-// BlackwhitePlayTx 参与游戏的RPC接口
 func (c *Jrpc) BlackwhitePlayTx(parm *BlackwhitePlayTx, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam
@@ -68,7 +65,6 @@ func (c *Jrpc) BlackwhitePlayTx(parm *BlackwhitePlayTx, result *interface{}) err
 	return nil
 }
 
-// BlackwhiteTimeoutDoneTx 游戏超时RPC接口
 func (c *Jrpc) BlackwhiteTimeoutDoneTx(parm *BlackwhiteTimeoutDoneTx, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam

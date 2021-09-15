@@ -162,8 +162,6 @@ func testexecDelLocalRule(t *testing.T) {
 		},
 	}
 
-	// 先执行local然后进行删除
-
 	tx, err := types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err := au.execAutoLocalRule(tx, receipt)
@@ -200,8 +198,6 @@ func testexecDelLocalRule(t *testing.T) {
 		Logs: []*types.ReceiptLog{
 			{Ty: auty.TyLogVotePropRule, Log: types.Encode(receiptRule2)},
 		}}
-	// 先执行local然后进行删除
-	// 自动回退测试时候，需要先设置一个前置状态
 	tx, err = types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err = au.execAutoLocalRule(tx, receipt)
@@ -209,7 +205,6 @@ func testexecDelLocalRule(t *testing.T) {
 	assert.NotNil(t, set)
 	saveKvs(sdb, set.KV)
 
-	// 正常测试退回
 	tx, err = types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err = au.execAutoLocalRule(tx, recpt)
@@ -304,7 +299,6 @@ func TestListProposalRule(t *testing.T) {
 		Index:      2,
 	}
 
-	//将数据保存下去
 	var kvs []*types.KeyValue
 	table := NewRuleTable(kvdb)
 	for _, tcase := range testcase {
@@ -320,7 +314,6 @@ func TestListProposalRule(t *testing.T) {
 	}
 	saveKvs(sdb, kvs)
 
-	// 反向查找
 	req := &auty.ReqQueryProposalRule{
 		Status:    auty.AutonomyStatusProposalRule,
 		Count:     10,
@@ -337,7 +330,6 @@ func TestListProposalRule(t *testing.T) {
 		k--
 	}
 
-	// 正向查找
 	req = &auty.ReqQueryProposalRule{
 		Status:    auty.AutonomyStatusProposalRule,
 		Count:     10,
@@ -352,7 +344,6 @@ func TestListProposalRule(t *testing.T) {
 		assert.Equal(t, rsp.(*auty.ReplyQueryProposalRule).PropRules[i].Index, int32(tcase.index))
 	}
 
-	// 翻页查找
 	req = &auty.ReqQueryProposalRule{
 		Status:    auty.AutonomyStatusProposalRule,
 		Count:     1,
@@ -454,7 +445,6 @@ func testexecDelLocalCommentProp(t *testing.T) {
 		},
 	}
 	var set *types.LocalDBSet
-	// 先执行local然后进行删除
 
 	tx, err := types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
@@ -515,7 +505,6 @@ func TestListProposalComment(t *testing.T) {
 		kvdb.Set(key, value)
 	}
 
-	// 反向查找
 	req := &auty.ReqQueryProposalComment{
 		ProposalID: propID2,
 		Count:      10,
@@ -532,7 +521,6 @@ func TestListProposalComment(t *testing.T) {
 		k--
 	}
 
-	// 正向查找
 	req = &auty.ReqQueryProposalComment{
 		ProposalID: propID2,
 		Count:      10,
@@ -547,7 +535,6 @@ func TestListProposalComment(t *testing.T) {
 		assert.Equal(t, rsp.(*auty.ReplyQueryProposalComment).RltCmt[i].Index, int32(tcase.index))
 	}
 
-	// 翻页查找
 	req = &auty.ReqQueryProposalComment{
 		ProposalID: propID2,
 		Count:      1,

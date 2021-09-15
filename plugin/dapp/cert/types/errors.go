@@ -7,14 +7,14 @@ package types
 import "errors"
 
 var (
-	// ErrValidateCertFailed cert校验失败
+
 	ErrValidateCertFailed = errors.New("ErrValidateCertFailed")
-	// ErrGetHistoryCertData 获取证书错误
+
 	ErrGetHistoryCertData = errors.New("ErrGetHistoryCertData")
-	// ErrUnknowAuthSignType 无效签名类型
+
 	ErrUnknowAuthSignType = errors.New("ErrUnknowAuthSignType")
-	// ErrInitializeAuthority 初始化校验器失败
+
 	ErrInitializeAuthority = errors.New("ErrInitializeAuthority")
-	// ErrPermissionDeny 权限校验失败
+
 	ErrPermissionDeny = errors.New("ErrPermissionDeny")
 )

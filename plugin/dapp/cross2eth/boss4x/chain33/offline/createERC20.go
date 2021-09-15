@@ -107,7 +107,7 @@ func ApproveErc20Cmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approve_erc20",
 		Short: "approve erc20",
-		Run:   ApproveErc20, //配置账户
+		Run:   ApproveErc20, 
 	}
 	addApproveErc20Flags(cmd)
 	return cmd
@@ -144,7 +144,7 @@ func AddToken2LockListCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create_add_lock_list",
 		Short: "add token to lock list",
-		Run:   AddToken2LockList, //配置账户
+		Run:   AddToken2LockList, 
 	}
 	addAddToken2LockListFlags(cmd)
 	return cmd
@@ -181,7 +181,7 @@ func CreateNewBridgeTokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create_bridge_token",
 		Short: "create new token as ethereum asset on chain33, and it's should be done by operator",
-		Run:   CreateNewBridgeToken, //配置账户
+		Run:   CreateNewBridgeToken, 
 	}
 	addCreateNewBridgeTokenFlags(cmd)
 	return cmd

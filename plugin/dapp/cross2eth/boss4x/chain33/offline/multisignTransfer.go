@@ -142,9 +142,7 @@ func MultisignTransfer(cmd *cobra.Command, _ []string) {
 	baseGas := 0
 	gasPrice := 0
 	valueStr := relayerutils.ToWei(txinfo.Amount, 8).String()
-	//如果是bty转账,则直接将to地址设置为receiver,而如果是ERC20转账，则需要将其设置为token地址
 	to := txinfo.Receiver
-	//如果是erc20转账，则需要构建data数据
 	if "" != txinfo.Token {
 		parameter := fmt.Sprintf("transfer(%s, %s)", txinfo.Receiver, relayerutils.ToWei(txinfo.Amount, 8).String())
 		_, data, err := evmAbi.Pack(parameter, erc20.ERC20ABI, false)
@@ -152,7 +150,6 @@ func MultisignTransfer(cmd *cobra.Command, _ []string) {
 			fmt.Println("evmAbi.Pack(parameter, erc20.ERC20ABI, false)", "Failed", err.Error())
 			return
 		}
-		//对于其他erc20资产，直接将其设置为0
 		valueStr = "0"
 		to = txinfo.Token
 		dataStr = chain33Common.ToHex(data)
@@ -184,7 +181,6 @@ func MultisignTransfer(cmd *cobra.Command, _ []string) {
 		sigs = append(sigs, sig...)
 	}
 
-	//构造execTransaction参数
 	parameter2Exec := fmt.Sprintf("execTransaction(%s, %s, %s, 0, %d, %d, %d, %s, %s, %s)", to, valueStr, dataStr,
 		safeTxGas, baseGas, gasPrice, ebrelayerTypes.NilAddrChain33, ebrelayerTypes.NilAddrChain33, chain33Common.ToHex(sigs))
 	_, packData, err := evmAbi.Pack(parameter2Exec, generated.GnosisSafeABI, false)

@@ -143,7 +143,7 @@ function loop_send_lock_eth() {
         nowEthBalance=$(${CLIA} ethereum balance -o "${ethAddress[i]}" | jq -r ".balance")
         res=$(echo "${preEthBalance[i]} - $nowEthBalance" | bc)
         echo ${i} "preBalance" "${preEthBalance[i]}" "nowBalance" "${nowEthBalance}" "diff" "${res}"
-        diff=$(echo "$res >= 1" | bc) # 浮点数比较 判断是否大于1 大于返回1 小于返回0
+        diff=$(echo "$res >= 1" | bc) 
         if [ "${diff}" -ne 1 ]; then
             echo -e "${RED}error number, expect greater than 1, get ${res}${NOC}"
             exit 1
@@ -178,7 +178,7 @@ function loop_send_burn_eth() {
         nowEthBalance=$(${CLIA} ethereum balance -o "${ethAddress[i]}" | jq -r ".balance")
         res=$(echo "$nowEthBalance - ${preEthBalance[i]}" | bc)
         echo ${i} "preBalance" "${preEthBalance[i]}" "nowBalance" "${nowEthBalance}" "diff" "${res}"
-        diff=$(echo "$res >= 1" | bc) # 浮点数比较 判断是否大于1 大于返回1 小于返回0
+        diff=$(echo "$res >= 1" | bc) 
         if [ "${diff}" -ne 1 ]; then
             echo -e "${RED}error number, expect greater than 1, get ${res}${NOC}"
             exit 1
@@ -198,7 +198,6 @@ function loop_send_lock_ycc() {
 
     preChain33Balance=$(${Chain33Cli} evm query -a "${chain33YccTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
 
-    # 先往每个ETH地址中导入token
     i=0
     while [[ i -lt ${#privateKeys[@]} ]]; do
         ethTxHash=$(${CLIA} ethereum transfer -m 10 -k "${ethDeployKey}" -r "${ethAddress[i]}" -t "${ethereumYccTokenAddr}" | jq -r ".msg")

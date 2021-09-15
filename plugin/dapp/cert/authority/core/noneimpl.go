@@ -7,7 +7,6 @@ package core
 type noneValidator struct {
 }
 
-// NewNoneValidator 创建none校验器
 func NewNoneValidator() (Validator, error) {
 	return &noneValidator{}, nil
 }

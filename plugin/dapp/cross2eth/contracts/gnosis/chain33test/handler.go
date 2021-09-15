@@ -35,7 +35,6 @@ package main
 //const (
 //	// GasLimit : the gas limit in Gwei used for transactions sent with TransactOpts
 //	GasLimitTxExec  = uint64(100 * 10000)
-//	GasLimit4Deploy = uint64(0) //此处需要设置为0,让交易自行估计,否则将会导致部署失败,TODO:其他解决途径后续调研解决
 //	fee2setter      = "0x0f2e821517D4f64a012a04b668a6b1aa3B262e08"
 //)
 //
@@ -63,7 +62,6 @@ package main
 //}
 //
 //func GetBalance(tokenAddr, owner string) (string, error) {
-//	//查询ETH余额
 //	if "" != tokenAddr {
 //		token, err := erc20.NewERC20(common.HexToAddress(tokenAddr), ethClient)
 //		if nil != err {
@@ -289,7 +287,6 @@ package main
 //		if err != nil {
 //			return err
 //		}
-//		//对于erc20这种方式 最后需要将其设置为0
 //		value = big.NewInt(0)
 //	}
 //

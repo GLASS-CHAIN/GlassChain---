@@ -35,13 +35,10 @@ type VoteResult struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 总票数
 	TotalVotes int32 `protobuf:"varint,1,opt,name=totalVotes,proto3" json:"totalVotes,omitempty"`
-	// 赞成票
 	ApproveVotes int32 `protobuf:"varint,2,opt,name=approveVotes,proto3" json:"approveVotes,omitempty"`
-	// 反对票
+
 	OpposeVotes int32 `protobuf:"varint,3,opt,name=opposeVotes,proto3" json:"opposeVotes,omitempty"`
-	// 是否通过
 	Pass bool `protobuf:"varint,4,opt,name=pass,proto3" json:"pass,omitempty"`
 }
 
@@ -110,13 +107,12 @@ type PublicVote struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 是否需要公示
 	Publicity bool `protobuf:"varint,1,opt,name=publicity,proto3" json:"publicity,omitempty"`
-	// 总票数
+
 	TotalVotes int32 `protobuf:"varint,2,opt,name=totalVotes,proto3" json:"totalVotes,omitempty"`
-	// 全体持票人反对票
+
 	OpposeVotes int32 `protobuf:"varint,3,opt,name=opposeVotes,proto3" json:"opposeVotes,omitempty"`
-	// 是否通过
+
 	PubPass bool `protobuf:"varint,4,opt,name=pubPass,proto3" json:"pubPass,omitempty"`
 }
 
@@ -232,15 +228,14 @@ type RuleConfig struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 董事会成员赞成率,以%为单位,只保留整数部分
 	BoardApproveRatio int32 `protobuf:"varint,1,opt,name=boardApproveRatio,proto3" json:"boardApproveRatio,omitempty"`
-	// 全体持票人否决率
+
 	PubOpposeRatio int32 `protobuf:"varint,2,opt,name=pubOpposeRatio,proto3" json:"pubOpposeRatio,omitempty"`
-	// 提案金额
+
 	ProposalAmount int64 `protobuf:"varint,3,opt,name=proposalAmount,proto3" json:"proposalAmount,omitempty"`
-	// 重大项目公示金额阈值
+
 	LargeProjectAmount int64 `protobuf:"varint,4,opt,name=largeProjectAmount,proto3" json:"largeProjectAmount,omitempty"`
-	// 重大项目公示时间（以区块数为单位）
+
 	PublicPeriod int32 `protobuf:"varint,5,opt,name=publicPeriod,proto3" json:"publicPeriod,omitempty"`
 }
 

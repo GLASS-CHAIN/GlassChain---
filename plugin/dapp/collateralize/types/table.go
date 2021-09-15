@@ -16,7 +16,6 @@ var opt = &table.Option{
 	Index:   []string{"status", "addr", "addr_status"},
 }
 
-//NewCollateralizeTable 新建表
 func NewCollateralizeTable(kvdb db.KV) *table.Table {
 	rowmeta := NewCollatetalizeRow()
 	table, err := table.NewTable(rowmeta, kvdb, opt)
@@ -26,22 +25,18 @@ func NewCollateralizeTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//CollatetalizeRow table meta 结构
 type CollatetalizeRow struct {
 	*ReceiptCollateralize
 }
 
-//NewCollatetalizeRow 新建一个meta 结构
 func NewCollatetalizeRow() *CollatetalizeRow {
 	return &CollatetalizeRow{ReceiptCollateralize: &ReceiptCollateralize{}}
 }
 
-//CreateRow 新建数据行
 func (tx *CollatetalizeRow) CreateRow() *table.Row {
 	return &table.Row{Data: &ReceiptCollateralize{}}
 }
 
-//SetPayload 设置数据
 func (tx *CollatetalizeRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*ReceiptCollateralize); ok {
 		tx.ReceiptCollateralize = txdata
@@ -50,7 +45,6 @@ func (tx *CollatetalizeRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *CollatetalizeRow) Get(key string) ([]byte, error) {
 	if key == "collateralizeid" {
 		return []byte(tx.CollateralizeId), nil
@@ -71,7 +65,6 @@ var optRecord = &table.Option{
 	Index:   []string{"status", "addr", "addr_status", "id_status", "id_addr"},
 }
 
-// NewRecordTable 借贷记录表
 func NewRecordTable(kvdb db.KV) *table.Table {
 	rowmeta := NewRecordRow()
 	table, err := table.NewTable(rowmeta, kvdb, optRecord)
@@ -81,22 +74,18 @@ func NewRecordTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//CollateralizeRecordRow table meta 结构
 type CollateralizeRecordRow struct {
 	*ReceiptCollateralize
 }
 
-//NewRecordRow 新建一个meta 结构
 func NewRecordRow() *CollateralizeRecordRow {
 	return &CollateralizeRecordRow{ReceiptCollateralize: &ReceiptCollateralize{}}
 }
 
-//CreateRow 新建数据行
 func (tx *CollateralizeRecordRow) CreateRow() *table.Row {
 	return &table.Row{Data: &ReceiptCollateralize{}}
 }
 
-//SetPayload 设置数据
 func (tx *CollateralizeRecordRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*ReceiptCollateralize); ok {
 		tx.ReceiptCollateralize = txdata
@@ -105,7 +94,6 @@ func (tx *CollateralizeRecordRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
 func (tx *CollateralizeRecordRow) Get(key string) ([]byte, error) {
 	if key == "borrowid" {
 		return []byte(tx.RecordId), nil

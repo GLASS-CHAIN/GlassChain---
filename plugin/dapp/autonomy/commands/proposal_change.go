@@ -16,7 +16,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ProposalChangeCmd 创建提案命令
 func ProposalChangeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "proposalChange",
@@ -96,7 +95,6 @@ func proposalChange(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// RevokeProposalChangeCmd 撤销提案
 func RevokeProposalChangeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revokeChange",
@@ -134,7 +132,6 @@ func revokeProposalChange(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// VoteProposalChangeCmd 投票提案
 func VoteProposalChangeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "voteChange",
@@ -183,7 +180,6 @@ func voteProposalChange(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// TerminateProposalChangeCmd 终止提案
 func TerminateProposalChangeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "terminateChange",
@@ -222,7 +218,6 @@ func terminateProposalChange(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// ShowProposalChangeCmd 显示提案查询信息
 func ShowProposalChangeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "showChange",

@@ -44,7 +44,6 @@ ethBridgeToeknYccAddr=""
     ethValidatorAddrKeyc="bbf5e65539e9af0eb0cfac30bad475111054b09c11d668fc0731d54ea777471e"
     ethValidatorAddrKeyd="c9fa31d7984edf81b8ef3b40c761f1847f6fcd5711ab2462da97dc458f1f896b"
 
-    # 新增地址 chain33 需要导入地址 转入 10 bty当收费费
     chain33Validatora="1N6HstkyLFS8QCeVfdvYxx1xoryXoJtvvZ"
     chain33Validatorb="155ooMPBTF8QQsGAknkK7ei5D78rwDEFe6"
     chain33Validatorc="13zBdQwuyDh7cKN79oT2odkxYuDbgQiXFv"
@@ -72,7 +71,6 @@ function updata_toml_start_bcd() {
         local file="./relayer$name.toml"
         cp './relayer.toml' "${file}"
 
-        # 删除配置文件中不需要的字段
         for deleteName in "deploy4chain33" "deployerPrivateKey" "operatorAddr" "validatorsAddr" "initPowers" "deploy" "deployerPrivateKey" "operatorAddr" "validatorsAddr" "initPowers"; do
             delete_line "${file}" "${deleteName}"
         done
@@ -111,22 +109,17 @@ function updata_toml_start_bcd() {
 function StartDockerRelayerDeploy() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
-    # 修改 relayer.toml 配置文件 pushName 字段
     pushNameChange "./relayer.toml"
-    # 修改 relayer.toml 配置文件 initPowers
     validators_config
 
     # change EthProvider url
     dockerAddr=$(get_docker_addr "${dockerNamePrefix}_ganachetest_1")
     #    ethUrl="http://${dockerAddr}:8545"
 
-    # 修改 relayer.toml 配置文件
     updata_relayer_a_toml "${dockerAddr}" "${dockerNamePrefix}_ebrelayera_1" "./relayer.toml"
 
-    # 启动 ebrelayer
     start_docker_ebrelayerA
 
-    # 导入私钥 部署合约 设置 bridgeRegistry 地址
     InitAndDeploy
 
     docker cp "${BridgeRegistryOnChain33}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${BridgeRegistryOnChain33}.abi
@@ -134,7 +127,6 @@ function StartDockerRelayerDeploy() {
     docker cp "${BridgeRegistryOnEth}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${BridgeRegistryOnEth}.abi
     docker cp "${ethBridgeBank}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${ethBridgeBank}.abi
 
-    # 重启
     # kill ebrelayer A
     kill_docker_ebrelayer "${dockerNamePrefix}_ebrelayera_1"
     sleep 1
@@ -147,7 +139,6 @@ function StartDockerRelayerDeploy() {
     # start ebrelayer B C D
     updata_toml_start_bcd
 
-    # 设置 token 地址
     InitTokenAddr
     docker cp "${chain33EthTokenAddr}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${chain33EthTokenAddr}.abi
     docker cp "${chain33YccTokenAddr}.abi" "${dockerNamePrefix}_ebrelayera_1":/root/${chain33YccTokenAddr}.abi
@@ -162,7 +153,6 @@ function TestChain33ToEthAssets() {
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethereumBtyTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # 原来的地址金额
     result=$(${Chain33Cli} account balance -a "${chain33DeployAddr}" -e evm)
     #    balance=$(cli_ret "${result}" "balance" ".balance")
 
@@ -170,19 +160,16 @@ function TestChain33ToEthAssets() {
     hash=$(${Chain33Cli} send evm call -f 1 -a 5 -k "${chain33DeployAddr}" -e "${chain33BridgeBank}" -p "lock(${ethDeployAddr}, ${chain33BtyTokenAddr}, 500000000)")
     check_tx "${Chain33Cli}" "${hash}"
 
-    # 原来的地址金额 减少了 5
     result=$(${Chain33Cli} account balance -a "${chain33DeployAddr}" -e evm)
     #    cli_ret "${result}" "balance" ".balance" "$(echo "${balance}-5" | bc)"
     #balance_ret "${result}" "195.0000"
 
-    # chain33BridgeBank 是否增加了 5
     result=$(${Chain33Cli} account balance -a "${chain33BridgeBank}" -e evm)
     balance_ret "${result}" "5.0000"
 
     sleep 2
     #    eth_block_wait 2 "${ethUrl}"
 
-    # eth 这端 金额是否增加了 5
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethereumBtyTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "5"
 
@@ -193,50 +180,43 @@ function TestChain33ToEthAssets() {
     sleep 2
     #    eth_block_wait 2 "${ethUrl}"
 
-    # eth 这端 金额是否减少了 3
     result=$(${CLIA} ethereum balance -o "${ethDeployAddr}" -t "${ethereumBtyTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "2"
 
     sleep ${maturityDegree}
 
-    # 接收的地址金额 变成了 3
     result=$(${Chain33Cli} account balance -a "${chain33ReceiverAddr}" -e evm)
     balance_ret "${result}" "3.0000"
 
-    # chain33BridgeBank 是否减少了 3
     result=$(${Chain33Cli} account balance -a "${chain33BridgeBank}" -e evm)
     balance_ret "${result}" "2.0000"
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# eth to chain33 在以太坊上锁定 ETH 资产,然后在 chain33 上 burn
 function TestETH2Chain33Assets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # 查询 ETH 这端 bridgeBank 地址原来是 0
+
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # ETH 这端 lock 11个
+
     result=$(${CLIA} ethereum lock -m 11 -k "${ethValidatorAddrKeyA}" -r "${chain33ReceiverAddr}")
     cli_ret "${result}" "lock"
 
-    # eth 等待 10 个区块
     sleep 2
     #    eth_block_wait 2 "${ethUrl}"
 
-    # 查询 ETH 这端 bridgeBank 地址 11
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
     cli_ret "${result}" "balance" ".balance" "11"
 
     sleep ${maturityDegree}
 
-    # chain33 chain33EthTokenAddr（ETH合约中）查询 lock 金额
     result=$(${Chain33Cli} evm query -a "${chain33EthTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 11 * le8
+
     is_equal "${result}" "1100000000"
 
-    # 原来的数额
+
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}")
     cli_ret "${result}" "balance" ".balance" "100"
 
@@ -247,14 +227,12 @@ function TestETH2Chain33Assets() {
 
     echo "check the balance on chain33"
     result=$(${Chain33Cli} evm query -a "${chain33EthTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 11-5 * le8
+
     is_equal "${result}" "600000000"
 
-    # 查询 ETH 这端 bridgeBank 地址 0
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}")
     cli_ret "${result}" "balance" ".balance" "6"
 
-    # 比之前多 5
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}")
     cli_ret "${result}" "balance" ".balance" "105"
 
@@ -263,30 +241,26 @@ function TestETH2Chain33Assets() {
 
 function TestETH2Chain33Ycc() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # 查询 ETH 这端 bridgeBank 地址原来是 0
+  
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # ETH 这端 lock 7个 YCC
+
     result=$(${CLIA} ethereum lock -m 7 -k "${ethDeployKey}" -r "${chain33ReceiverAddr}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "lock"
 
-    # eth 等待 10 个区块
     sleep 2
     #    eth_block_wait 2 "${ethUrl}"
 
-    # 查询 ETH 这端 bridgeBank 地址 7 YCC
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "7"
 
     sleep ${maturityDegree}
 
-    # chain33 chain33EthTokenAddr（ETH合约中）查询 lock 金额
     result=$(${Chain33Cli} evm query -a "${chain33YccTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 7 * le8
+
     is_equal "${result}" "700000000"
 
-    # 原来的数额 0
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "0"
 
@@ -297,14 +271,12 @@ function TestETH2Chain33Ycc() {
 
     echo "check the balance on chain33"
     result=$(${Chain33Cli} evm query -a "${chain33YccTokenAddr}" -c "${chain33DeployAddr}" -b "balanceOf(${chain33ReceiverAddr})")
-    # 结果是 7-5 * le8
+
     is_equal "${result}" "200000000"
 
-    # 查询 ETH 这端 bridgeBank 地址 2
     result=$(${CLIA} ethereum balance -o "${ethBridgeBank}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "2"
 
-    # 更新后的金额 5
     result=$(${CLIA} ethereum balance -o "${ethReceiverAddr1}" -t "${ethereumYccTokenAddr}")
     cli_ret "${result}" "balance" ".balance" "5"
 

@@ -1,5 +1,4 @@
 ##
-##编译solidity，并产生bin文件，abi文件，和相应的go文件
 
 SRC_CONTRACT := safe-contracts/contracts
 GO_OUT0 := bsctest/gnosisSafe/

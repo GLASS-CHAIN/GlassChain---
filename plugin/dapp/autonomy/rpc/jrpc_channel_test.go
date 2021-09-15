@@ -23,7 +23,6 @@ func init() {
 }
 
 func TestJRPCChannel(t *testing.T) {
-	// 启动RPCmocker
 	mocker := testnode.New("--notset--", nil)
 	defer func() {
 		mocker.Close()

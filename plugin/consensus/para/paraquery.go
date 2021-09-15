@@ -13,7 +13,6 @@ import (
 	pt "github.com/33cn/plugin/plugin/dapp/paracross/types"
 )
 
-//IsCaughtUp 是否追上最新高度,
 func (client *client) Query_IsCaughtUp(req *types.ReqNil) (types.Message, error) {
 	if client == nil {
 		return nil, fmt.Errorf("%s", "client not bind message queue.")
@@ -87,7 +86,6 @@ func (client *client) Query_BlsPubKey(req *types.ReqString) (types.Message, erro
 		pub.Key = p
 		return &pub, nil
 	}
-	//缺省获取钱包的
 	if nil != client.blsSignCli.blsPubKey {
 		t := client.blsSignCli.blsPubKey.Bytes()
 		pub.Key = common.ToHex(t[:])
@@ -97,24 +95,20 @@ func (client *client) Query_BlsPubKey(req *types.ReqString) (types.Message, erro
 	return nil, errors.New("no bls prikey init")
 }
 
-// Query_CreateNewAccount 通知para共识模块钱包创建了一个新的账户
 func (client *client) Query_CreateNewAccount(acc *types.Account) (types.Message, error) {
 	if acc == nil {
 		return nil, types.ErrInvalidParam
 	}
 	plog.Info("Query_CreateNewAccount", "acc", acc.Addr)
-	// 需要para共识这边处理新创建的账户是否是超级节点发送commit共识交易的账户
 	client.commitMsgClient.onWalletAccount(acc)
 	return &types.Reply{IsOk: true, Msg: []byte("OK")}, nil
 }
 
-// Query_WalletStatus 通知para共识模块钱包锁状态有变化
 func (client *client) Query_WalletStatus(walletStatus *types.WalletStatus) (types.Message, error) {
 	if walletStatus == nil {
 		return nil, types.ErrInvalidParam
 	}
 	plog.Info("Query_WalletStatus", "walletStatus", walletStatus.IsWalletLock)
-	// 需要para共识这边根据walletStatus.IsWalletLock锁的状态开启/关闭发送共识交易
 	client.commitMsgClient.onWalletStatus(walletStatus)
 	return &types.Reply{IsOk: true, Msg: []byte("OK")}, nil
 }

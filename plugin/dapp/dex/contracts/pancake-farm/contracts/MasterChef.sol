@@ -209,19 +209,19 @@ contract MasterChef is Ownable {
 
     // Return get CakePerBlock due to current block number.
     function getCakePerBlock(uint256 height) public view returns (uint256) {
-        //当前只有一个配置，直接返回
+
         if (cakePerBlockCfg.length == 1) {
             return cakePerBlockCfg[0].cakePerBlock;
         }
-        //当前已经使用最新配置项，同样直接返回最新即可
+
         if (latestCakePerBlockIndex ==  (cakePerBlockCfg.length - 1)) {
             return cakePerBlockCfg[latestCakePerBlockIndex].cakePerBlock;
         }
-        //如果需要启用新的配置项，则更新index的值
+
         if (height >= cakePerBlockCfg[latestCakePerBlockIndex + 1].startBlock) {
             return cakePerBlockCfg[latestCakePerBlockIndex + 1].cakePerBlock;
         }
-        //未达到使用最新配置的高度前，使用当前配置项
+
         return cakePerBlockCfg[latestCakePerBlockIndex].cakePerBlock;
     }
 
@@ -231,7 +231,7 @@ contract MasterChef is Ownable {
         if (cake2RewardTo == cake2RewardFrom) {
             return (_to.sub(_from).mul(cake2RewardFrom), false);
         }
-        //分段计算
+
         uint256 cake2RewardPart1 = cakePerBlockCfg[latestCakePerBlockIndex + 1].startBlock.sub(_from).mul(cakePerBlockCfg[latestCakePerBlockIndex].cakePerBlock);
         uint256 cake2RewardPart2 = _to.sub(cakePerBlockCfg[latestCakePerBlockIndex + 1].startBlock).mul(cakePerBlockCfg[latestCakePerBlockIndex + 1].cakePerBlock);
 
@@ -250,7 +250,6 @@ contract MasterChef is Ownable {
             uint256 cakeReward = cake2Reward.mul(pool.allocPoint).div(totalAllocPoint);
             accCakePerShare = accCakePerShare.add(cakeReward.mul(1e12).div(lpSupply));
             if (updateBlockIndex){
-                //只是为了消除编译告警信息
             }
         }
         return user.amount.mul(accCakePerShare).div(1e12).sub(user.rewardDebt);

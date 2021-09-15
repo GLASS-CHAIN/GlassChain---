@@ -169,7 +169,6 @@ func testexecDelLocalProject(t *testing.T) {
 		},
 	}
 
-	// 先执行local然后进行删除
 	tx, err := types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err := au.execAutoLocalProject(tx, receipt)
@@ -205,8 +204,6 @@ func testexecDelLocalProject(t *testing.T) {
 		Logs: []*types.ReceiptLog{
 			{Ty: auty.TyLogVotePropProject, Log: types.Encode(receiptProject2)},
 		}}
-	// 先执行local然后进行删除
-	// 自动回退测试时候，需要先设置一个前置状态
 	tx, err = types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err = au.execAutoLocalProject(tx, receipt)
@@ -214,7 +211,6 @@ func testexecDelLocalProject(t *testing.T) {
 	assert.NotNil(t, set)
 	saveKvs(sdb, set.KV)
 
-	// 正常测试退回
 	tx, err = types.CreateFormatTx(chainTestCfg, chainTestCfg.ExecName(auty.AutonomyX), nil)
 	assert.NoError(t, err)
 	set, err = au.execAutoLocalProject(tx, recpt)
@@ -281,7 +277,6 @@ func TestListProposalProject(t *testing.T) {
 		Index:        2,
 	}
 
-	//将数据保存下去
 	var kvs []*types.KeyValue
 	table := NewProjectTable(kvdb)
 	for _, tcase := range testcase {
@@ -297,7 +292,6 @@ func TestListProposalProject(t *testing.T) {
 	}
 	saveKvs(sdb, kvs)
 
-	// 反向查找
 	req := &auty.ReqQueryProposalProject{
 		Status:    auty.AutonomyStatusProposalProject,
 		Count:     10,
@@ -314,7 +308,6 @@ func TestListProposalProject(t *testing.T) {
 		k--
 	}
 
-	// 正向查找
 	req = &auty.ReqQueryProposalProject{
 		Status:    auty.AutonomyStatusProposalProject,
 		Count:     10,
@@ -329,7 +322,6 @@ func TestListProposalProject(t *testing.T) {
 		assert.Equal(t, rsp.(*auty.ReplyQueryProposalProject).PropProjects[i].Index, int32(tcase.index))
 	}
 
-	// 翻页查找
 	req = &auty.ReqQueryProposalProject{
 		Status:    auty.AutonomyStatusProposalProject,
 		Count:     1,
