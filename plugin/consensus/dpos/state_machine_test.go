@@ -19,9 +19,9 @@ func init() {
 	setParams(3, 3, 6)
 }
 func setParams(delegateNum int64, blockInterval int64, continueBlockNum int64) {
-	dposDelegateNum = delegateNum           //委托节点个数，从配置读取，以后可以根据投票结果来定
-	dposBlockInterval = blockInterval       //出块间隔，当前按3s
-	dposContinueBlockNum = continueBlockNum //一个委托节点当选后，一次性持续出块数量
+	dposDelegateNum = delegateNum           
+	dposBlockInterval = blockInterval       
+	dposContinueBlockNum = continueBlockNum 
 	dposCycle = dposDelegateNum * dposBlockInterval * dposContinueBlockNum
 	dposPeriod = dposBlockInterval * dposContinueBlockNum
 }

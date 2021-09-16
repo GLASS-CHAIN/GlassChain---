@@ -21,16 +21,11 @@ import (
 )
 
 var (
-	// InitStateType 为状态机的初始状态
 	InitStateType = 1
-	// VotingStateType 为状态机的投票状态
 	VotingStateType = 2
-	// VotedStateType 为状态机的已投票状态
 	VotedStateType = 3
-	// WaitNotifyStateType 为状态机的等待通知状态
 	WaitNotifyStateType = 4
 
-	// StateTypeMapping 为状态的整型值和字符串值的对应关系
 	StateTypeMapping = map[int]string{
 		InitStateType:       "InitState",
 		VotingStateType:     "VotingState",
@@ -63,7 +58,6 @@ var LastCheckRegTopNTime = int64(0)
 // LastCheckUpdateTopNTime is the Last Check Update TopN Time
 var LastCheckUpdateTopNTime = int64(0)
 
-// Task 为计算当前时间所属周期的数据结构
 type Task struct {
 	NodeID      int64
 	Cycle       int64
@@ -75,7 +69,6 @@ type Task struct {
 	BlockStop   int64
 }
 
-// TopNVersionInfo 为记录某一个区块高度对应的TopN更新的版本信息
 type TopNVersionInfo struct {
 	Version           int64
 	HeightStart       int64
@@ -85,7 +78,6 @@ type TopNVersionInfo struct {
 	HeightUpdateLimit int64
 }
 
-// CalcTopNVersion 根据某一个区块高度计算对应的TopN更新的版本信息
 func CalcTopNVersion(height int64) (info TopNVersionInfo) {
 	info = TopNVersionInfo{}
 	info.Version = height / blockNumToUpdateDelegate
@@ -97,7 +89,6 @@ func CalcTopNVersion(height int64) (info TopNVersionInfo) {
 	return info
 }
 
-// DecideTaskByTime 根据时间戳计算所属的周期，包括cycle周期，负责出块周期，当前出块周期
 func DecideTaskByTime(now int64) (task Task) {
 	task.NodeID = now % dposCycle / dposPeriod
 	task.Cycle = now / dposCycle
@@ -114,13 +105,12 @@ func DecideTaskByTime(now int64) (task Task) {
 }
 
 func generateVote(cs *ConsensusState) *dpostype.Vote {
-	//获得当前高度
+
 	height := cs.client.GetCurrentHeight()
 	now := time.Now().Unix()
 	if cs.lastMyVote != nil && math.Abs(float64(now-cs.lastMyVote.VoteItem.PeriodStop)) <= 1 {
 		now += 2
 	}
-	//计算当前时间，属于哪一个周期，应该哪一个节点出块，应该出块的高度
 	task := DecideTaskByTime(now)
 
 	cs.ShuffleValidators(task.Cycle)
@@ -131,7 +121,6 @@ func generateVote(cs *ConsensusState) *dpostype.Vote {
 		return nil
 	}
 
-	//生成vote， 对于vote进行签名
 	voteItem := &dpostype.VoteItem{
 		VotedNodeAddress: addr,
 		VotedNodeIndex:   int32(task.NodeID),
@@ -235,14 +224,12 @@ func checkTopNRegist(cs *ConsensusState) {
 
 	now := time.Now().Unix()
 	if now-LastCheckRegTopNTime < dposBlockInterval*3 {
-		//避免短时间频繁检查，5个区块以内不重复检查
 		return
 	}
 
 	height := cs.client.GetCurrentHeight()
 	info := CalcTopNVersion(height)
 	if height <= info.HeightRegLimit {
-		//在注册TOPN的区块区间内，则检查本节点是否注册成功，如果否则进行注册
 		topN := cs.GetTopNCandidatorsByVersion(info.Version)
 		if topN == nil || !cs.IsTopNRegisted(topN) {
 			cands, err := cs.client.QueryCandidators()
@@ -282,7 +269,6 @@ func checkTopNUpdate(cs *ConsensusState) {
 
 	now := time.Now().Unix()
 	if now-LastCheckUpdateTopNTime < dposBlockInterval*1 {
-		//避免短时间频繁检查，1个区块以内不重复检查
 		return
 	}
 
@@ -388,7 +374,6 @@ func (init *InitState) timeOut(cs *ConsensusState) {
 		dposlog.Error("InitState timeout but available nodes less than 2/3,waiting for more connections", "connections", connections, "validators", validators)
 		cs.ClearVotes()
 
-		//设定超时时间，超时后再检查链接数量
 		cs.resetTimer(time.Duration(timeoutCheckConnections)*time.Millisecond, InitStateType)
 	} else {
 		vote := generateVote(cs)
@@ -410,12 +395,12 @@ func (init *InitState) timeOut(cs *ConsensusState) {
 		dposlog.Info("Available nodes equal or more than 2/3,change state to VotingState", "connections", connections, "validators", validators)
 		cs.SetState(VotingStateObj)
 		dposlog.Info("Change state.", "from", "InitState", "to", "VotingState")
-		//通过node发送p2p消息到其他节点
+
 		dposlog.Info("VotingState send a vote", "vote info", printVote(vote.DPosVote), "localNodeIndex", cs.client.ValidatorIndex(), "now", time.Now().Unix())
 		cs.dposState.sendVote(cs, vote.DPosVote)
 
 		cs.resetTimer(time.Duration(timeoutVoting)*time.Millisecond, VotingStateType)
-		//处理之前缓存的投票信息
+
 		for i := 0; i < len(cs.cachedVotes); i++ {
 			cs.dposState.recvVote(cs, cs.cachedVotes[i])
 		}
@@ -447,7 +432,6 @@ func (init *InitState) sendNotify(cs *ConsensusState, notify *dpostype.DPosNotif
 func (init *InitState) recvNotify(cs *ConsensusState, notify *dpostype.DPosNotify) {
 	dposlog.Info("InitState recvNotify")
 
-	//zzh:需要增加对Notify的处理，可以考虑记录已经确认过的出快记录
 	cs.SetNotify(notify)
 }
 
@@ -461,26 +445,23 @@ type VotingState struct {
 }
 
 func (voting *VotingState) timeOut(cs *ConsensusState) {
-	//如果是测试场景，只有一个节点，也需要状态机能运转下去
 	if dposDelegateNum == 1 {
 		result, voteItem := cs.CheckVotes()
 
 		if result == voteSuccess {
 			dposlog.Info("VotingState get 2/3 result", "final vote:", printVoteItem(voteItem))
 			dposlog.Info("VotingState change state to VotedState")
-			//切换状态
+
 			cs.SetState(VotedStateObj)
 			dposlog.Info("Change state because of check votes successfully.", "from", "VotingState", "to", "VotedState")
 
 			cs.SetCurrentVote(voteItem)
 
-			//检查最终投票是否与自己的投票一致，如果不一致，需要更新本地的信息，保证各节点共识结果执行一致。
 			if !bytes.Equal(cs.myVote.VoteItem.VoteID, voteItem.VoteID) {
 				if !cs.validatorMgr.UpdateFromVoteItem(voteItem) {
 					panic("This node's validators are not the same with final vote, please check")
 				}
 			}
-			//1s后检查是否出块，是否需要重新投票
 			cs.resetTimer(time.Millisecond*500, VotedStateType)
 		}
 		return
@@ -488,13 +469,11 @@ func (voting *VotingState) timeOut(cs *ConsensusState) {
 
 	dposlog.Info("VotingState timeout but don't get an agreement. change state to InitState")
 
-	//清理掉之前的选票记录，从初始状态重新开始
 	cs.ClearVotes()
 	cs.ClearCachedVotes()
 	cs.SetState(InitStateObj)
 	dposlog.Info("Change state because of timeOut.", "from", "VotingState", "to", "InitState")
 
-	//由于连接多数情况下正常，快速触发InitState的超时处理
 	cs.resetTimer(time.Duration(timeoutCheckConnections)*time.Millisecond, InitStateType)
 }
 
@@ -517,25 +496,23 @@ func (voting *VotingState) recvVote(cs *ConsensusState, vote *dpostype.DPosVote)
 	if result == voteSuccess {
 		dposlog.Info("VotingState get 2/3 result", "final vote:", printVoteItem(voteItem))
 		dposlog.Info("VotingState change state to VotedState")
-		//切换状态
+
 		cs.SetState(VotedStateObj)
 		dposlog.Info("Change state because of check votes successfully.", "from", "VotingState", "to", "VotedState")
 
 		cs.SetCurrentVote(voteItem)
 
-		//检查最终投票是否与自己的投票一致，如果不一致，需要更新本地的信息，保证各节点共识结果执行一致。
 		if !bytes.Equal(cs.myVote.VoteItem.VoteID, voteItem.VoteID) {
 			if !cs.validatorMgr.UpdateFromVoteItem(voteItem) {
 				panic("This node's validators are not the same with final vote, please check")
 			}
 		}
-		//1s后检查是否出块，是否需要重新投票
 		cs.resetTimer(time.Millisecond*500, VotedStateType)
 	} else if result == continueToVote {
 		dposlog.Info("VotingState get a vote, but don't get an agreement,waiting for new votes...")
 	} else {
 		dposlog.Info("VotingState get a vote, but don't get an agreement,vote fail,abort voting")
-		//清理掉之前的选票记录，从初始状态重新开始
+
 		cs.ClearVotes()
 		cs.SetState(InitStateObj)
 		dposlog.Info("Change state because of vote failed.", "from", "VotingState", "to", "InitState")
@@ -577,22 +554,18 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 
 	dposlog.Info("address info", "privValidatorAddr", hex.EncodeToString(cs.privValidator.GetAddress()), "VotedNodeAddress", hex.EncodeToString(cs.currentVote.VotedNodeAddress))
 	if bytes.Equal(cs.privValidator.GetAddress(), cs.currentVote.VotedNodeAddress) {
-		//当前节点为出块节点
 
-		//如果区块未同步，则等待；如果区块已同步，则进行后续正常出块的判断和处理。
+
 		if block.Height+1 < cs.currentVote.Height {
 			dposlog.Info("VotedState timeOut but block is not sync,wait...", "localHeight", block.Height, "vote height", cs.currentVote.Height)
 			cs.resetTimer(time.Second*1, VotedStateType)
 			return
 		}
 
-		//时间到了节点切换时刻
 		if now >= cs.currentVote.PeriodStop {
-			//当前时间超过了节点切换时间，需要进行重新投票
 			dposlog.Info("VotedState timeOut over periodStop.", "periodStop", cs.currentVote.PeriodStop, "cycleStop", cs.currentVote.CycleStop)
 
 			isCycleSwith := false
-			//如果到了cycle结尾，需要构造一个交易，把最终的CycleBoundary信息发布出去
 			if cs.currentVote.PeriodStop == cs.currentVote.CycleStop {
 				dposlog.Info("Create new tx for cycle change to record cycle boundary info.", "height", block.Height)
 				isCycleSwith = true
@@ -619,7 +592,6 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 				voted.sendCBInfo(cs, info2)
 			}
 
-			//当前时间超过了节点切换时间，需要进行重新投票
 			notify := &dpostype.Notify{
 				DPosNotify: &dpostype.DPosNotify{
 					Vote:              cs.currentVote,
@@ -654,7 +626,6 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 			cs.dposState.sendNotify(cs, notify.DPosNotify)
 			cs.ClearVotes()
 
-			//检查是否需要更新TopN，如果有更新，则更新TOPN节点后进入新的状态循环。
 			if isCycleSwith {
 				checkTopNUpdate(cs)
 			}
@@ -666,21 +637,16 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 			return
 		}
 
-		//根据时间进行vrf相关处理，如果在(cyclestart,middle)之间，发布M，如果在(middle,cyclestop)之间，发布R、P
 		checkVrf(cs)
 
-		//检查是否应该注册topN，是否已经注册topN
 		checkTopNRegist(cs)
 
-		//当前时间未到节点切换时间，则继续进行出块判断
 		if block.BlockTime >= task.BlockStop {
-			//已出块，或者时间落后了。
 			dposlog.Info("VotedState timeOut but block already is generated.", "blocktime", block.BlockTime, "blockStop", task.BlockStop, "now", now)
 			cs.resetTimer(time.Second*1, VotedStateType)
 
 			return
 		} else if block.BlockTime < task.BlockStart {
-			//本出块周期尚未出块，则进行出块
 			if task.BlockStop-now <= 1 {
 				dposlog.Info("Create new block.", "height", block.Height+1)
 
@@ -694,8 +660,7 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 			cs.resetTimer(time.Millisecond*500, VotedStateType)
 			return
 
-		} else {
-			//本周期已经出块
+		} else { 
 			dposlog.Info("Wait to next block cycle.", "waittime", task.BlockStop-now+1)
 
 			//cs.scheduleDPosTimeout(time.Second * time.Duration(task.blockStop-now+1), VotedStateType)

@@ -33,10 +33,8 @@ const (
 	voteSuccess    = 1
 	voteFail       = 2
 
-	//VrfQueryTypeM vrf query type 为查询M信息
 	VrfQueryTypeM = 0
 
-	//VrfQueryTypeRP vrf query type 为查询RP信息
 	VrfQueryTypeRP = 1
 )
 
@@ -76,13 +74,10 @@ type ConsensusState struct {
 	stopped          uint32 // atomic
 	Quit             chan struct{}
 
-	//当前状态
 	dposState State
 
-	//所有选票，包括自己的和从网络中接收到的
 	dposVotes []*dpostype.DPosVote
 
-	//当前达成共识的选票
 	currentVote *dpostype.VoteItem
 	lastVote    *dpostype.VoteItem
 
@@ -92,7 +87,6 @@ type ConsensusState struct {
 	notify     *dpostype.DPosNotify
 	lastNotify *dpostype.DPosNotify
 
-	//所有选票，包括自己的和从网络中接收到的
 	cachedVotes []*dpostype.DPosVote
 
 	cachedNotify *dpostype.DPosNotify
@@ -277,7 +271,6 @@ func (cs *ConsensusState) handleTimeout() {
 	cs.mtx.Lock()
 	defer cs.mtx.Unlock()
 
-	//由具体的状态来处理超时消息
 	cs.dposState.timeOut(cs)
 }
 
@@ -374,12 +367,10 @@ func (cs *ConsensusState) AddVotes(vote *dpostype.DPosVote) {
 		}
 	}
 
-	//有重复投票，则不需要处理
 	if repeatFlag {
 		return
 	}
 
-	//投票不重复，如果地址也不重复，则直接加入;如果地址重复了，则替换老的投票
 	if !addrExistFlag {
 		cs.dposVotes = append(cs.dposVotes, vote)
 	} else if vote.VoteTimestamp > cs.dposVotes[index].VoteTimestamp {
@@ -404,12 +395,10 @@ func (cs *ConsensusState) CacheVotes(vote *dpostype.DPosVote) {
 		}
 	}
 
-	//有重复投票，则不需要处理
 	if repeatFlag {
 		return
 	}
 
-	//投票不重复，如果地址也不重复，则直接加入;如果地址重复了，则替换老的投票
 	if !addrExistFlag {
 		cs.cachedVotes = append(cs.cachedVotes, vote)
 	} else if vote.VoteTimestamp > cs.cachedVotes[index].VoteTimestamp {
@@ -421,7 +410,6 @@ func (cs *ConsensusState) CacheVotes(vote *dpostype.DPosVote) {
 func (cs *ConsensusState) CheckVotes() (ty int, vote *dpostype.VoteItem) {
 	major32 := int(dposDelegateNum * 2 / 3)
 
-	//总的票数还不够2/3，先不做决定
 	if len(cs.dposVotes) < major32 {
 		return continueToVote, nil
 	}
@@ -446,7 +434,6 @@ func (cs *ConsensusState) CheckVotes() (ty int, vote *dpostype.VoteItem) {
 		}
 	}
 
-	//如果一个节点的投票数已经过2/3，则返回最终票数超过2/3的选票
 	if value >= major32 {
 		for i := 0; i < len(cs.dposVotes); i++ {
 			if key == string(cs.dposVotes[i].VoteItem.VoteID) {
@@ -454,7 +441,6 @@ func (cs *ConsensusState) CheckVotes() (ty int, vote *dpostype.VoteItem) {
 			}
 		}
 	} else if (value + (int(dposDelegateNum) - len(cs.dposVotes))) < major32 {
-		//得票最多的节点，即使后续所有票都选它，也不满足2/3多数，不能达成共识。
 		return voteFail, nil
 	}
 
@@ -804,7 +790,6 @@ func (cs *ConsensusState) SendCBTx(info *dty.DposCBInfo) bool {
 
 	cs.privValidator.SignTx(tx)
 	dposlog.Info("Sign RecordCBTx ok.")
-	//将交易发往交易池中，方便后续重启或者新加入的超级节点查询
 	msg := cs.client.GetQueueClient().NewMessage("mempool", types.EventTx, tx)
 	err = cs.client.GetQueueClient().Send(msg, false)
 	if err != nil {
@@ -826,7 +811,6 @@ func (cs *ConsensusState) SendRegistVrfMTx(info *dty.DposVrfMRegist) bool {
 	}
 	cs.privValidator.SignTx(tx)
 	dposlog.Info("Sign RegistVrfMTx ok.")
-	//将交易发往交易池中，方便后续重启或者新加入的超级节点查询
 	msg := cs.client.GetQueueClient().NewMessage("mempool", types.EventTx, tx)
 	err = cs.client.GetQueueClient().Send(msg, false)
 	if err != nil {
@@ -849,7 +833,6 @@ func (cs *ConsensusState) SendRegistVrfRPTx(info *dty.DposVrfRPRegist) bool {
 
 	cs.privValidator.SignTx(tx)
 	dposlog.Info("Sign RegVrfRPTx ok.")
-	//将交易发往交易池中，方便后续重启或者新加入的超级节点查询
 	msg := cs.client.GetQueueClient().NewMessage("mempool", types.EventTx, tx)
 	err = cs.client.GetQueueClient().Send(msg, false)
 	if err != nil {
@@ -1036,7 +1019,6 @@ func (cs *ConsensusState) ShuffleValidators(cycle int64) {
 	}
 
 	if cycle == cs.validatorMgr.ShuffleCycle {
-		//如果已经洗过牌，则直接返回，不重复洗牌
 		dposlog.Info("Shuffle for this cycle is done already.", "cycle", cycle)
 		return
 	}
@@ -1098,7 +1080,6 @@ func (cs *ConsensusState) ShuffleValidators(cycle int64) {
 	cs.validatorMgr.ShuffleType = ShuffleTypePartVrf
 
 	for i := 0; i < len(set); i++ {
-		//如果节点信息不在VrfValidators，则说明没有完整的VRF信息，将被放入NoVrfValidators中
 		if !isValidatorExist(set[i].PubKey, vrfValidators) {
 			item := &ttypes.Validator{
 				PubKey:  set[i].PubKey,
@@ -1169,7 +1150,6 @@ func (cs *ConsensusState) SendTopNRegistTx(reg *dty.TopNCandidatorRegist) bool {
 
 	cs.privValidator.SignTx(tx)
 	dposlog.Info("Sign TopNRegistTx ok.")
-	//将交易发往交易池中，方便后续重启或者新加入的超级节点查询
 	msg := cs.client.GetQueueClient().NewMessage("mempool", types.EventTx, tx)
 	err = cs.client.GetQueueClient().Send(msg, false)
 	if err != nil {

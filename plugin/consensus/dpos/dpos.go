@@ -43,15 +43,15 @@ var (
 	validatorNodes                  = []string{"127.0.0.1:46656"}
 	isValidator                     = false
 
-	dposDelegateNum          int64 = 3 //委托节点个数，从配置读取，以后可以根据投票结果来定
-	dposBlockInterval        int64 = 3 //出块间隔，当前按3s
-	dposContinueBlockNum     int64 = 6 //一个委托节点当选后，一次性持续出块数量
+	dposDelegateNum          int64 = 3 
+	dposBlockInterval        int64 = 3 
+	dposContinueBlockNum     int64 = 6 
 	dposCycle                      = dposDelegateNum * dposBlockInterval * dposContinueBlockNum
 	dposPeriod                     = dposBlockInterval * dposContinueBlockNum
 	zeroHash                 [32]byte
 	dposPort                       = "36656"
-	shuffleType              int32 = dposShuffleTypeOrderByVrfInfo //shuffleType为1表示使用固定出块顺序，为2表示使用vrf信息进行出块顺序洗牌
-	whetherUpdateTopN              = false                         //是否更新topN，如果为true，根据下面几个配置项定期更新topN节点;如果为false，则一直使用初始配置的节点，不关注投票结果
+	shuffleType              int32 = dposShuffleTypeOrderByVrfInfo 
+	whetherUpdateTopN              = false                         
 	blockNumToUpdateDelegate int64 = 20000
 	registTopNHeightLimit    int64 = 100
 	updateTopNHeightLimit    int64 = 200
@@ -189,7 +189,6 @@ func New(cfg *types.Consensus, sub []byte) queue.Module {
 		//return nil
 	}
 
-	//为了使用VRF，需要使用SECP256K1体系的公私钥
 	cr, err := crypto.New(types.GetSignName("", types.SECP256K1))
 	if err != nil {
 		dposlog.Error("NewDPosClient", "err", err)
@@ -198,7 +197,6 @@ func New(cfg *types.Consensus, sub []byte) queue.Module {
 
 	ttypes.ConsensusCrypto = cr
 
-	//安全连接仍然要使用ed25519
 	cr2, err := crypto.New(types.GetSignName("", types.ED25519))
 	if err != nil {
 		dposlog.Error("NewDPosClient", "err", err)
@@ -272,7 +270,7 @@ const DebugCatchup = false
 
 // StartConsensus a routine that make the consensus start
 func (client *Client) StartConsensus() {
-	//进入共识前先同步到最大高度
+
 	hint := time.NewTicker(5 * time.Second)
 	beg := time.Now()
 	block, err := client.RequestLastBlock()
@@ -294,7 +292,6 @@ OuterLoop:
 	}
 	hint.Stop()
 
-	//如果非候选节点，直接返回，接受同步区块数据，不做任何共识相关的事情。
 	if !isValidator {
 		dposlog.Info("This node is not a validator,does not join the consensus, just syncs blocks from validators")
 		client.InitBlock()
@@ -373,7 +370,6 @@ OuterLoop:
 
 	client.node = node
 
-	// 对于受托节点，才需要初始化区块，启动共识相关程序等,后续支持投票要做成动态切换的。
 	if client.isDelegator {
 		client.InitBlock()
 		time.Sleep(time.Second * 2)
@@ -423,7 +419,6 @@ func (client *Client) CreateGenesisTx() (ret []*types.Transaction) {
 	return
 }
 
-// CheckBlock 暂不检查任何的交易
 func (client *Client) CheckBlock(parent *types.Block, current *types.BlockDetail) error {
 	return nil
 }
@@ -449,7 +444,6 @@ func (client *Client) CreateBlock() {
 			emptyBlock.TxHash = zeroHash[:]
 			emptyBlock.BlockTime = client.blockTime
 			err := client.WriteBlock(lastBlock.StateHash, emptyBlock)
-			//判断有没有交易是被删除的，这类交易要从mempool 中删除
 			if err != nil {
 				return
 			}
@@ -467,7 +461,6 @@ func (client *Client) CreateBlock() {
 	client.AddTxsToBlock(&newblock, txs)
 	newblock.Difficulty = cfg.GetP(0).PowLimitBits
 
-	//需要首先对交易进行排序然后再计算TxHash
 	if cfg.IsFork(newblock.Height, "ForkRootHash") {
 		newblock.Txs = types.TransactionSort(newblock.Txs)
 	}
@@ -475,7 +468,6 @@ func (client *Client) CreateBlock() {
 	newblock.BlockTime = client.blockTime
 
 	err := client.WriteBlock(lastBlock.StateHash, &newblock)
-	//判断有没有交易是被删除的，这类交易要从mempool 中删除
 	if err != nil {
 		return
 	}
@@ -785,7 +777,6 @@ func (client *Client) GetNode() *Node {
 	return client.node
 }
 
-//CmpBestBlock 比较newBlock是不是最优区块
 func (client *Client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block) bool {
 	return false
 }

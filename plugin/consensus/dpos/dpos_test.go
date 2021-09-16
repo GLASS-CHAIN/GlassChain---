@@ -129,7 +129,7 @@ func DposPerf() {
 	}
 
 	fmt.Println("=======start sendTransferTx sendTransferToExecTx!=======")
-	//从创世地址向测试地址转入代币
+
 	sendTransferTx(cfg, genesisKey, validatorAddr, 2000000000000)
 	time.Sleep(3 * time.Second)
 	in := &types.ReqBalance{}
@@ -140,7 +140,7 @@ func DposPerf() {
 	} else {
 		fmt.Println(validatorAddr, " balance:", acct.Acc[0].Balance, "frozen:", acct.Acc[0].Frozen)
 	}
-	//从测试地址向dos合约转入代币
+
 	sendTransferToExecTx(cfg, validatorKey, "dpos", 1600000000000)
 
 	time.Sleep(3 * time.Second)
