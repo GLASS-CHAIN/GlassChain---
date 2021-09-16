@@ -20,18 +20,14 @@ import (
 )
 
 type (
-	// CanTransferFunc 检查制定账户是否有足够的金额进行转账
 	CanTransferFunc func(state.EVMStateDB, common.Address, uint64) bool
 
-	// TransferFunc 执行转账逻辑
 	TransferFunc func(state.EVMStateDB, common.Address, common.Address, uint64) bool
 
-	// GetHashFunc 获取制定高度区块的哈希
-	// 给 BLOCKHASH 指令使用
+
 	GetHashFunc func(uint64) common.Hash
 )
 
-// 依据合约地址判断是否为预编译合约，如果不是，则全部通过解释器解释执行
 func run(evm *EVM, contract *Contract, input []byte, readOnly bool) (ret []byte, err error) {
 	if contract.CodeAddr != nil {
 		precompiles := PrecompiledContractsBerlin
@@ -40,7 +36,6 @@ func run(evm *EVM, contract *Contract, input []byte, readOnly bool) (ret []byte,
 			return
 		}
 	}
-	// 在此处打印下自定义合约的错误信息
 	ret, err = evm.Interpreter.Run(contract, input, readOnly)
 	if err != nil {
 		log.Error("error occurs while run evm contract", "error info", err)
@@ -49,74 +44,54 @@ func run(evm *EVM, contract *Contract, input []byte, readOnly bool) (ret []byte,
 	return ret, err
 }
 
-// Context EVM操作辅助上下文
-// 外部在构造EVM实例时传入，EVM实例构造完成后不允许修改
 type Context struct {
 
-	// CanTransfer 是否可转账
 	CanTransfer CanTransferFunc
-	// Transfer 转账
+
 	Transfer TransferFunc
-	// GetHash 获取区块哈希
+
 	GetHash GetHashFunc
 
-	// Origin 指令返回数据， 合约调用者地址
 	Origin common.Address
-	// GasPrice 指令返回数据
 	GasPrice uint32
 
-	// Coinbase 指令， 区块打包者地址
-	Coinbase *common.Address
-	// GasLimit 指令，当前交易的GasLimit
+	Coinbase *common.address
 	GasLimit uint64
 
 	// TxHash
 	TxHash []byte
 
-	// BlockNumber NUMBER 指令，当前区块高度
 	BlockNumber *big.Int
-	// Time 指令， 当前区块打包时间
+
 	Time *big.Int
-	// Difficulty 指令，当前区块难度
+
 	Difficulty *big.Int
 }
 
-// EVM 结构对象及其提供的操作方法，用于进行满足以太坊EVM黄皮书规范定义的智能合约代码的创建和执行
-// 合约执行过程中会修改外部状态数据（数据操作通过外部注入）
-// 在合约代码执行过程中发生的任何错误，都将会导致对状态数据的修改被回滚，并且依然消耗掉剩余的Gas
-// 此对象为每个交易创建一个实例，其操作非线程安全
+
 type EVM struct {
-	// Context 链相关的一些辅助属性和操作方法
-	Context
-	// EVMStateDB 状态数据操作入口
+
+	context
+
 	StateDB state.EVMStateDB
-	// 当前调用深度
+	
 	depth int
 
-	// VMConfig 虚拟机配置属性信息
 	VMConfig Config
 
-	// Interpreter EVM指令解释器，生命周期同EVM
 	Interpreter *Interpreter
 
-	// EVM执行流程结束标志
-	// 不允许手工设置
+
 	abort int32
 
-	// CallGasTemp 此属性用于临时存储计算出来的Gas消耗值
-	// 在指令执行时，会调用指令的gasCost方法，计算出此指令需要消耗的Gas，并存放在此临时属性中
-	// 然后在执行opCall时，从此属性获取消耗的Gas值
+
 	callGasTemp uint64
 
-	// 支持的最长合约代码大小
 	maxCodeSize int
 
-	// chain33配置
 	cfg *types.Chain33Config
 }
 
-// NewEVM 创建一个新的EVM实例对象
-// 在同一个节点中，一个EVM实例对象只服务于一个交易执行的生命周期
 func NewEVM(ctx Context, statedb state.EVMStateDB, vmConfig Config, cfg *types.Chain33Config) *EVM {
 	evm := &EVM{
 		Context:     ctx,
@@ -130,18 +105,14 @@ func NewEVM(ctx Context, statedb state.EVMStateDB, vmConfig Config, cfg *types.C
 	return evm
 }
 
-// GasTable 返回不同操作消耗的Gas定价表
-// 接收区块高度作为参数，方便以后在这里作分叉处理
 func (evm *EVM) GasTable(num *big.Int) gas.Table {
 	return gas.TableHomestead
 }
 
-// Cancel 调用此操作会在任意时刻取消此EVM的解释运行逻辑，支持重复调用
 func (evm *EVM) Cancel() {
 	atomic.StoreInt32(&evm.abort, 1)
 }
 
-// SetMaxCodeSize 设置合约代码的最大支持长度
 func (evm *EVM) SetMaxCodeSize(maxCodeSize int) {
 	if maxCodeSize < 1 || maxCodeSize > params.MaxCodeSize {
 		return
@@ -150,32 +121,26 @@ func (evm *EVM) SetMaxCodeSize(maxCodeSize int) {
 	evm.maxCodeSize = maxCodeSize
 }
 
-// 封装合约的各种调用逻辑中通用的预检查逻辑
 func (evm *EVM) preCheck(caller ContractRef, value uint64) (pass bool, err error) {
-	// 检查调用深度是否合法
+
 	if evm.VMConfig.NoRecursion && evm.depth > 0 {
 		return false, nil
 	}
 
-	// 允许递归，但深度不合法
 	if evm.depth > int(params.CallCreateDepth) {
 		return false, model.ErrDepth
 	}
 
-	// 如有转账，检查余额是否充足
 	if value > 0 {
 		if !evm.Context.CanTransfer(evm.StateDB, caller.Address(), value) {
 			return false, model.ErrInsufficientBalance
 		}
 	}
 
-	// 检查通过情况下，后面三个返回参数无意义
 	return true, nil
 }
 
-// Call 此方法提供合约外部调用入口
-// 根据合约地址调用已经存在的合约，input为合约调用参数
-// 合约调用逻辑支持在合约调用的同时进行向合约转账的操作
+
 func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas uint64, value uint64) (ret []byte, snapshot int, leftOverGas uint64, err error) {
 	pass, err := evm.preCheck(caller, value)
 	if !pass {
@@ -184,11 +149,8 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 
 	p, isPrecompile := evm.precompile(addr)
 	if !evm.StateDB.Exist(addr.String()) {
-		// 合约地址在自定义合约和预编译合约中都不存在时，可能为外部账户
 		if !isPrecompile {
-			// 只有一种情况会走到这里来，就是合约账户向外部账户转账的情况
 			if len(input) > 0 || value == 0 {
-				// 其它情况要求地址必须存在，所以需要报错
 				if EVMDebugOn == evm.VMConfig.Debug && evm.depth == 0 {
 					evm.VMConfig.Tracer.CaptureStart(caller.Address(), addr, false, input, gas, value)
 					evm.VMConfig.Tracer.CaptureEnd(ret, 0, 0, nil)
@@ -197,26 +159,19 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 			}
 		} else {
 
-			// 否则，为预编译合约，创建一个新的账号
-			// 此分支先屏蔽，不需要为预编译合约创建账号也可以调用合约逻辑，因为预编译合约只有逻辑没有存储状态，可以不对应具体的账号存储
-			//evm.StateDB.CreateAccount(addr, caller.Address())
 		}
 	}
 
-	// 如果是已经销毁状态的合约是不允许调用的
 	if evm.StateDB.HasSuicided(addr.String()) {
 		return nil, -1, gas, model.ErrDestruct
 	}
 
-	// 打快照，开始处理逻辑
 	snapshot = evm.StateDB.Snapshot()
 	to := AccountRef(addr)
 
-	// 向合约地址转账
 	evm.Transfer(evm.StateDB, caller.Address(), to.Address(), value)
 	log.Info("evm call", "caller address", caller.Address().String(), "contract address", to.Address().String(), "value", value)
 
-	// 从ForkV20EVMState开始，状态数据存储发生变更，需要做数据迁移
 	cfg := evm.StateDB.GetConfig()
 	if cfg.IsDappFork(evm.BlockNumber.Int64(), "evm", evmtypes.ForkEVMState) {
 		evm.StateDB.TransferStateData(addr.String())
@@ -231,13 +186,11 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 		if len(code) == 0 {
 			ret, err = nil, nil // gas is unchanged
 		} else {
-			// 创建新的合约对象，包含双方地址以及合约代码，可用Gas信息
 			contract := NewContract(caller, to, value, gas)
 			contract.SetCallCode(&addr, evm.StateDB.GetCodeHash(addr.String()), evm.StateDB.GetCode(addr.String()))
 
 			start := types.Now()
 
-			// 调试模式下启用跟踪
 			if EVMDebugOn == evm.VMConfig.Debug && evm.depth == 0 {
 				evm.VMConfig.Tracer.CaptureStart(caller.Address(), addr, false, input, gas, value)
 
@@ -250,7 +203,6 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 		}
 	}
 
-	// 当合约调用出错时，操作将会回滚（对数据的变更操作会被恢复），并且会消耗掉所有的gas
 	if err != nil {
 		evm.StateDB.RevertToSnapshot(snapshot)
 		if err != model.ErrExecutionReverted {
@@ -260,16 +212,12 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 	return ret, snapshot, gas, err
 }
 
-// CallCode 合约内部调用合约的入口
-// 执行逻辑同Call方法，但是有以下几点不同：
-// 在创建合约对象时，合约对象的上下文地址（合约对象的self属性）被设置为caller的地址
 func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, gas uint64, value uint64) (ret []byte, leftOverGas uint64, err error) {
 	pass, err := evm.preCheck(caller, value)
 	if !pass {
 		return nil, gas, err
 	}
 
-	// 如果是已经销毁状态的合约是不允许调用的
 	if evm.StateDB.HasSuicided(addr.String()) {
 		return nil, gas, model.ErrDestruct
 	}
@@ -283,9 +231,7 @@ func (evm *EVM) CallCode(caller ContractRef, addr common.Address, input []byte, 
 	if p, isPrecompile := evm.precompile(addr); isPrecompile {
 		ret, gas, err = RunPrecompiledContract(p, input, gas)
 	} else {
-		// 创建合约对象时，讲调用者和被调用者地址均设置为外部账户地址
 		contract := NewContract(caller, to, value, gas)
-		// 正常从合约地址加载合约代码
 		contract.SetCallCode(&addr, evm.StateDB.GetCodeHash(addr.String()), evm.StateDB.GetCode(addr.String()))
 		ret, err = run(evm, contract, input, false)
 		gas = contract.Gas

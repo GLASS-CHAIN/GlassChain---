@@ -37,7 +37,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// CycleBoundaryInfo cycle边界信息
 type CycleBoundaryInfo struct {
 	Cycle      int64  `protobuf:"varint,1,opt,name=cycle" json:"cycle,omitempty"`
 	StopHeight int64  `protobuf:"varint,2,opt,name=stopHeight" json:"stopHeight,omitempty"`
@@ -70,7 +69,6 @@ func (m *CycleBoundaryInfo) GetStopHash() string {
 	return ""
 }
 
-// SuperNode 超级节点信息
 type SuperNode struct {
 	Address []byte `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	PubKey  []byte `protobuf:"bytes,2,opt,name=pubKey,proto3" json:"pubKey,omitempty"`
@@ -95,7 +93,6 @@ func (m *SuperNode) GetPubKey() []byte {
 	return nil
 }
 
-// VoteItem 投票信息
 type VoteItem struct {
 	VotedNodeIndex   int32              `protobuf:"varint,1,opt,name=votedNodeIndex" json:"votedNodeIndex,omitempty"`
 	VotedNodeAddress []byte             `protobuf:"bytes,2,opt,name=votedNodeAddress,proto3" json:"votedNodeAddress,omitempty"`
@@ -216,7 +213,6 @@ func (m *VoteItem) GetNoVrfValidators() []*SuperNode {
 	return nil
 }
 
-// DPosVote Dpos共识的节点投票，为达成共识用。
 type DPosVote struct {
 	VoteItem         *VoteItem `protobuf:"bytes,1,opt,name=voteItem" json:"voteItem,omitempty"`
 	VoteTimestamp    int64     `protobuf:"varint,2,opt,name=voteTimestamp" json:"voteTimestamp,omitempty"`
@@ -265,7 +261,6 @@ func (m *DPosVote) GetSignature() []byte {
 	return nil
 }
 
-// DPosVoteReply 投票响应。
 type DPosVoteReply struct {
 	Vote *DPosVote `protobuf:"bytes,1,opt,name=vote" json:"vote,omitempty"`
 }
@@ -282,7 +277,6 @@ func (m *DPosVoteReply) GetVote() *DPosVote {
 	return nil
 }
 
-// DPosNotify Dpos委托节点出块周期结束时，通知其他节点进行高度确认及新节点投票。
 type DPosNotify struct {
 	Vote              *VoteItem `protobuf:"bytes,1,opt,name=vote" json:"vote,omitempty"`
 	HeightStop        int64     `protobuf:"varint,2,opt,name=heightStop" json:"heightStop,omitempty"`
@@ -347,7 +341,6 @@ func (m *DPosNotify) GetSignature() []byte {
 	return nil
 }
 
-// DPosCBInfo Cycle boundary注册信息。
 type DPosCBInfo struct {
 	Cycle      int64  `protobuf:"varint,1,opt,name=cycle" json:"cycle,omitempty"`
 	StopHeight int64  `protobuf:"varint,2,opt,name=stopHeight" json:"stopHeight,omitempty"`

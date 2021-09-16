@@ -22,7 +22,6 @@ import (
 	evmtypes "github.com/33cn/plugin/plugin/dapp/evm/types"
 )
 
-// Query_CheckAddrExists 检查合约地址是否存在，此操作不会改变任何状态，所以可以直接从statedb查询
 func (evm *EVMExecutor) Query_CheckAddrExists(in *evmtypes.CheckEVMAddrReq) (types.Message, error) {
 	evm.CheckInit()
 	addrStr := in.Addr
@@ -31,12 +30,12 @@ func (evm *EVMExecutor) Query_CheckAddrExists(in *evmtypes.CheckEVMAddrReq) (typ
 	}
 
 	var addr evmCommon.Address
-	// 合约名称
+
 	cfg := evm.GetAPI().GetConfig()
 	if strings.HasPrefix(addrStr, cfg.ExecName(evmtypes.EvmPrefix)) {
 		addr = evmCommon.ExecAddress(addrStr)
 	} else {
-		// 合约地址
+
 		nAddr := evmCommon.StringToAddress(addrStr)
 		if nAddr == nil {
 			return nil, model.ErrAddrNotExists
@@ -57,7 +56,6 @@ func (evm *EVMExecutor) Query_CheckAddrExists(in *evmtypes.CheckEVMAddrReq) (typ
 	return ret, nil
 }
 
-// Query_EstimateGas 此方法用来估算合约消耗的Gas，不能修改原有执行器的状态数据
 func (evm *EVMExecutor) Query_EstimateGas(req *evmtypes.EstimateEVMGasReq) (types.Message, error) {
 	evm.CheckInit()
 
@@ -97,7 +95,6 @@ func (evm *EVMExecutor) Query_EstimateGas(req *evmtypes.EstimateEVMGasReq) (type
 	return result, nil
 }
 
-// 从日志中查找调用结果
 func getCallReceipt(logs []*types.ReceiptLog) *evmtypes.ReceiptEVMContract {
 	if len(logs) == 0 {
 		return nil
@@ -115,7 +112,6 @@ func getCallReceipt(logs []*types.ReceiptLog) *evmtypes.ReceiptEVMContract {
 	return nil
 }
 
-// Query_EvmDebug 此方法用来控制evm调试打印开关
 func (evm *EVMExecutor) Query_EvmDebug(in *evmtypes.EvmDebugReq) (types.Message, error) {
 	evm.CheckInit()
 	optype := in.Optype
@@ -130,7 +126,6 @@ func (evm *EVMExecutor) Query_EvmDebug(in *evmtypes.EvmDebugReq) (types.Message,
 	return ret, nil
 }
 
-// Query_Query 此方法用来调用合约的只读接口，不修改原有执行器的状态数据
 func (evm *EVMExecutor) Query_Query(in *evmtypes.EvmQueryReq) (types.Message, error) {
 	evm.CheckInit()
 
@@ -149,7 +144,6 @@ func (evm *EVMExecutor) Query_Query(in *evmtypes.EvmQueryReq) (types.Message, er
 		return ret, nil
 	}
 
-	// 如果未指定调用地址，则直接使用一个虚拟的地址发起调用
 	cfg := evm.GetAPI().GetConfig()
 	if len(in.Caller) > 0 {
 		callAddr := evmCommon.StringToAddress(in.Caller)

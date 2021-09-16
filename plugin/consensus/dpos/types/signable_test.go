@@ -13,7 +13,6 @@ import (
 )
 
 func init() {
-	//为了使用VRF，需要使用SECP256K1体系的公私钥
 	cr, err := crypto.New(types.GetSignName("", types.SECP256K1))
 	if err != nil {
 		panic("init ConsensusCrypto failed.")
@@ -29,7 +28,6 @@ func TestVote(t *testing.T) {
 
 	now := time.Now().Unix()
 	//task := dpos.DecideTaskByTime(now)
-	//生成vote， 对于vote进行签名
 	voteItem := &VoteItem{
 		VotedNodeAddress: privValidator.Address,
 		VotedNodeIndex:   int32(0),
@@ -74,7 +72,6 @@ func TestNotify(t *testing.T) {
 
 	now := time.Now().Unix()
 	//task := dpos.DecideTaskByTime(now)
-	//生成vote， 对于vote进行签名
 	voteItem := &VoteItem{
 		VotedNodeAddress: privValidator.Address,
 		VotedNodeIndex:   int32(0),

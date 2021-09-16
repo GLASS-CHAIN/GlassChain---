@@ -23,29 +23,22 @@ import (
 )
 
 const (
-	//TestPrivateKey 测试私钥
 	TestPrivateKey = "6da92a632ab7deb67d38c0f6560bcfed28167998f6496db64c258d5e8393a81b"
-	//TestBlockTime 测试时间搓
+
 	TestBlockTime = 1514533390
-	//TestMaxCacheCount 测试本地DB最大缓冲数
 	TestMaxCacheCount = 100
-	//TestLoopCount   测试轮数
 	TestMaxLoopCount = 3
 )
 
 var (
-	//testLoopCountAtom 设置queue返回的Message是正例还是反例
 	testLoopCountAtom int32
-	//actionReturnIndexAtom 对应getNextAction的每一步返回顺序
 	actionReturnIndexAtom int32
 )
 
-//测试初始化
 func initTestSyncBlock() {
 	//println("initSyncBlock")
 }
 
-//新建一个para测试实例并初始化一些参数
 func createParaTestInstance(t *testing.T, q queue.Queue) *client {
 	para := new(client)
 	para.subCfg = new(subConfig)
@@ -55,11 +48,9 @@ func createParaTestInstance(t *testing.T, q queue.Queue) *client {
 
 	para.InitClient(q.Client(), initTestSyncBlock)
 
-	//生成rpc Client
 	grpcClient := &typesmocks.Chain33Client{}
 	para.grpcClient = grpcClient
 
-	//生成私钥
 	pk, err := hex.DecodeString(TestPrivateKey)
 	assert.Nil(t, err)
 	secp, err := crypto.New(types.GetSignName("", types.SECP256K1))
@@ -68,7 +59,6 @@ func createParaTestInstance(t *testing.T, q queue.Queue) *client {
 	assert.Nil(t, err)
 	para.minerPrivateKey = priKey
 
-	//实例化BlockSyncClient
 	para.blockSyncClient = &blockSyncClient{
 		paraClient:      para,
 		notifyChan:      make(chan bool),
@@ -83,7 +73,6 @@ func createParaTestInstance(t *testing.T, q queue.Queue) *client {
 	return para
 }
 
-//生成创世区块测试数据
 func makeGenesisBlockInputTestData() *types.Block {
 	newBlock := &types.Block{}
 	newBlock.Height = 0
@@ -95,7 +84,6 @@ func makeGenesisBlockInputTestData() *types.Block {
 	return newBlock
 }
 
-//生成创世区块响应测试数据
 func makeGenesisBlockReplyTestData(testLoopCount int32) interface{} {
 	switch testLoopCount {
 	case 0:
@@ -105,9 +93,6 @@ func makeGenesisBlockReplyTestData(testLoopCount int32) interface{} {
 	}
 }
 
-//生成getNextAction不同返回情况下的同步测试数据
-//index 对应getNextAction的每一步返回顺序，按return的先后顺序索引
-//testLoopCount 测试轮数
 func makeSyncReplyTestData(index int32, testLoopCount int32) (
 	interface{}, //*types.Block, //GetLastBlock reply
 	interface{}, //*types.LocalReplyValue, //GetLastLocalHeight reply
@@ -181,10 +166,9 @@ func makeSyncReplyTestData(index int32, testLoopCount int32) (
 	}
 }
 
-//生成清理功能Get Reply测试数据
 func makeCleanDataGetReplyTestData(clearLocalDBCallCount int32, testLoopCount int32) interface{} {
 	switch clearLocalDBCallCount {
-	case 1: //testinitFirstLocalHeightIfNeed会调用到
+	case 1: 
 		switch testLoopCount {
 		case 0:
 			return &types.LocalReplyValue{Values: [][]byte{types.Encode(&types.Int64{Data: 1})}}
@@ -192,14 +176,14 @@ func makeCleanDataGetReplyTestData(clearLocalDBCallCount int32, testLoopCount in
 			return &types.LocalReplyValue{Values: [][]byte{types.Encode(&types.Int64{Data: -1})}}
 		}
 
-	case 2: //testclearLocalOldBlocks会调用到
+	case 2: 
 		switch testLoopCount {
 		case 0:
 			return &types.LocalReplyValue{Values: [][]byte{types.Encode(&types.Int64{Data: 1 + 2*TestMaxCacheCount})}}
 		default:
 			return &types.LocalReplyValue{Values: [][]byte{types.Encode(&types.Int64{Data: 1 + 2*TestMaxCacheCount - 50})}}
 		}
-	case 3: //testclearLocalOldBlocks会调用到
+	case 3: 
 		switch testLoopCount {
 		case 0:
 			return &types.LocalReplyValue{Values: [][]byte{types.Encode(&types.Int64{Data: 1})}}
@@ -213,7 +197,6 @@ func makeCleanDataGetReplyTestData(clearLocalDBCallCount int32, testLoopCount in
 	}
 }
 
-//生成清理功能Set Reply测试数据
 func makeCleanDataSetReplyTestData(testLoopCount int32) interface{} {
 	reply := &types.Reply{}
 	reply.IsOk = testLoopCount == 0
@@ -221,19 +204,15 @@ func makeCleanDataSetReplyTestData(testLoopCount int32) interface{} {
 	return reply
 }
 
-//mock queue Message 返回
 func mockMessageReply(q queue.Queue) {
 
 	blockChainKey := "blockchain"
 	cli := q.Client()
 	cli.Sub(blockChainKey)
-	//记录消息Call次数,用于loop退出；quitEndCount通过事先统计得出
 	//quitCount := int32(0)
 	//quitEndCount := int32(111) //TODO: Need a nice loop quit way
-	//用于处理数据同步情况下EventGetValueByKey消息的多重返回
 	useLocalReply := false
 	usrLocalReplyStart := true
-	//用于处理数据清理情况下EventGetValueByKey消息的多重返回
 	clearLocalDBCallCount := int32(0)
 
 	for msg := range cli.Recv() {
@@ -243,8 +222,7 @@ func mockMessageReply(q queue.Queue) {
 
 		switch {
 		case getActionReturnIndex > 0:
-			//mock数据同步处理消息返回,testsyncBlocksIfNeed会调用到
-			lastBlockReply,
+				lastBlockReply,
 				lastLocalReply,
 				localReply,
 				writeBlockReply,
@@ -299,24 +277,23 @@ func mockMessageReply(q queue.Queue) {
 			}
 		default:
 			switch msg.Ty {
-			case types.EventAddParaChainBlockDetail: //mock创世区块创建消息返回,testCreateGenesisBlock
+			case types.EventAddParaChainBlockDetail: 
 				//quitCount++
 
 				reply := makeGenesisBlockReplyTestData(testLoopCount)
 				msg.Reply(cli.NewMessage(blockChainKey, types.EventReply, reply))
 
-			case types.EventGetValueByKey: //mock数据清理消息返回
+			case types.EventGetValueByKey: 
 				//quitCount++
 
 				clearLocalDBCallCount++
 				reply := makeCleanDataGetReplyTestData(clearLocalDBCallCount, testLoopCount)
 				msg.Reply(cli.NewMessage(blockChainKey, types.EventLocalReplyValue, reply))
 				if clearLocalDBCallCount == 3 {
-					//正例测试完成，初始化等待互例测试
 					clearLocalDBCallCount = 0
 				}
 
-			case types.EventSetValueByKey: //mock数据清理消息返回,testclearLocalOldBlocks会调用到
+			case types.EventSetValueByKey: 
 				//quitCount++
 
 				reply := makeCleanDataSetReplyTestData(testLoopCount)
@@ -334,7 +311,6 @@ func mockMessageReply(q queue.Queue) {
 	}
 }
 
-//测试创世区块写入
 func testCreateGenesisBlock(t *testing.T, para *client, testLoopCount int32) {
 	genesisBlock := makeGenesisBlockInputTestData()
 	err := para.blockSyncClient.createGenesisBlock(genesisBlock)
@@ -348,7 +324,6 @@ func testCreateGenesisBlock(t *testing.T, para *client, testLoopCount int32) {
 
 }
 
-//测试清理localdb缓存数据
 func testClearLocalOldBlocks(t *testing.T, para *client, testLoopCount int32) {
 	err := para.blockSyncClient.clearLocalOldBlocks()
 
@@ -362,7 +337,6 @@ func testClearLocalOldBlocks(t *testing.T, para *client, testLoopCount int32) {
 	}
 }
 
-//测试初始化开始高度
 func testInitFirstLocalHeightIfNeed(t *testing.T, para *client, testLoopCount int32) {
 	err := para.blockSyncClient.initFirstLocalHeightIfNeed()
 
@@ -374,7 +348,6 @@ func testInitFirstLocalHeightIfNeed(t *testing.T, para *client, testLoopCount in
 	}
 }
 
-//测试一次区块同步操作
 func testSyncBlocksIfNeed(t *testing.T, para *client, testLoopCount int32) {
 	errorCount := int32(0)
 	for i := int32(1); i <= 10; i++ {
@@ -396,7 +369,6 @@ func testSyncBlocksIfNeed(t *testing.T, para *client, testLoopCount int32) {
 	atomic.StoreInt32(&actionReturnIndexAtom, 0)
 }
 
-//测试SyncHasCaughtUp
 func testSyncHasCaughtUp(t *testing.T, para *client, testLoopCount int32) {
 	oldValue := para.blockSyncClient.syncHasCaughtUp()
 	para.blockSyncClient.setSyncCaughtUp(true)
@@ -406,7 +378,6 @@ func testSyncHasCaughtUp(t *testing.T, para *client, testLoopCount int32) {
 	assert.Equal(t, true, isSyncHasCaughtUp)
 }
 
-//测试getBlockSyncState
 func testGetBlockSyncState(t *testing.T, para *client, testLoopCount int32) {
 	oldValue := para.blockSyncClient.getBlockSyncState()
 	para.blockSyncClient.setBlockSyncState(blockSyncStateFinished)
@@ -416,7 +387,6 @@ func testGetBlockSyncState(t *testing.T, para *client, testLoopCount int32) {
 	assert.Equal(t, true, syncState == blockSyncStateFinished)
 }
 
-//执行所有函数测试
 func execTest(t *testing.T, para *client, testLoopCount int32) {
 	atomic.StoreInt32(&actionReturnIndexAtom, 0)
 	atomic.StoreInt32(&testLoopCountAtom, testLoopCount)
@@ -430,7 +400,6 @@ func execTest(t *testing.T, para *client, testLoopCount int32) {
 	testGetBlockSyncState(t, para, testLoopCount)
 }
 
-//测试入口
 func TestSyncBlocks(t *testing.T) {
 	cfg := types.NewChain33Config(testnode.DefaultConfig)
 	q := queue.New("channel")
@@ -439,7 +408,6 @@ func TestSyncBlocks(t *testing.T) {
 	para := createParaTestInstance(t, q)
 	go q.Start()
 	go mockMessageReply(q)
-	//测试分多轮测试，每一轮测模拟不同的测试数据输入,包括正常数据和异常数据
 	for i := int32(0); i <= TestMaxLoopCount-1; i++ {
 		execTest(t, para, i)
 	}

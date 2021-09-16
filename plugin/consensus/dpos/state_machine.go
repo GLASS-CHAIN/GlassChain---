@@ -674,9 +674,7 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 
 		checkTopNRegist(cs)
 
-		//非当前出块节点，如果到了切换出块节点的时间，则进行状态切换，进行投票
 		if now >= cs.currentVote.PeriodStop {
-			//当前时间超过了节点切换时间，需要进行重新投票
 			cs.SaveVote()
 			cs.SaveMyVote()
 			cs.ClearVotes()
@@ -689,7 +687,6 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 			return
 		}
 
-		//设置超时时间
 		dposlog.Info("wait until change state.", "waittime", cs.currentVote.PeriodStop-now+1)
 		cs.resetTimer(time.Second*time.Duration(cs.currentVote.PeriodStop-now+1), VotedStateType)
 		return
@@ -763,7 +760,6 @@ type WaitNofifyState struct {
 func (wait *WaitNofifyState) timeOut(cs *ConsensusState) {
 	//cs.clearVotes()
 
-	//检查是否需要更新TopN，如果有更新，则更新TOPN节点后进入新的状态循环。
 	now := time.Now().Unix()
 	if now >= cs.lastVote.PeriodStop && cs.lastVote.PeriodStop == cs.lastVote.CycleStop {
 		checkTopNUpdate(cs)
@@ -780,7 +776,6 @@ func (wait *WaitNofifyState) sendVote(cs *ConsensusState, vote *dpostype.DPosVot
 
 func (wait *WaitNofifyState) recvVote(cs *ConsensusState, vote *dpostype.DPosVote) {
 	dposlog.Info("WaitNofifyState recvVote,store it.")
-	//对于vote进行保存，在后续状态中进行处理。 保存的选票有先后，同一个节点发来的最新的选票被保存。
 	cs.CacheVotes(vote)
 }
 
@@ -799,7 +794,6 @@ func (wait *WaitNofifyState) sendNotify(cs *ConsensusState, notify *dpostype.DPo
 func (wait *WaitNofifyState) recvNotify(cs *ConsensusState, notify *dpostype.DPosNotify) {
 	dposlog.Info("WaitNofifyState recvNotify")
 	cfg := cs.client.GetAPI().GetConfig()
-	//记录Notify，校验区块，标记不可逆区块高度
 	if !cs.VerifyNotify(notify) {
 		dposlog.Info("VotedState verify notify failed")
 		return
@@ -841,7 +835,6 @@ func (wait *WaitNofifyState) recvNotify(cs *ConsensusState, notify *dpostype.DPo
 	cs.SaveNotify()
 	cs.SetNotify(notify)
 
-	//检查是否需要更新TopN，如果有更新，则更新TOPN节点后进入新的状态循环。
 	now := time.Now().Unix()
 	if now >= cs.lastVote.PeriodStop && cs.lastVote.PeriodStop == cs.lastVote.CycleStop {
 		checkTopNUpdate(cs)

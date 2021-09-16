@@ -31,10 +31,8 @@ type Argument struct {
 	Indexed bool // indexed is only used by events
 }
 
-// Arguments 参数
 type Arguments []Argument
 
-// ArgumentMarshaling 参数数列化结构体
 type ArgumentMarshaling struct {
 	Name         string
 	Type         string

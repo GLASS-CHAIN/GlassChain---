@@ -73,10 +73,9 @@ func NewRaftCluster(cfg *types.Consensus, sub []byte) queue.Module {
 	}
 	if int(subcfg.NodeID) == 0 || strings.Compare(subcfg.PeersURL, "") == 0 {
 		rlog.Error("Please check whether the configuration of nodeId and peersURL is empty!")
-		//TODO 当传入的参数异常时，返回给主函数的是个nil,这时候需要做异常处理
 		return nil
 	}
-	// 默认10000个Entry打一个snapshot
+
 	if subcfg.DefaultSnapCount > 0 {
 		defaultSnapCount = uint64(subcfg.DefaultSnapCount)
 		snapshotCatchUpEntriesN = uint64(subcfg.DefaultSnapCount)
@@ -96,8 +95,7 @@ func NewRaftCluster(cfg *types.Consensus, sub []byte) queue.Module {
 
 	var b *Client
 	getSnapshot := func() ([]byte, error) { return b.getSnapshot() }
-	// raft集群的建立,1. 初始化两条channel： propose channel用于客户端和raft底层交互, commit channel用于获取commit消息
-	// 2. raft集群中的节点之间建立http连接
+
 	peers := strings.Split(subcfg.PeersURL, ",")
 	if len(peers) == 1 && peers[0] == "" {
 		peers = []string{}
@@ -110,15 +108,15 @@ func NewRaftCluster(cfg *types.Consensus, sub []byte) queue.Module {
 	if len(addPeers) == 1 && addPeers[0] == "" {
 		addPeers = []string{}
 	}
-	//采用context来统一管理所有服务
+
 	ctx, stop := context.WithCancel(context.Background())
 	// propose channel
 	proposeC := make(chan *types.Block)
 	confChangeC = make(chan raftpb.ConfChange)
 	commitC, errorC, snapshotterReady, validatorC := NewRaftNode(ctx, int(subcfg.NodeID), subcfg.IsNewJoinNode, peers, readOnlyPeers, addPeers, getSnapshot, proposeC, confChangeC)
-	//启动raft删除节点操作监听
+
 	go serveHTTPRaftAPI(ctx, int(subcfg.RaftAPIPort), confChangeC, errorC)
-	// 监听commit channel,取block
+
 	b = NewBlockstore(ctx, cfg, <-snapshotterReady, proposeC, commitC, errorC, validatorC, stop)
 	return b
 }

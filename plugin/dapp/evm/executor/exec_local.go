@@ -11,7 +11,6 @@ import (
 	evmtypes "github.com/33cn/plugin/plugin/dapp/evm/types"
 )
 
-// ExecLocal 处理本地区块新增逻辑
 func (evm *EVMExecutor) ExecLocal(tx *types.Transaction, receipt *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	set, err := evm.DriverBase.ExecLocal(tx, receipt, index)
 	if err != nil {
@@ -22,7 +21,7 @@ func (evm *EVMExecutor) ExecLocal(tx *types.Transaction, receipt *types.ReceiptD
 	}
 	cfg := evm.GetAPI().GetConfig()
 	if cfg.IsDappFork(evm.GetHeight(), "evm", evmtypes.ForkEVMState) {
-		// 需要将Exec中生成的合约状态变更信息写入localdb
+
 		for _, logItem := range receipt.Logs {
 			if evmtypes.TyLogEVMStateChangeItem == logItem.Ty {
 				data := logItem.Log
@@ -31,7 +30,6 @@ func (evm *EVMExecutor) ExecLocal(tx *types.Transaction, receipt *types.ReceiptD
 				if err != nil {
 					return set, err
 				}
-				//转换老的log的key-> 新的key
 				key := []byte(changeItem.Key)
 				if bytes.HasPrefix(key, []byte("mavl-")) {
 					key[0] = 'L'

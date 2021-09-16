@@ -15,7 +15,6 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
-// ValidateSignatureValues 校验签名信息是否正确
 func ValidateSignatureValues(r, s *big.Int) bool {
 	if r.Cmp(common.Big1) < 0 || s.Cmp(common.Big1) < 0 {
 		return false
@@ -23,7 +22,6 @@ func ValidateSignatureValues(r, s *big.Int) bool {
 	return true
 }
 
-// Ecrecover 根据压缩消息和签名，返回压缩的公钥信息
 func Ecrecover(hash, sig []byte) ([]byte, error) {
 	unpressedPub, err := ethCrypto.SigToPub(hash, sig)
 	if err != nil {
@@ -33,7 +31,6 @@ func Ecrecover(hash, sig []byte) ([]byte, error) {
 	return bytes, err
 }
 
-// SigToPub 根据签名返回公钥信息
 func SigToPub(hash, sig []byte) (*ecdsa.PublicKey, error) {
 	btcsig := make([]byte, 65)
 	btcsig[0] = sig[64] + 27
@@ -43,7 +40,6 @@ func SigToPub(hash, sig []byte) (*ecdsa.PublicKey, error) {
 	return (*ecdsa.PublicKey)(pub), err
 }
 
-// Keccak256 计算并返回 Keccak256 哈希
 func Keccak256(data ...[]byte) []byte {
 	d := sha3.NewLegacyKeccak256()
 	for _, b := range data {

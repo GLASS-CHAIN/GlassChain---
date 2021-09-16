@@ -113,7 +113,6 @@ func (client *Client) Close() {
 
 // CreateBlock method
 func (client *Client) CreateBlock() {
-	//打包区块前先同步到最大高度
 	tocker := time.NewTicker(30 * time.Second)
 	beg := time.Now()
 OuterLoop:
@@ -144,7 +143,6 @@ OuterLoop:
 		case <-hint.C:
 			rlog.Info("==================This is Leader node=====================")
 		case <-ticker.C:
-			//如果leader节点突然挂了，不是打包节点，需要退出
 			if !mux.Load().(bool) {
 				rlog.Warn("Not Leader node anymore")
 				return
@@ -171,12 +169,11 @@ OuterLoop:
 			newblock.ParentHash = lastBlock.Hash(cfg)
 			newblock.Height = lastBlock.Height + 1
 			client.AddTxsToBlock(&newblock, txs)
-			//需要首先对交易进行排序然后再计算TxHash
 			if cfg.IsFork(newblock.Height, "ForkRootHash") {
 				newblock.Txs = types.TransactionSort(newblock.Txs)
 			}
 			newblock.TxHash = merkle.CalcMerkleRoot(cfg, newblock.Height, newblock.Txs)
-			//固定难度
+
 			newblock.Difficulty = cfg.GetP(0).PowLimitBits
 			newblock.BlockTime = types.Now().Unix()
 			if lastBlock.BlockTime >= newblock.BlockTime {
@@ -192,12 +189,10 @@ OuterLoop:
 	}
 }
 
-// 向raft底层发送BlockInfo
 func (client *Client) propose(block *types.Block) {
 	client.proposeC <- block
 }
 
-// 从receive channel中读leader发来的block
 func (client *Client) readCommits(commitC <-chan *types.Block, errorC <-chan error) {
 	var data *types.Block
 	var ok bool
@@ -234,7 +229,6 @@ func (client *Client) readCommits(commitC <-chan *types.Block, errorC <-chan err
 	}
 }
 
-//轮询任务，去检测本机器是否为validator节点，如果是，则执行打包任务
 func (client *Client) pollingTask() {
 	for {
 		select {
@@ -259,7 +253,6 @@ func (client *Client) pollingTask() {
 	}
 }
 
-//CmpBestBlock 比较newBlock是不是最优区块
 func (client *Client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block) bool {
 	return false
 }

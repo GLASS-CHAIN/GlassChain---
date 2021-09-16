@@ -12,7 +12,7 @@ import (
 )
 
 func (client *client) setLocalDb(set *types.LocalDBSet) error {
-	//如果追赶上主链了，则落盘
+
 	if client.isCaughtUp() {
 		set.Txid = 1
 		client.blockSyncClient.handleLocalCaughtUpMsg()
@@ -61,7 +61,6 @@ func (client *client) addLocalBlock(block *pt.ParaLocalDbBlock) error {
 	kv := &types.KeyValue{Key: key, Value: types.Encode(block)}
 	set.KV = append(set.KV, kv)
 
-	//两个key原子操作
 	key = calcTitleLastHeightKey(cfg.GetTitle())
 	kv = &types.KeyValue{Key: key, Value: types.Encode(&types.Int64{Data: block.Height})}
 	set.KV = append(set.KV, kv)
@@ -78,7 +77,6 @@ func (client *client) saveBatchLocalBlocks(blocks []*pt.ParaLocalDbBlock) error 
 		kv := &types.KeyValue{Key: key, Value: types.Encode(block)}
 		set.KV = append(set.KV, kv)
 	}
-	//save lastHeight,两个key原子操作
 	key := calcTitleLastHeightKey(cfg.GetTitle())
 	kv := &types.KeyValue{Key: key, Value: types.Encode(&types.Int64{Data: blocks[len(blocks)-1].Height})}
 	set.KV = append(set.KV, kv)
@@ -93,7 +91,6 @@ func (client *client) delLocalBlock(height int64) error {
 	kv := &types.KeyValue{Key: key, Value: nil}
 	set.KV = append(set.KV, kv)
 
-	//两个key原子操作
 	key = calcTitleLastHeightKey(cfg.GetTitle())
 	kv = &types.KeyValue{Key: key, Value: types.Encode(&types.Int64{Data: height - 1})}
 	set.KV = append(set.KV, kv)
@@ -101,7 +98,6 @@ func (client *client) delLocalBlock(height int64) error {
 	return client.setLocalDb(set)
 }
 
-// localblock 设置到当前高度，当前高度后面block会被新的区块覆盖
 func (client *client) removeLocalBlocks(curHeight int64) error {
 	cfg := client.GetAPI().GetConfig()
 	set := &types.LocalDBSet{}

@@ -110,13 +110,10 @@ func New(cfg *types.Consensus, sub []byte) queue.Module {
 		subcfg.WriteBlockSeconds = poolMainBlockSec
 	}
 
-	//WaitMainBlockNum 配置最小为1，因为genesis块是startHeight-1， wait=1和startHeight相等
 	if subcfg.WaitMainBlockNum <= 0 {
 		subcfg.WaitMainBlockNum = defaultWaitMinBlockNum
 	}
 
-	//最初平行链toml GenesisBlockTime=1514533394，但是未被使用，一直使用的内置的1514533390,最新版本开始适配cfg.GenesisBlockTime,并且
-	//时间也缺省改为1514533390，支持修改时间， 如果有以前的旧的配置未修改，panic强制修改
 	if cfg.GenesisBlockTime == 1514533394 {
 		panic("para chain GenesisBlockTime need be modified to 1514533390 or other")
 	}
@@ -174,7 +171,6 @@ func New(cfg *types.Consensus, sub []byte) queue.Module {
 	return para
 }
 
-//para 不检查任何的交易
 func (client *client) CheckBlock(parent *types.Block, current *types.BlockDetail) error {
 	err := checkMinerTx(current)
 	return err
@@ -243,9 +239,7 @@ func (client *client) InitBlock() {
 		if client.subCfg.StartHeight <= 0 {
 			panic(fmt.Sprintf("startHeight(%d) should be more than 0 in mainchain", client.subCfg.StartHeight))
 		}
-		//平行链创世区块对应主链hash为startHeight-1的那个block的hash
 		mainHash := client.GetStartMainHash(client.subCfg.StartHeight - 1)
-		// 创世区块
 		newblock := &types.Block{}
 		newblock.Height = 0
 		newblock.BlockTime = defaultGenesisBlockTime
@@ -256,7 +250,6 @@ func (client *client) InitBlock() {
 		newblock.ParentHash = zeroHash[:]
 		newblock.MainHash = mainHash
 
-		//缺省是减1,但有些特殊项目方6.2.0版本升级上来要求blockhash不变，则需与6.2.0保持一致，不减一
 		newblock.MainHeight = client.subCfg.StartHeight - 1
 		if client.subCfg.GenesisStartHeightSame {
 			newblock.MainHeight = client.subCfg.StartHeight
@@ -281,7 +274,6 @@ func (client *client) InitBlock() {
 
 }
 
-// GetStartMainHash 获取start
 func (client *client) GetStartMainHash(height int64) []byte {
 	lastHeight, err := client.GetLastHeightOnMainChain()
 	if err != nil {
@@ -368,12 +360,10 @@ func (client *client) isCaughtUp() bool {
 }
 
 func checkMinerTx(current *types.BlockDetail) error {
-	//检查第一个笔交易的execs, 以及执行状态
 	if len(current.Block.Txs) == 0 {
 		return types.ErrEmptyTx
 	}
 	baseTx := current.Block.Txs[0]
-	//判断交易类型和执行情况
 	var action paracross.ParacrossAction
 	err := types.Decode(baseTx.GetPayload(), &action)
 	if err != nil {
@@ -382,24 +372,20 @@ func checkMinerTx(current *types.BlockDetail) error {
 	if action.GetTy() != pt.ParacrossActionMiner {
 		return paracross.ErrParaMinerTxType
 	}
-	//判断交易执行是否OK
 	if action.GetMiner() == nil {
 		return paracross.ErrParaEmptyMinerTx
 	}
 
-	//判断exec 是否成功
 	if current.Receipts[0].Ty != types.ExecOk {
 		return paracross.ErrParaMinerExecErr
 	}
 	return nil
 }
 
-//比较newBlock是不是最优区块
 func (client *client) CmpBestBlock(newBlock *types.Block, cmpBlock *types.Block) bool {
 	return false
 }
 
-//["0:50","100:20","500:30"]
 func parseEmptyBlockInterval(cfg []string) ([]*emptyBlockInterval, error) {
 	var emptyInter []*emptyBlockInterval
 	if len(cfg) == 0 {

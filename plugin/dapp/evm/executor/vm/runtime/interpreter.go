@@ -17,27 +17,18 @@ import (
 	"github.com/33cn/plugin/plugin/dapp/evm/executor/vm/params"
 )
 
-// Config 解释器的配置模型
 type Config struct {
-	// Debug 调试开关
 	Debug int32
-	// Tracer 记录操作日志
 	Tracer Tracer
-	// NoRecursion 不允许使用Call, CallCode, DelegateCall
 	NoRecursion bool
-	// EnablePreimageRecording SHA3/keccak 操作时是否保存数据
 	EnablePreimageRecording bool
-	// JumpTable 指令跳转表
 	JumpTable [256]*operation
 }
 
-// EVMInterpreter 解释器接结构定义
 type Interpreter struct {
 	evm *EVM
 	cfg Config
-	// 是否允许修改数据
 	readOnly bool
-	// 合约执行返回的结果数据
 	returnData []byte
 }
 
@@ -46,14 +37,11 @@ const (
 	EVMDebugOff = int32(0)
 )
 
-// NewInterpreter 新创建一个解释器
 func NewInterpreter(evm *EVM, cfg Config) *Interpreter {
-	// 使用是否包含第一个STOP指令判断jump table是否完成初始化
-	// 需要注意，后继如果新增指令，需要在这里判断硬分叉，指定不同的指令集
 	if cfg.JumpTable[STOP] == nil {
 		cfg.JumpTable = berlinInstructionSet
 		if evm.cfg.IsDappFork(evm.StateDB.GetBlockHeight(), "evm", evmtypes.ForkEVMYoloV1) {
-			//这里需要替换为最新得指令集
+
 			cfg.JumpTable = berlinInstructionSet
 		}
 	}
@@ -66,8 +54,6 @@ func NewInterpreter(evm *EVM, cfg Config) *Interpreter {
 
 func (in *Interpreter) enforceRestrictions(op OpCode, operation *operation, stack *Stack) error {
 	if in.readOnly {
-		// 在只读状态下如果包含了写操作，
-		// 也不允许进行转账操作（通过第二个条件可以判断）
 		if operation.writes || (op == CALL && stack.Back(2).BitLen() > 0) {
 			return model.ErrWriteProtection
 		}

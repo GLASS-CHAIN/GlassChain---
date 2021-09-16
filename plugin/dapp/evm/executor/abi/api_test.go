@@ -114,7 +114,6 @@ func TestProcFuncCall(t *testing.T) {
 	}
 }
 
-// TestProcArray 测试根据ABI解析数组结构的逻辑
 func TestProcArray(t *testing.T) {
 	for _, test := range []struct {
 		input  string
@@ -144,7 +143,6 @@ func TestProcArray(t *testing.T) {
 	}
 }
 
-// Test_GoValue 测试从字符串依据ABI类型定义，转换为正确的类型并编码的逻辑
 func Test_GoValue(t *testing.T) {
 	for i, test := range []struct {
 		typ    string
