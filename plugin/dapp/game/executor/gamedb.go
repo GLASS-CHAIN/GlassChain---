@@ -22,18 +22,13 @@ import (
 
 const (
 
-	// Scissor 剪刀
 	Scissor = int32(1)
 
-	// Rock 石头
 	Rock = int32(2)
-	// Paper 布
 	Paper = int32(3)
 
-	// Unknown 未知结果
 	Unknown = int32(4)
 
-	// IsDraw 平局
 	IsDraw = int32(1)
 
 	// IsCreatorWin creator win
@@ -42,7 +37,6 @@ const (
 	// IsMatcherWin matcher win
 	IsMatcherWin = int32(3)
 
-	// IsTimeOut 开奖超时
 	IsTimeOut = int32(4)
 
 	// ListDESC  desc query
@@ -51,22 +45,17 @@ const (
 	// ListASC  asc query
 	ListASC = int32(1)
 
-	// GameCount 根据状态，地址统计整个合约目前总共成功执行了多少场游戏
 	GameCount = "GameCount"
 
-	// MaxGameAmount max game amount.单位为types.Coin  1e8
 	MaxGameAmount = int64(100)
 
 	// MinGameAmount min game amount
 	MinGameAmount = int64(2)
 
-	// DefaultCount 默认一次取多少条记录
 	DefaultCount = int64(20)
 
-	// MaxCount 最多取100条
 	MaxCount = int64(100)
 
-	//ActiveTime 从有matcher参与游戏开始计算本局游戏开奖的有效时间，单位为天
 	ActiveTime = int64(24)
 )
 
@@ -83,10 +72,8 @@ var (
 func (action *Action) GetReceiptLog(game *gt.Game) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	r := &gt.ReceiptGame{}
-	//TODO 记录这个action由哪个地址触发的
 	r.Addr = action.fromaddr
 	if game.Status == gt.GameActionCreate {
-		// TODO: 这里需要将游戏相关的类型从系统核心代码中移除
 		log.Ty = gt.TyLogCreateGame
 		r.PrevStatus = -1
 	} else if game.Status == gt.GameActionCancel {

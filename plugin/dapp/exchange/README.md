@@ -1,50 +1,49 @@
-# exchange合约
+# exchange contract
 
-## 前言
-这是一个基于chain33开发的去中心化交易所合约，不收任何手续费，用于满足一小部分人群或者其他特定业务场景中，虚拟资产之间得交换。
+## Foreword
+This is a decentralized exchange contract based on chain33. It does not charge any fees. It is used to meet the exchange of virtual assets between a small group of people or other specific business scenarios.
 
-## 使用
-合约提供了类似中心化交易所健全的查询接口，所有得接口设计都基于用户的角度去出发
-合约接口,在线构造交易和查询接口分别复用了框架中的CreateTransaction和Query接口，详情请参考
-[CreateTransaction接口](https://github.com/33cn/chain33/blob/master/rpc/jrpchandler.go#L1101)和[Query接口](https://github.com/33cn/chain33/blob/master/rpc/jrpchandler.go#L838)
+## use
+The contract provides a sound query interface similar to that of a centralized exchange, and all interface designs are based on the user’s perspective
+The contract interface, online construction transaction and query interface reuse the CreateTransaction and Query interfaces in the framework respectively. For details, please refer to
+[CreateTransaction interface](https://github.com/33cn/chain33/blob/master/rpc/jrpchandler.go#L1101) and [Query interface](https://github.com/33cn/chain33/blob/master /rpc/jrpchandler.go#L838)
 
-查询方法名称|功能
+Query method name|function
 -----|----
-QueryMarketDepth|获取指定交易资产的市场深度
-QueryHistoryOrderList|实时获取指定交易对已经成交的订单信息
-QueryOrder|根据orderID订单号查询具体的订单信息
-QueryOrderList|根据用户地址和订单状态（ordered,completed,revoked)，实时地获取相应相应的订单详情
+QueryMarketDepth|Get the market depth of the specified trading asset
+QueryHistoryOrderList|Get real-time information about orders that have been executed for a specified trading pair
+QueryOrder|Query specific order information according to orderID order number
+QueryOrderList|According to user address and order status (ordered, completed, revoked), obtain corresponding order details in real time
 
-可参照exchange_test.go中得相关测试用例，构建limitOrder或者revokeOrder交易进行相关测试
+You can refer to the related test cases in exchange_test.go to construct limitOrder or revokeOrder transactions for related tests
 
-## 注意事项
-合约撮合规则如下：
+## Precautions
+The contract matching rules are as follows:
 
-序号|规则
+Serial number|rules
 ---|----
-1|买家获利得原则
-2|买单高于市场价，按价格由低往高撮合
-3|卖单低于市场价，按价格由高往低进行撮合
-4|价格相同按先进先出的原则进行撮合
-5|出于系统安全考虑，最大撮合深度为100单，单笔挂单最小为1e8,就是一个bty
+1|The principle of buyer's profit
+2|Buying orders are higher than the market price, and the price is matched from low to high
+3|The sell order is lower than the market price, and the price is matched from high to low
+4|The same price is matched according to the principle of first-in first-out
+5|For the sake of system security, the maximum matching depth is 100 orders, and the minimum single pending order is 1e8, which is a bty
 
-**表结构说明**
+**Table structure description**
 
-表名|主键|索引|用途|说明
+Table name|Primary key|Index|Purpose|Description
  ---|---|---|---|---
- depth|price|nil|动态记录市场深度|主键price是复合主键由{leftAsset}:{rightAsset}:{op}:{price}构成
- order|orderID|market_order,addr_status|实时动态维护更新市场上的挂单|market_order是复合索引由{leftAsset}:{rightAsset}:{op}:{price}:{orderID},addr_status是复合索引由{addr}:{status}，当订单成交或者撤回时，该条订单记录和索引会从order表中自动删除
- history|index|name,addr_status|实时记录某资产交易对下面最新完成的订单信息(revoked状态的交易也会记录)|name是复合索引由{leftAsset}:{rightAsset}构成, addr_status是复合索引由{addr}:{status}
+ depth|price|nil|Dynamic record of market depth|The primary key price is a composite primary key composed of {leftAsset}:{rightAsset}:{op}:{price}
+ order|orderID|market_order,addr_status|Real-time dynamic maintenance and updating of pending orders on the market|market_order is a composite index by {leftAsset}:{rightAsset}:{op}:{price}:{orderID}, addr_status is a composite index by {addr} :{status}, when the order is filled or withdrawn, the order record and index will be automatically deleted from the order table
+ history|index|name,addr_status|Real-time record of the latest completed order information under an asset transaction pair (transactions in the revoked state will also be recorded)|name is a composite index composed of {leftAsset}:{rightAsset}, addr_status is a composite index consisting of { addr}:{status}
 
-**表中相关参数说明**
+**Description of relevant parameters in the table**
 
-参数名|说明
+Parameter name|Description
 ----|----
-leftAsset|交易对左边资产名称
-rightAsset|交易对右边资产名称
-op|买卖操作 1为买，2为卖
-status|挂单状态，0 ordered, 1 completed,2 revoked
-price|挂单价格，占位16 %016d,为了兼容不同架构的系统，这里设计为整型，由原有浮点型乘以1e8。 比如某交易对在中心化交易所上面是0.25，这里就变成25000000，price取值范围为1<=price<=1e16的整数
-orderID|单号，由系统自动生成，整型，占位22 %022d
-index|系统自动生成的index，占位22 %022d
-
+leftAsset|The name of the asset on the left of the trading pair
+rightAsset|The name of the asset on the right of the trading pair
+op|Buying operation 1 is buying, 2 is selling
+status|Pending order status, 0 ordered, 1 completed, 2 revoked
+price|Pending order price, occupies 16% 016d. In order to be compatible with systems of different architectures, it is designed as an integer here, which is multiplied by 1e8 by the original floating-point type. For example, a trading pair is 0.25 on a centralized exchange, here it becomes 25000000, and the price range is an integer of 1<=price<=1e16
+orderID|Order ID, automatically generated by the system, integer, occupying 22% 022d
+index|index automatically generated by the system, occupying 22% 022d
