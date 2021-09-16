@@ -32,7 +32,7 @@ func init() {
 }
 
 func TestLimitOrder(t *testing.T) {
-	//A 挂买 4x10
+
 	req := &et.LimitOrder{LeftAsset: leftAsset, RightAsset: rightAsset, Price: 4, Amount: 10 * types.DefaultCoinPrecision, Op: et.OpBuy}
 	testPlaceLimitOrder(t, req, Nodes[0], PrivKeyA)
 }
@@ -56,7 +56,7 @@ func TestMarketDepth(t *testing.T) {
 }
 
 func TestMatch(t *testing.T) {
-	//B 挂卖 4x5
+
 	req := &et.LimitOrder{LeftAsset: leftAsset, RightAsset: rightAsset, Price: 4, Amount: 5 * types.DefaultCoinPrecision, Op: et.OpSell}
 	doLimitOrder(req, PrivKeyB)
 }
@@ -72,7 +72,7 @@ func TestHistoryOrderList(t *testing.T) {
 }
 
 func TestRevokeOrder(t *testing.T) {
-	//A 撤回未完成订单
+
 	testRevokeLimitOrder(t, orderID, Nodes[0], PrivKeyA)
 }
 
@@ -84,12 +84,8 @@ func TestSample0(t *testing.T) {
 	assert.Nil(t, depth)
 }
 
-//买卖单价格相同，测试正常撮合流程，查询功能是否可用
-//1.先挂数量是10的买单。
-//2.然后再挂数量是5的吃单
-//3.最后撤销未成交部分的买单
 func TestCase1(t *testing.T) {
-	//先挂数量是10的买单
+
 	req := &et.LimitOrder{LeftAsset: leftAsset, RightAsset: rightAsset, Price: 4, Amount: 10 * types.DefaultCoinPrecision, Op: et.OpBuy}
 	_, err := doLimitOrder(req, PrivKeyA)
 	assert.Nil(t, err)
@@ -97,20 +93,17 @@ func TestCase1(t *testing.T) {
 	orderList, err := getOrderList(et.Ordered, Nodes[0], "")
 	assert.Nil(t, err)
 
-	//根据订单号，查询订单详情
 	orderID1 := orderList.List[0].OrderID
 	order, err := getOrder(orderID1)
 	assert.Nil(t, err)
 	assert.Equal(t, int32(et.Ordered), order.Status)
 	assert.Equal(t, 10*types.DefaultCoinPrecision, order.GetBalance())
 
-	//根据op查询市场深度
 	q := &et.QueryMarketDepth{LeftAsset: leftAsset, RightAsset: rightAsset, Op: et.OpBuy}
 	marketDepthList, err := getMarketDepth(q)
 	assert.Nil(t, err)
 	assert.Equal(t, 10*types.DefaultCoinPrecision, marketDepthList.List[0].GetAmount())
 
-	//然后再挂数量是5的吃单
 	req = &et.LimitOrder{LeftAsset: leftAsset, RightAsset: rightAsset, Price: 4, Amount: 5 * types.DefaultCoinPrecision, Op: et.OpSell}
 	_, err = doLimitOrder(req, PrivKeyB)
 	assert.Nil(t, err)
@@ -119,49 +112,43 @@ func TestCase1(t *testing.T) {
 	assert.Nil(t, err)
 	orderID2 := orderList.List[0].OrderID
 
-	//查询订单1详情
 	order, err = getOrder(orderID1)
 	assert.Nil(t, err)
-	//订单1的状态应该还是ordered
+
 	assert.Equal(t, int32(et.Ordered), order.Status)
 	assert.Equal(t, 5*types.DefaultCoinPrecision, order.Balance)
 
-	//order2状态是completed
 	order, err = getOrder(orderID2)
 	assert.Nil(t, err)
 	assert.Equal(t, int32(et.Completed), order.Status)
 
-	//根据op查询市场深度
 	q = &et.QueryMarketDepth{LeftAsset: leftAsset, RightAsset: rightAsset, Op: et.OpBuy}
 	marketDepthList, err = getMarketDepth(q)
 	assert.Nil(t, err)
-	//市场深度应该改变
+
 	assert.Equal(t, 5*types.DefaultCoinPrecision, marketDepthList.List[0].GetAmount())
 
-	//查询历史成交
 	q2 := &et.QueryHistoryOrderList{LeftAsset: leftAsset, RightAsset: rightAsset}
 	orderList, err = getHistoryOrderList(q2)
 	assert.Nil(t, err)
 	assert.Equal(t, orderID2, orderList.List[0].OrderID)
 
-	//撤回未完成的订单
+
 	_, err = doRevokeOrder(orderID1, PrivKeyA)
 	assert.Nil(t, err)
 
-	//查询订单1详情
+
 	order, err = getOrder(orderID1)
 	assert.Nil(t, err)
-	//订单1的状态应该Revoked
+
 	assert.Equal(t, int32(et.Revoked), order.Status)
 	assert.Equal(t, 5*types.DefaultCoinPrecision, order.Balance)
 
-	//根据op查询市场深度
+
 	q = &et.QueryMarketDepth{LeftAsset: leftAsset, RightAsset: rightAsset, Op: et.OpBuy}
 	_, err = getMarketDepth(q)
 	assert.NotNil(t, err)
 
-	//根据原有状态去查看买单是否被改变
-	//原有ordered状态的数据应该被删除
 	_, err = getOrderList(et.Ordered, Nodes[0], "")
 	assert.NotNil(t, err)
 }

@@ -290,7 +290,7 @@ func gasStaticCall(evm *EVM, contract *Contract, stack *Stack, mem *Memory, memo
 		return 0, err
 	}
 	log15.Info("gasStaticCall", "gas", gas, "contract.Gas", contract.Gas)
-	//todo:此处需要完善 by hzj on 20210331
+
 	evm.callGasTemp, err = callGas(true, contract.Gas, gas, stack.Back(0))
 	if err != nil {
 		return 0, err

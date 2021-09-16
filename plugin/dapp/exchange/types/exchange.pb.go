@@ -168,21 +168,19 @@ func (*ExchangeAction_MarketOrder) isExchangeAction_Value() {}
 
 func (*ExchangeAction_RevokeOrder) isExchangeAction_Value() {}
 
-//限价订单
 type LimitOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//交易对
 	LeftAsset *Asset `protobuf:"bytes,1,opt,name=leftAsset,proto3" json:"leftAsset,omitempty"`
-	//交易对
+
 	RightAsset *Asset `protobuf:"bytes,2,opt,name=rightAsset,proto3" json:"rightAsset,omitempty"`
-	//价格
+
 	Price int64 `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"`
-	//总量
+
 	Amount int64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	//操作， 1为买，2为卖
+
 	Op int32 `protobuf:"varint,5,opt,name=op,proto3" json:"op,omitempty"`
 }
 
@@ -253,19 +251,17 @@ func (x *LimitOrder) GetOp() int32 {
 	return 0
 }
 
-//市价委托
 type MarketOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//资产1
 	LeftAsset *Asset `protobuf:"bytes,1,opt,name=leftAsset,proto3" json:"leftAsset,omitempty"`
-	//资产2
+
 	RightAsset *Asset `protobuf:"bytes,2,opt,name=rightAsset,proto3" json:"rightAsset,omitempty"`
-	//总量
+
 	Amount int64 `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
-	//操作， 1为买，2为卖
+
 	Op int32 `protobuf:"varint,4,opt,name=op,proto3" json:"op,omitempty"`
 }
 
@@ -329,13 +325,12 @@ func (x *MarketOrder) GetOp() int32 {
 	return 0
 }
 
-//撤回订单
 type RevokeOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//订单号
+
 	OrderID int64 `protobuf:"varint,1,opt,name=orderID,proto3" json:"orderID,omitempty"`
 }
 
@@ -378,7 +373,6 @@ func (x *RevokeOrder) GetOrderID() int64 {
 	return 0
 }
 
-//资产类型
 type Asset struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -434,7 +428,6 @@ func (x *Asset) GetSymbol() string {
 	return ""
 }
 
-//订单信息
 type Order struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -445,21 +438,21 @@ type Order struct {
 	//	*Order_LimitOrder
 	//	*Order_MarketOrder
 	Value isOrder_Value `protobuf_oneof:"value"`
-	//挂单类型
+
 	Ty int32 `protobuf:"varint,4,opt,name=ty,proto3" json:"ty,omitempty"`
-	//已经成交的数量
+
 	Executed int64 `protobuf:"varint,5,opt,name=executed,proto3" json:"executed,omitempty"`
-	//成交均价
+
 	AVGPrice int64 `protobuf:"varint,6,opt,name=AVG_price,json=AVGPrice,proto3" json:"AVG_price,omitempty"`
-	//余额
+
 	Balance int64 `protobuf:"varint,7,opt,name=balance,proto3" json:"balance,omitempty"`
-	//状态,0 挂单中ordered， 1 完成completed， 2撤回 revoked
+
 	Status int32 `protobuf:"varint,8,opt,name=status,proto3" json:"status,omitempty"`
-	//用户地址
+
 	Addr string `protobuf:"bytes,9,opt,name=addr,proto3" json:"addr,omitempty"`
-	//更新时间
+
 	UpdateTime int64 `protobuf:"varint,10,opt,name=updateTime,proto3" json:"updateTime,omitempty"`
-	//索引
+
 	Index int64 `protobuf:"varint,11,opt,name=index,proto3" json:"index,omitempty"`
 }
 
@@ -595,21 +588,19 @@ func (*Order_LimitOrder) isOrder_Value() {}
 
 func (*Order_MarketOrder) isOrder_Value() {}
 
-//查询接口
 type QueryMarketDepth struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//资产1
+
 	LeftAsset *Asset `protobuf:"bytes,1,opt,name=leftAsset,proto3" json:"leftAsset,omitempty"`
-	//资产2
+
 	RightAsset *Asset `protobuf:"bytes,2,opt,name=rightAsset,proto3" json:"rightAsset,omitempty"`
-	//操作， 1为买，2为卖
+
 	Op int32 `protobuf:"varint,3,opt,name=op,proto3" json:"op,omitempty"`
-	// 这里用价格作为索引值
+
 	PrimaryKey string `protobuf:"bytes,4,opt,name=primaryKey,proto3" json:"primaryKey,omitempty"`
-	//单页返回多少条记录，默认返回10条,为了系统安全最多单次只能返回20条
 	Count int32 `protobuf:"varint,5,opt,name=count,proto3" json:"count,omitempty"`
 }
 
@@ -680,21 +671,20 @@ func (x *QueryMarketDepth) GetCount() int32 {
 	return 0
 }
 
-//市场深度
 type MarketDepth struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//资产1
+
 	LeftAsset *Asset `protobuf:"bytes,1,opt,name=leftAsset,proto3" json:"leftAsset,omitempty"`
-	//资产2
+
 	RightAsset *Asset `protobuf:"bytes,2,opt,name=rightAsset,proto3" json:"rightAsset,omitempty"`
-	//价格
+
 	Price int64 `protobuf:"varint,3,opt,name=price,proto3" json:"price,omitempty"`
-	//总量
+
 	Amount int64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
-	//操作， 1为买，2为卖
+
 	Op int32 `protobuf:"varint,5,opt,name=op,proto3" json:"op,omitempty"`
 }
 
@@ -765,7 +755,6 @@ func (x *MarketDepth) GetOp() int32 {
 	return 0
 }
 
-//查询接口返回的市场深度列表
 type MarketDepthList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -821,21 +810,18 @@ func (x *MarketDepthList) GetPrimaryKey() string {
 	return ""
 }
 
-//查询最新得成交信息,外部接口
 type QueryHistoryOrderList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//资产1
 	LeftAsset *Asset `protobuf:"bytes,1,opt,name=leftAsset,proto3" json:"leftAsset,omitempty"`
-	//资产2
+
 	RightAsset *Asset `protobuf:"bytes,2,opt,name=rightAsset,proto3" json:"rightAsset,omitempty"`
-	// 索引值
+
 	PrimaryKey string `protobuf:"bytes,3,opt,name=primaryKey,proto3" json:"primaryKey,omitempty"`
-	//单页返回多少条记录，默认返回10条,为了系统安全最多单次只能返回20条
 	Count int32 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
-	// 0降序，1升序，默认降序
+
 	Direction int32 `protobuf:"varint,5,opt,name=direction,proto3" json:"direction,omitempty"`
 }
 
@@ -906,7 +892,6 @@ func (x *QueryHistoryOrderList) GetDirection() int32 {
 	return 0
 }
 
-//根据orderID去查询订单信息
 type QueryOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -954,21 +939,18 @@ func (x *QueryOrder) GetOrderID() int64 {
 	return 0
 }
 
-//根据地址，状态查询用户自己的挂单信息
 type QueryOrderList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//挂单状态必填(默认是0,只查询ordered挂单中的)
 	Status int32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	//用户地址信息，必填
+
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	// 主键索引
+
 	PrimaryKey string `protobuf:"bytes,3,opt,name=primaryKey,proto3" json:"primaryKey,omitempty"`
-	//单页返回多少条记录，默认返回10条,为了系统安全最多单次只能返回20条
 	Count int32 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
-	// 0降序，1升序，默认降序
+
 	Direction int32 `protobuf:"varint,5,opt,name=direction,proto3" json:"direction,omitempty"`
 }
 
@@ -1039,7 +1021,6 @@ func (x *QueryOrderList) GetDirection() int32 {
 	return 0
 }
 
-//订单列表
 type OrderList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1095,7 +1076,6 @@ func (x *OrderList) GetPrimaryKey() string {
 	return ""
 }
 
-// exchange执行票据日志
 type ReceiptExchange struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

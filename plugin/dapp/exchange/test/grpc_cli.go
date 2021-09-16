@@ -119,9 +119,7 @@ func (c *GRPCCli) GetExecAccount(addr string, exec string, symbol string) (*type
 	return nil, types.ErrNotFound
 }
 
-// 发送交易并等待执行结果
-// 如果交易非法，返回错误信息
-// 如果交易执行成功，返回 交易哈希、回报
+
 func (c *GRPCCli) sendAndWaitReceipt(tx *types.Transaction, hexKey string) (txHash []byte, logs []*types.ReceiptLog, err error) {
 	r, err := c.SendTx(tx, hexKey)
 	if err != nil {

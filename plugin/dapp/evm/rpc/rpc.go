@@ -18,7 +18,6 @@ import (
 	evmtypes "github.com/33cn/plugin/plugin/dapp/evm/types"
 )
 
-// CreateEvmCallTx 创建未签名的部署合约交易
 func (c *channelClient) CreateDeployTx(ctx context.Context, in evmtypes.EvmContractCreateReq) (*types.UnsignTx, error) {
 	amountInt64 := in.Amount
 	exec := in.ParaName + evmtypes.ExecutorName

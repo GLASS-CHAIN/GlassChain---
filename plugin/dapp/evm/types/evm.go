@@ -30,17 +30,17 @@ func init() {
 //InitFork ...
 func InitFork(cfg *types.Chain33Config) {
 	cfg.RegisterDappFork(ExecutorName, EVMEnable, 500000)
-	// EVM合约中的数据分散存储，支持大数据量
+
 	cfg.RegisterDappFork(ExecutorName, ForkEVMState, 650000)
-	// EVM合约状态数据生成哈希，保存在主链的StateDB中
+
 	cfg.RegisterDappFork(ExecutorName, ForkEVMKVHash, 1000000)
-	// EVM合约支持ABI绑定和调用
+
 	cfg.RegisterDappFork(ExecutorName, ForkEVMABI, 1250000)
-	// EEVM合约用户金额冻结
+
 	cfg.RegisterDappFork(ExecutorName, ForkEVMFrozen, 1300000)
-	// EEVM 黄皮v1分叉高度
+
 	cfg.RegisterDappFork(ExecutorName, ForkEVMYoloV1, 9500000)
-	// EVM合约支持交易组
+
 	cfg.RegisterDappFork(ExecutorName, ForkEVMTxGroup, 0)
 }
 
@@ -49,12 +49,10 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(ExecutorName, NewType(cfg))
 }
 
-// EvmType EVM类型定义
 type EvmType struct {
 	types.ExecTypeBase
 }
 
-// NewType 新建EVM类型对象
 func NewType(cfg *types.Chain33Config) *EvmType {
 	c := &EvmType{}
 	c.SetChild(c)
@@ -62,20 +60,15 @@ func NewType(cfg *types.Chain33Config) *EvmType {
 	return c
 }
 
-// GetName 获取执行器名称
 func (evm *EvmType) GetName() string {
 	return ExecutorName
 }
 
-// GetPayload 获取消息负载结构
 func (evm *EvmType) GetPayload() types.Message {
 	return &EVMContractAction{}
 }
 
-// ActionName 获取ActionName
 func (evm EvmType) ActionName(tx *types.Transaction) string {
-	// 这个需要通过合约交易目标地址来判断Action
-	// 如果目标地址为空，或为evm的固定合约地址，则为创建合约，否则为调用合约
 	cfg := evm.GetConfig()
 	if strings.EqualFold(tx.To, address.ExecAddress(cfg.ExecName(ExecutorName))) {
 		return "createEvmContract"
@@ -83,12 +76,10 @@ func (evm EvmType) ActionName(tx *types.Transaction) string {
 	return "callEvmContract"
 }
 
-// GetTypeMap 获取类型映射
 func (evm *EvmType) GetTypeMap() map[string]int32 {
 	return actionName
 }
 
-// GetRealToAddr 获取实际地址
 func (evm EvmType) GetRealToAddr(tx *types.Transaction) string {
 	if string(tx.Execer) == ExecutorName {
 		return tx.To
@@ -101,12 +92,10 @@ func (evm EvmType) GetRealToAddr(tx *types.Transaction) string {
 	return tx.To
 }
 
-// Amount 获取金额
 func (evm EvmType) Amount(tx *types.Transaction) (int64, error) {
 	return 0, nil
 }
 
-// GetLogMap 获取日志类型映射
 func (evm *EvmType) GetLogMap() map[int64]*types.LogInfo {
 	return logInfo
 }

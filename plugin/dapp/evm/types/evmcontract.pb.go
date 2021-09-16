@@ -26,7 +26,6 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-//合约对象信息
 type EVMContractObject struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -90,7 +89,6 @@ func (x *EVMContractObject) GetState() *EVMContractState {
 	return nil
 }
 
-// 存放合约固定数据
 type EVMContractData struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -102,7 +100,7 @@ type EVMContractData struct {
 	Addr     string `protobuf:"bytes,4,opt,name=addr,proto3" json:"addr,omitempty"`
 	Code     []byte `protobuf:"bytes,5,opt,name=code,proto3" json:"code,omitempty"`
 	CodeHash []byte `protobuf:"bytes,6,opt,name=codeHash,proto3" json:"codeHash,omitempty"`
-	// 绑定ABI数据 ForkEVMABI
+
 	Abi string `protobuf:"bytes,7,opt,name=abi,proto3" json:"abi,omitempty"`
 }
 
@@ -187,7 +185,6 @@ func (x *EVMContractData) GetAbi() string {
 	return ""
 }
 
-// 存放合约变化数据
 type EVMContractState struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -259,27 +256,25 @@ func (x *EVMContractState) GetStorage() map[string][]byte {
 	return nil
 }
 
-// 创建/调用合约的请求结构
 type EVMContractAction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 转账金额
 	Amount uint64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	// 消耗限制，默认为Transaction.Fee
+
 	GasLimit uint64 `protobuf:"varint,2,opt,name=gasLimit,proto3" json:"gasLimit,omitempty"`
-	// gas价格，默认为1
+
 	GasPrice uint32 `protobuf:"varint,3,opt,name=gasPrice,proto3" json:"gasPrice,omitempty"`
-	// 合约数据
+
 	Code []byte `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
-	//交易参数
+
 	Para []byte `protobuf:"bytes,5,opt,name=para,proto3" json:"para,omitempty"`
-	// 合约别名，方便识别
+
 	Alias string `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
-	// 交易备注
+
 	Note string `protobuf:"bytes,7,opt,name=note,proto3" json:"note,omitempty"`
-	// 调用合约地址
+
 	ContractAddr string `protobuf:"bytes,8,opt,name=contractAddr,proto3" json:"contractAddr,omitempty"`
 }
 
@@ -371,7 +366,6 @@ func (x *EVMContractAction) GetContractAddr() string {
 	return ""
 }
 
-// 合约创建/调用日志
 type ReceiptEVMContract struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -381,9 +375,9 @@ type ReceiptEVMContract struct {
 	ContractName string `protobuf:"bytes,2,opt,name=contractName,proto3" json:"contractName,omitempty"`
 	ContractAddr string `protobuf:"bytes,3,opt,name=contractAddr,proto3" json:"contractAddr,omitempty"`
 	UsedGas      uint64 `protobuf:"varint,4,opt,name=usedGas,proto3" json:"usedGas,omitempty"`
-	// 创建合约返回的代码
+
 	Ret []byte `protobuf:"bytes,5,opt,name=ret,proto3" json:"ret,omitempty"`
-	// json格式化后的返回值
+
 	JsonRet string `protobuf:"bytes,6,opt,name=jsonRet,proto3" json:"jsonRet,omitempty"`
 }
 
@@ -461,7 +455,6 @@ func (x *ReceiptEVMContract) GetJsonRet() string {
 	return ""
 }
 
-// 用于保存EVM只能合约中的状态数据变更
 type EVMStateChangeItem struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -525,7 +518,6 @@ func (x *EVMStateChangeItem) GetCurrentValue() []byte {
 	return nil
 }
 
-// 存放合约固定数据
 type EVMContractDataCmd struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -613,7 +605,6 @@ func (x *EVMContractDataCmd) GetCodeHash() string {
 	return ""
 }
 
-// 存放合约变化数据
 type EVMContractStateCmd struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -685,18 +676,17 @@ func (x *EVMContractStateCmd) GetStorage() map[string]string {
 	return nil
 }
 
-// 合约创建/调用日志
 type ReceiptEVMContractCmd struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Caller string `protobuf:"bytes,1,opt,name=caller,proto3" json:"caller,omitempty"`
-	// 合约创建时才会返回此内容
+
 	ContractName string `protobuf:"bytes,2,opt,name=contractName,proto3" json:"contractName,omitempty"`
 	ContractAddr string `protobuf:"bytes,3,opt,name=contractAddr,proto3" json:"contractAddr,omitempty"`
 	UsedGas      uint64 `protobuf:"varint,4,opt,name=usedGas,proto3" json:"usedGas,omitempty"`
-	// 创建合约返回的代码
+
 	Ret string `protobuf:"bytes,5,opt,name=ret,proto3" json:"ret,omitempty"`
 }
 

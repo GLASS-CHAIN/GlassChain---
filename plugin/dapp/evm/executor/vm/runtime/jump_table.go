@@ -8,10 +8,7 @@ import (
 	"github.com/33cn/plugin/plugin/dapp/evm/executor/vm/params"
 )
 
-//type (
-//	// ExecutionFunc 指令执行函数，每个操作指令对应一个实现，它实现了指令的具体操作逻辑
-//	ExecutionFunc func(pc *uint64, evm *EVM, callContext *callCtx) ([]byte, error)
-//)
+
 
 type (
 	//executionFunc func(pc *uint64, interpreter *EVMInterpreter, callContext *callCtx) ([]byte, error)

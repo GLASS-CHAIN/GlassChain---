@@ -7,13 +7,8 @@ import (
 	exchangetypes "github.com/33cn/plugin/plugin/dapp/exchange/types"
 )
 
-/*
- * 执行器相关定义
- * 重载基类相关接口
- */
-
 var (
-	//日志
+
 	elog = log.New("module", "exchange.executor")
 )
 
@@ -53,9 +48,10 @@ func (e *exchange) GetDriverName() string {
 	return driverName
 }
 
-// CheckTx 实现自定义检验交易接口，供框架调用
+
 func (e *exchange) CheckTx(tx *types.Transaction, index int) error {
-	//发送交易的时候就检查payload,做严格的参数检查
+
+	
 	var exchange exchangetypes.ExchangeAction
 	types.Decode(tx.GetPayload(), &exchange)
 	cfg := e.GetAPI().GetConfig()
@@ -85,7 +81,7 @@ func (e *exchange) CheckTx(tx *types.Transaction, index int) error {
 	return nil
 }
 
-//ExecutorOrder Exec 的时候 同时执行 ExecLocal
+
 func (e *exchange) ExecutorOrder() int64 {
 	return drivers.ExecLocalSameTime
 }

@@ -6,13 +6,7 @@ import (
 	"github.com/33cn/chain33/types"
 )
 
-/*
- * 交易相关类型定义
- * 交易action通常有对应的log结构，用于交易回执日志记录
- * 每一种action和log需要用id数值和name名称加以区分
- */
 
-// action类型id和name，这些常量可以自定义修改
 const (
 	TyUnknowAction = iota + 200
 	TyLimitOrderAction
@@ -29,7 +23,6 @@ const (
 	FuncNameQueryOrderList        = "QueryOrderList"
 )
 
-// log类型id值
 const (
 	TyUnknownLog = iota + 200
 	TyLimitOrderLog
@@ -58,22 +51,17 @@ const (
 )
 
 const (
-	//Count 单次list还回条数
 	Count = int32(10)
-	//MaxMatchCount 系统最大撮合深度
 	MaxMatchCount = 100
 )
 
 var (
-	//ExchangeX 执行器名称定义
 	ExchangeX = "exchange"
-	//定义actionMap
 	actionMap = map[string]int32{
 		NameLimitOrderAction:  TyLimitOrderAction,
 		NameMarketOrderAction: TyMarketOrderAction,
 		NameRevokeOrderAction: TyRevokeOrderAction,
 	}
-	//定义log的id和具体log类型及名称，填入具体自定义log类型
 	logMap = map[int64]*types.LogInfo{
 		TyLimitOrderLog:  {Ty: reflect.TypeOf(ReceiptExchange{}), Name: "TyLimitOrderLog"},
 		TyMarketOrderLog: {Ty: reflect.TypeOf(ReceiptExchange{}), Name: "TyMarketOrderLog"},
@@ -85,7 +73,7 @@ var (
 // init defines a register function
 func init() {
 	types.AllowUserExec = append(types.AllowUserExec, []byte(ExchangeX))
-	//注册合约启用高度
+
 	types.RegFork(ExchangeX, InitFork)
 	types.RegExec(ExchangeX, InitExecutor)
 }
@@ -113,17 +101,15 @@ func NewType(cfg *types.Chain33Config) *ExchangeType {
 	return c
 }
 
-// GetPayload 获取合约action结构
+
 func (e *ExchangeType) GetPayload() types.Message {
 	return &ExchangeAction{}
 }
 
-// GetTypeMap 获取合约action的id和name信息
 func (e *ExchangeType) GetTypeMap() map[string]int32 {
 	return actionMap
 }
 
-// GetLogMap 获取合约log相关信息
 func (e *ExchangeType) GetLogMap() map[int64]*types.LogInfo {
 	return logMap
 }

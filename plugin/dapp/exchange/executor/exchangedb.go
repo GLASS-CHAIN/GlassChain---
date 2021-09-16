@@ -36,7 +36,6 @@ func NewAction(e *exchange, tx *types.Transaction, index int) *Action {
 
 //GetIndex get index
 func (a *Action) GetIndex() int64 {
-	//扩容4个0,用于匹配多个matchorder索引时使用
 	return (a.height*types.MaxTxsPerBlock + int64(a.index)) * 1e4
 }
 
@@ -46,7 +45,6 @@ func (a *Action) GetKVSet(order *et.Order) (kvset []*types.KeyValue) {
 	return kvset
 }
 
-//OpSwap 反转
 func (a *Action) OpSwap(op int32) int32 {
 	if op == et.OpBuy {
 		return et.OpSell
@@ -54,7 +52,6 @@ func (a *Action) OpSwap(op int32) int32 {
 	return et.OpBuy
 }
 
-//CalcActualCost 计算实际花费
 func CalcActualCost(op int32, amount int64, price, coinPrecision int64) int64 {
 	if op == et.OpBuy {
 		return SafeMul(amount, price, coinPrecision)
@@ -62,7 +59,6 @@ func CalcActualCost(op int32, amount int64, price, coinPrecision int64) int64 {
 	return amount
 }
 
-//CheckPrice price 精度允许范围 1<=price<=1e16 整数
 func CheckPrice(price int64) bool {
 	if price > 1e16 || price < 1 {
 		return false
@@ -83,7 +79,6 @@ func CheckCount(count int32) bool {
 	return count <= 20 && count >= 0
 }
 
-//CheckAmount 最小交易 1coin
 func CheckAmount(amount, coinPrecision int64) bool {
 	if amount < coinPrecision || amount >= types.MaxCoin*coinPrecision {
 		return false
@@ -107,7 +102,6 @@ func CheckStatus(status int32) bool {
 	return false
 }
 
-//CheckExchangeAsset 检查交易得资产是否合法
 func CheckExchangeAsset(coinExec string, left, right *et.Asset) bool {
 	if left.Execer == "" || left.Symbol == "" || right.Execer == "" || right.Symbol == "" {
 		return false
@@ -122,8 +116,7 @@ func CheckExchangeAsset(coinExec string, left, right *et.Asset) bool {
 func (a *Action) LimitOrder(payload *et.LimitOrder) (*types.Receipt, error) {
 	leftAsset := payload.GetLeftAsset()
 	rightAsset := payload.GetRightAsset()
-	//TODO 参数要合法，必须有严格的校验，后面统一加入到checkTx里面
-	//coins执行器下面只有bty
+
 	cfg := a.api.GetConfig()
 	if !CheckExchangeAsset(cfg.GetCoinExec(), leftAsset, rightAsset) {
 		return nil, et.ErrAsset
@@ -137,7 +130,6 @@ func (a *Action) LimitOrder(payload *et.LimitOrder) (*types.Receipt, error) {
 	if !CheckOp(payload.GetOp()) {
 		return nil, et.ErrAssetOp
 	}
-	//TODO 这里symbol
 	leftAssetDB, err := account.NewAccountDB(cfg, leftAsset.GetExecer(), leftAsset.GetSymbol(), a.statedb)
 	if err != nil {
 		return nil, err
@@ -146,7 +138,6 @@ func (a *Action) LimitOrder(payload *et.LimitOrder) (*types.Receipt, error) {
 	if err != nil {
 		return nil, err
 	}
-	//先检查账户余额
 	if payload.GetOp() == et.OpBuy {
 		amount := SafeMul(payload.GetAmount(), payload.GetPrice(), cfg.GetCoinPrecision())
 		rightAccount := rightAssetDB.LoadExecAccount(a.fromaddr, a.execaddr)
@@ -231,7 +222,6 @@ func (a *Action) RevokeOrder(payload *et.RevokeOrder) (*types.Receipt, error) {
 		kvs = append(kvs, receipt.KV...)
 	}
 
-	//更新order状态
 	order.Status = et.Revoked
 	order.UpdateTime = a.blocktime
 	kvs = append(kvs, a.GetKVSet(order)...)
@@ -246,12 +236,7 @@ func (a *Action) RevokeOrder(payload *et.RevokeOrder) (*types.Receipt, error) {
 
 }
 
-//撮合交易逻辑方法
-// 规则：
-//1.买单高于市场价，按价格由低往高撮合。
-//2.卖单低于市场价，按价格由高往低进行撮合。
-//3.价格相同按先进先出的原则进行撮合
-//4.买家获利得原则
+
 func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAccountDB *account.DB) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kvs []*types.KeyValue
@@ -277,14 +262,12 @@ func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAcc
 		Index: a.GetIndex(),
 	}
 
-	//单笔交易最多撮合100笔历史订单,最大可撮合得深度，系统得自我防护
-	//迭代已有挂单价格
 	for {
-		//当撮合深度大于最大深度时跳出
+
 		if count >= et.MaxMatchCount {
 			break
 		}
-		//获取现有市场挂单价格信息
+
 		marketDepthList, err := QueryMarketDepth(a.localDB, payload.GetLeftAsset(), payload.GetRightAsset(), a.OpSwap(payload.Op), priceKey, et.Count)
 		if err == types.ErrNotFound {
 			break
@@ -293,17 +276,17 @@ func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAcc
 			if count >= et.MaxMatchCount {
 				break
 			}
-			// 卖单价大于买单价
+
 			if payload.Op == et.OpBuy && marketDepth.Price > payload.GetPrice() {
 				continue
 			}
-			// 买单价小于卖单价
+
 			if payload.Op == et.OpSell && marketDepth.Price < payload.GetPrice() {
 				continue
 			}
-			//根据价格进行迭代
+
 			for {
-				//当撮合深度大于等于最大深度时跳出
+
 				if count >= et.MaxMatchCount {
 					break
 				}
@@ -313,33 +296,31 @@ func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAcc
 				}
 
 				for _, matchorder := range orderList.List {
-					//当撮合深度大于最大深度时跳出
+
 					if count >= et.MaxMatchCount {
 						break
 					}
-					//同地址不能交易
+
 					if matchorder.Addr == a.fromaddr {
 						continue
 					}
-					//撮合,指针传递
+
 					log, kv, err := a.matchModel(leftAccountDB, rightAccountDB, payload, matchorder, or, re) // payload, or redundant
 					if err != nil {
 						return nil, err
 					}
 					logs = append(logs, log...)
 					kvs = append(kvs, kv...)
-					//订单完成,直接返回，如果没有完成，则继续撮合，直到count等于
 					if or.Status == et.Completed {
 						receiptlog := &types.ReceiptLog{Ty: et.TyLimitOrderLog, Log: types.Encode(re)}
 						logs = append(logs, receiptlog)
 						receipts := &types.Receipt{Ty: types.ExecOk, KV: kvs, Logs: logs}
 						return receipts, nil
 					}
-					//TODO 这里得逻辑是否需要调整?当匹配的单数过多，会导致receipt日志数量激增，理论上存在日志存储攻击，需要加下最大匹配深度，防止这种攻击发生
-					//撮合深度计数
+
 					count = count + 1
 				}
-				//查询数据不满足10条说明没有了,跳出循环
+
 				if orderList.PrimaryKey == "" {
 					break
 				}
@@ -347,14 +328,12 @@ func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAcc
 			}
 		}
 
-		//查询的数据如果没有primaryKey说明没有后续数据了,跳出循环
 		if marketDepthList.PrimaryKey == "" {
 			break
 		}
 		priceKey = marketDepthList.PrimaryKey
 	}
 
-	//未完成的订单需要冻结剩余未成交的资金
 	if payload.Op == et.OpBuy {
 		amount := CalcActualCost(et.OpBuy, or.Balance, payload.Price, cfg.GetCoinPrecision())
 		receipt, err := rightAccountDB.ExecFrozen(a.fromaddr, a.execaddr, amount)
@@ -375,7 +354,7 @@ func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAcc
 		logs = append(logs, receipt.Logs...)
 		kvs = append(kvs, receipt.KV...)
 	}
-	//更新order状态
+
 	kvs = append(kvs, a.GetKVSet(or)...)
 	re.Order = or
 	receiptlog := &types.ReceiptLog{Ty: et.TyLimitOrderLog, Log: types.Encode(re)}
@@ -384,7 +363,6 @@ func (a *Action) matchLimitOrder(payload *et.LimitOrder, leftAccountDB, rightAcc
 	return receipts, nil
 }
 
-//交易撮合模型
 func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *et.LimitOrder, matchorder *et.Order, or *et.Order, re *et.ReceiptExchange) ([]*types.ReceiptLog, []*types.KeyValue, error) {
 	var logs []*types.ReceiptLog
 	var kvs []*types.KeyValue
@@ -401,7 +379,7 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 
 	cfg := a.api.GetConfig()
 	if payload.Op == et.OpSell {
-		//转移冻结资产
+
 		amount := CalcActualCost(matchorder.GetLimitOrder().Op, matched, payload.Price, cfg.GetCoinPrecision())
 		receipt, err := rightAccountDB.ExecTransferFrozen(matchorder.Addr, a.fromaddr, a.execaddr, amount)
 		if err != nil {
@@ -410,7 +388,7 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 		}
 		logs = append(logs, receipt.Logs...)
 		kvs = append(kvs, receipt.KV...)
-		//解冻多余资金
+
 		if payload.Price < matchorder.GetLimitOrder().Price {
 			amount := CalcActualCost(matchorder.GetLimitOrder().Op, matched, matchorder.GetLimitOrder().Price-payload.Price, cfg.GetCoinPrecision())
 			receipt, err := rightAccountDB.ExecActive(matchorder.Addr, a.execaddr, amount)
@@ -421,7 +399,7 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 			logs = append(logs, receipt.Logs...)
 			kvs = append(kvs, receipt.KV...)
 		}
-		//将达成交易的相应资产结算
+
 		amount = CalcActualCost(payload.Op, matched, payload.Price, cfg.GetCoinPrecision())
 		receipt, err = leftAccountDB.ExecTransfer(a.fromaddr, matchorder.Addr, a.execaddr, amount)
 		if err != nil {
@@ -431,13 +409,12 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 		logs = append(logs, receipt.Logs...)
 		kvs = append(kvs, receipt.KV...)
 
-		//卖单成交得平均价格始终与自身挂单价格相同
 		or.AVGPrice = payload.Price
-		//计算matchOrder平均成交价格
+
 		matchorder.AVGPrice = caclAVGPrice(matchorder, payload.Price, matched) //TODO
 	}
 	if payload.Op == et.OpBuy {
-		//转移冻结资产
+
 		amount := CalcActualCost(matchorder.GetLimitOrder().Op, matched, matchorder.GetLimitOrder().Price, cfg.GetCoinPrecision())
 		receipt, err := leftAccountDB.ExecTransferFrozen(matchorder.Addr, a.fromaddr, a.execaddr, amount)
 		if err != nil {
@@ -446,7 +423,7 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 		}
 		logs = append(logs, receipt.Logs...)
 		kvs = append(kvs, receipt.KV...)
-		//将达成交易的相应资产结算
+
 		amount = CalcActualCost(payload.Op, matched, matchorder.GetLimitOrder().Price, cfg.GetCoinPrecision())
 		receipt, err = rightAccountDB.ExecTransfer(a.fromaddr, matchorder.Addr, a.execaddr, amount)
 		if err != nil {
@@ -456,9 +433,8 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 		logs = append(logs, receipt.Logs...)
 		kvs = append(kvs, receipt.KV...)
 
-		//买单得话，价格选取卖单的价格
 		or.AVGPrice = matchorder.GetLimitOrder().Price
-		//计算matchOrder平均成交价格
+
 		matchorder.AVGPrice = caclAVGPrice(matchorder, matchorder.GetLimitOrder().Price, matched) //TODO
 	}
 
@@ -496,9 +472,6 @@ func (a *Action) matchModel(leftAccountDB, rightAccountDB *account.DB, payload *
 	return logs, kvs, nil
 }
 
-//根据订单号查询，分为两步，优先去localdb中查询，如没有则再去状态数据库中查询
-// 1.挂单中得订单信会根据orderID在localdb中存储
-// 2.订单撤销，或者成交后，根据orderID在localdb中存储得数据会被删除，这时只能到状态数据库中查询
 func findOrderByOrderID(statedb dbm.KV, localdb dbm.KV, orderID int64) (*et.Order, error) {
 	table := NewMarketOrderTable(localdb)
 	primaryKey := []byte(fmt.Sprintf("%022d", orderID))
@@ -527,7 +500,7 @@ func findOrderIDListByPrice(localdb dbm.KV, left, right *et.Asset, price int64, 
 
 	var rows []*tab.Row
 	var err error
-	if primaryKey == "" { //第一次查询,默认展示最新得成交记录
+	if primaryKey == "" { 
 		rows, err = table.ListIndex("market_order", prefix, nil, et.Count, direction)
 	} else {
 		rows, err = table.ListIndex("market_order", prefix, []byte(primaryKey), et.Count, direction)
@@ -539,18 +512,17 @@ func findOrderIDListByPrice(localdb dbm.KV, left, right *et.Asset, price int64, 
 	var orderList et.OrderList
 	for _, row := range rows {
 		order := row.Data.(*et.Order)
-		//替换已经成交得量
+
 		order.Executed = order.GetLimitOrder().Amount - order.Balance
 		orderList.List = append(orderList.List, order)
 	}
-	//设置主键索引
+
 	if len(rows) == int(et.Count) {
 		orderList.PrimaryKey = string(rows[len(rows)-1].Primary)
 	}
 	return &orderList, nil
 }
 
-//Direction 买单深度是按价格倒序，由高到低
 func Direction(op int32) int32 {
 	if op == et.OpBuy {
 		return et.ListDESC
@@ -558,7 +530,6 @@ func Direction(op int32) int32 {
 	return et.ListASC
 }
 
-//QueryMarketDepth 这里primaryKey当作主键索引来用，首次查询不需要填值,买单按价格由高往低，卖单按价格由低往高查询
 func QueryMarketDepth(localdb dbm.KV, left, right *et.Asset, op int32, primaryKey string, count int32) (*et.MarketDepthList, error) {
 	table := NewMarketDepthTable(localdb)
 	prefix := []byte(fmt.Sprintf("%s:%s:%d", left.GetSymbol(), right.GetSymbol(), op))
@@ -567,7 +538,7 @@ func QueryMarketDepth(localdb dbm.KV, left, right *et.Asset, op int32, primaryKe
 	}
 	var rows []*tab.Row
 	var err error
-	if primaryKey == "" { //第一次查询,默认展示最新得成交记录
+	if primaryKey == "" { 
 		rows, err = table.ListIndex("price", prefix, nil, count, Direction(op))
 	} else {
 		rows, err = table.ListIndex("price", prefix, []byte(primaryKey), count, Direction(op))
@@ -581,14 +552,13 @@ func QueryMarketDepth(localdb dbm.KV, left, right *et.Asset, op int32, primaryKe
 	for _, row := range rows {
 		list.List = append(list.List, row.Data.(*et.MarketDepth))
 	}
-	//设置主键索引
+
 	if len(rows) == int(count) {
 		list.PrimaryKey = string(rows[len(rows)-1].Primary)
 	}
 	return &list, nil
 }
 
-//QueryHistoryOrderList 只返回成交的订单信息
 func QueryHistoryOrderList(localdb dbm.KV, left, right *et.Asset, primaryKey string, count, direction int32) (types.Message, error) {
 	table := NewHistoryOrderTable(localdb)
 	prefix := []byte(fmt.Sprintf("%s:%s", left.Symbol, right.Symbol))
@@ -600,7 +570,7 @@ func QueryHistoryOrderList(localdb dbm.KV, left, right *et.Asset, primaryKey str
 	var err error
 	var orderList et.OrderList
 HERE:
-	if primaryKey == "" { //第一次查询,默认展示最新得成交记录
+	if primaryKey == "" { 
 		rows, err = table.ListIndex(indexName, prefix, nil, count, direction)
 	} else {
 		rows, err = table.ListIndex(indexName, prefix, []byte(primaryKey), count, direction)
@@ -614,15 +584,14 @@ HERE:
 	}
 	for _, row := range rows {
 		order := row.Data.(*et.Order)
-		//因为这张表里面记录了 completed,revoked 两种状态的订单，所以需要过滤
 		if order.Status == et.Revoked {
 			continue
 		}
-		//替换已经成交得量
+
 		order.Executed = order.GetLimitOrder().Amount - order.Balance
 		orderList.List = append(orderList.List, order)
 		if len(orderList.List) == int(count) {
-			//设置主键索引
+
 			orderList.PrimaryKey = string(row.Primary)
 			return &orderList, nil
 		}
@@ -634,7 +603,6 @@ HERE:
 	return &orderList, nil
 }
 
-//QueryOrderList 默认展示最新的
 func QueryOrderList(localdb dbm.KV, addr string, status, count, direction int32, primaryKey string) (types.Message, error) {
 	var table *tab.Table
 	if status == et.Completed || status == et.Revoked {
@@ -649,7 +617,7 @@ func QueryOrderList(localdb dbm.KV, addr string, status, count, direction int32,
 	}
 	var rows []*tab.Row
 	var err error
-	if primaryKey == "" { //第一次查询,默认展示最新得成交记录
+	if primaryKey == "" { 
 		rows, err = table.ListIndex(indexName, prefix, nil, count, direction)
 	} else {
 		rows, err = table.ListIndex(indexName, prefix, []byte(primaryKey), count, direction)
@@ -661,11 +629,11 @@ func QueryOrderList(localdb dbm.KV, addr string, status, count, direction int32,
 	var orderList et.OrderList
 	for _, row := range rows {
 		order := row.Data.(*et.Order)
-		//替换已经成交得量
+
 		order.Executed = order.GetLimitOrder().Amount - order.Balance
 		orderList.List = append(orderList.List, order)
 	}
-	//设置主键索引
+
 	if len(rows) == int(count) {
 		orderList.PrimaryKey = string(rows[len(rows)-1].Primary)
 	}
@@ -682,14 +650,12 @@ func queryMarketDepth(localdb dbm.KV, left, right *et.Asset, op int32, price int
 	return row.Data.(*et.MarketDepth), nil
 }
 
-//SafeMul math库中的安全大数乘法，防溢出
 func SafeMul(x, y, coinPrecision int64) int64 {
 	res := big.NewInt(0).Mul(big.NewInt(x), big.NewInt(y))
 	res = big.NewInt(0).Div(res, big.NewInt(coinPrecision))
 	return res.Int64()
 }
 
-//计算平均成交价格
 func caclAVGPrice(order *et.Order, price int64, amount int64) int64 {
 	x := big.NewInt(0).Mul(big.NewInt(order.AVGPrice), big.NewInt(order.GetLimitOrder().Amount-order.GetBalance()))
 	y := big.NewInt(0).Mul(big.NewInt(price), big.NewInt(amount))

@@ -14,7 +14,6 @@ import (
 	evm "github.com/33cn/plugin/plugin/dapp/evm/types"
 )
 
-// EvmCreateTx 创建Evm合约接口
 func (c *Jrpc) CreateDeployTx(parm *evm.EvmContractCreateReq, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam
@@ -28,7 +27,6 @@ func (c *Jrpc) CreateDeployTx(parm *evm.EvmContractCreateReq, result *interface{
 	return nil
 }
 
-// CreateCallTx 创建调用EVM合约交易
 func (c *Jrpc) CreateCallTx(parm *evm.EvmContractCallReq, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam
@@ -42,7 +40,6 @@ func (c *Jrpc) CreateCallTx(parm *evm.EvmContractCallReq, result *interface{}) e
 	return nil
 }
 
-// CreateTransferOnlyTx 创建只进行evm内部转账的交易
 func (c *Jrpc) CreateTransferOnlyTx(parm *evm.EvmTransferOnlyReq, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam
@@ -56,7 +53,6 @@ func (c *Jrpc) CreateTransferOnlyTx(parm *evm.EvmTransferOnlyReq, result *interf
 	return nil
 }
 
-// CalcNewContractAddr Evm部署合约的地址
 func (c *Jrpc) CalcNewContractAddr(parm *evm.EvmCalcNewContractAddrReq, result *interface{}) error {
 	if parm == nil {
 		return types.ErrInvalidParam

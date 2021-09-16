@@ -15,7 +15,6 @@ var (
 	PrivKeyB = "0x19c069234f9d3e61135fefbeb7791b149cdf6af536f26bebb310d4cd22c3fee4" // 1JRNjdEqp4LJ5fqycUBm9ayCKSeeskgMKR
 )
 
-// 批量测试前，先确保测试账户有足够的币和钱
 func main() {
 	cli = test.NewGRPCCli("localhost:8802")
 	go buy()
@@ -32,7 +31,7 @@ func sell() {
 		Op:         et.OpSell,
 	}
 	ety := types.LoadExecutorType(et.ExchangeX)
-	// 卖 2000 次，需 2000*1=2000 个 bty
+
 	for i := 0; i < 2000; i++ {
 		fmt.Println("sell ", i)
 		tx, err := ety.Create("LimitOrder", req)
@@ -52,7 +51,7 @@ func buy() {
 		Op:         et.OpBuy,
 	}
 	ety := types.LoadExecutorType(et.ExchangeX)
-	// 买 2000 次，需 2000*1=2000 个 ccny
+
 	for i := 0; i < 2000; i++ {
 		fmt.Println("buy ", i)
 		tx, err := ety.Create("LimitOrder", req)

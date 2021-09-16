@@ -24,21 +24,13 @@ import (
 	"golang.org/x/crypto/ripemd160"
 )
 
-// PrecompiledContract 系统内置合约实现的接口，只包含两个操作：
-// 1 根据合约自身逻辑和入参，计算所需Gas；
-// 2 执行合约。
 type PrecompiledContract interface {
-	// 计算当前合约执行需要消耗的Gas
+
 	RequiredGas(input []byte) uint64
 
-	// 执行预编译的合约固定逻辑，input为入参
 	Run(input []byte) ([]byte, error)
 }
 
-// PrecompiledContractsByzantium chain33平台支持君士坦丁堡版本支持的所有预编译合约指令，并从此版本开始同步支持EVM黄皮书中的新增指令；
-// 保存拜占庭版本支持的所有预编译合约（包括之前版本的合约）；
-// 后面如果有硬分叉，需要在此处考虑分叉逻辑，根据区块高度分别处理；
-// 下面的8个预编译指令，直接引用go-ethereum中的EVM实现
 var PrecompiledContractsByzantium = map[common.Hash160Address]PrecompiledContract{
 	common.BytesToAddress(common.RightPadBytes([]byte{1}, 20)).ToHash160(): &ecrecover{},
 	common.BytesToAddress(common.RightPadBytes([]byte{2}, 20)).ToHash160(): &sha256hash{},
@@ -64,8 +56,6 @@ var PrecompiledContractsIstanbul = map[common.Hash160Address]PrecompiledContract
 	common.BytesToAddress(common.RightPadBytes([]byte{19}, 20)).ToHash160(): &blake2F{},
 }
 
-// PrecompiledContractsYoloV1 黄皮书v1版本兼容伊斯坦布尔版本
-// PrecompiledContractsYoloV1 contains the default set of pre-compiled Ethereum
 var PrecompiledContractsYoloV1 = map[common.Hash160Address]PrecompiledContract{
 	common.BytesToAddress(common.RightPadBytes([]byte{1}, 20)).ToHash160():  &ecrecover{},
 	common.BytesToAddress(common.RightPadBytes([]byte{2}, 20)).ToHash160():  &sha256hash{},
@@ -87,8 +77,6 @@ var PrecompiledContractsYoloV1 = map[common.Hash160Address]PrecompiledContract{
 	common.BytesToAddress(common.RightPadBytes([]byte{18}, 20)).ToHash160(): &bls12381MapG2{},
 }
 
-//因为common.Address结构体中定义的是指针，map中的key值不能使用address作为key值来使用，于是使用Hash160Address作为key来进行索引
-// PrecompiledContractsBerlin contains the default set of pre-compiled Ethereum
 // contracts used in the Berlin release.
 var PrecompiledContractsBerlin = map[common.Hash160Address]PrecompiledContract{
 	common.BytesToAddress(common.RightPadBytes([]byte{1}, 20)).ToHash160(): &ecrecover{},
@@ -102,11 +90,6 @@ var PrecompiledContractsBerlin = map[common.Hash160Address]PrecompiledContract{
 	common.BytesToAddress(common.RightPadBytes([]byte{9}, 20)).ToHash160(): &blake2F{},
 }
 
-// RunPrecompiledContract 调用预编译的合约逻辑并返回结果
-// It returns
-// - the returned bytes,
-// - the _remaining_ gas,
-// - any error that occurred
 func RunPrecompiledContract(p PrecompiledContract, input []byte, suppliedGas uint64) (ret []byte, remainingGas uint64, err error) {
 	gasCost := p.RequiredGas(input)
 	//log15.Info("RunPrecompiledContract", "RequiredGas", gasCost, "avaliableGas", suppliedGas)
@@ -119,7 +102,6 @@ func RunPrecompiledContract(p PrecompiledContract, input []byte, suppliedGas uin
 	return output, suppliedGas, err
 }
 
-// 预编译合约 ECRECOVER 椭圆曲线算法支持
 // ECRECOVER implemented as a native contract.
 type ecrecover struct{}
 

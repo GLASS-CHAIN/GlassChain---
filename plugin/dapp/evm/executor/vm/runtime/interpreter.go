@@ -61,12 +61,8 @@ func (in *Interpreter) enforceRestrictions(op OpCode, operation *operation, stac
 	return nil
 }
 
-// Run 合约代码的解释执行主逻辑
-// 需要注意的是，如果返回执行出错，依然会扣除剩余的Gas
-// （除非返回的是ErrExecutionReverted，这种情况下会保留剩余的Gas）
 func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret []byte, err error) {
-	//TODO 切换为最新的管理方式,合约涉及转账报错？
-	// 每次递归调用，深度加1
+
 	in.evm.depth++
 	defer func() { in.evm.depth-- }()
 
@@ -77,42 +73,33 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 		defer func() { in.readOnly = false }()
 	}
 
-	// 执行前讲返回数据置空
 	in.returnData = nil
 
-	// 无合约代码直接返回
 	if len(contract.Code) == 0 {
 		return nil, nil
 	}
 
 	var (
-		// 当前操作指令码
 		op OpCode
-		// 内存空间
 		mem = NewMemory()
-		// 本地栈空间
 		stack = newstack()
-		// 本地返回的栈
 		//returns     = mm.NewReturnStack() // local returns stack
 		callContext = &callCtx{
 			memory:   mem,
 			stack:    stack,
 			contract: contract,
 		}
-		// 指令计数器
+
 		pc = uint64(0)
-		// 操作消耗的Gas
+
 		cost uint64
-		// 在使用tracer打印调试日志时，复制一份下面的数据进行操作
 		pcCopy  uint64
 		gasCopy uint64
 		logged  bool
-		// 操作码执行函数的结果
 		res []byte
 	)
 	contract.Input = input
 
-	// 执行结束后，返还堆栈
 	defer func() {
 		returnStack(stack)
 	}()
@@ -128,7 +115,6 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 			}
 		}()
 	}
-	// 遍历合约代码中的指令执行，知道遇到特殊指令（停止、自毁、暂停、恢复、返回）
 	steps := 0
 	for {
 		steps++
@@ -136,11 +122,9 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 			break
 		}
 		if EVMDebugOn == in.cfg.Debug {
-			// 记录当前指令执行前的状态数据
 			logged, pcCopy, gasCopy = false, pc, contract.Gas
 		}
 
-		// 从合约代码中获取具体操作指令
 		op = contract.GetOp(pc)
 		operation := in.cfg.JumpTable[op]
 		if operation == nil {
@@ -153,7 +137,7 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 		} else if sLen > operation.maxStack {
 			return nil, &ErrStackOverflow{stackLen: sLen, limit: operation.maxStack}
 		}
-		// 检查写约束
+
 		if err := in.enforceRestrictions(op, operation, stack); err != nil {
 			return nil, err
 		}
@@ -168,7 +152,6 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 		}
 
 		var memorySize uint64
-		// 计算需要开辟的内存空间
 		// Memory check needs to be done prior to evaluating the dynamic gas portion,
 		// to detect calculation overflows
 		if operation.memorySize != nil {
@@ -185,7 +168,7 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 		// Dynamic portion of gas
 		// consume the gas and return an error if not enough gas is available.
 		// cost is explicitly set so that the capture state defer method can get the proper cost
-		// 计算本操作具体需要消耗的Gas
+
 		if operation.dynamicGas != nil {
 			var dynamicCost uint64
 			dynamicCost, err = operation.dynamicGas(in.evm, contract, stack, mem, memorySize)
@@ -206,9 +189,7 @@ func (in *Interpreter) Run(contract *Contract, input []byte, readOnly bool) (ret
 			logged = true
 		}
 
-		// 执行具体的指令操作逻辑（合约执行的核心）
 		res, err = operation.execute(&pc, in.evm, callContext)
-		// 如果本操作需要返回，则讲操作返回的结果最为合约执行的结果
 		if operation.returns {
 			in.returnData = common.CopyBytes(res)
 		}
@@ -233,16 +214,10 @@ func (in *Interpreter) CanRun(code []byte) bool {
 	return true
 }
 
-// 从Contract构造参数传递给GasFunc逻辑使用
-// 目前只按需构造必要的参数，理论上GasFun进行Gas计算时可以使用Contract中的所有参数
-// 后继视需要修改GasParam结构
 func buildGasParam(contract *Contract) *params.GasParam {
 	return &params.GasParam{Gas: contract.Gas, Address: contract.Address()}
 }
 
-// 从EVM构造参数传递给GasFunc逻辑使用
-// 目前只按需构造必要的参数，理论上GasFun进行Gas计算时可以使用EVM中的所有参数
-// 后继视需要修改EVMParam结构
 func buildEVMParam(evm *EVM) *params.EVMParam {
 	return &params.EVMParam{
 		StateDB:     evm.StateDB,
@@ -251,8 +226,6 @@ func buildEVMParam(evm *EVM) *params.EVMParam {
 	}
 }
 
-// 使用操作结果反向填充EVM中的参数
-// 之所以只设置CallGasTemp，是因为其它参数均为指针引用，参数中可以直接修改EVM中的状态
 func fillEVM(param *params.EVMParam, evm *EVM) {
 	evm.callGasTemp = param.CallGasTemp
 }

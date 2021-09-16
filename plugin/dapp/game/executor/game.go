@@ -147,7 +147,7 @@ func delGameStatusIndex(status int32, index int64) *types.KeyValue {
 func delGameAddrIndex(status int32, addr string, index int64) *types.KeyValue {
 	kv := &types.KeyValue{}
 	kv.Key = calcGameAddrIndexKey(status, addr, index)
-	//value置nil,提交时，会自动执行删除操作
+
 	kv.Value = nil
 	return kv
 }

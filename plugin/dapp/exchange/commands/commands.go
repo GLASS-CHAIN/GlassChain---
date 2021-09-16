@@ -5,9 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-/*
- * 实现合约对应客户端
- */
 
 // Cmd exchange client command
 func Cmd() *cobra.Command {

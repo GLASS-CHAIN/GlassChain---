@@ -4,10 +4,8 @@
 
 package runtime
 
-// OpCode EVM操作码定义，本质上就是一个字节，所以操作码最多只支持256个
 type OpCode byte
 
-// IsPush 是否为压栈操作
 func (op OpCode) IsPush() bool {
 	if op >= PUSH1 && op <= PUSH32 {
 		return true
@@ -15,14 +13,12 @@ func (op OpCode) IsPush() bool {
 	return false
 }
 
-// IsStaticJump 是否为跳转操作
 func (op OpCode) IsStaticJump() bool {
 	return op == JUMP
 }
 
 var opmap map[OpCode]string
 
-// String 打印字符串形式
 func (op OpCode) String() string {
 	if opmap == nil {
 		initMap()
@@ -205,18 +201,16 @@ func initMap() {
 
 // unofficial opcodes used for parsing
 const (
-	// PUSH 压栈操作
 	PUSH OpCode = 0xb0 + iota
-	// DUP 操作
+
 	DUP
-	// SWAP 操作
+
 	SWAP
 )
 
 const (
-	// STOP 0x0 算术操作
 	STOP OpCode = iota
-	// ADD 操作
+
 	ADD
 	// MUL op
 	MUL
@@ -241,7 +235,7 @@ const (
 )
 
 const (
-	// LT 比较、位操作
+
 	LT OpCode = iota + 0x10
 	// GT op
 	GT
@@ -275,7 +269,6 @@ const (
 )
 
 const (
-	// ADDRESS 0x30 合约数据操作
 	ADDRESS OpCode = 0x30 + iota
 	// BALANCE op
 	BALANCE
@@ -310,7 +303,6 @@ const (
 )
 
 const (
-	// BLOCKHASH 0x40 区块相关操作
 	BLOCKHASH OpCode = 0x40 + iota
 	// COINBASE op
 	COINBASE
@@ -329,7 +321,6 @@ const (
 )
 
 const (
-	// POP 0x50 存储相关操作
 	POP OpCode = 0x50 + iota
 	// MLOAD op
 	MLOAD
@@ -362,7 +353,6 @@ const (
 )
 
 const (
-	// PUSH1 0x60 栈操作
 	PUSH1 OpCode = 0x60 + iota
 	// PUSH2 op
 	PUSH2
@@ -493,7 +483,6 @@ const (
 )
 
 const (
-	// LOG0 生成日志
 	LOG0 OpCode = 0xa0 + iota
 	// LOG1 op
 	LOG1
@@ -506,7 +495,6 @@ const (
 )
 
 const (
-	// CREATE 过程调用
 	CREATE OpCode = 0xf0 + iota
 	// CALL op
 	CALL
