@@ -94,7 +94,7 @@ func main() {
 			if len(e.Data) == 0 {
 				break
 			}
-			// 解码
+			
 			block := &ttypes.Block{}
 			if err := proto.Unmarshal(e.Data, block); err != nil {
 				log.Printf("failed to unmarshal: %v", err)

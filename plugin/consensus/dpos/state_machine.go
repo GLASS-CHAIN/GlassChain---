@@ -670,10 +670,8 @@ func (voted *VotedState) timeOut(cs *ConsensusState) {
 	} else {
 		dposlog.Info("This node is not current owner.", "current owner index", cs.currentVote.VotedNodeIndex, "this node index", cs.client.ValidatorIndex())
 
-		//根据时间进行vrf相关处理，如果在(cyclestart,middle)之间，发布M，如果在(middle,cyclestop)之间，发布R、P
 		checkVrf(cs)
 
-		//检查是否应该注册topN，是否已经注册topN
 		checkTopNRegist(cs)
 
 		//非当前出块节点，如果到了切换出块节点的时间，则进行状态切换，进行投票

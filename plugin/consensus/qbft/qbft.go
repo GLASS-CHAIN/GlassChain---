@@ -28,7 +28,6 @@ import (
 const (
 	qbftVersion = "0.1.0"
 
-	// DefaultQbftPort 默认端口
 	DefaultQbftPort = 33001
 )
 
@@ -226,7 +225,6 @@ func New(cfg *types.Consensus, sub []byte) queue.Module {
 
 	ttypes.InitMessageMap()
 
-	//采用context来统一管理所有服务
 	ctx, stop := context.WithCancel(context.Background())
 
 	c := drivers.NewBaseClient(cfg)
@@ -283,7 +281,7 @@ func (client *Client) SetQueueClient(q queue.Client) {
 
 // StartConsensus a routine that make the consensus start
 func (client *Client) StartConsensus() {
-	//进入共识前先同步到最大高度
+	
 	hint := time.NewTicker(5 * time.Second)
 	defer hint.Stop()
 

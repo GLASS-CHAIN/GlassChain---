@@ -19,7 +19,6 @@ import (
 	vty "github.com/33cn/plugin/plugin/dapp/qbftNode/types"
 	"github.com/stretchr/testify/assert"
 
-	//加载系统内置store, 不要依赖plugin
 	_ "github.com/33cn/chain33/system"
 	_ "github.com/33cn/chain33/system/dapp/init"
 	_ "github.com/33cn/chain33/system/mempool/init"
@@ -34,7 +33,6 @@ func init() {
 	quitC = make(chan struct{}, 1)
 }
 
-// 执行： go test -cover
 func TestQbft(t *testing.T) {
 	mock33 := testnode.New("chain33.qbft.toml", nil)
 	cfg := mock33.GetClient().GetConfig()

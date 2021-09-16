@@ -1,27 +1,25 @@
-# 平行链有选择的下载包含平行链交易的主链区块方案
+# Parachain selectively downloads the main chain block scheme containing parachain transactions
 
-## 说明
- 1. 新平行链节点从头开始同步主链区块需要两个信息，一个是所有主链区块头部信息，一个是含有平行链交易的主链区块
- 1. 获取所有主链区块头部一是为了产生空块，另一个是为了校验，平行链交易的区块对交易做merkel root计算需要和header tx root一致
+## illustrate
+ 1. The new parachain node needs two pieces of information to synchronize the main chain block from the beginning, one is the header information of all main chain blocks, and the other is the main chain block containing the parachain transactions.
+ 1. Obtain the headers of all main chain blocks. One is to generate empty blocks, and the other is to verify. The merkel root calculation of the transaction block of the parachain transaction needs to be consistent with the header tx root
 
     
-## 分段下载方案实现
-1. 本地区块和主链区块同步对齐确定下载开始高度，然后根据主链当前高度减1w高度确定下载结束高度，结束高度之前认为不存在回滚问题
-1. 下载所有包含平行链交易的主链区块高度列表，用时3s
-1. 把高度列表按1000高度分为多个段，每次获取一段含平行链交易的主链区块，同时根据这一段的头尾高度确定主链头的区间，然后区间内每次获取1000个区块头
-　　然后结合之前下载的1000个平行链交易的区块产生准区块，同步层可以立即同步执行
-1. 比如1~2w高度，含平行链交易的块为　100,105,...1500, 1610...2700, ...15300,17200...19100, 第一个段就是100~1500,获取区块头区间为1~1500,
-   下一个区块头区间为1501~2700,最后一个区块头区间为15301~20000
+## Implementation of segmented download scheme
+1. Synchronously align the local block and the main chain block to determine the download start height, and then determine the download end height according to the current height of the main chain minus 1w height. Before the end height, it is considered that there is no rollback problem
+1. Download a list of all main chain block heights containing parachain transactions, which will take 3s
+1. Divide the height list into multiple segments according to the height of 1000, and obtain a block of the main chain containing parachain transactions each time. At the same time, determine the interval of the main chain head according to the height of the head and tail of this segment, and then get 1000 each time in the interval. Block header
+　　 Then combined with the previously downloaded 1,000 parallel chain transaction blocks to generate a quasi-block, the synchronization layer can be executed immediately
+1. For example, the height of 1~2w, the blocks containing parachain transactions are 100,105,...1500, 1610...2700,...15300,17200...19100, the first segment is 100~1500, the acquisition area The block header interval is 1~1500,
+   The next block header interval is 1501~2700, and the last block header interval is 15301~20000
   
-##几种方案比较：
-1. 每次请求1000个区块，依次下载，不区分是否有平行链交易区块，这种场景服务端读取数据库需要读头部或平行链交易的区块body,缓存没有很好利用
-   在当前测试环境下实际测试500w个主链区块用时33分钟
-1. 多主链服务节点下载，在主链节点ip确定的情况下可以很大的提高下载速度，但是由于当前是云节点代理的方式，测试结果没有理论效果明显
-1. 先下载所有主链头，在下载含平行链交易区块，由于串行化，用时40多分钟
-1. 先下载平行链交易，再依次下载相关主链头区间，并行执行，可以提高到30分钟，由于有可能主链头区间有几十万，同步执行会等待，可以继续优化
-1. 先分段下载平行链交易，再分段下载相关的主链头区间，每次1000区块，可以缩小同步层的等待时间，整体下载过程时间基本就是下载主链头部的时间
-    1. 下载所有平行链交易用时大概１分多钟，相比所有头部时间很小
-    1. 测试用时21分钟
-    1. 本方案也采用的最后一种方案
- 
-        
+##Comparison of several schemes:
+1. Request 1000 blocks each time, download them in turn, without distinguishing whether there is a parachain transaction block. In this scenario, the server needs to read the header or the block body of the parachain transaction to read the database, and the cache is not well used.
+   It takes 33 minutes to actually test 500w main chain blocks in the current test environment
+1. Download from multiple main chain service nodes. The download speed can be greatly improved when the main chain node ip is determined. However, due to the current cloud node proxy method, the test results have no obvious theoretical effect.
+1. Download all the main chain heads first, and download the transaction block containing the parachain. Due to serialization, it takes more than 40 minutes
+1. Download the parachain transaction first, and then download the relevant main chain head section in turn, and execute in parallel, which can be increased to 30 minutes. Since there may be hundreds of thousands of main chain head sections, synchronous execution will wait and you can continue to optimize
+1. First download the parachain transaction in sections, and then download the relevant main chain head section in sections, each time 1000 blocks, can reduce the waiting time of the synchronization layer, the overall download process time is basically the time to download the main chain head
+    1. It takes about 1 minute to download all parachain transactions, which is very small compared to all heads
+    1. The test takes 21 minutes
+    1. The last plan also used in this plan

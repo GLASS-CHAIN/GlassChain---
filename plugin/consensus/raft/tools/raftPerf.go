@@ -55,42 +55,42 @@ func main() {
 	createConn(os.Args[1])
 	argsWithoutProg := os.Args[2:]
 	switch argsWithoutProg[0] {
-	case "-h": //使用帮助
+	case "-h": 
 		LoadHelp()
 	case "transferperf":
 		if len(argsWithoutProg) != 6 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("para error").Error())
 			return
 		}
 		TransferPerf(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3], argsWithoutProg[4], argsWithoutProg[5])
 	case "sendtoaddress":
 		if len(argsWithoutProg) != 5 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("para error").Error())
 			return
 		}
 		SendToAddress(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3], argsWithoutProg[4])
 	case "normperf":
 		if len(argsWithoutProg) != 5 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("para error").Error())
 			return
 		}
 		NormPerf(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3], argsWithoutProg[4])
 	case "normput":
 		if len(argsWithoutProg) != 4 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("para error").Error())
 			return
 		}
 		NormPut(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3])
 	case "normget":
 		if len(argsWithoutProg) != 2 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("para error").Error())
 			return
 		}
 		NormGet(argsWithoutProg[1])
 		//zzh
 	case "normreadperf":
 		if len(argsWithoutProg) != 4 {
-			fmt.Print(errors.New("参数错误").Error())
+			fmt.Print(errors.New("para error").Error())
 			return
 		}
 		NormReadPerf(argsWithoutProg[1], argsWithoutProg[2], argsWithoutProg[3])
@@ -100,12 +100,12 @@ func main() {
 // LoadHelp show available commands
 func LoadHelp() {
 	fmt.Println("Available Commands:")
-	fmt.Println("[ip] transferperf [from, to, amount, txNum, duration]            : 转账性能测试")
-	fmt.Println("[ip] sendtoaddress [from, to, amount, note]                      : 发送交易到地址")
-	fmt.Println("[ip] normperf [size, num, interval, duration]                    : 常规写数据性能测试")
-	fmt.Println("[ip] normput [privkey, key, value]                               : 常规写数据")
-	fmt.Println("[ip] normget [key]                                               : 常规读数据")
-	fmt.Println("[ip] normreadperf [num, interval, duration]                      : 常规读数据性能测试")
+	fmt.Println("[ip] transferperf [from, to, amount, txNum, duration]            : Transfer performance test")
+	fmt.Println("[ip] sendtoaddress [from, to, amount, note]                      : Send transaction to address")
+	fmt.Println("[ip] normperf [size, num, interval, duration]                    : Conventional write data performance test")
+	fmt.Println("[ip] normput [privkey, key, value]                               : Regular write data")
+	fmt.Println("[ip] normget [key]                                               : Regular read data")
+	fmt.Println("[ip] normreadperf [num, interval, duration]                      : Conventional read data performance test")
 }
 
 // TransferPerf run transfer performance
