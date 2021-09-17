@@ -1,7 +1,4 @@
-//简单的猜数字游戏
-//游戏规则: 庄家出一个 0 - 10 的数字 hash(随机数 + 9) (一共的赔偿金额) NewGame()
-//用户可以猜这个数字，多个用户都可以猜测。 Guess()
-//开奖 CloseGame()
+
 function Init(context) {
     this.kvc = new kvcreator("init")
     this.context = context
@@ -25,11 +22,11 @@ Exec.prototype.NewGame = function(args) {
     game.obet = game.bet
     game.addr = this.context.from
     game.status = 1 //open
-    //最大值是 9000万,否则js到 int 会溢出
+
     if (game.bet < 10 * COINS || game.bet > 10000000 * COINS) {
         throwerr("bet low than 10 or hight than 10000000")
     }
-    if (this.kvc.get(game.randhash)) { //如果randhash 已经被使用了
+    if (this.kvc.get(game.randhash)) { 
         throwerr("dup rand hash")
     }
     var err = this.acc.execFrozen(this.name, this.context.from, game.bet)
@@ -89,14 +86,13 @@ Exec.prototype.CloseGame = function(args) {
     if (n == -1) {
         throwerr("err rand str")
     }
-    //必须可以让用户可以有一个区块的竞猜时间
     if (this.context.height - game.height < MIN_WAIT_BLOCK) {
         throwerr("close game must wait "+MIN_WAIT_BLOCK+" block")
     }
     for (var i = 0; i < matches.length; i++) {
         var match = matches[i].left
         if (match.num == n) {
-            //不能随便添加辅助函数，因为可以被外界调用到，所以辅助函数都是传递 this
+
             win.call(this, game, match)
         } else {
             fail.call(this, game, match)

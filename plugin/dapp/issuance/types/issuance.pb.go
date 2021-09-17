@@ -26,27 +26,26 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// 发行信息
 type Issuance struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	IssuanceId             string        `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"`                           //发行ID,一期发行对应一个ID
-	TotalBalance           int64         `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`                      //当期发行的总金额(ccny)
-	DebtCeiling            int64         `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`                        //单用户可借出的限额(ccny)
-	LiquidationRatio       int64         `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`              //清算比例
-	CollateralValue        int64         `protobuf:"varint,5,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`                //抵押物总数量(bty)
-	DebtValue              int64         `protobuf:"varint,6,opt,name=debtValue,proto3" json:"debtValue,omitempty"`                            //产生的ccny数量
-	DebtRecords            []*DebtRecord `protobuf:"bytes,7,rep,name=debtRecords,proto3" json:"debtRecords,omitempty"`                         //大户抵押记录
-	InvalidRecords         []*DebtRecord `protobuf:"bytes,8,rep,name=invalidRecords,proto3" json:"invalidRecords,omitempty"`                   //大户抵押记录
-	Status                 int32         `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`                                  //当期发行的状态，是否关闭
-	LatestLiquidationPrice int64         `protobuf:"varint,10,opt,name=latestLiquidationPrice,proto3" json:"latestLiquidationPrice,omitempty"` //最高清算价格
-	Period                 int64         `protobuf:"varint,11,opt,name=period,proto3" json:"period,omitempty"`                                 //发行最大期限
-	LatestExpireTime       int64         `protobuf:"varint,12,opt,name=latestExpireTime,proto3" json:"latestExpireTime,omitempty"`             //最近超期时间
-	CreateTime             int64         `protobuf:"varint,13,opt,name=createTime,proto3" json:"createTime,omitempty"`                         //创建时间
-	Balance                int64         `protobuf:"varint,14,opt,name=balance,proto3" json:"balance,omitempty"`                               //剩余可发行ccny
-	IssuerAddr             string        `protobuf:"bytes,15,opt,name=issuerAddr,proto3" json:"issuerAddr,omitempty"`                          //发行地址
+	IssuanceId             string        `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"`                           
+	TotalBalance           int64         `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`                      
+	DebtCeiling            int64         `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`                        
+	LiquidationRatio       int64         `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`              
+	CollateralValue        int64         `protobuf:"varint,5,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`                
+	DebtValue              int64         `protobuf:"varint,6,opt,name=debtValue,proto3" json:"debtValue,omitempty"`                           
+	DebtRecords            []*DebtRecord `protobuf:"bytes,7,rep,name=debtRecords,proto3" json:"debtRecords,omitempty"`                        
+	InvalidRecords         []*DebtRecord `protobuf:"bytes,8,rep,name=invalidRecords,proto3" json:"invalidRecords,omitempty"`                   
+	Status                 int32         `protobuf:"varint,9,opt,name=status,proto3" json:"status,omitempty"`                                  
+	LatestLiquidationPrice int64         `protobuf:"varint,10,opt,name=latestLiquidationPrice,proto3" json:"latestLiquidationPrice,omitempty"`
+	Period                 int64         `protobuf:"varint,11,opt,name=period,proto3" json:"period,omitempty"`                                
+	LatestExpireTime       int64         `protobuf:"varint,12,opt,name=latestExpireTime,proto3" json:"latestExpireTime,omitempty"`            
+	CreateTime             int64         `protobuf:"varint,13,opt,name=createTime,proto3" json:"createTime,omitempty"`                         
+	Balance                int64         `protobuf:"varint,14,opt,name=balance,proto3" json:"balance,omitempty"`                               
+	IssuerAddr             string        `protobuf:"bytes,15,opt,name=issuerAddr,proto3" json:"issuerAddr,omitempty"`                          
 }
 
 func (x *Issuance) Reset() {
@@ -186,24 +185,23 @@ func (x *Issuance) GetIssuerAddr() string {
 	return ""
 }
 
-// 抵押记录
 type DebtRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AccountAddr      string `protobuf:"bytes,1,opt,name=accountAddr,proto3" json:"accountAddr,omitempty"`            //抵押人地址
-	StartTime        int64  `protobuf:"varint,2,opt,name=startTime,proto3" json:"startTime,omitempty"`               //抵押时间
-	CollateralValue  int64  `protobuf:"varint,3,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`   //抵押物价值(bty)
-	CollateralPrice  int64  `protobuf:"varint,4,opt,name=collateralPrice,proto3" json:"collateralPrice,omitempty"`   //抵押物价格
-	DebtValue        int64  `protobuf:"varint,5,opt,name=debtValue,proto3" json:"debtValue,omitempty"`               //债务价值(ccny)
-	LiquidationPrice int64  `protobuf:"varint,6,opt,name=liquidationPrice,proto3" json:"liquidationPrice,omitempty"` //抵押物清算价格
-	Status           int32  `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`                     //抵押状态，是否被清算
-	LiquidateTime    int64  `protobuf:"varint,8,opt,name=liquidateTime,proto3" json:"liquidateTime,omitempty"`       //清算时间
-	ExpireTime       int64  `protobuf:"varint,9,opt,name=expireTime,proto3" json:"expireTime,omitempty"`             //超时清算时间
-	PreStatus        int32  `protobuf:"varint,10,opt,name=preStatus,proto3" json:"preStatus,omitempty"`              //上一次抵押状态，用于告警恢复
-	DebtId           string `protobuf:"bytes,11,opt,name=debtId,proto3" json:"debtId,omitempty"`                     //借贷id
-	IssuId           string `protobuf:"bytes,12,opt,name=issuId,proto3" json:"issuId,omitempty"`                     //发行id
+	AccountAddr      string `protobuf:"bytes,1,opt,name=accountAddr,proto3" json:"accountAddr,omitempty"`            
+	StartTime        int64  `protobuf:"varint,2,opt,name=startTime,proto3" json:"startTime,omitempty"`               
+	CollateralValue  int64  `protobuf:"varint,3,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`   
+	CollateralPrice  int64  `protobuf:"varint,4,opt,name=collateralPrice,proto3" json:"collateralPrice,omitempty"`   
+	DebtValue        int64  `protobuf:"varint,5,opt,name=debtValue,proto3" json:"debtValue,omitempty"`               
+	LiquidationPrice int64  `protobuf:"varint,6,opt,name=liquidationPrice,proto3" json:"liquidationPrice,omitempty"` 
+	Status           int32  `protobuf:"varint,7,opt,name=status,proto3" json:"status,omitempty"`                     
+	LiquidateTime    int64  `protobuf:"varint,8,opt,name=liquidateTime,proto3" json:"liquidateTime,omitempty"`      
+	ExpireTime       int64  `protobuf:"varint,9,opt,name=expireTime,proto3" json:"expireTime,omitempty"`             
+	PreStatus        int32  `protobuf:"varint,10,opt,name=preStatus,proto3" json:"preStatus,omitempty"`            
+	DebtId           string `protobuf:"bytes,11,opt,name=debtId,proto3" json:"debtId,omitempty"`                 
+	IssuId           string `protobuf:"bytes,12,opt,name=issuId,proto3" json:"issuId,omitempty"`                   
 }
 
 func (x *DebtRecord) Reset() {
@@ -322,14 +320,13 @@ func (x *DebtRecord) GetIssuId() string {
 	return ""
 }
 
-// 资产价格记录
 type IssuanceAssetPriceRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RecordTime int64 `protobuf:"varint,1,opt,name=recordTime,proto3" json:"recordTime,omitempty"` //价格记录时间
-	BtyPrice   int64 `protobuf:"varint,2,opt,name=btyPrice,proto3" json:"btyPrice,omitempty"`     // bty价格
+	RecordTime int64 `protobuf:"varint,1,opt,name=recordTime,proto3" json:"recordTime,omitempty"` 
+	BtyPrice   int64 `protobuf:"varint,2,opt,name=btyPrice,proto3" json:"btyPrice,omitempty"`    
 }
 
 func (x *IssuanceAssetPriceRecord) Reset() {
@@ -488,27 +485,27 @@ type isIssuanceAction_Value interface {
 }
 
 type IssuanceAction_Create struct {
-	Create *IssuanceCreate `protobuf:"bytes,1,opt,name=create,proto3,oneof"` //创建一期发行
+	Create *IssuanceCreate `protobuf:"bytes,1,opt,name=create,proto3,oneof"`
 }
 
 type IssuanceAction_Debt struct {
-	Debt *IssuanceDebt `protobuf:"bytes,2,opt,name=debt,proto3,oneof"` //抵押
+	Debt *IssuanceDebt `protobuf:"bytes,2,opt,name=debt,proto3,oneof"`
 }
 
 type IssuanceAction_Repay struct {
-	Repay *IssuanceRepay `protobuf:"bytes,3,opt,name=repay,proto3,oneof"` //清算
+	Repay *IssuanceRepay `protobuf:"bytes,3,opt,name=repay,proto3,oneof"`
 }
 
 type IssuanceAction_Feed struct {
-	Feed *IssuanceFeed `protobuf:"bytes,4,opt,name=feed,proto3,oneof"` //喂价
+	Feed *IssuanceFeed `protobuf:"bytes,4,opt,name=feed,proto3,oneof"`
 }
 
 type IssuanceAction_Close struct {
-	Close *IssuanceClose `protobuf:"bytes,5,opt,name=close,proto3,oneof"` //关闭
+	Close *IssuanceClose `protobuf:"bytes,5,opt,name=close,proto3,oneof"`
 }
 
 type IssuanceAction_Manage struct {
-	Manage *IssuanceManage `protobuf:"bytes,6,opt,name=manage,proto3,oneof"` //全局配置
+	Manage *IssuanceManage `protobuf:"bytes,6,opt,name=manage,proto3,oneof"`
 }
 
 func (*IssuanceAction_Create) isIssuanceAction_Value() {}
@@ -528,7 +525,7 @@ type IssuanceManage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	SuperAddrs []string `protobuf:"bytes,1,rep,name=superAddrs,proto3" json:"superAddrs,omitempty"` //大户地址
+	SuperAddrs []string `protobuf:"bytes,1,rep,name=superAddrs,proto3" json:"superAddrs,omitempty"`
 }
 
 func (x *IssuanceManage) Reset() {
@@ -570,16 +567,15 @@ func (x *IssuanceManage) GetSuperAddrs() []string {
 	return nil
 }
 
-// 创建发行
 type IssuanceCreate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	TotalBalance     int64 `protobuf:"varint,1,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`         //发行总金额
-	DebtCeiling      int64 `protobuf:"varint,2,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`           //单用户可借出的限额(ccny)
-	LiquidationRatio int64 `protobuf:"varint,3,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"` //清算比例
-	Period           int64 `protobuf:"varint,4,opt,name=period,proto3" json:"period,omitempty"`                     //发行最大期限
+	TotalBalance     int64 `protobuf:"varint,1,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`         
+	DebtCeiling      int64 `protobuf:"varint,2,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`         
+	LiquidationRatio int64 `protobuf:"varint,3,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"`
+	Period           int64 `protobuf:"varint,4,opt,name=period,proto3" json:"period,omitempty"`                     
 }
 
 func (x *IssuanceCreate) Reset() {
@@ -642,14 +638,13 @@ func (x *IssuanceCreate) GetPeriod() int64 {
 	return 0
 }
 
-// 抵押
 type IssuanceDebt struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	IssuanceId string `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"` //发行ID
-	Value      int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`          //借贷金额(ccny)
+	IssuanceId string `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"` 
+	Value      int64  `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`          
 }
 
 func (x *IssuanceDebt) Reset() {
@@ -698,14 +693,13 @@ func (x *IssuanceDebt) GetValue() int64 {
 	return 0
 }
 
-// 质押清算
 type IssuanceRepay struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	IssuanceId string `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"` //发行ID
-	DebtId     string `protobuf:"bytes,2,opt,name=debtId,proto3" json:"debtId,omitempty"`         //抵押ID
+	IssuanceId string `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"` 
+	DebtId     string `protobuf:"bytes,2,opt,name=debtId,proto3" json:"debtId,omitempty"`         
 }
 
 func (x *IssuanceRepay) Reset() {
@@ -754,15 +748,14 @@ func (x *IssuanceRepay) GetDebtId() string {
 	return ""
 }
 
-// 喂价
 type IssuanceFeed struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CollType int32   `protobuf:"varint,1,opt,name=collType,proto3" json:"collType,omitempty"`    //抵押物价格类型(1，bty，2，btc，3，eth...)
-	Price    []int64 `protobuf:"varint,2,rep,packed,name=price,proto3" json:"price,omitempty"`   //喂价
-	Volume   []int64 `protobuf:"varint,3,rep,packed,name=volume,proto3" json:"volume,omitempty"` //成交量
+	CollType int32   `protobuf:"varint,1,opt,name=collType,proto3" json:"collType,omitempty"`    
+	Price    []int64 `protobuf:"varint,2,rep,packed,name=price,proto3" json:"price,omitempty"`   
+	Volume   []int64 `protobuf:"varint,3,rep,packed,name=volume,proto3" json:"volume,omitempty"`
 }
 
 func (x *IssuanceFeed) Reset() {
@@ -818,13 +811,12 @@ func (x *IssuanceFeed) GetVolume() []int64 {
 	return nil
 }
 
-// 借贷关闭
 type IssuanceClose struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	IssuanceId string `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"` //发行ID
+	IssuanceId string `protobuf:"bytes,1,opt,name=issuanceId,proto3" json:"issuanceId,omitempty"` 
 }
 
 func (x *IssuanceClose) Reset() {
@@ -866,7 +858,6 @@ func (x *IssuanceClose) GetIssuanceId() string {
 	return ""
 }
 
-// exec_local 发行信息
 type ReceiptIssuance struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -938,7 +929,6 @@ func (x *ReceiptIssuance) GetStatus() int32 {
 	return 0
 }
 
-// exec_local issuid记录信息
 type ReceiptIssuanceID struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -994,7 +984,6 @@ func (x *ReceiptIssuanceID) GetStatus() int32 {
 	return 0
 }
 
-// exec_local 抵押记录信息列表
 type IssuanceRecords struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1042,7 +1031,6 @@ func (x *IssuanceRecords) GetRecords() []*ReceiptIssuance {
 	return nil
 }
 
-// 根据ID查询发行信息
 type ReqIssuanceInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1090,22 +1078,21 @@ func (x *ReqIssuanceInfo) GetIssuanceId() string {
 	return ""
 }
 
-// 返回一期发行信息
 type RepIssuanceCurrentInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status           int32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`                     //当期发行的状态，是否关闭
-	TotalBalance     int64  `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`         //当期发行总金额(ccny)
-	DebtCeiling      int64  `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`           //单用户可借出的限额(ccny)
-	LiquidationRatio int64  `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"` //清算比例
-	Balance          int64  `protobuf:"varint,5,opt,name=balance,proto3" json:"balance,omitempty"`                   //剩余可借贷金额(ccny)
-	CollateralValue  int64  `protobuf:"varint,6,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`   //抵押物总数量(bty)
-	DebtValue        int64  `protobuf:"varint,7,opt,name=debtValue,proto3" json:"debtValue,omitempty"`               //产生的ccny数量
-	Period           int64  `protobuf:"varint,8,opt,name=period,proto3" json:"period,omitempty"`                     //发行最大期限
-	IssuId           string `protobuf:"bytes,9,opt,name=issuId,proto3" json:"issuId,omitempty"`                      //发行ID
-	CreateTime       int64  `protobuf:"varint,10,opt,name=createTime,proto3" json:"createTime,omitempty"`            //创建时间
+	Status           int32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`                     
+	TotalBalance     int64  `protobuf:"varint,2,opt,name=totalBalance,proto3" json:"totalBalance,omitempty"`         
+	DebtCeiling      int64  `protobuf:"varint,3,opt,name=debtCeiling,proto3" json:"debtCeiling,omitempty"`           
+	LiquidationRatio int64  `protobuf:"varint,4,opt,name=liquidationRatio,proto3" json:"liquidationRatio,omitempty"` 
+	Balance          int64  `protobuf:"varint,5,opt,name=balance,proto3" json:"balance,omitempty"`                 
+	CollateralValue  int64  `protobuf:"varint,6,opt,name=collateralValue,proto3" json:"collateralValue,omitempty"`   
+	DebtValue        int64  `protobuf:"varint,7,opt,name=debtValue,proto3" json:"debtValue,omitempty"`              
+	Period           int64  `protobuf:"varint,8,opt,name=period,proto3" json:"period,omitempty"`                    
+	IssuId           string `protobuf:"bytes,9,opt,name=issuId,proto3" json:"issuId,omitempty"`                     
+	CreateTime       int64  `protobuf:"varint,10,opt,name=createTime,proto3" json:"createTime,omitempty"`          
 }
 
 func (x *RepIssuanceCurrentInfo) Reset() {
@@ -1210,7 +1197,6 @@ func (x *RepIssuanceCurrentInfo) GetCreateTime() int64 {
 	return 0
 }
 
-// 根据ID列表查询多期发行信息
 type ReqIssuanceInfos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1258,7 +1244,6 @@ func (x *ReqIssuanceInfos) GetIssuanceIds() []string {
 	return nil
 }
 
-// 返回多期发行信息
 type RepIssuanceCurrentInfos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1306,7 +1291,6 @@ func (x *RepIssuanceCurrentInfos) GetInfos() []*RepIssuanceCurrentInfo {
 	return nil
 }
 
-// 根据发行状态查询
 type ReqIssuanceByStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1362,7 +1346,6 @@ func (x *ReqIssuanceByStatus) GetIssuanceId() string {
 	return ""
 }
 
-// 返回发行ID列表
 type RepIssuanceIDs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1410,7 +1393,6 @@ func (x *RepIssuanceIDs) GetIDs() []string {
 	return nil
 }
 
-// 根据用户地址查询抵押记录
 type ReqIssuanceRecords struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1482,7 +1464,6 @@ func (x *ReqIssuanceRecords) GetDebtId() string {
 	return ""
 }
 
-// 返回记录列表
 type RepIssuanceRecords struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1530,7 +1511,6 @@ func (x *RepIssuanceRecords) GetRecords() []*DebtRecord {
 	return nil
 }
 
-// 返回记录
 type RepIssuanceDebtInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1578,13 +1558,12 @@ func (x *RepIssuanceDebtInfo) GetRecord() *DebtRecord {
 	return nil
 }
 
-// 返回最新抵押物价格
 type RepIssuancePrice struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Price int64 `protobuf:"varint,1,opt,name=price,proto3" json:"price,omitempty"` //当前抵押物最新价格
+	Price int64 `protobuf:"varint,1,opt,name=price,proto3" json:"price,omitempty"` 
 }
 
 func (x *RepIssuancePrice) Reset() {
@@ -1626,13 +1605,12 @@ func (x *RepIssuancePrice) GetPrice() int64 {
 	return 0
 }
 
-// 返回用户发行总额
 type RepIssuanceUserBalance struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Balance int64 `protobuf:"varint,1,opt,name=balance,proto3" json:"balance,omitempty"` //返回用户发行总额
+	Balance int64 `protobuf:"varint,1,opt,name=balance,proto3" json:"balance,omitempty"`
 }
 
 func (x *RepIssuanceUserBalance) Reset() {

@@ -29,7 +29,6 @@ function init() {
     exec_addr=$(curl -ksd '{"method":"Chain33.ConvertExectoAddr","params":[{"execname":"'${exec_name}'"}]}' ${MAIN_HTTP} | jq -r ".result")
     echo "exec_addr=${exec_addr}"
 
-    # json 中 \n \t 需要转意, " 影响json的结构， 需要转意
     jsCode=$(sed 's/"/\\"/g' <./js/test.js | sed ':a;N;s/\n/\\n/g;ta' | sed 's/\t/\\t/g')
 }
 

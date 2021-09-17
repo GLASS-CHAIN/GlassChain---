@@ -92,7 +92,7 @@ func (action *Action) Hashlocklock(hlock *pty.HashlockLock) (*types.Receipt, err
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
 	var err error
-	//不存在相同的hashlock，假定采用sha256
+
 	cfg := action.api.GetConfig()
 	if cfg.IsDappFork(action.height, pty.HashlockX, pty.ForkBadRepeatSecretX) {
 		_, err = readHashlock(action.db, hlock.Hash)
@@ -105,7 +105,7 @@ func (action *Action) Hashlocklock(hlock *pty.HashlockLock) (*types.Receipt, err
 	}
 
 	h := NewDB(hlock.Hash, action.fromaddr, hlock.ToAddress, action.blocktime, hlock.Amount, hlock.Time)
-	//冻结子账户资金
+
 	receipt, err := action.coinsAccount.ExecFrozen(action.fromaddr, action.execaddr, hlock.Amount)
 
 	if err != nil {
@@ -245,7 +245,7 @@ func GeHashReciverKV(hashlockID []byte, information *pty.Hashlockquery) *types.K
 	clog.Error("GeHashReciverKV action", "Status", information.Status)
 	reciver, err := json.Marshal(infor)
 	if err == nil {
-		fmt.Println("成功转换为json格式")
+		fmt.Println("json")
 	} else {
 		fmt.Println(err)
 	}
@@ -300,7 +300,6 @@ func UpdateHashReciver(cachedb dbm.KVDB, hashlockID []byte, information pty.Hash
 	clog.Error("UpdateHashReciver", "recv", recv)
 	//	clog.Error("UpdateHashReciver", "Status", information.Status)
 	//	var action types.Action
-	//当处于lock状态时，在db中是找不到的，此时需要创建并存储于db中，其他状态则能从db中找到
 	if information.Status == hashlockLocked {
 		clog.Error("UpdateHashReciver", "Hashlock_Locked", hashlockLocked)
 		if err == types.ErrNotFound {

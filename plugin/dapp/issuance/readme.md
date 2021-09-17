@@ -1,27 +1,27 @@
-## 发行合约表结构
+## Issuing contract table structure
 
-### 总发行表issuer表结构
-字段名称|类型|说明
+### Issuer table structure of the total issuance table
+Field name|Type|Description
 ---|---|---
-issuanceId|string|总发行ID，主键
-status|int32|发行状态（1：已发行 2：已下线）
+issuanceId|string|Total issuance ID, primary key
+status|int32|Release status (1: issued 2: offline)
 
-### 总发行表issuer表索引
-索引名|说明
+### Total issue table issuer table index
+Index name|Description
 ---|---
-status|根据发行状态查询总发行ID
+status|Query the total issuance ID according to the issuance status
 
-### 大户发行表debt表结构
-字段名称|类型|说明
+### Debt table structure
+Field name|Type|Description
 ---|---|---
-debtId|string|大户发行ID，主键
-issuanceId|string|总发行ID
-accountAddr|string|用户地址
-status|int32|发行状态（1：已发行 2：价格清算告警 3：价格清算 4：超时清算告警 5：超时清算 6：关闭）
+debtId|string|Issuance ID of major account, primary key
+issuanceId|string|Total issuance ID
+accountAddr|string|User address
+status|int32|Issuance status (1: issued 2: price clearing alarm 3: price clearing 4: overtime clearing alarm 5: overtime clearing 6: closed)
 
-### 大户发行表debt表索引
-索引名|说明
+### The index of the debt table of the large-scale release table
+Index name|Description
 ---|---
-status|根据大户发行状态查询大户发行ID
-addr|根据大户地址查询大户发行ID
-addr_status|根据发行状态和大户地址查询大户发行ID
+status|Query the issuance ID of the major account according to the status of the major account issuance
+addr|Query the ID issued by the major account according to the address of the major account
+addr_status|Query the issuance ID of the major account based on the issuance status and the address of the major account

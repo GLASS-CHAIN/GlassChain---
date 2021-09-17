@@ -31,9 +31,7 @@ const (
 	TyLogGuessGameTimeout = 906
 )
 
-//包的名字可以通过配置文件来配置
-//建议用github的组织名称，或者用户名字开头, 再加上自己的插件的名字
-//如果发生重名，可以通过配置文件修改这些名字
+
 var (
 	GuessX      = "guess"
 	ExecerGuess = []byte(GuessX)
@@ -64,19 +62,14 @@ const (
 	//FuncNameQueryGameByCategoryStatus func name
 	FuncNameQueryGameByCategoryStatus = "QueryGamesByCategoryStatus"
 
-	//CreateStartTx 创建开始交易
 	CreateStartTx = "Start"
 
-	//CreateBetTx 创建下注交易
 	CreateBetTx = "Bet"
 
-	//CreateStopBetTx 创建停止下注交易
 	CreateStopBetTx = "StopBet"
 
-	//CreatePublishTx 创建公布结果交易
 	CreatePublishTx = "Publish"
 
-	//CreateAbortTx 创建撤销游戏交易
 	CreateAbortTx = "Abort"
 )
 

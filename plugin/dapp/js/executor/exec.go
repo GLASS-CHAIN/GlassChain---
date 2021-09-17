@@ -16,8 +16,6 @@ func (c *js) userExecName(name string, local bool) string {
 	return execer
 }
 
-// execName 在create 时为 jsvm
-// 在 call 时为 user.jsvm.game
 func (c *js) checkTxExec(txExec string, execName string) bool {
 	cfg := c.GetAPI().GetConfig()
 	return txExec == cfg.ExecName(execName)

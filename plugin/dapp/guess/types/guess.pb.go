@@ -31,34 +31,33 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// GuessGame 竞猜游戏详情
 type GuessGame struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GameID         string         `protobuf:"bytes,1,opt,name=gameID,proto3" json:"gameID,omitempty"`  //游戏ID
-	Status         int32          `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` //游戏的状态：创建->投注->截止投注->开奖
+	GameID         string         `protobuf:"bytes,1,opt,name=gameID,proto3" json:"gameID,omitempty"` 
+	Status         int32          `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` 
 	PreStatus      int32          `protobuf:"varint,3,opt,name=preStatus,proto3" json:"preStatus,omitempty"`
-	StartTime      int64          `protobuf:"varint,4,opt,name=startTime,proto3" json:"startTime,omitempty"`            //创建游戏的时间
-	StartHeight    int64          `protobuf:"varint,5,opt,name=startHeight,proto3" json:"startHeight,omitempty"`        //创建游戏的时间
-	StartTxHash    string         `protobuf:"bytes,6,opt,name=startTxHash,proto3" json:"startTxHash,omitempty"`         //创建游戏的交易hash
-	StartIndex     int64          `protobuf:"varint,7,opt,name=startIndex,proto3" json:"startIndex,omitempty"`          //创建游戏的交易index
-	Topic          string         `protobuf:"bytes,8,opt,name=topic,proto3" json:"topic,omitempty"`                     //主题
-	Category       string         `protobuf:"bytes,9,opt,name=category,proto3" json:"category,omitempty"`               //分类
-	Options        string         `protobuf:"bytes,10,opt,name=options,proto3" json:"options,omitempty"`                //选项
-	MaxBetHeight   int64          `protobuf:"varint,11,opt,name=maxBetHeight,proto3" json:"maxBetHeight,omitempty"`     //截止下注的块高
-	MaxBetsOneTime int64          `protobuf:"varint,12,opt,name=maxBetsOneTime,proto3" json:"maxBetsOneTime,omitempty"` //单次可以下多少注，默认100
-	MaxBetsNumber  int64          `protobuf:"varint,13,opt,name=maxBetsNumber,proto3" json:"maxBetsNumber,omitempty"`   //最多可以下多少注
-	DevFeeFactor   int64          `protobuf:"varint,14,opt,name=devFeeFactor,proto3" json:"devFeeFactor,omitempty"`     //开发者抽成比例
-	DevFeeAddr     string         `protobuf:"bytes,15,opt,name=devFeeAddr,proto3" json:"devFeeAddr,omitempty"`          //开发者地址
-	PlatFeeFactor  int64          `protobuf:"varint,16,opt,name=platFeeFactor,proto3" json:"platFeeFactor,omitempty"`   //平台抽成比例
-	PlatFeeAddr    string         `protobuf:"bytes,17,opt,name=platFeeAddr,proto3" json:"platFeeAddr,omitempty"`        //平台地址
-	ExpireHeight   int64          `protobuf:"varint,18,opt,name=expireHeight,proto3" json:"expireHeight,omitempty"`     //游戏过期区块高度
-	AdminAddr      string         `protobuf:"bytes,19,opt,name=adminAddr,proto3" json:"adminAddr,omitempty"`            //游戏创建者地址,只有该地址可以开奖
-	BetsNumber     int64          `protobuf:"varint,20,opt,name=betsNumber,proto3" json:"betsNumber,omitempty"`         //已下注数,如果数量达到maxBetsNumber，则不允许再下注
-	Plays          []*GuessPlayer `protobuf:"bytes,21,rep,name=plays,proto3" json:"plays,omitempty"`                    //参与游戏下注的玩家投注信息
-	Result         string         `protobuf:"bytes,22,opt,name=result,proto3" json:"result,omitempty"`                  //公布的中奖结果
+	StartTime      int64          `protobuf:"varint,4,opt,name=startTime,proto3" json:"startTime,omitempty"`            
+	StartHeight    int64          `protobuf:"varint,5,opt,name=startHeight,proto3" json:"startHeight,omitempty"`        
+	StartTxHash    string         `protobuf:"bytes,6,opt,name=startTxHash,proto3" json:"startTxHash,omitempty"`         
+	StartIndex     int64          `protobuf:"varint,7,opt,name=startIndex,proto3" json:"startIndex,omitempty"`          
+	Topic          string         `protobuf:"bytes,8,opt,name=topic,proto3" json:"topic,omitempty"`                     
+	Category       string         `protobuf:"bytes,9,opt,name=category,proto3" json:"category,omitempty"`               
+	Options        string         `protobuf:"bytes,10,opt,name=options,proto3" json:"options,omitempty"`                
+	MaxBetHeight   int64          `protobuf:"varint,11,opt,name=maxBetHeight,proto3" json:"maxBetHeight,omitempty"`     
+	MaxBetsOneTime int64          `protobuf:"varint,12,opt,name=maxBetsOneTime,proto3" json:"maxBetsOneTime,omitempty"` 
+	MaxBetsNumber  int64          `protobuf:"varint,13,opt,name=maxBetsNumber,proto3" json:"maxBetsNumber,omitempty"`   
+	DevFeeFactor   int64          `protobuf:"varint,14,opt,name=devFeeFactor,proto3" json:"devFeeFactor,omitempty"`    
+	DevFeeAddr     string         `protobuf:"bytes,15,opt,name=devFeeAddr,proto3" json:"devFeeAddr,omitempty"`         
+	PlatFeeFactor  int64          `protobuf:"varint,16,opt,name=platFeeFactor,proto3" json:"platFeeFactor,omitempty"`  
+	PlatFeeAddr    string         `protobuf:"bytes,17,opt,name=platFeeAddr,proto3" json:"platFeeAddr,omitempty"`       
+	ExpireHeight   int64          `protobuf:"varint,18,opt,name=expireHeight,proto3" json:"expireHeight,omitempty"`    
+	AdminAddr      string         `protobuf:"bytes,19,opt,name=adminAddr,proto3" json:"adminAddr,omitempty"`           
+	BetsNumber     int64          `protobuf:"varint,20,opt,name=betsNumber,proto3" json:"betsNumber,omitempty"`       
+	Plays          []*GuessPlayer `protobuf:"bytes,21,rep,name=plays,proto3" json:"plays,omitempty"`                
+	Result         string         `protobuf:"bytes,22,opt,name=result,proto3" json:"result,omitempty"`                
 	BetStat        *GuessBetStat  `protobuf:"bytes,23,opt,name=betStat,proto3" json:"betStat,omitempty"`
 	Index          int64          `protobuf:"varint,24,opt,name=index,proto3" json:"index,omitempty"`
 	PreIndex       int64          `protobuf:"varint,25,opt,name=preIndex,proto3" json:"preIndex,omitempty"`
@@ -279,7 +278,6 @@ func (x *GuessGame) GetDrivenByAdmin() bool {
 	return false
 }
 
-// GuessPlayer 竞猜玩家信息
 type GuessPlayer struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -335,7 +333,6 @@ func (x *GuessPlayer) GetBet() *GuessBet {
 	return nil
 }
 
-// GuessBet 竞猜下注信息
 type GuessBet struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -423,7 +420,6 @@ func (x *GuessBet) GetPreIndex() int64 {
 	return 0
 }
 
-// GuessBetStat 竞猜下注统计信息
 type GuessBetStat struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -487,7 +483,6 @@ func (x *GuessBetStat) GetItems() []*GuessBetStatItem {
 	return nil
 }
 
-// GuessBetStat 竞猜下注子选项统计信息
 type GuessBetStatItem struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -551,7 +546,6 @@ func (x *GuessBetStatItem) GetBetsTimes() int64 {
 	return 0
 }
 
-// GuessGameAction 竞猜游戏动作
 type GuessGameAction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -696,7 +690,6 @@ func (*GuessGameAction_Publish) isGuessGameAction_Value() {}
 
 func (*GuessGameAction_Query) isGuessGameAction_Value() {}
 
-// GuessGameStart 游戏创建
 type GuessGameStart struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -708,10 +701,10 @@ type GuessGameStart struct {
 	MaxBetHeight   int64  `protobuf:"varint,4,opt,name=maxBetHeight,proto3" json:"maxBetHeight,omitempty"`
 	MaxBetsOneTime int64  `protobuf:"varint,5,opt,name=maxBetsOneTime,proto3" json:"maxBetsOneTime,omitempty"`
 	MaxBetsNumber  int64  `protobuf:"varint,6,opt,name=maxBetsNumber,proto3" json:"maxBetsNumber,omitempty"`
-	DevFeeFactor   int64  `protobuf:"varint,7,opt,name=devFeeFactor,proto3" json:"devFeeFactor,omitempty"`   //开发者抽成比例
-	DevFeeAddr     string `protobuf:"bytes,8,opt,name=devFeeAddr,proto3" json:"devFeeAddr,omitempty"`        //开发者地址
-	PlatFeeFactor  int64  `protobuf:"varint,9,opt,name=platFeeFactor,proto3" json:"platFeeFactor,omitempty"` //平台抽成比例
-	PlatFeeAddr    string `protobuf:"bytes,10,opt,name=platFeeAddr,proto3" json:"platFeeAddr,omitempty"`     //平台地址
+	DevFeeFactor   int64  `protobuf:"varint,7,opt,name=devFeeFactor,proto3" json:"devFeeFactor,omitempty"`   
+	DevFeeAddr     string `protobuf:"bytes,8,opt,name=devFeeAddr,proto3" json:"devFeeAddr,omitempty"`        
+	PlatFeeFactor  int64  `protobuf:"varint,9,opt,name=platFeeFactor,proto3" json:"platFeeFactor,omitempty"` 
+	PlatFeeAddr    string `protobuf:"bytes,10,opt,name=platFeeAddr,proto3" json:"platFeeAddr,omitempty"`     
 	ExpireHeight   int64  `protobuf:"varint,11,opt,name=expireHeight,proto3" json:"expireHeight,omitempty"`
 	DrivenByAdmin  bool   `protobuf:"varint,12,opt,name=drivenByAdmin,proto3" json:"drivenByAdmin,omitempty"`
 }
@@ -832,7 +825,6 @@ func (x *GuessGameStart) GetDrivenByAdmin() bool {
 	return false
 }
 
-// GuessGameBet 参与游戏下注
 type GuessGameBet struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -896,7 +888,6 @@ func (x *GuessGameBet) GetBetsNum() int64 {
 	return 0
 }
 
-// GuessGameStopBet 游戏停止下注
 type GuessGameStopBet struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -944,7 +935,6 @@ func (x *GuessGameStopBet) GetGameID() string {
 	return ""
 }
 
-// GuessGameAbort 游戏异常终止,退还下注
 type GuessGameAbort struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -992,7 +982,6 @@ func (x *GuessGameAbort) GetGameID() string {
 	return ""
 }
 
-// GuessGamePublish 游戏结果揭晓
 type GuessGamePublish struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1048,7 +1037,6 @@ func (x *GuessGamePublish) GetResult() string {
 	return ""
 }
 
-// GuessGameQuery 查询游戏结果
 type GuessGameQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1104,7 +1092,6 @@ func (x *GuessGameQuery) GetTy() uint32 {
 	return 0
 }
 
-// QueryGuessGameInfo 游戏信息查询消息
 type QueryGuessGameInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1200,7 +1187,6 @@ func (x *QueryGuessGameInfo) GetPrimaryKey() string {
 	return ""
 }
 
-// ReplyGuessGameInfo 游戏信息查询响应消息
 type ReplyGuessGameInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1248,7 +1234,6 @@ func (x *ReplyGuessGameInfo) GetGame() *GuessGame {
 	return nil
 }
 
-// QueryGuessGameInfos 游戏信息列表查询消息
 type QueryGuessGameInfos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1296,7 +1281,6 @@ func (x *QueryGuessGameInfos) GetGameIDs() []string {
 	return nil
 }
 
-// ReplyGuessGameInfos 游戏信息列表查询响应消息
 type ReplyGuessGameInfos struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1344,7 +1328,6 @@ func (x *ReplyGuessGameInfos) GetGames() []*GuessGame {
 	return nil
 }
 
-// ReceiptGuessGame 竞猜游戏收据信息
 type ReceiptGuessGame struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1496,7 +1479,6 @@ func (x *ReceiptGuessGame) GetGame() *GuessGame {
 	return nil
 }
 
-// UserBet 用户下注信息
 type UserBet struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1584,7 +1566,6 @@ func (x *UserBet) GetBetsNumber() int64 {
 	return 0
 }
 
-// GuessStartTxReq 构造start交易的请求
 type GuessStartTxReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1728,7 +1709,6 @@ func (x *GuessStartTxReq) GetFee() int64 {
 	return 0
 }
 
-// GuessBetTxReq 构造bet交易的请求
 type GuessBetTxReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1800,7 +1780,6 @@ func (x *GuessBetTxReq) GetFee() int64 {
 	return 0
 }
 
-// GuessStopBetTxReq 构造stopBet交易的请求
 type GuessStopBetTxReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1856,7 +1835,6 @@ func (x *GuessStopBetTxReq) GetFee() int64 {
 	return 0
 }
 
-// GuessAbortTxReq 构造abort交易的请求
 type GuessAbortTxReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1912,7 +1890,6 @@ func (x *GuessAbortTxReq) GetFee() int64 {
 	return 0
 }
 
-// GuessPublishTxReq 构造publish交易的请求
 type GuessPublishTxReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1976,7 +1953,6 @@ func (x *GuessPublishTxReq) GetFee() int64 {
 	return 0
 }
 
-// GuessGameRecord game信息查询记录
 type GuessGameRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2032,7 +2008,6 @@ func (x *GuessGameRecord) GetStartIndex() int64 {
 	return 0
 }
 
-// GuessGameRecords game信息查询记录集
 type GuessGameRecords struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2803,15 +2778,15 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type GuessClient interface {
-	//游戏开始
+
 	GuessStart(ctx context.Context, in *GuessGameStart, opts ...grpc.CallOption) (*types.UnsignTx, error)
-	//游戏下注
+
 	GuessBet(ctx context.Context, in *GuessGameBet, opts ...grpc.CallOption) (*types.UnsignTx, error)
-	//游戏终止下注
+
 	GuessStopBet(ctx context.Context, in *GuessGameStopBet, opts ...grpc.CallOption) (*types.UnsignTx, error)
-	//游戏异常终止
+
 	GuessAbort(ctx context.Context, in *GuessGameAbort, opts ...grpc.CallOption) (*types.UnsignTx, error)
-	//游戏结束
+
 	GuessPublish(ctx context.Context, in *GuessGamePublish, opts ...grpc.CallOption) (*types.UnsignTx, error)
 }
 
@@ -2870,15 +2845,15 @@ func (c *guessClient) GuessPublish(ctx context.Context, in *GuessGamePublish, op
 
 // GuessServer is the server API for Guess service.
 type GuessServer interface {
-	//游戏开始
+
 	GuessStart(context.Context, *GuessGameStart) (*types.UnsignTx, error)
-	//游戏下注
+
 	GuessBet(context.Context, *GuessGameBet) (*types.UnsignTx, error)
-	//游戏终止下注
+
 	GuessStopBet(context.Context, *GuessGameStopBet) (*types.UnsignTx, error)
-	//游戏异常终止
+
 	GuessAbort(context.Context, *GuessGameAbort) (*types.UnsignTx, error)
-	//游戏结束
+
 	GuessPublish(context.Context, *GuessGamePublish) (*types.UnsignTx, error)
 }
 

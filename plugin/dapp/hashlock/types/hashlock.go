@@ -47,7 +47,6 @@ func NewType(cfg *types.Chain33Config) *HashlockType {
 	return c
 }
 
-// GetName 获取执行器名称
 func (hashlock *HashlockType) GetName() string {
 	return HashlockX
 }

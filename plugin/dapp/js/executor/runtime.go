@@ -6,7 +6,6 @@ import (
 	"github.com/robertkrimen/otto"
 )
 
-//让 js 具有访问 区块链 的一些能力
 func execaddressFunc(vm *otto.Otto) {
 	vm.Set("execaddress", func(call otto.FunctionCall) otto.Value {
 		key, err := call.Argument(0).ToString()
@@ -29,10 +28,4 @@ func sha256Func(vm *otto.Otto) {
 	})
 }
 
-/*
-//获取系统随机数的接口
-//randnum
 
-//获取前一个区块hash的接口
-//prev_blockhash()
-*/

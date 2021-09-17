@@ -212,7 +212,6 @@ account.prototype.execGetBalance = function(execer, addr) {
     return get_balance(this, execer, addr)
 }
 
-//本合约转移资产，或者转移到其他合约，或者从其他合约取回资产
 account.prototype.transfer = function(from, to, amount) {
     var ret = transfer(this, from, to, amount)
     if (this.kvc) {
@@ -237,7 +236,6 @@ account.prototype.withdrawFromExec = function(execer, to, amount) {
     return ret.err
 }
 
-//管理其他合约的资产转移到这个合约中
 account.prototype.execActive = function(execer, addr, amount) {
     var ret = exec_active(this, execer, addr, amount)
     if (this.kvc) {

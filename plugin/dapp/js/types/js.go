@@ -14,12 +14,10 @@ const (
 	jsActionCall   = 1
 )
 
-//日志类型
 const (
 	TyLogJs = 10000
 )
 
-// JsCreator 配置项 创建js合约的管理员
 const JsCreator = "js-creator"
 
 var (
@@ -32,20 +30,18 @@ var (
 	}
 )
 
-//JsX 插件名字
 var JsX = "jsvm"
 
-//错误常量
 var (
 	ErrDupName            = errors.New("ErrDupName")
 	ErrJsReturnNotObject  = errors.New("ErrJsReturnNotObject")
 	ErrJsReturnKVSFormat  = errors.New("ErrJsReturnKVSFormat")
 	ErrJsReturnLogsFormat = errors.New("ErrJsReturnLogsFormat")
-	//ErrInvalidFuncFormat 错误的函数调用格式(没有_)
+
 	ErrInvalidFuncFormat = errors.New("chain33.js: invalid function name format")
 	//ErrInvalidFuncPrefix not exec_ execloal_ query_
 	ErrInvalidFuncPrefix = errors.New("chain33.js: invalid function prefix format")
-	//ErrFuncNotFound 函数没有找到
+
 	ErrFuncNotFound = errors.New("chain33.js: invalid function name not found")
 	ErrSymbolName   = errors.New("chain33.js: ErrSymbolName")
 	ErrExecerName   = errors.New("chain33.js: ErrExecerName")
@@ -70,12 +66,10 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(JsX, NewType(cfg))
 }
 
-//JsType 类型
 type JsType struct {
 	types.ExecTypeBase
 }
 
-//NewType 新建一个plugin 类型
 func NewType(cfg *types.Chain33Config) *JsType {
 	c := &JsType{}
 	c.SetChild(c)
@@ -83,17 +77,14 @@ func NewType(cfg *types.Chain33Config) *JsType {
 	return c
 }
 
-//GetPayload 获取 交易构造
 func (t *JsType) GetPayload() types.Message {
 	return &jsproto.JsAction{}
 }
 
-//GetTypeMap 获取类型映射
 func (t *JsType) GetTypeMap() map[string]int32 {
 	return typeMap
 }
 
-//GetLogMap 获取日志映射
 func (t *JsType) GetLogMap() map[int64]*types.LogInfo {
 	return logMap
 }

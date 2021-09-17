@@ -11,7 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// IssuanceCmd 斗牛游戏命令行
 func IssuanceCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "issuance",
@@ -32,7 +31,6 @@ func IssuanceCmd() *cobra.Command {
 	return cmd
 }
 
-// IssuanceCreateRawTxCmd 生成开始交易命令行
 func IssuanceCreateRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
@@ -73,7 +71,6 @@ func IssuanceCreate(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// IssuanceDebtRawTxCmd 生成开始交易命令行
 func IssuanceDebtRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "debt",
@@ -110,7 +107,6 @@ func IssuanceDebt(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// IssuanceRepayRawTxCmd 生成开始交易命令行
 func IssuanceRepayRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "repay",
@@ -147,7 +143,6 @@ func IssuanceRepay(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// IssuancePriceFeedRawTxCmd 生成开始交易命令行
 func IssuancePriceFeedRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "feed",
@@ -184,7 +179,6 @@ func IssuancePriceFeed(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// IssuanceCloseRawTxCmd 生成开始交易命令行
 func IssuanceCloseRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "close",
@@ -218,7 +212,6 @@ func IssuanceClose(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// IssuanceManageRawTxCmd 生成开始交易命令行
 func IssuanceManageRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "manage",
@@ -309,7 +302,6 @@ func IssuanceQueryUserBalance(cmd *cobra.Command, args []string) {
 	ctx.Run()
 }
 
-// IssuanceQueryCmd 查询命令行
 func IssuanceQueryCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",

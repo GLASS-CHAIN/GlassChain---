@@ -50,7 +50,6 @@ func NewType(cfg *types.Chain33Config) *IssuanceType {
 	return c
 }
 
-// GetName 获取执行器名称
 func (issuance *IssuanceType) GetName() string {
 	return IssuanceX
 }

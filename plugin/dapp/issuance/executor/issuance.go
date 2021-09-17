@@ -60,7 +60,6 @@ func (c *Issuance) CheckReceiptExecOk() bool {
 	return true
 }
 
-// ExecutorOrder 设置localdb的EnableRead
 func (c *Issuance) ExecutorOrder() int64 {
 	cfg := c.GetAPI().GetConfig()
 	if cfg.IsFork(c.GetHeight(), "ForkLocalDBAccess") {

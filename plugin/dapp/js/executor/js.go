@@ -23,10 +23,9 @@ var codecache *lru.Cache
 
 var isinit int64
 
-//Init 插件初始化
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	if atomic.CompareAndSwapInt64(&isinit, 0, 1) {
-		//最新的64个code做cache
+
 		var err error
 		codecache, err = lru.New(512)
 		if err != nil {
@@ -64,12 +63,10 @@ func newjs() drivers.Driver {
 	return t
 }
 
-//GetName 获取名字
 func GetName() string {
 	return newjs().GetName()
 }
 
-//GetDriverName 获取插件的名字
 func (u *js) GetDriverName() string {
 	return driverName
 }
@@ -123,8 +120,7 @@ func (u *js) callVM(prefix string, payload *jsproto.Call, tx *types.Transaction,
 	vm.Set("args", payload.Args)
 	callfunc := "callcode(context, f, args, loglist)"
 	jsvalue, err := vm.Run(callfunc)
-	//除非你知道怎么做，不要返回这样的操作，这会引起整个区块执行失败，从而引起严重的安全问题。
-	//要保证不能人工的创造这样的条件，也就是调用接口的输入，不能用户可以任意修改的。
+
 	if u.GetExecutorAPI().IsErr() {
 		return nil, status.New(codes.Aborted, "jsvm operation is abort").Err()
 	}
@@ -157,7 +153,7 @@ func jslogs(receiptData *types.ReceiptData) ([]string, error) {
 	}
 	for i := 0; i < len(receiptData.Logs); i++ {
 		logitem := receiptData.Logs[i]
-		//只传递 json格式的日子，不传递 二进制的日志
+
 		if logitem.Ty != ptypes.TyLogJs {
 			continue
 		}
@@ -304,7 +300,7 @@ func (u *js) createVM(name string, tx *types.Transaction, index int) (*otto.Otto
 		if err != nil {
 			return nil, err
 		}
-		//cache 合约代码部分，不会cache 具体执行
+
 		cachevm := basevm.Copy()
 		cachevm.Run(code)
 		codecache.Add(name, cachevm)
@@ -380,15 +376,12 @@ func (o *object) value() otto.Value {
 	return v
 }
 
-// Allow 允许哪些交易在本命执行器执行
 func (u *js) Allow(tx *types.Transaction, index int) error {
 	err := u.DriverBase.Allow(tx, index)
 	if err == nil {
 		return nil
 	}
-	//增加新的规则:
-	//主链: user.jsvm.xxx  执行 jsvm 合约
-	//平行链: user.p.guodun.user.jsvm.xxx 执行 jsvm 合约
+
 	cfg := u.GetAPI().GetConfig()
 	exec := cfg.GetParaExec(tx.Execer)
 	if u.AllowIsUserDot2(exec) {
