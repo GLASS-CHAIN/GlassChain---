@@ -80,7 +80,7 @@ Retry:
 	pServer := NewP2pServer()
 	pServer.node = dl.node
 
-	//一元拦截器 接口调用之前进行校验拦截
+	/  
 	interceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		//checkAuth
 		getctx, ok := pr.FromContext(ctx)
@@ -97,7 +97,7 @@ Retry:
 
 		if !auth(ip) {
 			log.Error("interceptor", "auth faild", ip)
-			//把相应的IP地址加入黑名单中
+			/ I 
 			pServer.node.nodeInfo.blacklist.Add(ip, int64(3600))
 			return nil, fmt.Errorf("auth faild %v  no authorized", ip)
 
@@ -105,7 +105,7 @@ Retry:
 		// Continue processing the request
 		return handler(ctx, req)
 	}
-	//流拦截器
+	/ 
 	interceptorStream := func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		getctx, ok := pr.FromContext(ss.Context())
 		if !ok {
@@ -122,7 +122,7 @@ Retry:
 
 		if !auth(ip) {
 			log.Error("interceptorStream", "auth faild", ip)
-			//把相应的IP地址加入黑名单中
+			/ I 
 			pServer.node.nodeInfo.blacklist.Add(ip, int64(3600))
 			return fmt.Errorf("auth faild  %v  no authorized", ip)
 		}
@@ -130,11 +130,11 @@ Retry:
 	}
 	var opts []grpc.ServerOption
 	opts = append(opts, grpc.UnaryInterceptor(interceptor), grpc.StreamInterceptor(interceptorStream))
-	maxMsgSize := pb.MaxBlockSize + 1024*1024    //最大传输数据 最大区块大小
-	msgRecvOp := grpc.MaxRecvMsgSize(maxMsgSize) //设置最大接收数据
-	msgSendOp := grpc.MaxSendMsgSize(maxMsgSize) //设置最大发送数据
+	maxMsgSize := pb.MaxBlockSize + 1024*1024    /  
+	msgRecvOp := grpc.MaxRecvMsgSize(maxMsgSize) / 
+	msgSendOp := grpc.MaxSendMsgSize(maxMsgSize) / 
 	kaep := keepalive.EnforcementPolicy{
-		MinTime:             10 * time.Second, //只允许不低于10s频率的ping周期
+		MinTime:             10 * time.Second, / 10 pin 
 		PermitWithoutStream: true,
 	}
 	var keepparm keepalive.ServerParameters
@@ -198,7 +198,7 @@ func (h *statshandler) HandleConn(ctx context.Context, s stats.ConnStats) {
 	}
 }
 
-// HandleRPC 为空.
+// HandleRPC .
 func (h *statshandler) HandleRPC(ctx context.Context, s stats.RPCStats) {}
 
 type connCtxKey struct{}

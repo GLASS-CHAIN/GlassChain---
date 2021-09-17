@@ -681,7 +681,7 @@ func (x *RelayRevoke) GetAction() uint32 {
 	return 0
 }
 
-//客户只用交易hash提交， 验证需要的其他信息由relayd提供
+/ has ， relay 
 type RelayConfirmTx struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -737,7 +737,7 @@ func (x *RelayConfirmTx) GetTxHash() string {
 	return ""
 }
 
-// relayd提供验证信息
+// relay 
 type RelayVerify struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

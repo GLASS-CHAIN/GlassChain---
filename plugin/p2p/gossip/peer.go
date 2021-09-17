@@ -26,7 +26,7 @@ func (p *Peer) Start() {
 
 // Close peer close
 func (p *Peer) Close() {
-	//避免重复关闭
+	/ 
 	if !atomic.CompareAndSwapInt32(&p.isclose, 0, 1) {
 		return
 	}
@@ -48,12 +48,12 @@ type Peer struct {
 	persistent   bool
 	isclose      int32
 	version      *Version
-	name         string //远程节点的name
+	name         string / name
 	mconn        *MConnection
 	peerAddr     *NetAddress
 	peerStat     *Stat
 	taskChan     chan interface{} //tx block
-	inBounds     int32            //连接此节点的客户端节点数量
+	inBounds     int32            / 
 	IsMaxInbouds bool
 }
 
@@ -266,7 +266,7 @@ func (p *Peer) sendStream() {
 					}
 					cancel()
 
-					break SEND_LOOP //下一次外循环重新获取stream
+					break SEND_LOOP / stream
 				}
 				log.Debug("sendStream", "send data", "ok")
 
@@ -338,7 +338,7 @@ func (p *Peer) readStream() {
 					return
 				}
 
-				//其他stream 错误全部break ,重新创建新的stream
+				/ stream break  stream
 				break
 			}
 

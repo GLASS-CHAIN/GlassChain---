@@ -51,7 +51,7 @@ func processMsg(q queue.Queue) {
 		defer func(path string) {
 			_ = os.RemoveAll(path)
 		}(cfg.GetModuleConfig().Wallet.DbPath)
-		//导入种子，解锁钱包
+		/  
 		password := "a12345678"
 		seed := "cushion canal bitter result harvest sentence ability time steel basket useful ask depth sorry area course purpose search exile chapter mountain project ranch buffalo"
 		saveSeedByPw := &types.SaveSeedByPw{Seed: seed, Passwd: password}
@@ -183,7 +183,7 @@ func testNetInfo(t *testing.T, p2p *P2p) {
 	assert.NotNil(t, p2p.node.nodeInfo.GetExternalAddr())
 }
 
-//测试Peer
+/ Peer
 func testPeer(t *testing.T, p2p *P2p, q queue.Queue) {
 	cfg := types.NewChain33Config(types.ReadFile("../../../chain33.toml"))
 	conn, err := grpc.Dial("localhost:53802", grpc.WithInsecure(),
@@ -249,18 +249,18 @@ func testPeer(t *testing.T, p2p *P2p, q queue.Queue) {
 	localP2P.node.nodeInfo.peerInfos.SetPeerInfo(nil)
 	localP2P.node.nodeInfo.peerInfos.GetPeerInfo("1222")
 	t.Log(p2p.node.GetRegisterPeer(localPeerName))
-	//测试发送Ping消息
+	/ Pin 
 	err = p2pcli.SendPing(peer, localP2P.node.nodeInfo)
 	assert.Nil(t, err)
 
-	//获取peer节点的被连接数
+	/ pee 
 	pnum, err := p2pcli.GetInPeersNum(peer)
 	assert.Nil(t, err)
 	assert.Equal(t, 1, pnum)
 
 	_, err = peer.GetPeerInfo()
 	assert.Nil(t, err)
-	//获取节点列表
+	/ 
 	_, err = p2pcli.GetAddrList(peer)
 	assert.Nil(t, err)
 
@@ -274,12 +274,12 @@ func testPeer(t *testing.T, p2p *P2p, q queue.Queue) {
 
 	localP2P.node.pubsub.FIFOPub(&types.P2PTx{Tx: &types.Transaction{}, Route: &types.P2PRoute{}}, "tx")
 	localP2P.node.pubsub.FIFOPub(&types.P2PBlock{Block: &types.Block{}}, "block")
-	//	//测试获取高度
+	//	/ 
 	height, err := p2pcli.GetBlockHeight(localP2P.node.nodeInfo)
 	assert.Nil(t, err)
 	assert.Equal(t, int(height), 2019)
 	assert.Equal(t, false, p2pcli.CheckSelf("localhost:53802", localP2P.node.nodeInfo))
-	//测试下载
+	/ 
 	job := NewDownloadJob(NewP2PCli(localP2P).(*Cli), []*Peer{peer})
 
 	job.GetFreePeer(1)
@@ -306,7 +306,7 @@ func testPeer(t *testing.T, p2p *P2p, q queue.Queue) {
 	localP2P.node.remove(peer.GetPeerName())
 }
 
-//测试grpc 多连接
+/ grpc 
 func testGrpcConns(t *testing.T) {
 	var conns []*grpc.ClientConn
 
@@ -337,7 +337,7 @@ func testGrpcConns(t *testing.T) {
 
 }
 
-//测试grpc 流多连接
+/ grpc 
 func testGrpcStreamConns(t *testing.T, p2p *P2p) {
 
 	conn, err := grpc.Dial("localhost:53802", grpc.WithInsecure(),

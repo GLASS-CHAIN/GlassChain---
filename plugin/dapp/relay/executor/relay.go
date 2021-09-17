@@ -254,7 +254,7 @@ func (r *relay) CheckReceiptExecOk() bool {
 	return true
 }
 
-// ExecutorOrder 设置localdb的EnableRead
+// ExecutorOrder locald EnableRead
 func (r *relay) ExecutorOrder() int64 {
 	cfg := r.GetAPI().GetConfig()
 	if cfg.IsFork(r.GetHeight(), "ForkLocalDBAccess") {

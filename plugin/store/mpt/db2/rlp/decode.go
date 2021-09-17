@@ -563,11 +563,11 @@ func decodeDecoder(s *Stream, val reflect.Value) error {
 type Kind int
 
 const (
-	// Byte RLP 编码类型 byte
+	// Byte RLP  byte
 	Byte Kind = iota
-	// String RLP 编码类型 string
+	// String RLP  string
 	String
-	// List RLP 编码类型 list
+	// List RLP  list
 	List
 )
 

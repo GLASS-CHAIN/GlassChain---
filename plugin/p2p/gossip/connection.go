@@ -14,7 +14,7 @@ type MConnection struct {
 	node          *Node
 	gconn         *grpc.ClientConn
 	gcli          pb.P2PgserviceClient // source connection
-	remoteAddress *NetAddress          //peer 的地址
+	remoteAddress *NetAddress          //peer 
 	peer          *Peer
 }
 

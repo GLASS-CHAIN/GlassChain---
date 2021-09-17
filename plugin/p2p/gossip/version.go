@@ -4,18 +4,18 @@
 
 package gossip
 
-//更新内容：
-// 1.p2p 修改为在nat结束后，在启动peer的stream，ping,version 等功能
+/ ：
+// 1.p2p na  pee stream，ping,version 
 
-//2018-3-26 更新内容
-// 1. p2p 过滤重复数据，改用blockhash 提换block height
-// 2. 增加p2p私钥自动导入到钱包功能
+//2018-3-26 
+// 1. p2p  blockhash block height
+// 2. p2 
 
-//p2p版本区间 10020, 11000
+//p2  10020, 11000
 
-//历史版本
+/ 
 const (
-	//p2p广播交易哈希而非完整区块数据
+	//p2 
 	lightBroadCastVersion = 10030
 )
 

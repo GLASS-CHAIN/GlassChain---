@@ -11,28 +11,28 @@ const (
 	UnfreezeActionTerminate
 
 	//log for unfreeze
-	TyLogCreateUnfreeze    = 2001 // TODO 修改具体编号
+	TyLogCreateUnfreeze    = 2001 // TODO 
 	TyLogWithdrawUnfreeze  = 2002
 	TyLogTerminateUnfreeze = 2003
 )
 
 const (
-	// Action_CreateUnfreeze Action 名字
+	// Action_CreateUnfreeze Action 
 	Action_CreateUnfreeze = "createUnfreeze"
-	// Action_WithdrawUnfreeze Action 名字
+	// Action_WithdrawUnfreeze Action 
 	Action_WithdrawUnfreeze = "withdrawUnfreeze"
-	// Action_TerminateUnfreeze Action 名字
+	// Action_TerminateUnfreeze Action 
 	Action_TerminateUnfreeze = "terminateUnfreeze"
 )
 
 const (
-	// FuncName_QueryUnfreezeWithdraw 查询方法名
+	// FuncName_QueryUnfreezeWithdraw 
 	FuncName_QueryUnfreezeWithdraw = "QueryUnfreezeWithdraw"
 )
 
-//包的名字可以通过配置文件来配置
-//建议用github的组织名称，或者用户名字开头, 再加上自己的插件的名字
-//如果发生重名，可以通过配置文件修改这些名字
+/ 
+/ githu  , 
+/  
 var (
 	PackageName    = "chain33.unfreeze"
 	RPCName        = "Chain33.Unfreeze"

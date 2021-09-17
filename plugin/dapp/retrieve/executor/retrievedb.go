@@ -134,7 +134,7 @@ func (action *Action) RetrieveBackup(backupRet *rt.BackupRetrieve) (*types.Recei
 			return nil, rt.ErrRetrieveDefaultAddress
 		}
 	}
-	//用备份地址检索，如果没有，就建立新的，然后检查并处理关联
+	/    
 	retrieve, err := readRetrieve(action.db, backupRet.BackupAddress)
 	if err != nil && err != types.ErrNotFound {
 		rlog.Error("RetrieveBackup", "readRetrieve", err)
@@ -212,7 +212,7 @@ func (action *Action) RetrievePerformAssets(perfRet *rt.PerformRetrieve, default
 	var kv []*types.KeyValue
 	var receipt *types.Receipt
 	cfg := action.api.GetConfig()
-	// 兼容原来的找回， 在不指定的情况下，找回主币
+	// ，  
 	if len(perfRet.Assets) == 0 {
 		perfRet.Assets = append(perfRet.Assets, &rt.AssetSymbol{Exec: cfg.GetCoinExec(), Symbol: cfg.GetCoinSymbol()})
 		//return nil, nil

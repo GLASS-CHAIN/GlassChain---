@@ -509,7 +509,7 @@ func (db *Database) dereference(child common.Hash, parent common.Hash) {
 //	nodes, storage, start := len(db.nodes), db.nodesSize, time.Now()
 //	//batch := db.diskdb.NewBatch()
 //
-//	// TODO 暂时在内部设置为同步状态
+//	// TODO 
 //	batch := db.db.NewBatch(true)
 //
 //	// db.nodesSize only contains the useful data in the cache, but when reporting
@@ -617,7 +617,7 @@ func (db *Database) Commit(node common.Hash, report bool) error {
 	start := time.Now()
 	//batch := db.diskdb.NewBatch()
 
-	// TODO 暂时在内部设置为同步状态
+	// TODO 
 	batch := db.db.NewBatch(true)
 
 	// Move all of the accumulated preimages into a write batch

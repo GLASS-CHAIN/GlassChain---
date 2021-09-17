@@ -171,7 +171,7 @@ func (mvccs *KVMVCCStore) IterateRangeByStateHash(statehash []byte, start []byte
 	if !mvccs.enableMVCCIter {
 		panic("call IterateRangeByStateHash when disable mvcc iter")
 	}
-	//按照kv最新值来进行遍历处理，要求statehash必须是最新区块的statehash，否则不支持该接口
+	/ k  statehas statehash 
 	maxVersion, err := mvccs.mvcc.GetMaxVersion()
 	if err != nil {
 		klog.Error("KVMVCCStore IterateRangeByStateHash can't get max version, ignore the call.", "err", err)
@@ -233,7 +233,7 @@ func (mvccs *KVMVCCStore) saveKVSets(kvset []*types.KeyValue, sync bool) {
 }
 
 func (mvccs *KVMVCCStore) checkVersion(height int64) ([]*types.KeyValue, error) {
-	//检查新加入区块的height和现有的version的关系，来判断是否要回滚数据
+	/ heigh versio  
 	maxVersion, err := mvccs.mvcc.GetMaxVersion()
 	if err != nil {
 		if err != types.ErrNotFound {

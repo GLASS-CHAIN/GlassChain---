@@ -72,13 +72,13 @@ message RelayRevoke {
     uint32 action  = 3; // 0: unlock, 1: cancel (only for creator)
 }
 
-//客户只用交易hash提交， 验证需要的其他信息由relayd提供
+/ has ， relay 
 message RelayConfirmTx {
     string orderId = 1;
     string txHash  = 2;
 }
 
-// relayd提供验证信息
+// relay 
 message RelayVerify {
     string         orderId = 1;
     BtcTransaction tx      = 2;

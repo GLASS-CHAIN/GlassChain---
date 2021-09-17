@@ -43,7 +43,7 @@ var (
 )
 
 const (
-	// 是否开启对key进行sha3计算功能
+	// ke sha 
 	enableSecure bool = false
 )
 
@@ -468,7 +468,7 @@ func (t *Trie) hashRoot(db *Database, onleaf LeafCallback) (node, node, error) {
 	return h.hash(t.root, db, true)
 }
 
-// Commit2Db 保存tire数据到db
+// Commit2Db tir db
 func (t *Trie) Commit2Db(node common.Hash, report bool) error {
 	err := t.db.Commit(node, report)
 	if nil != err {
@@ -478,7 +478,7 @@ func (t *Trie) Commit2Db(node common.Hash, report bool) error {
 	return nil
 }
 
-// TrieEx Trie扩展，可以相应enableSecure
+// TrieEx Tri  enableSecure
 type TrieEx struct {
 	*Trie
 }
@@ -552,7 +552,7 @@ func (t *TrieEx) Commit2Db(node common.Hash, report bool) error {
 	return t.Trie.Commit2Db(node, report)
 }
 
-// SetKVPair set key value 的对外接口
+// SetKVPair set key value 
 func SetKVPair(db dbm.DB, storeSet *types.StoreSet, sync bool) ([]byte, error) {
 	var err error
 	var trie *TrieEx
@@ -597,7 +597,7 @@ func GetKVPair(db dbm.DB, storeGet *types.StoreGet) ([][]byte, error) {
 	return values, nil
 }
 
-// GetKVPairProof 获取指定k:v pair的proof证明
+// GetKVPairProof k:v pai proo 
 func GetKVPairProof(db dbm.DB, roothash []byte, key []byte) []byte {
 	if enableSecure {
 		key = common.Sha3(key)
@@ -609,7 +609,7 @@ func GetKVPairProof(db dbm.DB, roothash []byte, key []byte) []byte {
 	return value
 }
 
-// DelKVPair 剔除key对应的节点在本次tree中，返回新的roothash和key对应的value
+// DelKVPair ke tre  roothas ke value
 func DelKVPair(db dbm.DB, storeDel *types.StoreGet) ([]byte, [][]byte, error) {
 	var err error
 	var trie *TrieEx
@@ -639,7 +639,7 @@ func DelKVPair(db dbm.DB, storeDel *types.StoreGet) ([]byte, [][]byte, error) {
 	return hashByte, values, nil
 }
 
-// VerifyKVPairProof 验证KVPair 的证明
+// VerifyKVPairProof KVPair 
 func VerifyKVPairProof(db dbm.DB, roothash []byte, keyvalue types.KeyValue, proof []byte) bool {
 	if enableSecure {
 		keyvalue.Key = common.Sha3(keyvalue.Key)
@@ -648,7 +648,7 @@ func VerifyKVPairProof(db dbm.DB, roothash []byte, keyvalue types.KeyValue, proo
 	return nil == err
 }
 
-// IterateRangeByStateHash 迭代实现功能； statehash：当前状态hash, start：开始查找的key, end: 结束的key, ascending：升序，降序, fn 迭代回调函数
+// IterateRangeByStateHash ； statehash hash, start key, end: key, ascending  , fn 
 func IterateRangeByStateHash(db dbm.DB, statehash, start, end []byte, ascending bool, fn func([]byte, []byte) bool) {
 	var err error
 	var trie *TrieEx

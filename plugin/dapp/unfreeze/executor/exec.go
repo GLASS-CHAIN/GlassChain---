@@ -12,7 +12,7 @@ import (
 	pty "github.com/33cn/plugin/plugin/dapp/unfreeze/types"
 )
 
-// Exec_Create 执行创建冻结合约
+// Exec_Create 
 func (u *Unfreeze) Exec_Create(payload *pty.UnfreezeCreate, tx *types.Transaction, index int) (*types.Receipt, error) {
 	if payload.AssetExec == "" || payload.AssetSymbol == "" || payload.TotalCount <= 0 || payload.Means == "" {
 		return nil, types.ErrInvalidParam
@@ -47,7 +47,7 @@ func (u *Unfreeze) Exec_Create(payload *pty.UnfreezeCreate, tx *types.Transactio
 	return mergeReceipt(receipt, receipt1)
 }
 
-// Exec_Withdraw 执行冻结合约中提币
+// Exec_Withdraw 
 func (u *Unfreeze) Exec_Withdraw(payload *pty.UnfreezeWithdraw, tx *types.Transaction, index int) (*types.Receipt, error) {
 	cfg := u.GetAPI().GetConfig()
 	if cfg.IsDappFork(u.GetHeight(), pty.UnfreezeX, pty.ForkUnfreezeIDX) {
@@ -87,7 +87,7 @@ func (u *Unfreeze) Exec_Withdraw(payload *pty.UnfreezeWithdraw, tx *types.Transa
 	return mergeReceipt(receipt, receipt1)
 }
 
-// Exec_Terminate 执行终止冻结合约
+// Exec_Terminate 
 func (u *Unfreeze) Exec_Terminate(payload *pty.UnfreezeTerminate, tx *types.Transaction, index int) (*types.Receipt, error) {
 	cfg := u.GetAPI().GetConfig()
 	if cfg.IsDappFork(u.GetHeight(), pty.UnfreezeX, pty.ForkUnfreezeIDX) {
@@ -151,7 +151,7 @@ func (u *Unfreeze) newEntity(payload *pty.UnfreezeCreate, tx *types.Transaction)
 	return unfreeze, nil
 }
 
-// 创建解冻状态
+// 
 func (u *Unfreeze) create(unfreeze *pty.Unfreeze) (*types.Receipt, error) {
 	k := []byte(unfreeze.UnfreezeID)
 	v := types.Encode(unfreeze)
@@ -180,7 +180,7 @@ func getUnfreezeLog(prev, cur *pty.Unfreeze, ty int32) *types.ReceiptLog {
 	return log
 }
 
-// 提取解冻币
+// 
 func (u *Unfreeze) withdraw(unfreeze *pty.Unfreeze) (int64, *types.Receipt, error) {
 	cfg := u.GetAPI().GetConfig()
 	means, err := newMeans(cfg, unfreeze.Means, u.GetHeight())
@@ -207,7 +207,7 @@ func (u *Unfreeze) withdraw(unfreeze *pty.Unfreeze) (int64, *types.Receipt, erro
 		Logs: []*types.ReceiptLog{receiptLog}}, nil
 }
 
-// 中止定期解冻
+// 
 func (u *Unfreeze) terminator(unfreeze *pty.Unfreeze) (int64, *types.Receipt, error) {
 	if unfreeze.Remaining <= 0 {
 		return 0, nil, pty.ErrUnfreezeEmptied

@@ -10,22 +10,22 @@ package types;
 option go_package = "../types";
 
 message Unfreeze {
-    //解冻交易ID（唯一识别码）
+    / ID ）
     string unfreezeID = 1;
-    //开始时间
+    / 
     int64 startTime = 2;
-    //币种
+    / 
     string assetExec   = 3;
     string assetSymbol = 4;
-    //冻结总额
+    / 
     int64 totalCount = 5;
-    //发币人地址
+    / 
     string initiator = 6;
-    //收币人地址
+    / 
     string beneficiary = 7;
-    //解冻剩余币数
+    / 
     int64 remaining = 8;
-    //解冻方式（百分比；固额）
+    /   ）
     string means = 9;
     oneof  meansOpt {
         FixAmount      fixAmount      = 10;
@@ -34,13 +34,13 @@ message Unfreeze {
     bool terminated = 12;
 }
 
-// 按时间固定额度解冻
+// 
 message FixAmount {
     int64 period = 1;
     int64 amount = 2;
 }
 
-// 固定时间间隔按余量百分比解冻
+// 
 message LeftProportion {
     int64 period        = 1;
     int64 tenThousandth = 2;
@@ -104,22 +104,22 @@ message ReqUnfreezes {
 }
 
 message ReplyUnfreeze {
-    //解冻交易ID（唯一识别码）
+    / ID ）
     string unfreezeID = 1;
-    //开始时间
+    / 
     int64 startTime = 2;
-    //币种
+    / 
     string assetExec   = 3;
     string assetSymbol = 4;
-    //冻结总额
+    / 
     int64 totalCount = 5;
-    //发币人地址
+    / 
     string initiator = 6;
-    //收币人地址
+    / 
     string beneficiary = 7;
-    //解冻剩余币数
+    / 
     int64 remaining = 8;
-    //解冻方式（百分比；固额）
+    /   ）
     string means = 9;
     oneof  meansOpt {
         FixAmount      fixAmount      = 10;
@@ -132,7 +132,7 @@ message ReplyUnfreezes {
     repeated ReplyUnfreeze unfreeze = 1;
 }
 
-// TODO 类型应该大写还是小写
+// TODO 
 service unfreeze {
     rpc GetUnfreezeWithdraw(ReqString) returns (ReplyQueryUnfreezeWithdraw) {}
     rpc QueryUnfreeze(ReqString) returns (Unfreeze) {}

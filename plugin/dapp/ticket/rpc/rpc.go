@@ -26,7 +26,7 @@ func bindMiner(cfg *types.Chain33Config, param *ty.ReqBindMiner) (*ty.ReplyBindM
 	return &ty.ReplyBindMiner{TxHex: hex}, nil
 }
 
-// CreateBindMiner 创建绑定挖矿
+// CreateBindMiner 
 func (g *channelClient) CreateBindMiner(ctx context.Context, in *ty.ReqBindMiner) (*ty.ReplyBindMiner, error) {
 	if in.BindAddr != "" {
 		err := address.CheckAddress(in.BindAddr)

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package kvmvccmavl kvmvcc+mavl接口
+// Package kvmvccmavl kvmvcc+mav 
 package kvmvccmavl
 
 import (
@@ -34,13 +34,13 @@ var (
 	delMavlDataState   int32
 	wg                 sync.WaitGroup
 	quit               bool
-	isPrunedMavl       bool                       // 是否是被裁剪过的 mavl
-	delPrunedMavlState int32 = delPrunedMavlStart // Upgrade时候删除pruned mavl的状态
-	isCompactDelMavl   bool                       // 是否对删除mavl后压缩
+	isPrunedMavl       bool                       //  mavl
+	delPrunedMavlState int32 = delPrunedMavlStart // Upgrad pruned mav 
+	isCompactDelMavl   bool                       // mav 
 )
 
 const (
-	cacheSize         = 2048 //可以缓存2048个roothash, height对
+	cacheSize         = 2048 / 204 roothash, heigh 
 	batchDataSize     = 1024 * 1024 * 1
 	delMavlStateStart = 1
 	delMavlStateEnd   = 0
@@ -90,11 +90,11 @@ type subMavlConfig struct {
 	EnableMVCC       bool  `json:"enableMVCC"`
 	EnableMavlPrune  bool  `json:"enableMavlPrune"`
 	PruneHeight      int32 `json:"pruneHeight"`
-	// 是否使能内存树
+	// 
 	EnableMemTree bool `json:"enableMemTree"`
-	// 是否使能内存树中叶子节点
+	// 
 	EnableMemVal bool `json:"enableMemVal"`
-	// 缓存close ticket数目
+	// close ticke 
 	TkCloseCacheLen int32 `json:"tkCloseCacheLen"`
 }
 
@@ -106,13 +106,13 @@ type subConfig struct {
 	PruneMavlHeight  int32 `json:"pruneMavlHeight"`
 	EnableMVCCPrune  bool  `json:"enableMVCCPrune"`
 	PruneMVCCHeight  int32 `json:"pruneMVCCHeight"`
-	// 是否使能内存树
+	// 
 	EnableMemTree bool `json:"enableMemTree"`
-	// 是否使能内存树中叶子节点
+	// 
 	EnableMemVal bool `json:"enableMemVal"`
-	// 缓存close ticket数目
+	// close ticke 
 	TkCloseCacheLen int32 `json:"tkCloseCacheLen"`
-	// 使能空块处理
+	// 
 	EnableEmptyBlockHandle bool `json:"enableEmptyBlockHandle"`
 }
 
@@ -146,19 +146,19 @@ func New(cfg *types.Store, sub []byte, chain33cfg *types.Chain33Config) queue.Mo
 
 	kvms = &KVmMavlStore{bs, NewKVMVCC(&subKVMVCCcfg, bs.GetDB()),
 		NewMavl(&subMavlcfg, bs.GetDB()), cache}
-	// 查询是否已经删除mavl
+	// mavl
 	_, err = bs.GetDB().Get(genDelMavlKey(mvccPrefix))
 	if err == nil {
 		isDelMavlData = true
 	}
-	// 查询是否已经压缩过
+	// 
 	_, err = bs.GetDB().Get(genCompactDelMavlKey(mvccPrefix))
 	if err == nil {
 		isCompactDelMavl = true
 	}
-	// 查询是否是删除裁剪版mavl
+	// mavl
 	isPrunedMavl = isPrunedMavlDB(bs.GetDB())
-	// 读取fork高度
+	// for 
 	if chain33cfg != nil {
 		kvmvccMavlFork = chain33cfg.GetDappFork("store-kvmvccmavl", "ForkKvmvccmavl")
 	}
@@ -200,10 +200,10 @@ func (kvmMavls *KVmMavlStore) Set(datas *types.StoreSet, sync bool) ([]byte, err
 		}
 		return hash, err
 	}
-	// 仅仅做kvmvcc
+	// kvmvcc
 	var hash []byte
 	var err error
-	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle && datas.Height == kvmvccMavlFork { // kvmvccMavlFork高度下前一个区块需要映射
+	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle && datas.Height == kvmvccMavlFork { // kvmvccMavlFor 
 		hash, err = kvmMavls.KVMVCCStore.SetRdm(datas, nil, sync)
 	} else {
 		hash, err = kvmMavls.KVMVCCStore.Set(datas, nil, sync)
@@ -218,7 +218,7 @@ func (kvmMavls *KVmMavlStore) Set(datas *types.StoreSet, sync bool) ([]byte, err
 // Get kvs with statehash from KVmMavlStore
 func (kvmMavls *KVmMavlStore) Get(datas *types.StoreGet) [][]byte {
 	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle {
-		// 空块情况下只有第一个hash的为非空块
+		// has 
 		mvccHash, err := kvmMavls.KVMVCCStore.GetFirstHashRdm(datas.StateHash)
 		if err == nil {
 			nData := &types.StoreGet{
@@ -227,7 +227,7 @@ func (kvmMavls *KVmMavlStore) Get(datas *types.StoreGet) [][]byte {
 			}
 			return kvmMavls.KVMVCCStore.Get(nData)
 		}
-		// ForkKvmvccmavl之后无mavl，即不需映射，直接获取
+		// ForkKvmvccmav mavl  
 		return kvmMavls.KVMVCCStore.Get(datas)
 	}
 	return kvmMavls.KVMVCCStore.Get(datas)
@@ -257,10 +257,10 @@ func (kvmMavls *KVmMavlStore) MemSet(datas *types.StoreSet, sync bool) ([]byte, 
 		}
 		return hash, err
 	}
-	// 仅仅做kvmvcc
+	// kvmvcc
 	var hash []byte
 	var err error
-	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle && datas.Height == kvmvccMavlFork { // kvmvccMavlFork高度下前一个区块需要映射
+	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle && datas.Height == kvmvccMavlFork { // kvmvccMavlFor 
 		hash, err = kvmMavls.KVMVCCStore.MemSetRdm(datas, nil, sync)
 	} else {
 		hash, err = kvmMavls.KVMVCCStore.MemSet(datas, nil, sync)
@@ -268,18 +268,18 @@ func (kvmMavls *KVmMavlStore) MemSet(datas *types.StoreSet, sync bool) ([]byte, 
 	if err == nil {
 		kvmMavls.cache.Add(string(hash), datas.Height)
 	}
-	// 删除Mavl数据
+	// Mav 
 	if datas.Height > delMavlDataHeight && !isDelMavlData && !isDelMavling() {
-		// 达到该高度时候，将全局的memTree以及tkCloseCache释放掉
+		//  memTre tkCloseCach 
 		mavl.ReleaseGlobalMem()
 		wg.Add(1)
 		go DelMavl(kvmMavls.GetDB())
 	}
-	// 对删除的mavl进行压缩
+	// mav 
 	if isDelMavlData && !isCompactDelMavl && !isDelMavling() {
 		go CompactDelMavl(kvmMavls.GetDB())
 		if datas.Height > delMavlDataHeight && datas.Height < delMavlDataHeight*2 {
-			// 出于对区块链安全的角度阻塞执行区块压缩之发生在固定高度区间内
+			// 
 			count := 0
 			for {
 				if quit || isCompactDelMavl {
@@ -324,7 +324,7 @@ func (kvmMavls *KVmMavlStore) Rollback(req *types.ReqHash) ([]byte, error) {
 				Hash:    req.Hash,
 				Upgrade: req.Upgrade,
 			}
-			// 获取kvmvcc的实际statehash
+			// kvmvc statehash
 			if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle {
 				if value, ok := kvmMavls.cache.Get(string(realReq.Hash)); ok {
 					mvccHash, err := kvmMavls.KVMVCCStore.GetHashRdm(realReq.Hash, value.(int64))
@@ -400,10 +400,10 @@ func (kvmMavls *KVmMavlStore) MemSetUpgrade(datas *types.StoreSet, sync bool) ([
 		}
 		return hash, err
 	}
-	// 仅仅做kvmvcc
+	// kvmvcc
 	var hash []byte
 	var err error
-	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle && datas.Height == kvmvccMavlFork { // kvmvccMavlFork高度下前一个区块需要映射
+	if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle && datas.Height == kvmvccMavlFork { // kvmvccMavlFor 
 		hash, err = kvmMavls.KVMVCCStore.MemSetRdm(datas, nil, sync)
 	} else {
 		hash, err = kvmMavls.KVMVCCStore.MemSet(datas, nil, sync)
@@ -441,7 +441,7 @@ func (kvmMavls *KVmMavlStore) Del(req *types.StoreDel) ([]byte, error) {
 			StateHash: req.StateHash,
 			Height:    req.Height,
 		}
-		// 获取kvmvcc的实际statehash
+		// kvmvc statehash
 		if kvmMavls.kvmvccCfg.EnableEmptyBlockHandle {
 			mvccHash, err := kvmMavls.KVMVCCStore.GetHashRdm(req.StateHash, req.Height)
 			if err == nil {
@@ -457,7 +457,7 @@ func (kvmMavls *KVmMavlStore) Del(req *types.StoreDel) ([]byte, error) {
 		}
 		return req.StateHash, err
 	}
-	// 仅仅做kvmvcc
+	// kvmvcc
 	hash, err := kvmMavls.KVMVCCStore.Del(req)
 	if err == nil {
 		kvmMavls.cache.Remove(string(req.StateHash))
@@ -465,8 +465,8 @@ func (kvmMavls *KVmMavlStore) Del(req *types.StoreDel) ([]byte, error) {
 	return hash, err
 }
 
-// DelMavl 数据库中mavl数据清除
-// 达到kvmvccMavlFork + 100000 后触发清除
+// DelMavl mav 
+// kvmvccMavlFork + 100000 
 func DelMavl(db dbm.DB) {
 	defer wg.Done()
 	setDelMavl(delMavlStateStart)
@@ -494,7 +494,7 @@ func delMavlData(db dbm.DB, prefix string) (bool, string) {
 		if quit {
 			return false, ""
 		}
-		if !bytes.HasPrefix(it.Key(), mvccPrefix) { // 将非mvcc的mavl数据全部删除
+		if !bytes.HasPrefix(it.Key(), mvccPrefix) { // mvc mav 
 			batch.Delete(it.Key())
 			if batch.ValueSize() > batchDataSize {
 				dbm.MustWrite(batch)
@@ -533,7 +533,7 @@ func setDelMavl(state int32) {
 func CompactDelMavl(db dbm.DB) {
 	setDelMavl(delMavlStateStart)
 	defer setDelMavl(delMavlStateEnd)
-	// 开始进行压缩处理
+	// 
 	kmlog.Info("start compact db")
 	err := db.CompactRange(nil, nil)
 	if err == nil {
@@ -595,7 +595,7 @@ func deletePrunedMavlData(db dbm.DB, prefix string) (status int) {
 	const onceCount = 200
 	if it.Rewind() && it.Valid() {
 		batch := db.NewBatch(false)
-		for it.Next(); it.Valid(); it.Next() { //第一个不做删除
+		for it.Next(); it.Valid(); it.Next() { / 
 			if quit {
 				return 0 // quit
 			}

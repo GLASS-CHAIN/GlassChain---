@@ -147,7 +147,7 @@ func (mpts *Store) CommitUpgrade(req *types.ReqHash) ([]byte, error) {
 	return nil, nil
 }
 
-// Rollback 回退将缓存的mpt树删除掉
+// Rollback mp 
 func (mpts *Store) Rollback(req *types.ReqHash) ([]byte, error) {
 	_, ok := mpts.trees[string(req.Hash)]
 	if !ok {
@@ -164,7 +164,7 @@ func (mpts *Store) Del(req *types.StoreDel) ([]byte, error) {
 	return nil, nil
 }
 
-// IterateRangeByStateHash 迭代实现功能； statehash：当前状态hash, start：开始查找的key, end: 结束的key, ascending：升序，降序, fn 迭代回调函数
+// IterateRangeByStateHash ； statehash hash, start key, end: key, ascending  , fn 
 func (mpts *Store) IterateRangeByStateHash(statehash []byte, start []byte, end []byte, ascending bool, fn func(key, value []byte) bool) {
 	mpt.IterateRangeByStateHash(mpts.GetDB(), statehash, start, end, ascending, fn)
 }

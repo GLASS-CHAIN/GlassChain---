@@ -21,7 +21,7 @@ func init() {
 	drivers.Reg("score", New)
 }
 
-//New 创建score cache 结构的 mempool
+//New score cache  mempool
 func New(cfg *types.Mempool, sub []byte) queue.Module {
 	c := drivers.NewMempool(cfg)
 	var subcfg subConfig

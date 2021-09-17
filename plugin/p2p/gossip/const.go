@@ -54,7 +54,7 @@ const (
 	Service int32 = nodeBloom + nodeNetwork + nodeGetUTXO
 )
 
-// leveldb 中p2p privkey,addrkey
+// leveldb p2p privkey,addrkey
 const (
 	addrkeyTag = "addrs"
 	privKeyTag = "privkey"
@@ -71,10 +71,10 @@ const (
 // P2pCacheTxSize p2pcache size of transaction
 const (
 	PeerAddrCacheNum = 1000
-	//接收的交易哈希过滤缓存设为mempool最大接收交易量
+	/ mempoo 
 	TxRecvFilterCacheNum = 10240
 	BlockFilterCacheNum  = 50
-	//发送过滤主要用于发送时冗余检测, 发送完即可以被删除, 维护较小缓存数
+	/ , , 
 	TxSendFilterCacheNum  = 500
 	BlockCacheNum         = 10
 	MaxBlockCacheByteSize = 100 * 1024 * 1024

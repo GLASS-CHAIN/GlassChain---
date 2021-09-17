@@ -8,7 +8,7 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-// Queue 分数队列模式(分数=定量a*常量b*手续费/交易字节数-常量c*时间,按分数排队,高的优先,定量a和常量b,c可配置)
+// Queue   a b   c     b, )
 type Queue struct {
 	*skiplist.Queue
 	subConfig subConfig
@@ -32,7 +32,7 @@ func (item *scoreScore) Hash() []byte {
 
 func (item *scoreScore) Compare(cmp skiplist.Scorer) int {
 	it := cmp.(*scoreScore)
-	//时间越小，权重越高
+	/  
 	if item.EnterTime < it.EnterTime {
 		return skiplist.Big
 	}
@@ -46,7 +46,7 @@ func (item *scoreScore) ByteSize() int64 {
 	return int64(proto.Size(item.Value))
 }
 
-// NewQueue 创建队列
+// NewQueue 
 func NewQueue(subcfg subConfig) *Queue {
 	return &Queue{
 		Queue:     skiplist.NewQueue(subcfg.PoolCacheSize),
@@ -60,7 +60,7 @@ func NewQueue(subcfg subConfig) *Queue {
 //		cache.subConfig.PricePower - cache.subConfig.TimeParam*item.EnterTime, Value: item}, nil
 //}
 
-//GetItem 获取数据通过 key
+//GetItem  key
 func (cache *Queue) GetItem(hash string) (*mempool.Item, error) {
 	item, err := cache.Queue.GetItem(hash)
 	if err != nil {
@@ -69,19 +69,19 @@ func (cache *Queue) GetItem(hash string) (*mempool.Item, error) {
 	return item.(*scoreScore).Item, nil
 }
 
-// Push 把给定tx添加到Queue；如果tx已经存在Queue中或Mempool已满则返回对应error
+// Push t Queue t Queu Mempoo error
 func (cache *Queue) Push(item *mempool.Item) error {
 	return cache.Queue.Push(&scoreScore{Item: item, subConfig: cache.subConfig})
 }
 
-// Walk 遍历整个队列
+// Walk 
 func (cache *Queue) Walk(count int, cb func(value *mempool.Item) bool) {
 	cache.Queue.Walk(count, func(item skiplist.Scorer) bool {
 		return cb(item.(*scoreScore).Item)
 	})
 }
 
-// GetProperFee 获取合适的手续费
+// GetProperFee 
 func (cache *Queue) GetProperFee() int64 {
 	var sumScore int64
 	var properFeerate int64
@@ -97,7 +97,7 @@ func (cache *Queue) GetProperFee() int64 {
 		i++
 		return true
 	})
-	//这里的int64(100)是一般交易的大小
+	/ int64(100 
 	properFeerate = (sumScore/int64(i) + cache.subConfig.TimeParam*time.Now().Unix()) * int64(100) /
 		(cache.subConfig.PriceConstant * cache.subConfig.PricePower)
 	return properFeerate

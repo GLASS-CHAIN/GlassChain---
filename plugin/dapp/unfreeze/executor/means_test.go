@@ -179,7 +179,7 @@ func TestFixV1(t *testing.T) {
 	}
 }
 
-// 查询可提币量， 和当前时间有关， 如对应节点时间不对， 查询结果也不对
+// ， ， ， 
 func TestLeftV2(t *testing.T) {
 	cases := []struct {
 		start         int64

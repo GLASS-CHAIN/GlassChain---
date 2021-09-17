@@ -140,7 +140,7 @@ func TestJrpc_GetTicketCount(t *testing.T) {
 
 func TestRPC_CallTestNode(t *testing.T) {
 	cfg := types.NewChain33Config(types.GetDefaultCfgstring())
-	// 测试环境下，默认配置的共识为solo，需要修改
+	//  solo 
 	cfg.GetModuleConfig().Consensus.Name = "ticket"
 
 	api := new(mocks.QueueProtocolAPI)
@@ -178,7 +178,7 @@ func TestRPC_CallTestNode(t *testing.T) {
 	assert.Equal(t, ret.GetIsOk(), isSnyc)
 
 	flag := &ty.MinerFlag{Flag: 1}
-	//调用ticket.AutoMiner
+	/ ticket.AutoMiner
 	api.On("ExecWalletFunc", "ticket", "WalletAutoMiner", flag).Return(&types.Reply{IsOk: true}, nil)
 	var res rpctypes.Reply
 	err = jsonClient.Call("ticket.SetAutoMining", flag, &res)
@@ -317,10 +317,10 @@ Enable=0
 ForkParacrossWithdrawFromParachain=0
 ForkParacrossCommitTx=0
 ForkLoopCheckCommitTxDone=0
-#仅平行链适用，自共识分阶段开启，缺省是0，若对应主链高度7200000之前开启过自共识，需要重新配置此分叉，并为之前自共识设置selfConsensEnablePreContract配置项
+   0 720000   selfConsensEnablePreContrac 
 ForkParaSelfConsStages=0
 ForkParaAssetTransferRbk=0
-#仅平行链适用，开启挖矿交易的高度，已有代码版本可能未在0高度开启挖矿，需要设置这个高度，新版本默认从0开启挖矿，通过交易配置分阶段奖励
+        
 ForkParaFullMinerHeight=0
 
 [fork.sub.evm]
@@ -411,7 +411,7 @@ ForkCollateralizeTableUpdate=0
 [fork.sub.qbftNode]
 Enable=0
 
-#对已有的平行链如果不是从0开始同步数据，需要设置这个kvmvccmavl的对应平行链高度的fork，如果从0开始同步，statehash会跟以前mavl的不同
+   kvmvccmav fork  ，statehas mav 
 [fork.sub.store-kvmvccmavl]
 ForkKvmvccmavl=1
 

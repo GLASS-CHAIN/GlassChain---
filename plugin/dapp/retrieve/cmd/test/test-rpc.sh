@@ -9,9 +9,9 @@ MAIN_HTTP=""
 source ../dapp-test-common.sh
 
 # TODO
-# 1. 合约测试的先后顺序 是否可以在指定合约之后测试
-# 2. 或将资产类的合约先测试
-# 3. 或资产类的合约提供创建的函数 创建一个某某名字的token
+# 1.  
+# 2. 
+# 3.  token
 function updateConfig() {
     unsignedTx=$(curl -s --data-binary '{"jsonrpc":"2.0","id":2,"method":"Chain33.CreateTransaction","params":[{"execer": "manage","actionName":"Modify","payload":{ "key": "token-blacklist","value": "BTY","op": "add","addr": ""}}]}' -H 'content-type:text/plain;' ${MAIN_HTTP} | jq -r ".result")
     if [ "${unsignedTx}" == "" ]; then

@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	// HashLength hash长度32字节
+	// HashLength has 3 
 	HashLength = 32
 )
 

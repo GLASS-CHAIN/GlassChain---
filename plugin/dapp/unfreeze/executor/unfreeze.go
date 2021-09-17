@@ -15,7 +15,7 @@ var uflog = log.New("module", "execs.unfreeze")
 
 var driverName = uf.UnfreezeX
 
-// Init 重命名执行器名称
+// Init 
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	drivers.Register(cfg, GetName(), newUnfreeze, cfg.GetDappFork(driverName, "Enable"))
 	InitExecType()
@@ -27,7 +27,7 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&Unfreeze{}))
 }
 
-// Unfreeze 执行器结构体
+// Unfreeze 
 type Unfreeze struct {
 	drivers.DriverBase
 }
@@ -39,12 +39,12 @@ func newUnfreeze() drivers.Driver {
 	return t
 }
 
-// GetName 获得执行器名字
+// GetName 
 func GetName() string {
 	return newUnfreeze().GetName()
 }
 
-// GetDriverName 获得驱动名字
+// GetDriverName 
 func (u *Unfreeze) GetDriverName() string {
 	return driverName
 }

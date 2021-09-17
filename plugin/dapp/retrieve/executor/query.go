@@ -23,20 +23,20 @@ func (r *Retrieve) Query_GetRetrieveInfo(in *rt.ReqRetrieveInfo) (types.Message,
 		}
 	}
 
-	// 在指定asset 的情况下， 显示具体asset 的找回状态
+	// asset ， asset 
 	if info.Status == retrievePerform && in.GetAssetExec() != "" {
-		// retrievePerform状态下，不存在有两种情况
-		// 1 还没找回, 2 fork 之前是没有coins 找回记录的
-		// 2 fork 之前是 没有coins 找回记录的, 相当于都找回了
+		// retrievePerfor  
+		// 1 , 2 fork coins 
+		// 2 fork  coins , 
 		// localdb not support PrefixCount
-		// 所以在填写具体资产的情况下， 认为是要找对应的资产
+		// ， 
 
 		asset, _ := getRetrieveAsset(r.GetLocalDB(), in.BackupAddress, in.DefaultAddress, in.AssetExec, in.AssetSymbol)
 		if asset != nil {
 			return asset, nil
 		}
 
-		// 1 还没找回
+		// 1 
 		info.Status = retrievePrepare
 		info.RemainTime = zeroRemainTime
 		return info, nil

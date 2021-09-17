@@ -24,11 +24,11 @@ import (
 	"github.com/33cn/plugin/plugin/p2p/gossip/nat"
 )
 
-// 启动Node节点
-// 1.启动监听GRPC Server
-// 2.检测自身地址
-// 3.启动端口映射
-// 4.启动监控模块，进行节点管理
+// Nod 
+// 1 GRPC Server
+// 2 
+// 3 
+// 4  
 
 // Start Node server
 func (n *Node) Start() {
@@ -44,7 +44,7 @@ func (n *Node) Start() {
 
 // Close node server
 func (n *Node) Close() {
-	//避免重复
+	/ 
 	if !atomic.CompareAndSwapInt32(&n.closed, 0, 1) {
 		return
 	}
@@ -124,7 +124,7 @@ func NewNode(mgr *p2p.Manager, mcfg *subConfig) (*Node, error) {
 	}
 	node.nodeInfo = NewNodeInfo(cfg.GetModuleConfig().P2P, mcfg)
 	node.chainCfg = cfg
-	if mcfg.EnableTls { //读取证书，初始化tls客户端
+	if mcfg.EnableTls { /  tl 
 		var err error
 		node.nodeInfo.cliCreds, err = credentials.NewClientTLSFromFile(cfg.GetModuleConfig().RPC.CertFile, "")
 		if err != nil {
@@ -162,7 +162,7 @@ func (n *Node) natOk() bool {
 }
 
 func (n *Node) doNat() {
-	//测试是否在外网，当连接节点数大于0的时候，测试13802端口
+	/    1380 
 	for {
 		if n.Size() > 0 {
 			break
@@ -181,14 +181,14 @@ func (n *Node) doNat() {
 		return
 	}
 	log.Info("node inside")
-	//在内网，并且非种子节点，则进行端口映射
+	/   
 	if !n.nodeInfo.OutSide() && !n.nodeInfo.cfg.IsSeed && n.nodeInfo.cfg.ServerStart {
 
 		go n.natMapPort()
 		if !n.natOk() {
 			log.Info("doNat", "Nat", "Faild")
 		} else {
-			//检测映射成功后，能否对外提供服务
+			/  
 			for {
 				if n.Size() > 0 {
 					break
@@ -197,7 +197,7 @@ func (n *Node) doNat() {
 			}
 
 			p2pcli := NewNormalP2PCli()
-			//测试映射后的端口能否连通或者外网+本地端口
+			/  
 			if p2pcli.CheckPeerNatOk(n.nodeInfo.GetExternalAddr().String(), n.nodeInfo) ||
 				p2pcli.CheckPeerNatOk(fmt.Sprintf("%v:%v", n.nodeInfo.GetExternalAddr().IP.String(), n.listenPort), n.nodeInfo) {
 				n.nodeInfo.SetServiceTy(Service)
@@ -362,7 +362,7 @@ func (n *Node) removeAll() {
 
 func (n *Node) monitor() {
 	go n.monitorErrPeer()
-	//固定模式, 只连接seeds配置节点
+	/ , seed 
 	go n.monitorCfgSeeds()
 	if !n.nodeInfo.cfg.FixedSeed {
 		go n.getAddrFromOnline()
@@ -402,7 +402,7 @@ func (n *Node) detectNodeAddr() {
 			//goto SET_ADDR
 		}
 
-		//如果nat,getSelfExternalAddr 无法发现自己的外网地址，则把localaddr 赋值给外网地址
+		/ nat,getSelfExternalAddr  localaddr 
 		if externalIP == "" {
 			externalIP = laddr
 		}
@@ -426,7 +426,7 @@ func (n *Node) detectNodeAddr() {
 
 		externaladdr = fmt.Sprintf("%v:%v", externalIP, externalPort)
 		log.Debug("DetectionNodeAddr", "AddBlackList", externaladdr)
-		n.nodeInfo.blacklist.Add(externaladdr, 0) //把自己的外网地址永久加入到黑名单，以防连接self
+		n.nodeInfo.blacklist.Add(externaladdr, 0) /  self
 		if exaddr, err := NewNetAddressString(externaladdr); err == nil {
 			n.nodeInfo.SetExternalAddr(exaddr)
 			n.nodeInfo.addrBook.AddOurAddress(exaddr)
@@ -454,9 +454,9 @@ func (n *Node) natMapPort() {
 		time.Sleep(time.Second)
 	}
 	var err error
-	if len(P2pComm.AddrRouteble([]string{n.nodeInfo.GetExternalAddr().String()}, n.nodeInfo.channelVersion, n.nodeInfo.cliCreds)) != 0 { //判断能否连通要映射的端口
+	if len(P2pComm.AddrRouteble([]string{n.nodeInfo.GetExternalAddr().String()}, n.nodeInfo.channelVersion, n.nodeInfo.cliCreds)) != 0 { / 
 		log.Info("natMapPort", "addr", "routeble")
-		p2pcli := NewNormalP2PCli() //检查要映射的IP地址是否已经被映射成功
+		p2pcli := NewNormalP2PCli() / I 
 		ok := p2pcli.CheckSelf(n.nodeInfo.GetExternalAddr().String(), n.nodeInfo)
 		if !ok {
 			log.Info("natMapPort", "port is used", n.nodeInfo.GetExternalAddr().String())
@@ -467,10 +467,10 @@ func (n *Node) natMapPort() {
 	_, nodename := n.nodeInfo.addrBook.GetPrivPubKey()
 	log.Info("natMapPort", "netport", n.nodeInfo.GetExternalAddr().Port)
 	for i := 0; i < tryMapPortTimes; i++ {
-		//映射事件持续约48小时
+		/ 4 
 		err = nat.Any().AddMapping("TCP", int(n.nodeInfo.GetExternalAddr().Port), n.listenPort, nodename[:8], time.Hour*48)
 		if err != nil {
-			if i > tryMapPortTimes/2 { //如果连续失败次数超过最大限制次数的二分之一则切换为随机端口映射
+			if i > tryMapPortTimes/2 { / 
 				log.Warn("TryNatMapPortFailed", "tryTimes", i, "err", err.Error())
 				n.flushNodePort(uint16(n.listenPort), uint16(rand.Intn(64512)+1023))
 
@@ -483,7 +483,7 @@ func (n *Node) natMapPort() {
 	}
 
 	if err != nil {
-		//映射失败
+		/ 
 		log.Warn("NatMapPort", "Nat", "Faild")
 		n.flushNodePort(uint16(n.listenPort), uint16(n.listenPort))
 		n.nodeInfo.natResultChain <- false
@@ -491,7 +491,7 @@ func (n *Node) natMapPort() {
 	}
 
 	err = n.nodeInfo.addrBook.bookDb.Set([]byte(externalPortTag),
-		P2pComm.Int32ToBytes(int32(n.nodeInfo.GetExternalAddr().Port))) //把映射成功的端口信息刷入db
+		P2pComm.Int32ToBytes(int32(n.nodeInfo.GetExternalAddr().Port))) / db
 	if err != nil {
 		log.Error("NatMapPort", "dbErr", err)
 		return
@@ -536,13 +536,13 @@ func (n *Node) verifyP2PChannel(channel int32) bool {
 	return channel == n.nodeInfo.cfg.Channel
 }
 
-//检测该节点地址是否作为客户端连入, 此时需要维护双向连接, 增加了节点间的连接冗余
+/ , , 
 func (n *Node) isInBoundPeer(peerName string) (bool, *innerpeer) {
 
 	if n.server == nil || n.server.p2pserver == nil {
 		return false, nil
 	}
-	//查询连入的客户端
+	/ 
 	info := n.server.p2pserver.getInBoundPeerInfo(peerName)
 	return info != nil, info
 }

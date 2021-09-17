@@ -98,7 +98,7 @@ func (c Comm) dialPeerWithAddress(addr *NetAddress, persistent bool, node *Node)
 	if persistent {
 		peer.MakePersistent()
 	}
-	//Set peer Name 在启动peer对象之前，获取节点对象的peerName,即pid
+	//Set peer Name pee  peerName pid
 	resp, err := peer.mconn.gcli.Version2(context.Background(), &types.P2PVersion{
 		Nonce:    time.Now().Unix(),
 		Version:  node.nodeInfo.channelVersion,
@@ -114,7 +114,7 @@ func (c Comm) dialPeerWithAddress(addr *NetAddress, persistent bool, node *Node)
 	_, pub := node.nodeInfo.addrBook.GetPrivPubKey()
 
 	if node.Has(resp.UserAgent) || resp.UserAgent == pub {
-		//发现同一个peerID 下有两个不同的ip，则把新连接的ip加入黑名单5分钟
+		/ peerID ip i  
 		prepeer := node.GetRegisterPeer(resp.UserAgent)
 		log.Info("dialPeerWithAddress", "duplicate connect:", prepeer.Addr(), addr.String(), resp.GetUserAgent())
 		peer.Close()
@@ -145,7 +145,7 @@ func (c Comm) dialPeer(addr *NetAddress, node *Node) (*Peer, error) {
 		log.Error("dialPeer", "peerAddr", addr.str, "err", err)
 		return nil, err
 	}
-	//获取远程节点的信息 peer
+	/  peer
 	log.Debug("dialPeer", "peer", peer)
 	return peer, nil
 }

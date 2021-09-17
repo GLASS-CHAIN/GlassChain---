@@ -42,7 +42,7 @@ func NewType(cfg *types.Chain33Config) *RetrieveType {
 	return c
 }
 
-// GetRealToAddr 避免老的，没有To字段的交易分叉
+// GetRealToAddr  T 
 func (r RetrieveType) GetRealToAddr(tx *types.Transaction) string {
 	if len(tx.To) == 0 {
 		return address.ExecAddress(string(tx.Execer))

@@ -46,7 +46,6 @@ func NewType(cfg *types.Chain33Config) *LotteryType {
 	return c
 }
 
-// GetName 获取执行器名称
 func (lottery *LotteryType) GetName() string {
 	return LotteryX
 }

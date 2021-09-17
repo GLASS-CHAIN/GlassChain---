@@ -148,14 +148,14 @@ func (na *NetAddress) DialTimeout(version int32, creds credentials.TransportCred
 	ch <- P2pComm.GrpcConfig()
 
 	var cliparm keepalive.ClientParameters
-	cliparm.Time = 15 * time.Second    //keepalive ping 周期
-	cliparm.Timeout = 10 * time.Second //ping后的获取ack消息超时时间
-	cliparm.PermitWithoutStream = true //启动keepalive 进行检查
+	cliparm.Time = 15 * time.Second    //keepalive ping 
+	cliparm.Timeout = 10 * time.Second //pin ac 
+	cliparm.PermitWithoutStream = true / keepalive 
 	keepaliveOp := grpc.WithKeepaliveParams(cliparm)
 	timeoutOp := grpc.WithTimeout(time.Second * 3)
 	log.Debug("NetAddress", "Dial", na.String())
 	maxMsgSize := pb.MaxBlockSize + 1024*1024
-	//配置SSL连接
+	/ SS 
 	var secOpt grpc.DialOption
 	if creds == nil {
 		secOpt = grpc.WithInsecure()
@@ -172,9 +172,9 @@ func (na *NetAddress) DialTimeout(version int32, creds credentials.TransportCred
 		log.Debug("grpc DialCon", "did not connect", err, "addr", na.String())
 		return nil, err
 	}
-	//p2p version check 通过版本协议，获取通信session
+	//p2p version check  session
 
-	//判断是否对方是否支持压缩
+	/ 
 	cli := pb.NewP2PgserviceClient(conn)
 	_, err = cli.GetHeaders(context.Background(), &pb.P2PGetHeaders{StartHeight: 0, EndHeight: 0, Version: version}, grpc.FailFast(true))
 	if err != nil && !isCompressSupport(err) {

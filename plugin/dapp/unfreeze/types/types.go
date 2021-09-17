@@ -44,7 +44,7 @@ func getRealExecName(cfg *types.Chain33Config, paraName string) string {
 	return cfg.ExecName(paraName + UnfreezeX)
 }
 
-// NewType 生成新的基础类型
+// NewType 
 func NewType(cfg *types.Chain33Config) *UnfreezeType {
 	c := &UnfreezeType{}
 	c.SetChild(c)
@@ -52,17 +52,17 @@ func NewType(cfg *types.Chain33Config) *UnfreezeType {
 	return c
 }
 
-// UnfreezeType 基础类型结构体
+// UnfreezeType 
 type UnfreezeType struct {
 	types.ExecTypeBase
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (u *UnfreezeType) GetName() string {
 	return UnfreezeX
 }
 
-// GetLogMap 获得日志类型列表
+// GetLogMap 
 func (u *UnfreezeType) GetLogMap() map[int64]*types.LogInfo {
 	return map[int64]*types.LogInfo{
 		TyLogCreateUnfreeze:    {Ty: reflect.TypeOf(ReceiptUnfreeze{}), Name: "LogCreateUnfreeze"},
@@ -71,12 +71,12 @@ func (u *UnfreezeType) GetLogMap() map[int64]*types.LogInfo {
 	}
 }
 
-// GetPayload 获得空的Unfreeze 的 Payload
+// GetPayload Unfreeze  Payload
 func (u *UnfreezeType) GetPayload() types.Message {
 	return &UnfreezeAction{}
 }
 
-// GetTypeMap 获得Action 方法列表
+// GetTypeMap Action 
 func (u *UnfreezeType) GetTypeMap() map[string]int32 {
 	return map[string]int32{
 		"Create":    UnfreezeActionCreate,
@@ -85,7 +85,7 @@ func (u *UnfreezeType) GetTypeMap() map[string]int32 {
 	}
 }
 
-// CreateTx 创建交易
+// CreateTx 
 func (u *UnfreezeType) CreateTx(action string, message json.RawMessage) (*types.Transaction, error) {
 	tlog.Error("UnfreezeType.CreateTx", "action", action, "message", string(message))
 	if action == Action_CreateUnfreeze {
@@ -117,13 +117,13 @@ func (u *UnfreezeType) CreateTx(action string, message json.RawMessage) (*types.
 	return nil, types.ErrNotSupport
 }
 
-// RPC_UnfreezeCreateTx 创建冻结合约交易入口
+// RPC_UnfreezeCreateTx 
 func (u *UnfreezeType) RPC_UnfreezeCreateTx(parm *UnfreezeCreate) (*types.Transaction, error) {
 	cfg := u.GetConfig()
 	return CreateUnfreezeCreateTx(cfg, cfg.GetParaName(), parm)
 }
 
-// CreateUnfreezeCreateTx 创建冻结合约交易
+// CreateUnfreezeCreateTx 
 func CreateUnfreezeCreateTx(cfg *types.Chain33Config, title string, parm *UnfreezeCreate) (*types.Transaction, error) {
 	tlog.Error("CreateUnfreezeCreateTx", "parm", parm)
 	if parm == nil {
@@ -153,13 +153,13 @@ func CreateUnfreezeCreateTx(cfg *types.Chain33Config, title string, parm *Unfree
 	return tx, nil
 }
 
-// RPC_UnfreezeWithdrawTx 创建提币交易入口
+// RPC_UnfreezeWithdrawTx 
 func (u *UnfreezeType) RPC_UnfreezeWithdrawTx(parm *UnfreezeWithdraw) (*types.Transaction, error) {
 	cfg := u.GetConfig()
 	return CreateUnfreezeWithdrawTx(cfg, cfg.GetParaName(), parm)
 }
 
-// CreateUnfreezeWithdrawTx 创建提币交易
+// CreateUnfreezeWithdrawTx 
 func CreateUnfreezeWithdrawTx(cfg *types.Chain33Config, title string, parm *UnfreezeWithdraw) (*types.Transaction, error) {
 	if parm == nil {
 		tlog.Error("RPC_UnfreezeWithdrawTx", "parm", parm)
@@ -183,13 +183,13 @@ func CreateUnfreezeWithdrawTx(cfg *types.Chain33Config, title string, parm *Unfr
 	return tx, nil
 }
 
-// RPC_UnfreezeTerminateTx 创建终止冻结合约入口
+// RPC_UnfreezeTerminateTx 
 func (u *UnfreezeType) RPC_UnfreezeTerminateTx(parm *UnfreezeTerminate) (*types.Transaction, error) {
 	cfg := u.GetConfig()
 	return CreateUnfreezeTerminateTx(cfg, cfg.GetParaName(), parm)
 }
 
-// CreateUnfreezeTerminateTx 创建终止冻结合约
+// CreateUnfreezeTerminateTx 
 func CreateUnfreezeTerminateTx(cfg *types.Chain33Config, title string, parm *UnfreezeTerminate) (*types.Transaction, error) {
 	if parm == nil {
 		tlog.Error("RPC_UnfreezeTerminateTx", "parm", parm)

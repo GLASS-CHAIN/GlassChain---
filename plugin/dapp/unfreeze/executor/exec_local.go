@@ -58,17 +58,17 @@ func (u *Unfreeze) execLocal(receiptData *types.ReceiptData, index int) (*types.
 	return dbSet, nil
 }
 
-// ExecLocal_Create 本地执行创建冻结合约
+// ExecLocal_Create 
 func (u *Unfreeze) ExecLocal_Create(payload *uf.UnfreezeCreate, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return u.execLocal(receiptData, index)
 }
 
-// ExecLocal_Withdraw 本地执行提币
+// ExecLocal_Withdraw 
 func (u *Unfreeze) ExecLocal_Withdraw(payload *uf.UnfreezeWithdraw, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return u.execLocal(receiptData, index)
 }
 
-// ExecLocal_Terminate 本地执行终止冻结合约
+// ExecLocal_Terminate 
 func (u *Unfreeze) ExecLocal_Terminate(payload *uf.UnfreezeTerminate, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return u.execLocal(receiptData, index)
 }

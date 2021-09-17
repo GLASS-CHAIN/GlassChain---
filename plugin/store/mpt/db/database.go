@@ -206,7 +206,7 @@ func (db *Database) InsertBlob(hash common.Hash, blob []byte) {
 	db.insert(hash, blob, rawNode(blob))
 }
 
-//把flags 去掉，减少内存占用
+/ flags  
 func simplifyNode(n node) node {
 	switch n := n.(type) {
 	case *shortNode:
@@ -460,7 +460,7 @@ func (db *Database) Commit(node common.Hash, report bool) error {
 	start := time.Now()
 	//batch := db.diskdb.NewBatch()
 
-	// TODO 暂时在内部设置为同步状态
+	// TODO 
 	batch := db.db.NewBatch(true)
 
 	// Move all of the accumulated preimages into a write batch

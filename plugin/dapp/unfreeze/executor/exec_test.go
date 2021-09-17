@@ -84,7 +84,7 @@ func TestUnfreeze(t *testing.T) {
 	ty := pty.UnfreezeType{}
 	ty.SetConfig(chain33TestCfg)
 
-	// 创建
+	// 
 	opt := &pty.FixAmount{Period: 10, Amount: 2}
 	p1 := &pty.UnfreezeCreate{
 		StartTime:   10,
@@ -134,7 +134,7 @@ func TestUnfreeze(t *testing.T) {
 	assert.Equal(t, 1, len(resp.Unfreeze))
 	assert.Equal(t, string(unfreezeID(createTx.Hash())), resp.Unfreeze[0].UnfreezeID)
 
-	// 提币
+	// 
 	p2 := &pty.UnfreezeWithdraw{
 		UnfreezeID: hex.EncodeToString(createTx.Hash()),
 	}
@@ -167,7 +167,7 @@ func TestUnfreeze(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, set)
 
-	// 不是受益人提币
+	// 
 	{
 		p2 := &pty.UnfreezeWithdraw{
 			UnfreezeID: hex.EncodeToString(createTx.Hash()),
@@ -187,7 +187,7 @@ func TestUnfreeze(t *testing.T) {
 		assert.Nil(t, receipt)
 	}
 
-	// 不是创建者终止
+	// 
 	{
 		p3 := &pty.UnfreezeTerminate{
 			UnfreezeID: hex.EncodeToString(createTx.Hash()),
@@ -205,7 +205,7 @@ func TestUnfreeze(t *testing.T) {
 		assert.Nil(t, receipt)
 	}
 
-	// 终止
+	// 
 	p3 := &pty.UnfreezeTerminate{
 		UnfreezeID: hex.EncodeToString(createTx.Hash()),
 	}
@@ -231,7 +231,7 @@ func TestUnfreeze(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, set)
 
-	// 终止后不能继续提币
+	// 
 	{
 		p2 := &pty.UnfreezeWithdraw{
 			UnfreezeID: hex.EncodeToString(createTx.Hash()),

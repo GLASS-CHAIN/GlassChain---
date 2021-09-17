@@ -22,7 +22,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// Node mpt涉及到的node类型由四种基本类型
+// Node mp nod 
 type Node struct {
 	// Types that are valid to be assigned to Value:
 	//	*Node_Full
@@ -250,7 +250,7 @@ func _Node_OneofSizer(msg proto.Message) (n int) {
 	return n
 }
 
-// FullNode 分支节点
+// FullNode 
 type FullNode struct {
 	Nodes                []*Node  `protobuf:"bytes,1,rep,name=nodes,proto3" json:"nodes,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -289,7 +289,7 @@ func (m *FullNode) GetNodes() []*Node {
 	return nil
 }
 
-// ShortNode  扩展/叶子节点
+// ShortNode   
 type ShortNode struct {
 	Key                  []byte   `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
 	Val                  *Node    `protobuf:"bytes,2,opt,name=val,proto3" json:"val,omitempty"`
@@ -336,7 +336,7 @@ func (m *ShortNode) GetVal() *Node {
 	return nil
 }
 
-// HashNode hash节点
+// HashNode has 
 type HashNode struct {
 	Hash                 []byte   `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -375,7 +375,7 @@ func (m *HashNode) GetHash() []byte {
 	return nil
 }
 
-// ValueNode value节点
+// ValueNode valu 
 type ValueNode struct {
 	Value                []byte   `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`

@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	// 同store/mavl中定义保持一致，即裁剪的加前缀
+	// store/mav  
 	hashNodePrefix        = "_mh_"
 	leafNodePrefix        = "_mb_"
 	leafKeyCountPrefix    = "..mk.."
@@ -42,7 +42,7 @@ func NewMavl(sub *subMavlConfig, db dbm.DB) *MavlStore {
 		subcfg.TkCloseCacheLen = sub.TkCloseCacheLen
 	}
 
-	// 开启裁剪需要同时开启前缀树
+	// 
 	if subcfg.EnableMavlPrune {
 		subcfg.EnableMavlPrefix = subcfg.EnableMavlPrune
 	}
@@ -80,7 +80,7 @@ func (mavls *MavlStore) Get(datas *types.StoreGet) [][]byte {
 		tree = data.(*mavl.Tree)
 	} else {
 		tree = mavl.NewTree(mavls.db, true, mavls.treeCfg)
-		//get接口也应该传入高度
+		//ge 
 		//tree.SetBlockHeight(datas.Height)
 		err = tree.Load(datas.StateHash)
 		kmlog.Debug("store mavl get tree", "err", err, "StateHash", common.ToHex(datas.StateHash))
@@ -121,7 +121,7 @@ func (mavls *MavlStore) MemSet(datas *types.StoreSet, sync bool) ([]byte, error)
 	return hash, nil
 }
 
-// MemSetUpgrade 计算hash之后不在内存中存储树
+// MemSetUpgrade has 
 func (mavls *MavlStore) MemSetUpgrade(datas *types.StoreSet, sync bool) ([]byte, error) {
 	beg := types.Now()
 	defer func() {
@@ -169,7 +169,7 @@ func (mavls *MavlStore) Commit(req *types.ReqHash) ([]byte, error) {
 	return req.Hash, nil
 }
 
-// Rollback 回退将缓存的mavl树删除掉
+// Rollback mav 
 func (mavls *MavlStore) Rollback(req *types.ReqHash) ([]byte, error) {
 	beg := types.Now()
 	defer func() {
@@ -184,7 +184,7 @@ func (mavls *MavlStore) Rollback(req *types.ReqHash) ([]byte, error) {
 	return req.Hash, nil
 }
 
-// IterateRangeByStateHash 迭代实现功能； statehash：当前状态hash, start：开始查找的key, end: 结束的key, ascending：升序，降序, fn 迭代回调函数
+// IterateRangeByStateHash ； statehash hash, start key, end: key, ascending  , fn 
 func (mavls *MavlStore) IterateRangeByStateHash(statehash []byte, start []byte, end []byte, ascending bool, fn func(key, value []byte) bool) {
 	mavl.IterateRangeByStateHash(mavls.db, statehash, start, end, ascending, mavls.treeCfg, fn)
 }

@@ -247,7 +247,7 @@ func (a *AddrBook) loadDb() bool {
 	iteror := a.bookDb.Iterator(nil, nil, false)
 	for iteror.Next() {
 		if string(iteror.Key()) == addrkeyTag {
-			//读取存入的其他节点地址信息
+			/ 
 			aJSON := &addrBookJSON{}
 			dec := json.NewDecoder(strings.NewReader(string(iteror.Value())))
 			err := dec.Decode(aJSON)
@@ -306,7 +306,7 @@ func (a *AddrBook) AddAddress(addr *NetAddress, ka *KnownAddress) {
 		// Ignore our own listener address.
 		return
 	}
-	//已经添加的不重复添加
+	/ 
 	if _, ok := a.addrPeer[addr.String()]; ok {
 		return
 	}

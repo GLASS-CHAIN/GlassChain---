@@ -28,7 +28,7 @@ func TestKvdbNewClose(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil)
 
@@ -40,7 +40,7 @@ func TestKvddbSetGet(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(t, store)
@@ -87,7 +87,7 @@ func TestKvdbMemSet(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(t, store)
@@ -119,7 +119,7 @@ func TestKvmvccdbMemSetUpgrade(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(t, store)
@@ -131,7 +131,7 @@ func TestKvmvccdbCommitUpgrade(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(t, store)
@@ -142,7 +142,7 @@ func TestKvdbRollback(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(t, store)
@@ -172,12 +172,12 @@ func GetRandomString(length int) string {
 	return common.GetRandPrintString(20, length)
 }
 
-//目前正常情况下get 都是一个一个获取的
+/ get 
 func BenchmarkGet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(b, store)
@@ -218,7 +218,7 @@ func BenchmarkSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(b, store)
@@ -252,7 +252,7 @@ func BenchmarkMemSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(b, store)
@@ -285,7 +285,7 @@ func BenchmarkCommit(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*Store)
 	assert.NotNil(b, store)

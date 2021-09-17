@@ -40,22 +40,22 @@ type Unfreeze struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//解冻交易ID（唯一识别码）
+	/ ID ）
 	UnfreezeID string `protobuf:"bytes,1,opt,name=unfreezeID,proto3" json:"unfreezeID,omitempty"`
-	//开始时间
+	/ 
 	StartTime int64 `protobuf:"varint,2,opt,name=startTime,proto3" json:"startTime,omitempty"`
-	//币种
+	/ 
 	AssetExec   string `protobuf:"bytes,3,opt,name=assetExec,proto3" json:"assetExec,omitempty"`
 	AssetSymbol string `protobuf:"bytes,4,opt,name=assetSymbol,proto3" json:"assetSymbol,omitempty"`
-	//冻结总额
+	/ 
 	TotalCount int64 `protobuf:"varint,5,opt,name=totalCount,proto3" json:"totalCount,omitempty"`
-	//发币人地址
+	/ 
 	Initiator string `protobuf:"bytes,6,opt,name=initiator,proto3" json:"initiator,omitempty"`
-	//收币人地址
+	/ 
 	Beneficiary string `protobuf:"bytes,7,opt,name=beneficiary,proto3" json:"beneficiary,omitempty"`
-	//解冻剩余币数
+	/ 
 	Remaining int64 `protobuf:"varint,8,opt,name=remaining,proto3" json:"remaining,omitempty"`
-	//解冻方式（百分比；固额）
+	/   ）
 	Means string `protobuf:"bytes,9,opt,name=means,proto3" json:"means,omitempty"`
 	// Types that are assignable to MeansOpt:
 	//	*Unfreeze_FixAmount
@@ -203,7 +203,7 @@ func (*Unfreeze_FixAmount) isUnfreeze_MeansOpt() {}
 
 func (*Unfreeze_LeftProportion) isUnfreeze_MeansOpt() {}
 
-// 按时间固定额度解冻
+// 
 type FixAmount struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -259,7 +259,7 @@ func (x *FixAmount) GetAmount() int64 {
 	return 0
 }
 
-// 固定时间间隔按余量百分比解冻
+// 
 type LeftProportion struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -892,22 +892,22 @@ type ReplyUnfreeze struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//解冻交易ID（唯一识别码）
+	/ ID ）
 	UnfreezeID string `protobuf:"bytes,1,opt,name=unfreezeID,proto3" json:"unfreezeID,omitempty"`
-	//开始时间
+	/ 
 	StartTime int64 `protobuf:"varint,2,opt,name=startTime,proto3" json:"startTime,omitempty"`
-	//币种
+	/ 
 	AssetExec   string `protobuf:"bytes,3,opt,name=assetExec,proto3" json:"assetExec,omitempty"`
 	AssetSymbol string `protobuf:"bytes,4,opt,name=assetSymbol,proto3" json:"assetSymbol,omitempty"`
-	//冻结总额
+	/ 
 	TotalCount int64 `protobuf:"varint,5,opt,name=totalCount,proto3" json:"totalCount,omitempty"`
-	//发币人地址
+	/ 
 	Initiator string `protobuf:"bytes,6,opt,name=initiator,proto3" json:"initiator,omitempty"`
-	//收币人地址
+	/ 
 	Beneficiary string `protobuf:"bytes,7,opt,name=beneficiary,proto3" json:"beneficiary,omitempty"`
-	//解冻剩余币数
+	/ 
 	Remaining int64 `protobuf:"varint,8,opt,name=remaining,proto3" json:"remaining,omitempty"`
-	//解冻方式（百分比；固额）
+	/   ）
 	Means string `protobuf:"bytes,9,opt,name=means,proto3" json:"means,omitempty"`
 	// Types that are assignable to MeansOpt:
 	//	*ReplyUnfreeze_FixAmount

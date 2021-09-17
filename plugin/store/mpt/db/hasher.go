@@ -173,7 +173,7 @@ func (h *hasher) store(n node, db *Database, force bool) (node, error) {
 		return n, nil
 	}
 	// Generate the RLP encoding of the node
-	//这个不用非常精确，只要保持确定性就可以了
+	/  
 	size := n.size()
 	if size < 64 && !force {
 		return n, nil // Nodes smaller than 64 bytes are stored inside their parent

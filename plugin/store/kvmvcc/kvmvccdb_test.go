@@ -34,7 +34,7 @@ func TestKvmvccdbNewClose(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -46,7 +46,7 @@ func TestKvmvccdbSetGet(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -92,7 +92,7 @@ func TestKvmvccdbMemSet(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -131,7 +131,7 @@ func TestKvmvccdbMemSetUpgrade(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -143,7 +143,7 @@ func TestKvmvccdbCommitUpgrade(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -154,7 +154,7 @@ func TestKvmvccdbRollback(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -187,7 +187,7 @@ func TestKvmvccdbRollbackBatch(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -246,7 +246,7 @@ func TestKvmvccdbRollbackBatch(t *testing.T) {
 	kv2 = append(kv2, &types.KeyValue{Key: []byte("mk1"), Value: []byte("v11")})
 	kv2 = append(kv2, &types.KeyValue{Key: []byte("mk2"), Value: []byte("v22")})
 
-	//触发批量回滚
+	/ 
 	datas2 := &types.StoreSet{StateHash: hash, KV: kv2, Height: 1}
 	hash, err = store.MemSet(datas2, true)
 	assert.Nil(t, err)
@@ -283,7 +283,7 @@ func TestIterateRangeByStateHash(t *testing.T) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(t, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	storeCfg, sub := newStoreCfgIter(dir)
 	store := New(storeCfg, sub, nil).(*KVMVCCStore)
 	assert.NotNil(t, store)
@@ -428,7 +428,7 @@ func BenchmarkGet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
@@ -472,7 +472,7 @@ func BenchmarkStoreGetKvs4N(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
@@ -517,7 +517,7 @@ func BenchmarkStoreGetKvsForNN(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
@@ -577,7 +577,7 @@ func BenchmarkStoreGetKvsFor10000(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
@@ -642,7 +642,7 @@ func BenchmarkGetIter(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 
 	storeCfg, sub := newStoreCfgIter(dir)
 	store := New(storeCfg, sub, nil).(*KVMVCCStore)
@@ -686,7 +686,7 @@ func BenchmarkSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -718,12 +718,12 @@ func BenchmarkSet(b *testing.B) {
 	fmt.Println("mpt BenchmarkSet cost time is", end.Sub(start), "num is", b.N)
 }
 
-//上一个用例，一次性插入多对kv；本用例每次插入30对kv，分多次插入，测试性能表现。
+/  kv 3 kv  。
 func BenchmarkStoreSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -758,7 +758,7 @@ func BenchmarkSetIter(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	storeCfg, sub := newStoreCfgIter(dir)
 	store := New(storeCfg, sub, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -790,12 +790,12 @@ func BenchmarkSetIter(b *testing.B) {
 	fmt.Println("kvmvcc BenchmarkSet cost time is", end.Sub(start), "num is", b.N)
 }
 
-//一次设定多对kv，测试一次的时间/多少对kv，来算平均一对kv的耗时。
+/ kv  kv k 。
 func BenchmarkMemSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -824,12 +824,12 @@ func BenchmarkMemSet(b *testing.B) {
 	fmt.Println("kvmvcc BenchmarkMemSet cost time is", end.Sub(start), "num is", b.N)
 }
 
-//一次设定30对kv，设定N次，计算每次设定30对kv的耗时。
+/ 3 kv   3 k 。
 func BenchmarkStoreMemSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -867,7 +867,7 @@ func BenchmarkCommit(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -908,7 +908,7 @@ func BenchmarkStoreCommit(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	var storeCfg = newStoreCfg(dir)
 	store := New(storeCfg, nil, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -947,12 +947,12 @@ func BenchmarkStoreCommit(b *testing.B) {
 	b.StopTimer()
 }
 
-//一次设定多对kv，测试一次的时间/多少对kv，来算平均一对kv的耗时。
+/ kv  kv k 。
 func BenchmarkIterMemSet(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	storeCfg, sub := newStoreCfgIter(dir)
 	store := New(storeCfg, sub, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)
@@ -985,7 +985,7 @@ func BenchmarkIterCommit(b *testing.B) {
 	dir, err := ioutil.TempDir("", "example")
 	assert.Nil(b, err)
 	defer os.RemoveAll(dir) // clean up
-	os.RemoveAll(dir)       //删除已存在目录
+	os.RemoveAll(dir)       / 
 	storeCfg, sub := newStoreCfgIter(dir)
 	store := New(storeCfg, sub, nil).(*KVMVCCStore)
 	assert.NotNil(b, store)

@@ -4,15 +4,6 @@
 
 package executor
 
-/*
-multiSig合约主要实现如下功能：
-//创建多重签名账户
-//多重签名账户owner属性的修改：owner的add/del/replace等
-//多重签名账户属性的修改：weight权重以及每日限额的修改
-//多重签名账户交易的确认和撤销
-//合约中外部账户转账到多重签名账户，Addr --->multiSigAddr
-//合约中多重签名账户转账到外部账户，multiSigAddr--->Addr
-*/
 
 import (
 	"bytes"
@@ -32,7 +23,6 @@ var multisiglog = log.New("module", "execs.multisig")
 
 var driverName = "multisig"
 
-// Init multisig模块初始化
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	drivers.Register(cfg, GetName(), newMultiSig, cfg.GetDappFork(driverName, "Enable"))
 	InitExecType()
@@ -44,12 +34,10 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&MultiSig{}))
 }
 
-// GetName multisig合约name
 func GetName() string {
 	return newMultiSig().GetName()
 }
 
-// MultiSig multisig合约实例
 type MultiSig struct {
 	drivers.DriverBase
 }
@@ -61,12 +49,10 @@ func newMultiSig() drivers.Driver {
 	return m
 }
 
-// GetDriverName 获取multisig合约name
 func (m *MultiSig) GetDriverName() string {
 	return driverName
 }
 
-// CheckTx 检测multisig合约交易,转账交易amount不能为负数
 func (m *MultiSig) CheckTx(tx *types.Transaction, index int) error {
 	ety := m.GetExecutorType()
 
@@ -85,20 +71,16 @@ func (m *MultiSig) CheckTx(tx *types.Transaction, index int) error {
 	}
 	payload := v.Interface()
 
-	//MultiSigAccCreate 交易校验
 	if ato, ok := payload.(*mty.MultiSigAccCreate); ok {
 		return checkAccountCreateTx(ato)
 	}
 
-	//MultiSigOwnerOperate 交易的检测
 	if ato, ok := payload.(*mty.MultiSigOwnerOperate); ok {
 		return checkOwnerOperateTx(ato)
 	}
-	//MultiSigAccOperate 交易的检测
 	if ato, ok := payload.(*mty.MultiSigAccOperate); ok {
 		return checkAccountOperateTx(ato)
 	}
-	//MultiSigConfirmTx  交易的检测
 	if ato, ok := payload.(*mty.MultiSigConfirmTx); ok {
 		if err := address.CheckMultiSignAddress(ato.GetMultiSigAccAddr()); err != nil {
 			return types.ErrInvalidAddress
@@ -106,7 +88,6 @@ func (m *MultiSig) CheckTx(tx *types.Transaction, index int) error {
 		return nil
 	}
 
-	//MultiSigExecTransferTo 交易的检测
 	if ato, ok := payload.(*mty.MultiSigExecTransferTo); ok {
 		if err := address.CheckMultiSignAddress(ato.GetTo()); err != nil {
 			return types.ErrInvalidAddress
@@ -114,7 +95,6 @@ func (m *MultiSig) CheckTx(tx *types.Transaction, index int) error {
 		//assets check
 		return mty.IsAssetsInvalid(ato.GetExecname(), ato.GetSymbol())
 	}
-	//MultiSigExecTransferFrom 交易的检测
 	if ato, ok := payload.(*mty.MultiSigExecTransferFrom); ok {
 		//from addr check
 		if err := address.CheckMultiSignAddress(ato.GetFrom()); err != nil {
@@ -141,7 +121,6 @@ func checkAccountCreateTx(ato *mty.MultiSigAccCreate) error {
 	owners := ato.GetOwners()
 	ownersMap := make(map[string]bool)
 
-	//创建时requiredweight权重的值不能大于所有owner权重之和
 	for _, owner := range owners {
 		if owner != nil {
 			if err := address.CheckAddress(owner.OwnerAddr); err != nil {
@@ -163,11 +142,9 @@ func checkAccountCreateTx(ato *mty.MultiSigAccCreate) error {
 		return mty.ErrRequiredweight
 	}
 
-	//创建时最少设置两个owner
 	if ownerCount < mty.MinOwnersInit {
 		return mty.ErrOwnerLessThanTwo
 	}
-	//owner总数不能大于最大值
 	if ownerCount > mty.MaxOwnersCount {
 		return mty.ErrMaxOwnerCount
 	}
@@ -218,7 +195,7 @@ func checkOwnerOperateTx(ato *mty.MultiSigOwnerOperate) error {
 	return nil
 }
 func checkAccountOperateTx(ato *mty.MultiSigAccOperate) error {
-	//MultiSigAccOperate MultiSigAccAddr 地址检测
+
 	MultiSigAccAddr := ato.GetMultiSigAccAddr()
 	if err := address.CheckMultiSignAddress(MultiSigAccAddr); err != nil {
 		return types.ErrInvalidAddress
@@ -238,7 +215,6 @@ func checkAccountOperateTx(ato *mty.MultiSigAccOperate) error {
 	return nil
 }
 
-//多重签名交易的Receipt处理
 func (m *MultiSig) execLocalMultiSigReceipt(receiptData *types.ReceiptData, tx *types.Transaction, addOrRollback bool) ([]*types.KeyValue, error) {
 	var set []*types.KeyValue
 	for _, log := range receiptData.Logs {
@@ -314,7 +290,7 @@ func (m *MultiSig) execLocalMultiSigReceipt(receiptData *types.ReceiptData, tx *
 				}
 				set = append(set, kv...)
 			}
-		case mty.TyLogMultiSigConfirmTx, //只是交易确认和撤销，交易没有被执行
+		case mty.TyLogMultiSigConfirmTx, 
 			mty.TyLogMultiSigConfirmTxRevoke:
 			{
 				var receipt mty.ReceiptConfirmTx
@@ -328,7 +304,7 @@ func (m *MultiSig) execLocalMultiSigReceipt(receiptData *types.ReceiptData, tx *
 				}
 				set = append(set, kv...)
 			}
-		case mty.TyLogDailyLimitUpdate: //账户的DailyLimit更新
+		case mty.TyLogDailyLimitUpdate: 
 			{
 				var receipt mty.ReceiptAccDailyLimitUpdate
 				err := types.Decode(log.Log, &receipt)
@@ -341,21 +317,21 @@ func (m *MultiSig) execLocalMultiSigReceipt(receiptData *types.ReceiptData, tx *
 				}
 				set = append(set, kv...)
 			}
-		case mty.TyLogMultiSigTx: //交易被某个owner确认并执行
+		case mty.TyLogMultiSigTx: 
 			{
 				var receipt mty.ReceiptMultiSigTx
 				err := types.Decode(log.Log, &receipt)
 				if err != nil {
 					return nil, err
 				}
-				//交易被执行需要更新tx的执行状态以及确认owner列表
+
 				kv1, err := m.saveMultiSigTx(receipt, addOrRollback)
 				if err != nil {
 					return nil, err
 				}
 				set = append(set, kv1...)
 
-				//转账交易被执行需要更新账户的amount统计计数,需要区分submit和confirm
+
 				if receipt.CurExecuted {
 					kv2, err := m.saveMultiSigTransfer(tx, receipt.SubmitOrConfirm, addOrRollback)
 					if err != nil {
@@ -384,10 +360,10 @@ func (m *MultiSig) execLocalMultiSigReceipt(receiptData *types.ReceiptData, tx *
 	return set, nil
 }
 
-//转账交易to地址收币数量更新，Submit直接解析tx。Confirm需要解析对应txid的交易信息
+
 func (m *MultiSig) saveMultiSigTransfer(tx *types.Transaction, SubmitOrConfirm, addOrRollback bool) ([]*types.KeyValue, error) {
 	var set []*types.KeyValue
-	//执行成功解析GetPayload信息
+
 	var action mty.MultiSigAction
 	err := types.Decode(tx.GetPayload(), &action)
 	if err != nil {
@@ -420,7 +396,6 @@ func (m *MultiSig) saveMultiSigTransfer(tx *types.Transaction, SubmitOrConfirm, 
 		if action.Ty != mty.ActionMultiSigConfirmTx || action.GetMultiSigConfirmTx() == nil {
 			return nil, mty.ErrActionTyNoMatch
 		}
-		//通过需要确认的txid从数据库中获取对应的multiSigTx信息，然后根据txhash查询具体的交易详情
 		multiSigConfirmTx := action.GetMultiSigConfirmTx()
 		multiSigTx, err := getMultiSigTx(m.GetLocalDB(), multiSigConfirmTx.MultiSigAccAddr, multiSigConfirmTx.TxId)
 		if err != nil {
@@ -454,19 +429,19 @@ func (m *MultiSig) saveMultiSigTransfer(tx *types.Transaction, SubmitOrConfirm, 
 	return set, nil
 }
 
-//localdb Receipt相关消息的处理。需要区分执行的是add/Rollback
+//localdb Receip  add/Rollback
 func (m *MultiSig) saveMultiSigAccCreate(multiSig *mty.MultiSig, addOrRollback bool) ([]*types.KeyValue, error) {
 	multiSigAddr := multiSig.MultiSigAddr
-	//增加一个多重签名账户信息到localdb中，第一次增加时账户在local中应该是不存在的。如果存在就返回错误
+	/ locald  loca  
 	oldmultiSig, err := getMultiSigAccount(m.GetLocalDB(), multiSigAddr)
 	if err != nil {
 		return nil, err
 	}
-	if addOrRollback && oldmultiSig != nil { //创建的账户已经存在报错
+	if addOrRollback && oldmultiSig != nil { / 
 		multisiglog.Error("saveMultiSigAccCreate:getMultiSigAccount", "addOrRollback", addOrRollback, "MultiSigAddr", multiSigAddr, "oldmultiSig", oldmultiSig, "err", err)
 		return nil, mty.ErrAccountHasExist
 
-	} else if !addOrRollback && oldmultiSig == nil { //回滚函数的账户不经存在报错
+	} else if !addOrRollback && oldmultiSig == nil { / 
 		multisiglog.Error("saveMultiSigAccCreate:getMultiSigAccount", "addOrRollback", addOrRollback, "MultiSigAddr", multiSigAddr, "err", err)
 		return nil, types.ErrAccountNotExist
 	}
@@ -477,13 +452,13 @@ func (m *MultiSig) saveMultiSigAccCreate(multiSig *mty.MultiSig, addOrRollback b
 	}
 	accountkv := getMultiSigAccountKV(multiSig, addOrRollback)
 
-	//获取当前的账户计数
+	/ 
 	lastcount, err := getMultiSigAccCount(m.GetLocalDB())
 	if err != nil {
 		return nil, err
 	}
 
-	//更新账户列表,回滚时索引需要--
+	/  --
 	if !addOrRollback && lastcount > 0 {
 		lastcount = lastcount - 1
 	}
@@ -492,12 +467,12 @@ func (m *MultiSig) saveMultiSigAccCreate(multiSig *mty.MultiSig, addOrRollback b
 		return nil, err
 	}
 
-	//账户计数增加一个
+	/ 
 	accCountkv, err := updateMultiSigAccCount(m.GetLocalDB(), addOrRollback)
 	if err != nil {
 		return nil, err
 	}
-	//更新create地址创建的多重签名账户
+	/ creat 
 	accAddrkv := setMultiSigAddress(m.GetLocalDB(), multiSig.CreateAddr, multiSig.MultiSigAddr, addOrRollback)
 
 	var kvs []*types.KeyValue
@@ -509,9 +484,9 @@ func (m *MultiSig) saveMultiSigAccCreate(multiSig *mty.MultiSig, addOrRollback b
 	return kvs, nil
 }
 
-//账户owner的add/del操作.需要区分add/del 交易
+/ owne add/de  add/del 
 func (m *MultiSig) saveMultiSigOwnerAddOrDel(ownerOp mty.ReceiptOwnerAddOrDel, addOrRollback bool) ([]*types.KeyValue, error) {
-	//增加一个多重签名账户信息到localdb中，第一次增加时账户在local中应该是不存在的。如果存在就返回错误
+	/ locald  loca  
 	multiSig, err := getMultiSigAccount(m.GetLocalDB(), ownerOp.MultiSigAddr)
 	multisiglog.Error("saveMultiSigOwnerAddOrDel", "ownerOp", ownerOp)
 
@@ -522,7 +497,7 @@ func (m *MultiSig) saveMultiSigOwnerAddOrDel(ownerOp mty.ReceiptOwnerAddOrDel, a
 	multisiglog.Error("saveMultiSigOwnerAddOrDel", "wonerlen ", len(multiSig.Owners))
 
 	_, index, _, _, find := getOwnerInfoByAddr(multiSig, ownerOp.Owner.OwnerAddr)
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		if ownerOp.AddOrDel && !find { //add owner
 			multiSig.Owners = append(multiSig.Owners, ownerOp.Owner)
 		} else if !ownerOp.AddOrDel && find { //dell owner
@@ -533,11 +508,11 @@ func (m *MultiSig) saveMultiSigOwnerAddOrDel(ownerOp mty.ReceiptOwnerAddOrDel, a
 			return nil, mty.ErrOwnerNoMatch
 		}
 
-	} else { //回滚删除交易
-		if ownerOp.AddOrDel && find { //回滚add owner
+	} else { / 
+		if ownerOp.AddOrDel && find { / add owner
 			multiSig.Owners = delOwner(multiSig.Owners, index)
 			//multiSig.Owners = append(multiSig.Owners[0:index], multiSig.Owners[index+1:]...)
-		} else if !ownerOp.AddOrDel && !find { //回滚 del owner
+		} else if !ownerOp.AddOrDel && !find { /  del owner
 			multiSig.Owners = append(multiSig.Owners, ownerOp.Owner)
 		} else {
 			multisiglog.Error("saveMultiSigOwnerAddOrDel", "addOrRollback", addOrRollback, "ownerOp", ownerOp, "index", index, "find", find)
@@ -557,15 +532,15 @@ func (m *MultiSig) saveMultiSigOwnerAddOrDel(ownerOp mty.ReceiptOwnerAddOrDel, a
 	return kvs, nil
 }
 
-//账户owner的mod/replace操作
+/ owne mod/replac 
 func (m *MultiSig) saveMultiSigOwnerModOrRep(ownerOp mty.ReceiptOwnerModOrRep, addOrRollback bool) ([]*types.KeyValue, error) {
-	//获取多重签名账户信息从db中
+	/ d 
 	multiSig, err := getMultiSigAccount(m.GetLocalDB(), ownerOp.MultiSigAddr)
 
 	if err != nil || multiSig == nil {
 		return nil, err
 	}
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		_, index, _, _, find := getOwnerInfoByAddr(multiSig, ownerOp.PrevOwner.OwnerAddr)
 		if ownerOp.ModOrRep && find { //modify owner weight
 			multiSig.Owners[index].Weight = ownerOp.CurrentOwner.Weight
@@ -576,11 +551,11 @@ func (m *MultiSig) saveMultiSigOwnerModOrRep(ownerOp mty.ReceiptOwnerModOrRep, a
 			return nil, mty.ErrOwnerNoMatch
 		}
 
-	} else { //回滚删除交易
+	} else { / 
 		_, index, _, _, find := getOwnerInfoByAddr(multiSig, ownerOp.CurrentOwner.OwnerAddr)
-		if ownerOp.ModOrRep && find { //回滚modify owner weight
+		if ownerOp.ModOrRep && find { / modify owner weight
 			multiSig.Owners[index].Weight = ownerOp.PrevOwner.Weight
-		} else if !ownerOp.ModOrRep && find { //回滚 replace owner addr
+		} else if !ownerOp.ModOrRep && find { /  replace owner addr
 			multiSig.Owners[index].OwnerAddr = ownerOp.PrevOwner.OwnerAddr
 		} else {
 			multisiglog.Error("saveMultiSigOwnerModOrRep ", "addOrRollback", addOrRollback, "ownerOp", ownerOp, "index", index, "find", find)
@@ -599,17 +574,17 @@ func (m *MultiSig) saveMultiSigOwnerModOrRep(ownerOp mty.ReceiptOwnerModOrRep, a
 	return kvs, nil
 }
 
-//账户weight权重的mod操作
+/ weigh mo 
 func (m *MultiSig) saveMultiSigAccWeight(accountOp mty.ReceiptWeightModify, addOrRollback bool) ([]*types.KeyValue, error) {
-	//获取多重签名账户信息从db中
+	/ d 
 	multiSig, err := getMultiSigAccount(m.GetLocalDB(), accountOp.MultiSigAddr)
 
 	if err != nil || multiSig == nil {
 		return nil, err
 	}
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		multiSig.RequiredWeight = accountOp.CurrentWeight
-	} else { //回滚删除交易
+	} else { / 
 		multiSig.RequiredWeight = accountOp.PrevWeight
 	}
 
@@ -624,9 +599,9 @@ func (m *MultiSig) saveMultiSigAccWeight(accountOp mty.ReceiptWeightModify, addO
 	return kvs, nil
 }
 
-//账户DailyLimit资产每日限额的add/mod操作
+/ DailyLimi add/mo 
 func (m *MultiSig) saveMultiSigAccDailyLimit(accountOp mty.ReceiptDailyLimitOperate, addOrRollback bool) ([]*types.KeyValue, error) {
-	//获取多重签名账户信息从db中
+	/ d 
 	multiSig, err := getMultiSigAccount(m.GetLocalDB(), accountOp.MultiSigAddr)
 
 	if err != nil || multiSig == nil {
@@ -637,10 +612,10 @@ func (m *MultiSig) saveMultiSigAccDailyLimit(accountOp mty.ReceiptDailyLimitOper
 	curDailyLimit := accountOp.CurDailyLimit
 	prevDailyLimit := accountOp.PrevDailyLimit
 
-	//在每日限额列表中查找具体资产的每日限额信息
+	/ 
 	index, find := isDailyLimit(multiSig, curExecer, curSymbol)
 
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		if accountOp.AddOrModify && !find { //add DailyLimit
 			multiSig.DailyLimits = append(multiSig.DailyLimits, curDailyLimit)
 		} else if !accountOp.AddOrModify && find { //modifyDailyLimit
@@ -651,10 +626,10 @@ func (m *MultiSig) saveMultiSigAccDailyLimit(accountOp mty.ReceiptDailyLimitOper
 			multisiglog.Error("saveMultiSigAccDailyLimit", "addOrRollback", addOrRollback, "accountOp", accountOp, "index", index, "find", find)
 			return nil, mty.ErrDailyLimitNoMatch
 		}
-	} else { //回滚删除交易
-		if accountOp.AddOrModify && find { //删除已经 add 的 DailyLimit
+	} else { / 
+		if accountOp.AddOrModify && find { /  add  DailyLimit
 			multiSig.DailyLimits = append(multiSig.DailyLimits[0:index], multiSig.DailyLimits[index+1:]...)
-		} else if !accountOp.AddOrModify && find { //恢复前一次的状态 modifyDailyLimit
+		} else if !accountOp.AddOrModify && find { /  modifyDailyLimit
 			multiSig.DailyLimits[index].DailyLimit = prevDailyLimit.DailyLimit
 			multiSig.DailyLimits[index].SpentToday = prevDailyLimit.SpentToday
 			multiSig.DailyLimits[index].LastDay = prevDailyLimit.LastDay
@@ -675,13 +650,13 @@ func (m *MultiSig) saveMultiSigAccDailyLimit(accountOp mty.ReceiptDailyLimitOper
 	return kvs, nil
 }
 
-//多重签名账户交易的Confirm/Revoke
+/ Confirm/Revoke
 func (m *MultiSig) saveMultiSigConfirmTx(confirmTx mty.ReceiptConfirmTx, addOrRollback bool) ([]*types.KeyValue, error) {
 	multiSigAddr := confirmTx.MultiSigTxOwner.MultiSigAddr
 	txid := confirmTx.MultiSigTxOwner.Txid
 	owner := confirmTx.MultiSigTxOwner.ConfirmedOwner
 
-	//获取多重签名交易信息从db中
+	/ d 
 	multiSigTx, err := getMultiSigTx(m.GetLocalDB(), multiSigAddr, txid)
 	if err != nil {
 		return nil, err
@@ -691,7 +666,7 @@ func (m *MultiSig) saveMultiSigConfirmTx(confirmTx mty.ReceiptConfirmTx, addOrRo
 		return nil, mty.ErrTxidNotExist
 	}
 	index, exist := isOwnerConfirmedTx(multiSigTx, owner.OwnerAddr)
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		if confirmTx.ConfirmeOrRevoke && !exist { //add Confirmed Owner
 			multiSigTx.ConfirmedOwner = append(multiSigTx.ConfirmedOwner, owner)
 		} else if !confirmTx.ConfirmeOrRevoke && exist { //Revoke Confirmed Owner
@@ -700,12 +675,12 @@ func (m *MultiSig) saveMultiSigConfirmTx(confirmTx mty.ReceiptConfirmTx, addOrRo
 			multisiglog.Error("saveMultiSigConfirmTx", "addOrRollback", addOrRollback, "confirmTx", confirmTx, "index", index, "exist", exist)
 			return nil, mty.ErrDailyLimitNoMatch
 		}
-	} else { //回滚删除交易
-		if confirmTx.ConfirmeOrRevoke && exist { //回滚已经 add Confirmed Owner
+	} else { / 
+		if confirmTx.ConfirmeOrRevoke && exist { /  add Confirmed Owner
 			//multiSigTx.ConfirmedOwner = append(multiSigTx.ConfirmedOwner, owner)
 			multiSigTx.ConfirmedOwner = append(multiSigTx.ConfirmedOwner[0:index], multiSigTx.ConfirmedOwner[index+1:]...)
 
-		} else if !confirmTx.ConfirmeOrRevoke && !exist { //回滚已经 Revoke Confirmed Owner
+		} else if !confirmTx.ConfirmeOrRevoke && !exist { /  Revoke Confirmed Owner
 			multiSigTx.ConfirmedOwner = append(multiSigTx.ConfirmedOwner, owner)
 		} else {
 			multisiglog.Error("saveMultiSigConfirmTx", "addOrRollback", addOrRollback, "confirmTx", confirmTx, "index", index, "exist", exist)
@@ -724,8 +699,8 @@ func (m *MultiSig) saveMultiSigConfirmTx(confirmTx mty.ReceiptConfirmTx, addOrRo
 	return kvs, nil
 }
 
-//多重签名账户交易被确认执行,更新交易的执行结果以及增加确认owner
-//包含转账的交易以及修改多重签名账户属性的交易
+/  owner
+/ 
 func (m *MultiSig) saveMultiSigTx(execTx mty.ReceiptMultiSigTx, addOrRollback bool) ([]*types.KeyValue, error) {
 	multiSigAddr := execTx.MultiSigTxOwner.MultiSigAddr
 	txid := execTx.MultiSigTxOwner.Txid
@@ -740,20 +715,20 @@ func (m *MultiSig) saveMultiSigTx(execTx mty.ReceiptMultiSigTx, addOrRollback bo
 	temMultiSigTx.TxHash = execTx.TxHash
 	temMultiSigTx.TxType = execTx.TxType
 	temMultiSigTx.Executed = false
-	//获取多重签名交易信息从db中
+	/ d 
 	multiSigTx, err := getMultiSigTx(m.GetLocalDB(), multiSigAddr, txid)
 	if err != nil {
 		multisiglog.Error("saveMultiSigTx getMultiSigTx ", "addOrRollback", addOrRollback, "execTx", execTx, "err", err)
 		return nil, err
 	}
 
-	//Confirm的交易需要确认对应的txid已经存在
+	//Confir txi 
 	if multiSigTx == nil && !submitOrConfirm {
 		multisiglog.Error("saveMultiSigTx", "addOrRollback", addOrRollback, "execTx", execTx)
 		return nil, mty.ErrTxidNotExist
 	}
 
-	//add submit的交易需要创建txid，
+	//add submi txid，
 	if submitOrConfirm && addOrRollback {
 		if multiSigTx != nil {
 			multisiglog.Error("saveMultiSigTx", "addOrRollback", addOrRollback, "execTx", execTx)
@@ -763,7 +738,7 @@ func (m *MultiSig) saveMultiSigTx(execTx mty.ReceiptMultiSigTx, addOrRollback bo
 	}
 
 	index, exist := isOwnerConfirmedTx(multiSigTx, owner.OwnerAddr)
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		if !exist { //add Confirmed Owner and modify Executed
 			multiSigTx.ConfirmedOwner = append(multiSigTx.ConfirmedOwner, owner)
 			if prevExecuted != multiSigTx.Executed {
@@ -774,8 +749,8 @@ func (m *MultiSig) saveMultiSigTx(execTx mty.ReceiptMultiSigTx, addOrRollback bo
 			multisiglog.Error("saveMultiSigTx", "addOrRollback", addOrRollback, "execTx", execTx, "index", index, "exist", exist)
 			return nil, mty.ErrOwnerNoMatch
 		}
-	} else { //回滚删除交易
-		if exist { //回滚已经 add Confirmed Owner and modify Executed
+	} else { / 
+		if exist { /  add Confirmed Owner and modify Executed
 			multiSigTx.ConfirmedOwner = append(multiSigTx.ConfirmedOwner[0:index], multiSigTx.ConfirmedOwner[index+1:]...)
 			multiSigTx.Executed = prevExecuted
 		} else {
@@ -783,7 +758,7 @@ func (m *MultiSig) saveMultiSigTx(execTx mty.ReceiptMultiSigTx, addOrRollback bo
 			return nil, mty.ErrOwnerNoMatch
 		}
 	}
-	//submit交易的回滚需要将对应txid的值设置成nil
+	//submi txi nil
 	setNil := true
 	if !addOrRollback && submitOrConfirm {
 		setNil = false
@@ -800,7 +775,7 @@ func (m *MultiSig) saveMultiSigTx(execTx mty.ReceiptMultiSigTx, addOrRollback bo
 	return kvs, nil
 }
 
-//多重签名账户交易被确认执行，更新对应资产的每日限额信息，以及txcount计数
+/   txcoun 
 func (m *MultiSig) saveDailyLimitUpdate(execTransfer mty.ReceiptAccDailyLimitUpdate, addOrRollback bool) ([]*types.KeyValue, error) {
 	multiSigAddr := execTransfer.MultiSigAddr
 	curDailyLimit := execTransfer.CurDailyLimit
@@ -808,7 +783,7 @@ func (m *MultiSig) saveDailyLimitUpdate(execTransfer mty.ReceiptAccDailyLimitUpd
 	execer := execTransfer.CurDailyLimit.Execer
 	symbol := execTransfer.CurDailyLimit.Symbol
 
-	//获取多重签名交易信息从db中
+	/ d 
 	multiSig, err := getMultiSigAccount(m.GetLocalDB(), multiSigAddr)
 	if err != nil {
 		return nil, err
@@ -821,10 +796,10 @@ func (m *MultiSig) saveDailyLimitUpdate(execTransfer mty.ReceiptAccDailyLimitUpd
 	if !exist {
 		return nil, types.ErrAccountNotExist
 	}
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		multiSig.DailyLimits[index].SpentToday = curDailyLimit.SpentToday
 		multiSig.DailyLimits[index].LastDay = curDailyLimit.LastDay
-	} else { //回滚删除交易
+	} else { / 
 		multiSig.DailyLimits[index].SpentToday = prevDailyLimit.SpentToday
 		multiSig.DailyLimits[index].LastDay = prevDailyLimit.LastDay
 	}
@@ -840,12 +815,12 @@ func (m *MultiSig) saveDailyLimitUpdate(execTransfer mty.ReceiptAccDailyLimitUpd
 	return kvs, nil
 }
 
-//多重签名账户交易被确认执行，更新对应资产的每日限额信息，以及txcount计数
+/   txcoun 
 func (m *MultiSig) saveMultiSigTxCountUpdate(accTxCount mty.ReceiptTxCountUpdate, addOrRollback bool) ([]*types.KeyValue, error) {
 	multiSigAddr := accTxCount.MultiSigAddr
 	curTxCount := accTxCount.CurTxCount
 
-	//获取多重签名交易信息从db中
+	/ d 
 	multiSig, err := getMultiSigAccount(m.GetLocalDB(), multiSigAddr)
 	if err != nil {
 		return nil, err
@@ -855,14 +830,14 @@ func (m *MultiSig) saveMultiSigTxCountUpdate(accTxCount mty.ReceiptTxCountUpdate
 		return nil, types.ErrAccountNotExist
 	}
 
-	if addOrRollback { //正常添加交易
+	if addOrRollback { / 
 		if multiSig.TxCount+1 == curTxCount {
 			multiSig.TxCount = curTxCount
 		} else {
 			multisiglog.Error("saveMultiSigTxCountUpdate", "addOrRollback", addOrRollback, "accTxCount", accTxCount, "TxCount", multiSig.TxCount)
 			return nil, mty.ErrInvalidTxid
 		}
-	} else { //回滚删除交易
+	} else { / 
 		if multiSig.TxCount == curTxCount && curTxCount > 0 {
 			multiSig.TxCount = curTxCount - 1
 		}
@@ -879,7 +854,7 @@ func (m *MultiSig) saveMultiSigTxCountUpdate(accTxCount mty.ReceiptTxCountUpdate
 	return kvs, nil
 }
 
-//获取多重签名账户的指定资产
+/ 
 func (m *MultiSig) getMultiSigAccAssets(multiSigAddr string, assets *mty.Assets) (*types.Account, error) {
 	symbol := getRealSymbol(assets.Symbol)
 	cfg := m.GetAPI().GetConfig()
@@ -894,11 +869,11 @@ func (m *MultiSig) getMultiSigAccAssets(multiSigAddr string, assets *mty.Assets)
 	return acc1, nil
 }
 
-//内部共用接口
+/ 
 
-//获取指定owner的weight权重，owner所在的index，所有owners的weight权重之和，以及owner是否存在
+/ owne weigh ，owne index owner weigh  owne 
 func getOwnerInfoByAddr(multiSigAcc *mty.MultiSig, oldowner string) (uint64, int, uint64, int, bool) {
-	//首先遍历所有owners，确定对应的owner已近存在.
+	/ owners owne .
 	var findindex int
 	var totalweight uint64
 	var oldweight uint64
@@ -914,14 +889,14 @@ func getOwnerInfoByAddr(multiSigAcc *mty.MultiSig, oldowner string) (uint64, int
 		totalweight += owner.Weight
 		totalowner++
 	}
-	//owner不存在
+	//owne 
 	if !flag {
 		return 0, 0, totalweight, totalowner, false
 	}
 	return oldweight, findindex, totalweight, totalowner, true
 }
 
-//确认某笔交易是否已经达到确认需要的权重
+/ 
 func isConfirmed(requiredWeight uint64, multiSigTx *mty.MultiSigTx) bool {
 	var totalweight uint64
 	for _, owner := range multiSigTx.ConfirmedOwner {
@@ -930,7 +905,7 @@ func isConfirmed(requiredWeight uint64, multiSigTx *mty.MultiSigTx) bool {
 	return totalweight >= requiredWeight
 }
 
-//确认某笔交易的额度是否满足每日限额,返回是否满足，以及新的newLastDay时间
+/   newLastDa 
 func isUnderLimit(blocktime int64, amount uint64, dailyLimit *mty.DailyLimit) (bool, int64) {
 
 	var lastDay int64
@@ -939,7 +914,7 @@ func isUnderLimit(blocktime int64, amount uint64, dailyLimit *mty.DailyLimit) (b
 	nowtime := blocktime //types.Now().Unix()
 	newSpentToday = dailyLimit.SpentToday
 
-	//已经是新的一天了。需要更新LastDay为当前时间，SpentToday今日花费0
+	/  LastDa ，SpentToda 0
 	if nowtime > dailyLimit.LastDay+mty.OneDaySecond {
 		lastDay = nowtime
 		newSpentToday = 0
@@ -951,7 +926,7 @@ func isUnderLimit(blocktime int64, amount uint64, dailyLimit *mty.DailyLimit) (b
 	return true, lastDay
 }
 
-//确定这个地址是否是此multiSigAcc多重签名账户的owner,如果是owner的话并返回weight权重
+/ multiSigAc owner owne weigh 
 func isOwner(multiSigAcc *mty.MultiSig, ownerAddr string) (uint64, bool) {
 	for _, owner := range multiSigAcc.Owners {
 		if owner.OwnerAddr == ownerAddr {
@@ -961,15 +936,15 @@ func isOwner(multiSigAcc *mty.MultiSig, ownerAddr string) (uint64, bool) {
 	return 0, false
 }
 
-//删除指定index的owner从owners列表中
+/ inde owne owner 
 func delOwner(Owners []*mty.Owner, index int) []*mty.Owner {
 	ownerSize := len(Owners)
 	multisiglog.Error("delOwner", "ownerSize", ownerSize, "index", index)
 
-	//删除第一个owner
+	/ owner
 	if index == 0 {
 		Owners = Owners[1:]
-	} else if (ownerSize) == index+1 { //删除最后一个owner
+	} else if (ownerSize) == index+1 { / owner
 		multisiglog.Error("delOwner", "ownerSize", ownerSize)
 		Owners = Owners[0 : ownerSize-1]
 	} else {
@@ -978,7 +953,7 @@ func delOwner(Owners []*mty.Owner, index int) []*mty.Owner {
 	return Owners
 }
 
-//指定资产是否设置了每日限额
+/ 
 func isDailyLimit(multiSigAcc *mty.MultiSig, execer, symbol string) (int, bool) {
 	for index, dailyLimit := range multiSigAcc.DailyLimits {
 		if dailyLimit.Execer == execer && dailyLimit.Symbol == symbol {
@@ -988,7 +963,7 @@ func isDailyLimit(multiSigAcc *mty.MultiSig, execer, symbol string) (int, bool) 
 	return 0, false
 }
 
-//owner是否已经确认过某个txid，已经确认过就返回index
+//owne txid index
 func isOwnerConfirmedTx(multiSigTx *mty.MultiSigTx, ownerAddr string) (int, bool) {
 	for index, owner := range multiSigTx.ConfirmedOwner {
 		if owner.OwnerAddr == ownerAddr {
@@ -998,7 +973,7 @@ func isOwnerConfirmedTx(multiSigTx *mty.MultiSigTx, ownerAddr string) (int, bool
 	return 0, false
 }
 
-//通过txhash获取tx交易信息
+/ txhas t 
 func getTxByHash(api client.QueueProtocolAPI, txHash string) (*types.TransactionDetail, error) {
 	hash, err := hex.DecodeString(txHash)
 	if err != nil {
@@ -1021,7 +996,7 @@ func getTxByHash(api client.QueueProtocolAPI, txHash string) (*types.Transaction
 	return txs.Txs[0], nil
 }
 
-//从tx交易中解析payload信息
+/ t payloa 
 func getMultiSigTxPayload(tx *types.TransactionDetail) (*mty.MultiSigAction, error) {
 	if !bytes.HasSuffix(tx.Tx.Execer, []byte(mty.MultiSigX)) {
 		multisiglog.Error("GetMultiSigTx", "tx.Tx.Execer", string(tx.Tx.Execer), "MultiSigX", mty.MultiSigX)
@@ -1037,7 +1012,7 @@ func getMultiSigTxPayload(tx *types.TransactionDetail) (*mty.MultiSigAction, err
 	return &payload, nil
 }
 
-//bty 显示是大写，在底层mavl数据库中对应key值时使用小写
+//bty  mav ke 
 func getRealSymbol(symbol string) string {
 	if symbol == types.BTY {
 		return "bty"

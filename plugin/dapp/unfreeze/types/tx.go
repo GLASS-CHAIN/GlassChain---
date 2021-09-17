@@ -21,7 +21,7 @@ type parseUnfreezeCreate struct {
 	LeftProportion *LeftProportion `json:"leftProportion,omitempty"`
 }
 
-// UnmarshalJSON 解析UnfreezeCreate
+// UnmarshalJSON UnfreezeCreate
 func (m *UnfreezeCreate) UnmarshalJSON(v []byte) error {
 	var c parseUnfreezeCreate
 	err := json.Unmarshal(v, &c)
