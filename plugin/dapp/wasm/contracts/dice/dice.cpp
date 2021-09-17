@@ -89,7 +89,7 @@ int play(int64_t amount, int64_t number) {
     if (amount<=0) {
         return -1;
     }
-    //最大投注额为奖池的0.5%
+    / 0.5%
     if (amount*200>status.game_balance) {
         const char info[] = "amount is too big\0";
         printlog(info, string_size(info));
@@ -131,7 +131,7 @@ int draw() {
         return -1;
     }
     if (status.current_round == status.finished_round) {
-        //没有待开奖记录
+        / 
         return 0;
     }
 

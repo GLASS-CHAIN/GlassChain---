@@ -35,7 +35,7 @@ func (ticket *Ticket) GetRandNum(blockHash []byte, blockNum int64) (types.Messag
 	if err != nil {
 		return nil, err
 	}
-	//如果是genesis block 那么直接返回一个固定值，防止测试的时候出错
+	/ genesis block  
 	if txActions == nil && err == nil {
 		modify := common.Sha256([]byte("hello"))
 		return &types.ReplyHash{Hash: modify}, nil
@@ -71,7 +71,7 @@ func (ticket *Ticket) getTxActions(blockHash []byte, blockNum int64) ([]*tickett
 	currHash := blockHash
 	tlog.Debug("getTxActions", "blockHash", common.ToHex(blockHash), "blockNum", blockNum)
 
-	//根据blockHash，查询block，循环blockNum
+	/ blockHash block blockNum
 	for blockNum > 0 {
 		req := types.ReqHash{Hash: currHash}
 
@@ -110,12 +110,12 @@ func (ticket *Ticket) getTxActions(blockHash []byte, blockNum int64) ([]*tickett
 }
 
 func (ticket *Ticket) getMinerTx(current *types.Block) (*tickettypes.TicketAction, error) {
-	//检查第一个笔交易的execs, 以及执行状态
+	/ execs, 
 	if len(current.Txs) == 0 {
 		return nil, types.ErrEmptyTx
 	}
 	baseTx := current.Txs[0]
-	//判断交易类型和执行情况
+	/ 
 	var ticketAction tickettypes.TicketAction
 	err := types.Decode(baseTx.GetPayload(), &ticketAction)
 	if err != nil {
@@ -124,7 +124,7 @@ func (ticket *Ticket) getMinerTx(current *types.Block) (*tickettypes.TicketActio
 	if ticketAction.GetTy() != tickettypes.TicketActionMiner {
 		return nil, types.ErrCoinBaseTxType
 	}
-	//判断交易执行是否OK
+	/ OK
 	if ticketAction.GetMiner() == nil {
 		return nil, tickettypes.ErrEmptyMinerTx
 	}

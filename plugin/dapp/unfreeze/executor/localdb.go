@@ -12,8 +12,8 @@ import (
 )
 
 /*
- 1. 可以用创建者和收益者进行列表
- 1. 按 txIndex 排序
+ 1. 
+ 1.  txIndex 
 */
 
 var opt_addr_table = &table.Option{

@@ -4,8 +4,8 @@
 
 package executor
 
-// 记录token 的更改记录，
-// 包含创建完成， 铸币， 以后可能包含燃烧等
+// token ，
+// ， ， 
 
 import (
 	dbm "github.com/33cn/chain33/common/db"

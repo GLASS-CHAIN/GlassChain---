@@ -19,9 +19,9 @@ import (
 
 var (
 	bizlog = log15.New("module", "wallet.privacy")
-	// MaxTxHashsPerTime 单词处理的最大哈希书
+	// MaxTxHashsPerTime 
 	MaxTxHashsPerTime int64 = 100
-	// maxTxNumPerBlock 单个区块最大数
+	// maxTxNumPerBlock 
 	maxTxNumPerBlock int64 = types.MaxTxsPerBlock
 )
 
@@ -29,7 +29,7 @@ func init() {
 	wcom.RegisterPolicy(privacytypes.PrivacyX, New())
 }
 
-// New 创建一盒钱包业务策略
+// New 
 func New() wcom.WalletBizPolicy {
 	return &privacyPolicy{
 		mtx:            &sync.Mutex{},
@@ -58,45 +58,45 @@ func (policy *privacyPolicy) getWalletOperate() wcom.WalletOperate {
 	return policy.walletOperate
 }
 
-// Init 初始化处理
+// Init 
 func (policy *privacyPolicy) Init(walletOperate wcom.WalletOperate, sub []byte) {
 	policy.setWalletOperate(walletOperate)
 	policy.store = newStore(walletOperate.GetDBStore(), walletOperate.GetAPI().GetConfig())
-	// 启动定时检查超期FTXO的协程
+	// FTX 
 	walletOperate.GetWaitGroup().Add(1)
 	go policy.checkWalletStoreData()
 }
 
-// OnCreateNewAccount 在账号创建时做一些处理
+// OnCreateNewAccount 
 func (policy *privacyPolicy) OnCreateNewAccount(acc *types.Account) {
 	wg := policy.getWalletOperate().GetWaitGroup()
 	wg.Add(1)
 	go policy.rescanReqTxDetailByAddr(acc.Addr, wg)
 }
 
-// OnImportPrivateKey 在私钥导入时做一些处理
+// OnImportPrivateKey 
 func (policy *privacyPolicy) OnImportPrivateKey(acc *types.Account) {
 	wg := policy.getWalletOperate().GetWaitGroup()
 	wg.Add(1)
 	go policy.rescanReqTxDetailByAddr(acc.Addr, wg)
 }
 
-// OnAddBlockFinish 在区块被添加成功时做一些处理
+// OnAddBlockFinish 
 func (policy *privacyPolicy) OnAddBlockFinish(block *types.BlockDetail) {
 
 }
 
-// OnDeleteBlockFinish 在区块被删除成功时做一些处理
+// OnDeleteBlockFinish 
 func (policy *privacyPolicy) OnDeleteBlockFinish(block *types.BlockDetail) {
 
 }
 
-// OnClose 在钱包关闭时做一些处理
+// OnClose 
 func (policy *privacyPolicy) OnClose() {
 
 }
 
-// OnSetQueueClient 在钱包消息队列初始化时做一些处理
+// OnSetQueueClient 
 func (policy *privacyPolicy) OnSetQueueClient() {
 	version := policy.store.getVersion()
 	if version < PRIVACYDBVERSION {
@@ -105,15 +105,15 @@ func (policy *privacyPolicy) OnSetQueueClient() {
 	}
 }
 
-// OnWalletLocked 在钱包加锁时做一些处理
+// OnWalletLocked 
 func (policy *privacyPolicy) OnWalletLocked() {
 }
 
-// OnWalletUnlocked 在钱包解锁时做一些处理
+// OnWalletUnlocked 
 func (policy *privacyPolicy) OnWalletUnlocked(WalletUnLock *types.WalletUnLock) {
 }
 
-// Call 调用隐私的方法
+// Call 
 func (policy *privacyPolicy) Call(funName string, in types.Message) (ret types.Message, err error) {
 	switch funName {
 	case "GetUTXOScaningFlag":
@@ -125,7 +125,7 @@ func (policy *privacyPolicy) Call(funName string, in types.Message) (ret types.M
 	return
 }
 
-// SignTransaction 对隐私交易进行签名
+// SignTransaction 
 func (policy *privacyPolicy) SignTransaction(key crypto.PrivKey, req *types.ReqSignRawTx) (needSysSign bool, signtxhex string, err error) {
 	needSysSign = false
 	bytes, err := common.FromHex(req.GetTxHex())
@@ -154,11 +154,11 @@ func (policy *privacyPolicy) SignTransaction(key crypto.PrivKey, req *types.ReqS
 	}
 	switch action.Ty {
 	case privacytypes.ActionPublic2Privacy:
-		// 隐私交易的公对私动作，不存在交易组的操作
+		//  
 		tx.Sign(int32(policy.getWalletOperate().GetSignType()), key)
 
 	case privacytypes.ActionPrivacy2Privacy, privacytypes.ActionPrivacy2Public:
-		// 隐私交易的私对私、私对公需要进行特殊签名
+		//  
 		if err = policy.signatureTx(tx, action.GetInput(), signParam.GetUtxobasics(), signParam.GetRealKeyInputs()); err != nil {
 			return
 		}
@@ -194,17 +194,17 @@ type buildStoreWalletTxDetailParam struct {
 	sendRecvFlag int32
 }
 
-// OnAddBlockTx 响应区块交易添加的处理
+// OnAddBlockTx 
 func (policy *privacyPolicy) OnAddBlockTx(block *types.BlockDetail, tx *types.Transaction, index int32, dbbatch db.Batch) *types.WalletTxDetail {
 	policy.addDelPrivacyTxsFromBlock(tx, index, block, dbbatch, AddTx)
-	// 自己处理掉所有事务，部需要外部处理了
+	//  
 	return nil
 }
 
-// OnDeleteBlockTx 响应删除区块交易的处理
+// OnDeleteBlockTx 
 func (policy *privacyPolicy) OnDeleteBlockTx(block *types.BlockDetail, tx *types.Transaction, index int32, dbbatch db.Batch) *types.WalletTxDetail {
 	policy.addDelPrivacyTxsFromBlock(tx, index, block, dbbatch, DelTx)
-	// 自己处理掉所有事务，部需要外部处理了
+	//  
 	return nil
 }
 

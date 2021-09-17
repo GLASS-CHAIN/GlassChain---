@@ -21,7 +21,7 @@ func (o *oracle) execDelLocal(receipt *types.ReceiptData) (*types.LocalDBSet, er
 			return nil, err
 		}
 
-		//回滚时如果状态为EventPublished则删除记录，否则回滚至上一状态
+		/ EventPublishe  
 		if oraclelog.Status == oty.EventPublished {
 			err = table.Del([]byte(oraclelog.EventID))
 			if err != nil {

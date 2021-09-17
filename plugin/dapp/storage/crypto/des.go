@@ -8,7 +8,7 @@ import (
 //DES ...
 type DES struct {
 	key []byte
-	//iv的长度必须等于block块的大小
+	//i bloc 
 	iv []byte
 }
 
@@ -27,13 +27,13 @@ func (d *DES) Encrypt(origData []byte) ([]byte, error) {
 	// origData = ZeroPadding(origData, block.BlockSize())
 	blockMode := cipher.NewCBCEncrypter(block, d.iv[:block.BlockSize()])
 	crypted := make([]byte, len(origData))
-	// 根据CryptBlocks方法的说明，如下方式初始化crypted也可以
+	// CryptBlock  crypte 
 	// crypted := origData
 	blockMode.CryptBlocks(crypted, origData)
 	return crypted, nil
 }
 
-//Decrypt 密钥key长度固定8字节
+//Decrypt ke  
 func (d *DES) Decrypt(crypted []byte) ([]byte, error) {
 	block, err := des.NewCipher(d.key)
 	if err != nil {
@@ -51,7 +51,7 @@ func (d *DES) Decrypt(crypted []byte) ([]byte, error) {
 //TripleDES ...
 type TripleDES struct {
 	key []byte
-	//iv的长度必须等于block块的大小
+	//i bloc 
 	iv []byte
 }
 
@@ -60,7 +60,7 @@ func NewTripleDES(key, iv []byte) *TripleDES {
 	return &TripleDES{key: key, iv: iv}
 }
 
-//Encrypt 3DES加密 24字节
+//Encrypt 3DE  2 
 func (d *TripleDES) Encrypt(origData []byte) ([]byte, error) {
 	block, err := des.NewTripleDESCipher(d.key)
 	if err != nil {
@@ -74,7 +74,7 @@ func (d *TripleDES) Encrypt(origData []byte) ([]byte, error) {
 	return crypted, nil
 }
 
-//Decrypt 3DES解密
+//Decrypt 3DE 
 func (d *TripleDES) Decrypt(crypted []byte) ([]byte, error) {
 	block, err := des.NewTripleDESCipher(d.key)
 	if err != nil {

@@ -12,37 +12,37 @@ import (
 	"github.com/33cn/plugin/plugin/dapp/pokerbull/types"
 )
 
-// PokerCardNum 牌数，4 * 13 不带大小王
+// PokerCardNum ，4 * 13 
 var PokerCardNum = 52
 
-// ColorOffset 牌花色偏移
+// ColorOffset 
 var ColorOffset uint32 = 8
 
-// ColorBitMask 牌花色bit掩码
+// ColorBitMask bi 
 var ColorBitMask = 0xFF
 
-// CardNumPerColor 每种花色的牌数
+// CardNumPerColor 
 var CardNumPerColor = 13
 
-// CardNumPerGame 一手牌的牌数
+// CardNumPerGame 
 var CardNumPerGame = 5
 
 const (
-	// PokerbullResultX1 赌注倍数1倍
+	// PokerbullResultX1  
 	PokerbullResultX1 = 1
-	// PokerbullResultX2 赌注倍数2倍
+	// PokerbullResultX2  
 	PokerbullResultX2 = 2
-	// PokerbullResultX3 赌注倍数3倍
+	// PokerbullResultX3  
 	PokerbullResultX3 = 3
-	// PokerbullResultX4 赌注倍数4倍
+	// PokerbullResultX4  
 	PokerbullResultX4 = 4
-	// PokerbullResultX5 赌注倍数5倍
+	// PokerbullResultX5  
 	PokerbullResultX5 = 5
-	// PokerbullLeverageMax 赌注倍数最大倍数
+	// PokerbullLeverageMax 
 	PokerbullLeverageMax = PokerbullResultX1
 )
 
-// NewPoker 创建一副牌
+// NewPoker 
 func NewPoker() *types.PBPoker {
 	poker := new(types.PBPoker)
 	poker.Cards = make([]int32, PokerCardNum)
@@ -56,7 +56,7 @@ func NewPoker() *types.PBPoker {
 	return poker
 }
 
-// Shuffle 洗牌
+// Shuffle 
 func Shuffle(poker *types.PBPoker, rng int64) {
 	rndn := rand.New(rand.NewSource(rng))
 
@@ -69,7 +69,7 @@ func Shuffle(poker *types.PBPoker, rng int64) {
 	poker.Pointer = int32(PokerCardNum - 1)
 }
 
-// Deal 发牌
+// Deal 
 func Deal(poker *types.PBPoker, rng int64) []int32 {
 	if poker.Pointer < int32(CardNumPerGame) {
 		logger.Error(fmt.Sprintf("Wait to be shuffled: deal cards [%d], left [%d]", CardNumPerGame, poker.Pointer+1))
@@ -90,14 +90,14 @@ func Deal(poker *types.PBPoker, rng int64) []int32 {
 	return res
 }
 
-// Result 计算斗牛结果
+// Result 
 func Result(cards []int32) int32 {
 	temp := 0
-	r := -1 //是否有牛标志
+	r := -1 / 
 
 	pk := newcolorCard(cards)
 
-	//花牌等于10
+	/ 10
 	cardsC := make([]int, len(cards))
 	for i := 0; i < len(pk); i++ {
 		if pk[i].num > 10 {
@@ -107,7 +107,7 @@ func Result(cards []int32) int32 {
 		}
 	}
 
-	//斗牛算法
+	/ 
 	result := make([]int, 10)
 	var offset = 0
 	for x := 0; x < 3; x++ {
@@ -121,9 +121,9 @@ func Result(cards []int32) int32 {
 					}
 
 					if temp%10 == 0 {
-						r = 10 //若有牛，且剩下的两个数也是牛十
+						r = 10 /  
 					} else {
-						r = temp % 10 //若有牛，剩下的不是牛十
+						r = temp % 10 /  
 					}
 					result[offset] = r
 					offset++
@@ -132,7 +132,7 @@ func Result(cards []int32) int32 {
 		}
 	}
 
-	//没有牛
+	/ 
 	if r == -1 {
 		return -1
 	}
@@ -140,16 +140,16 @@ func Result(cards []int32) int32 {
 	return int32(result[0])
 }
 
-// Leverage 计算结果倍数
+// Leverage 
 func Leverage(hand *types.PBHand) int32 {
 	result := hand.Result
 
-	// 小牛 [1, 6]
+	//  [1, 6]
 	if result < 7 {
 		return PokerbullResultX1
 	}
 
-	// 大牛 [7, 9]
+	//  [7, 9]
 	if result >= 7 && result < 10 {
 		return PokerbullResultX2
 	}
@@ -162,17 +162,17 @@ func Leverage(hand *types.PBHand) int32 {
 			}
 		}
 
-		// 牛牛
+		// 
 		if flowers < 4 {
 			return PokerbullResultX3
 		}
 
-		// 四花
+		// 
 		if flowers == 4 {
 			return PokerbullResultX4
 		}
 
-		// 五花
+		// 
 		if flowers == 5 {
 			return PokerbullResultX5
 		}
@@ -216,7 +216,7 @@ func newcolorCard(a []int32) colorCardSlice {
 	return cardS
 }
 
-// CompareResult 两手牌比较结果
+// CompareResult 
 func CompareResult(i, j *types.PBHand) bool {
 	if i.Result < j.Result {
 		return true
@@ -229,7 +229,7 @@ func CompareResult(i, j *types.PBHand) bool {
 	return false
 }
 
-// Compare 比较两手牌的斗牛结果
+// Compare 
 func Compare(a []int32, b []int32) bool {
 	cardA := newcolorCard(a)
 	cardB := newcolorCard(b)

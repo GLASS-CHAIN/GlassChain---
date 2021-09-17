@@ -7,12 +7,12 @@ import (
 )
 
 /*
- * 交易相关类型定义
- * 交易action通常有对应的log结构，用于交易回执日志记录
- * 每一种action和log需要用id数值和name名称加以区分
+ * 
+ * actio lo  
+ * actio lo i nam 
  */
 
-// action类型id和name，这些常量可以自定义修改
+// actio i name 
 const (
 	TyUnknowAction = iota
 	TyContentStorageAction
@@ -33,7 +33,7 @@ const (
 	FuncNameBatchQueryStorage = "BatchQueryStorage"
 )
 
-// log类型id值
+// lo i 
 const (
 	TyUnknownLog = iota
 	TyContentStorageLog
@@ -55,9 +55,9 @@ var (
 	ForkStorageLocalDB = "ForkStorageLocalDB"
 )
 var (
-	//StorageX 执行器名称定义
+	//StorageX 
 	StorageX = "storage"
-	//定义actionMap
+	/ actionMap
 	actionMap = map[string]int32{
 		NameContentStorageAction:      TyContentStorageAction,
 		NameHashStorageAction:         TyHashStorageAction,
@@ -66,7 +66,7 @@ var (
 		NameEncryptShareStorageAction: TyEncryptShareStorageAction,
 		NameEncryptAddAction:          TyEncryptAddAction,
 	}
-	//定义log的id和具体log类型及名称，填入具体自定义log类型
+	/ lo i lo  lo 
 	logMap = map[int64]*types.LogInfo{
 		TyContentStorageLog:      {Ty: reflect.TypeOf(Storage{}), Name: "LogContentStorage"},
 		TyHashStorageLog:         {Ty: reflect.TypeOf(Storage{}), Name: "LogHashStorage"},
@@ -80,7 +80,7 @@ var (
 // init defines a register function
 func init() {
 	types.AllowUserExec = append(types.AllowUserExec, []byte(StorageX))
-	//注册合约启用高度
+	/ 
 	types.RegFork(StorageX, InitFork)
 	types.RegExec(StorageX, InitExecutor)
 }
@@ -109,17 +109,17 @@ func NewType(cfg *types.Chain33Config) *StorageType {
 	return c
 }
 
-// GetPayload 获取合约action结构
+// GetPayload actio 
 func (s *StorageType) GetPayload() types.Message {
 	return &StorageAction{}
 }
 
-// GetTypeMap 获取合约action的id和name信息
+// GetTypeMap actio i nam 
 func (s *StorageType) GetTypeMap() map[string]int32 {
 	return actionMap
 }
 
-// GetLogMap 获取合约log相关信息
+// GetLogMap lo 
 func (s *StorageType) GetLogMap() map[int64]*types.LogInfo {
 	return logMap
 }

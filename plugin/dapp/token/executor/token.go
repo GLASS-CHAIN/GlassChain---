@@ -5,12 +5,12 @@
 package executor
 
 /*
-token执行器支持token的创建，
+toke toke ，
 
-主要提供操作有以下几种：
-1）预创建token；
-2）完成创建token
-3）撤销预创建
+ ：
+1 token；
+2 token
+3 
 */
 
 import (
@@ -40,7 +40,7 @@ type subConfig struct {
 
 var subCfg subConfig
 
-// Init 重命名执行器名称
+// Init 
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	if sub != nil {
 		types.MustDecode(sub, &subCfg)
@@ -55,7 +55,7 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&token{}))
 }
 
-// GetName 获取执行器别名
+// GetName 
 func GetName() string {
 	return newToken().GetName()
 }
@@ -71,7 +71,7 @@ func newToken() drivers.Driver {
 	return t
 }
 
-// GetDriverName 获取执行器名字
+// GetDriverName 
 func (t *token) GetDriverName() string {
 	return driverName
 }
@@ -235,7 +235,7 @@ func (t *token) listTokenKeys(reqTokens *tokenty.ReqTokens) ([][]byte, error) {
 	return keys, nil
 }
 
-// value 对应 statedb 的key
+// value  statedb key
 func (t *token) saveLogs(receipt *tokenty.ReceiptToken) []*types.KeyValue {
 	var kv []*types.KeyValue
 
@@ -248,7 +248,7 @@ func (t *token) saveLogs(receipt *tokenty.ReceiptToken) []*types.KeyValue {
 		value = calcTokenAddrKeyS(receipt.Symbol, receipt.Owner)
 	}
 	kv = append(kv, &types.KeyValue{Key: key, Value: value})
-	//如果当前需要被更新的状态不是Status_PreCreated，则认为之前的状态是precreate，且其对应的key需要被删除
+	/ Status_PreCreated precreate ke 
 	if receipt.Status != tokenty.TokenStatusPreCreated {
 		key = calcTokenStatusKeyLocal(receipt.Symbol, receipt.Owner, tokenty.TokenStatusPreCreated)
 		kv = append(kv, &types.KeyValue{Key: key, Value: nil})
@@ -261,7 +261,7 @@ func (t *token) deleteLogs(receipt *tokenty.ReceiptToken) []*types.KeyValue {
 
 	key := calcTokenStatusKeyLocal(receipt.Symbol, receipt.Owner, receipt.Status)
 	kv = append(kv, &types.KeyValue{Key: key, Value: nil})
-	//如果当前需要被更新的状态不是Status_PreCreated，则认为之前的状态是precreate，且其对应的key需要被恢复
+	/ Status_PreCreated precreate ke 
 	if receipt.Status != tokenty.TokenStatusPreCreated {
 		key = calcTokenStatusKeyLocal(receipt.Symbol, receipt.Owner, tokenty.TokenStatusPreCreated)
 		var value []byte

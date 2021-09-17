@@ -26,23 +26,23 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-//事件
+/ 
 type OracleStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID      string       `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"`           //事件ID
-	Addr         string       `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`                 //发布者地址
-	Type         string       `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`                 //游戏类别
-	SubType      string       `protobuf:"bytes,4,opt,name=subType,proto3" json:"subType,omitempty"`           //游戏子类别
-	Time         int64        `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`                //结果公布参考时间
-	Content      string       `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`           //事件内容
-	Introduction string       `protobuf:"bytes,7,opt,name=introduction,proto3" json:"introduction,omitempty"` //事件描述
-	Status       *EventStatus `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`             //操作状态
-	Source       string       `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`             //数据来源
-	Result       string       `protobuf:"bytes,10,opt,name=result,proto3" json:"result,omitempty"`            //事件结果
-	PreStatus    *EventStatus `protobuf:"bytes,11,opt,name=preStatus,proto3" json:"preStatus,omitempty"`      //上次操作后状态及操作者地址
+	EventID      string       `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"`           / ID
+	Addr         string       `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`                 / 
+	Type         string       `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`                 / 
+	SubType      string       `protobuf:"bytes,4,opt,name=subType,proto3" json:"subType,omitempty"`           / 
+	Time         int64        `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`                / 
+	Content      string       `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`           / 
+	Introduction string       `protobuf:"bytes,7,opt,name=introduction,proto3" json:"introduction,omitempty"` / 
+	Status       *EventStatus `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`             / 
+	Source       string       `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`             / 
+	Result       string       `protobuf:"bytes,10,opt,name=result,proto3" json:"result,omitempty"`            / 
+	PreStatus    *EventStatus `protobuf:"bytes,11,opt,name=preStatus,proto3" json:"preStatus,omitempty"`      / 
 }
 
 func (x *OracleStatus) Reset() {
@@ -290,8 +290,8 @@ type EventStatus struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	OpAddr string `protobuf:"bytes,1,opt,name=opAddr,proto3" json:"opAddr,omitempty"`  //修改事件状态的地址
-	Status int32  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` //事件状态
+	OpAddr string `protobuf:"bytes,1,opt,name=opAddr,proto3" json:"opAddr,omitempty"`  / 
+	Status int32  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"` / 
 }
 
 func (x *EventStatus) Reset() {
@@ -345,11 +345,11 @@ type EventPublish struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type         string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`                 //游戏类别
-	SubType      string `protobuf:"bytes,3,opt,name=subType,proto3" json:"subType,omitempty"`           //游戏子类别
-	Time         int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`                //结果公布参考时间
-	Content      string `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`           //事件内容
-	Introduction string `protobuf:"bytes,6,opt,name=introduction,proto3" json:"introduction,omitempty"` //事件描述
+	Type         string `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`                 / 
+	SubType      string `protobuf:"bytes,3,opt,name=subType,proto3" json:"subType,omitempty"`           / 
+	Time         int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`                / 
+	Content      string `protobuf:"bytes,5,opt,name=content,proto3" json:"content,omitempty"`           / 
+	Introduction string `protobuf:"bytes,6,opt,name=introduction,proto3" json:"introduction,omitempty"` / 
 }
 
 func (x *EventPublish) Reset() {
@@ -424,7 +424,7 @@ type EventAbort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` //发布事件的ID
+	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` / ID
 }
 
 func (x *EventAbort) Reset() {
@@ -471,9 +471,9 @@ type ResultPrePublish struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` //发布事件的ID
-	Source  string `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`   //数据来源
-	Result  string `protobuf:"bytes,4,opt,name=result,proto3" json:"result,omitempty"`   //发布数据
+	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` / ID
+	Source  string `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`   / 
+	Result  string `protobuf:"bytes,4,opt,name=result,proto3" json:"result,omitempty"`   / 
 }
 
 func (x *ResultPrePublish) Reset() {
@@ -534,9 +534,9 @@ type ResultPublish struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` //发布事件的ID
-	Source  string `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`   //数据来源
-	Result  string `protobuf:"bytes,4,opt,name=result,proto3" json:"result,omitempty"`   //发布数据
+	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` / ID
+	Source  string `protobuf:"bytes,3,opt,name=source,proto3" json:"source,omitempty"`   / 
+	Result  string `protobuf:"bytes,4,opt,name=result,proto3" json:"result,omitempty"`   / 
 }
 
 func (x *ResultPublish) Reset() {
@@ -597,7 +597,7 @@ type ResultAbort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` //发布事件的ID
+	EventID string `protobuf:"bytes,2,opt,name=eventID,proto3" json:"eventID,omitempty"` / ID
 }
 
 func (x *ResultAbort) Reset() {
@@ -645,7 +645,7 @@ type EventRecord struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID string `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"` //发布的事件的ID
+	EventID string `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"` / ID
 }
 
 func (x *EventRecord) Reset() {
@@ -692,7 +692,7 @@ type QueryOracleInfos struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID []string `protobuf:"bytes,1,rep,name=eventID,proto3" json:"eventID,omitempty"` //发布的事件的ID
+	EventID []string `protobuf:"bytes,1,rep,name=eventID,proto3" json:"eventID,omitempty"` / ID
 }
 
 func (x *QueryOracleInfos) Reset() {
@@ -739,7 +739,7 @@ type ReplyEventIDs struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID []string `protobuf:"bytes,1,rep,name=eventID,proto3" json:"eventID,omitempty"` //发布事件的ID
+	EventID []string `protobuf:"bytes,1,rep,name=eventID,proto3" json:"eventID,omitempty"` / ID
 }
 
 func (x *ReplyEventIDs) Reset() {
@@ -786,10 +786,10 @@ type QueryEventID struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status  int32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`  //事件状态
-	Addr    string `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`       //事件发布者的地址
-	Type    string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`       //事件类型
-	EventID string `protobuf:"bytes,4,opt,name=eventID,proto3" json:"eventID,omitempty"` //事件ID
+	Status  int32  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`  / 
+	Addr    string `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`       / 
+	Type    string `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`       / 
+	EventID string `protobuf:"bytes,4,opt,name=eventID,proto3" json:"eventID,omitempty"` / ID
 }
 
 func (x *QueryEventID) Reset() {
@@ -857,11 +857,11 @@ type ReceiptOracle struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EventID   string `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"`      //发布事件ID
-	Status    int32  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`       //事件状态
-	Addr      string `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"`            //事件发布者的地址
-	Type      string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`            //事件类型
-	PreStatus int32  `protobuf:"varint,6,opt,name=preStatus,proto3" json:"preStatus,omitempty"` //事件的前一个状态
+	EventID   string `protobuf:"bytes,1,opt,name=eventID,proto3" json:"eventID,omitempty"`      / ID
+	Status    int32  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`       / 
+	Addr      string `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"`            / 
+	Type      string `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"`            / 
+	PreStatus int32  `protobuf:"varint,6,opt,name=preStatus,proto3" json:"preStatus,omitempty"` / 
 }
 
 func (x *ReceiptOracle) Reset() {
@@ -936,7 +936,7 @@ type ReplyOracleStatusList struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status []*OracleStatus `protobuf:"bytes,1,rep,name=status,proto3" json:"status,omitempty"` //状态集
+	Status []*OracleStatus `protobuf:"bytes,1,rep,name=status,proto3" json:"status,omitempty"` / 
 }
 
 func (x *ReplyOracleStatusList) Reset() {

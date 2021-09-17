@@ -97,7 +97,7 @@ func (c *Paracross) saveLocalParaTxs(tx *types.Transaction, isDel bool) (*types.
 
 }
 
-//无法获取到commit tx信息，从commitDone 结构里面构建
+/ commit t  commitDone 
 func (c *Paracross) saveLocalParaTxsFork(commitDone *pt.ReceiptParacrossDone, isDel bool) (*types.LocalDBSet, error) {
 	status := &pt.ParacrossNodeStatus{
 		MainBlockHash:   commitDone.MainBlockHash,
@@ -149,7 +149,7 @@ func (c *Paracross) udpateLocalParaTxs(paraTitle string, paraHeight int64, cross
 				clog.Crit("udpateLocalParaTxs getCrossAction failed", "error", err)
 				return nil, err
 			}
-			//主链共识后，平行链执行出错的主链资产transfer回滚
+			/  transfe 
 			if act == pt.ParacrossMainAssetTransfer || act == pt.ParacrossParaAssetWithdraw {
 				kv, err := c.updateLocalAssetTransfer(paraTx.Tx, paraHeight, success, isDel)
 				if err != nil {
@@ -157,7 +157,7 @@ func (c *Paracross) udpateLocalParaTxs(paraTitle string, paraHeight int64, cross
 				}
 				set.KV = append(set.KV, kv)
 			}
-			//主链共识后，平行链执行出错的平行链资产withdraw回滚
+			/  withdra 
 			if act == pt.ParacrossMainAssetWithdraw || act == pt.ParacrossParaAssetTransfer {
 				asset, err := c.getCrossAssetTransferInfo(payload.GetCrossAssetTransfer(), paraTx.Tx, act)
 				if err != nil {
@@ -311,27 +311,27 @@ func (c *Paracross) updateLocalAssetTransfer(tx *types.Transaction, paraHeight i
 
 //IsFriend call exec is same seariase exec
 func (c *Paracross) IsFriend(myexec, writekey []byte, tx *types.Transaction) bool {
-	//不允许平行链
+	/ 
 	cfg := c.GetAPI().GetConfig()
 	if cfg.IsPara() {
 		return false
 	}
-	//friend 调用必须是自己在调用
+	//friend 
 	if string(myexec) != c.GetDriverName() {
 		return false
 	}
-	//只允许同系列的执行器（tx 也必须是 paracross）
+	/ （tx  paracross）
 	if string(types.GetRealExecName(tx.Execer)) != c.GetDriverName() {
 		return false
 	}
-	//只允许跨链交易
+	/ 
 	return c.allow(tx, 0) == nil
 }
 
 func (c *Paracross) allow(tx *types.Transaction, index int) error {
-	// 增加新的规则: 在主链执行器带着title的 asset-transfer/asset-withdraw 交易允许执行
+	// : titl  asset-transfer/asset-withdraw 
 	// 1. user.p.${tilte}.${paraX}
-	// 1. payload 的 actionType = t/w
+	// 1. payload  actionType = t/w
 	cfg := c.GetAPI().GetConfig()
 	if !cfg.IsPara() && c.allowIsParaTx(tx.Execer) {
 		var payload pt.ParacrossAction
@@ -342,8 +342,8 @@ func (c *Paracross) allow(tx *types.Transaction, index int) error {
 		if payload.Ty == pt.ParacrossActionAssetTransfer || payload.Ty == pt.ParacrossActionAssetWithdraw {
 			return nil
 		}
-		//对一些跨链的新feature，主链分叉之前不允许执行，但会走none执行器，因为分叉之前的版本就是走none执行器
-		//然后会被过滤到平行链，最好在分叉前控制主链不发送相关交易，要么设置系统统一的fork比如ForkRootHash，主链和平行链都可以阻止执行，
+		/ feature  non  non 
+		/   for ForkRootHash ，
 		if cfg.IsDappFork(c.GetHeight(), pt.ParaX, pt.ForkCommitTx) {
 			if payload.Ty == pt.ParacrossActionCommit || payload.Ty == pt.ParacrossActionNodeConfig ||
 				payload.Ty == pt.ParacrossActionNodeGroupApply {
@@ -361,12 +361,12 @@ func (c *Paracross) allow(tx *types.Transaction, index int) error {
 
 // Allow add paracross allow rule
 func (c *Paracross) Allow(tx *types.Transaction, index int) error {
-	//默认规则
+	/ 
 	err := c.DriverBase.Allow(tx, index)
 	if err == nil {
 		return nil
 	}
-	//paracross 添加的规则
+	//paracross 
 	return c.allow(tx, index)
 }
 

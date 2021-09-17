@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-// relayer定义的错误类型
+// relaye 
 var (
 	ErrInvalidEthContractAddress = errors.New("ErrInvalidEthContractAddress")
 	ErrUnpack                    = errors.New("ErrUnpack")

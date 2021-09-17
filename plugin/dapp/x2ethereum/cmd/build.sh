@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# 官方ci集成脚本
+# c 
 strpwd=$(pwd)
 strcmd=${strpwd##*dapp/}
 strapp=${strcmd%/cmd*}

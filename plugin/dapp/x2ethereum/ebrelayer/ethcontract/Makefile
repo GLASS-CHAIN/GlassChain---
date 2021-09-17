@@ -1,5 +1,5 @@
 ##
-##编译solidity，并产生bin文件，abi文件，和相应的go文件
+# solidity bi ，ab  g 
 
 
 SRC_CONTRACT := sol_contracts

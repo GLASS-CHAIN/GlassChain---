@@ -29,7 +29,7 @@ func newTokenDB(cfg *types.Chain33Config, preCreate *pty.TokenPreCreate, creator
 	t.token.Introduction = preCreate.GetIntroduction()
 	t.token.Total = preCreate.GetTotal()
 	t.token.Price = preCreate.GetPrice()
-	//token可以由自己进行创建，也可以通过委托给其他地址进行创建
+	//toke  
 	t.token.Owner = preCreate.GetOwner()
 	t.token.Creator = creator
 	t.token.Status = pty.TokenStatusPreCreated
@@ -267,7 +267,7 @@ func (action *tokenAction) finishCreate(tokenFinish *pty.TokenFinishCreate) (*ty
 	if cfg.IsDappFork(action.height, pty.TokenX, "ForkTokenPrice") && token.GetPrice() == 0 {
 		// pay for create token offline
 	} else {
-		//将之前冻结的资金转账到fund合约账户中
+		/ fun 
 		receiptForCoin, err := action.coinsAccount.ExecTransferFrozen(token.Creator, action.toaddr, action.execaddr, token.Price)
 		if err != nil {
 			tokenlog.Error("token finishcreate ", "addr", action.fromaddr, "execaddr", action.execaddr, "token", token.Symbol)
@@ -277,7 +277,7 @@ func (action *tokenAction) finishCreate(tokenFinish *pty.TokenFinishCreate) (*ty
 		kv = append(kv, receiptForCoin.KV...)
 	}
 
-	//创建token类型的账户，同时需要创建的额度存入
+	/ toke  
 
 	tokenAccount, err := account.NewAccountDB(cfg, "token", tokenFinish.GetSymbol(), action.db)
 	if err != nil {
@@ -288,7 +288,7 @@ func (action *tokenAction) finishCreate(tokenFinish *pty.TokenFinishCreate) (*ty
 	if err != nil {
 		return nil, err
 	}
-	//更新token的状态为已经创建
+	/ toke 
 	token.Status = pty.TokenStatusCreated
 	tokendb := &tokenDB{*token}
 	var key []byte
@@ -305,7 +305,7 @@ func (action *tokenAction) finishCreate(tokenFinish *pty.TokenFinishCreate) (*ty
 	kv = append(kv, tokendb.getKVSet(key)...)
 
 	key = calcTokenKey(tokendb.token.Symbol)
-	//因为该token已经被创建，需要保存一个全局的token，防止其他用户再次创建
+	/ toke  token 
 	tokendb.save(action.db, key)
 	kv = append(kv, tokendb.getKVSet(key)...)
 	receipt := &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}
@@ -328,8 +328,8 @@ func (action *tokenAction) revokeCreate(tokenRevoke *pty.TokenRevokeCreate) (*ty
 		return nil, pty.ErrTokenCanotRevoked
 	}
 
-	//确认交易发起者的身份，token的发起人可以撤销该项token的创建
-	//token的owner允许撤销交易
+	/ ，toke toke 
+	//toke owne 
 	if action.fromaddr != token.Owner && action.fromaddr != token.Creator {
 		tokenlog.Error("tprocTokenRevokeCreate, different creator/owner vs actor of this revoke",
 			"action.fromaddr", action.fromaddr, "creator", token.Creator, "owner", token.Owner)
@@ -341,7 +341,7 @@ func (action *tokenAction) revokeCreate(tokenRevoke *pty.TokenRevokeCreate) (*ty
 	if cfg.IsDappFork(action.height, pty.TokenX, pty.ForkTokenPriceX) && token.GetPrice() == 0 {
 		// pay for create token offline
 	} else {
-		//解锁之前冻结的资金
+		/ 
 		receipt, err := action.coinsAccount.ExecActive(token.Creator, action.execaddr, token.Price)
 		if err != nil {
 			tokenlog.Error("token revokeCreate error ", "error info", err, "creator addr", token.Creator, "execaddr", action.execaddr, "token", token.Symbol)
@@ -478,7 +478,7 @@ func getTokenAssetsKey(addr string, db dbm.KVDB) (*types.ReplyStrings, error) {
 	return &assets, nil
 }
 
-// AddTokenToAssets 添加个人资产列表
+// AddTokenToAssets 
 func AddTokenToAssets(addr string, db dbm.KVDB, symbol string) []*types.KeyValue {
 	tokenAssets, err := getTokenAssetsKey(addr, db)
 	if err != nil {
@@ -550,10 +550,10 @@ func validSymbolWithHeight(cfg *types.Chain33Config, cs []byte, height int64) bo
 	return validSymbolOriginal(cs)
 }
 
-// 铸币不可控， 也是麻烦。 2选1
-// 1. 谁可以发起
-// 2. 是否需要审核  这个会增加管理的成本
-// 现在实现选择 1
+// ， 。  1
+// 1. 
+// 2.   
+//  1
 func (action *tokenAction) mint(mint *pty.TokenMint) (*types.Receipt, error) {
 	if mint == nil {
 		return nil, types.ErrInvalidParam

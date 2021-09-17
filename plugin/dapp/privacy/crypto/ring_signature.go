@@ -193,7 +193,7 @@ func GenerateRingSignature(datahash []byte, utxos []*privacytypes.UTXOBasic, pri
 	return &data, nil
 }
 
-// GenerateKeyImage 根据给定的公钥和私钥信息生成对应的秘钥镜像
+// GenerateKeyImage 
 func GenerateKeyImage(privkey crypto.PrivKey, pubkey []byte) (*KeyImage, error) {
 	var image KeyImage
 	var pub PubKeyPrivacy
@@ -207,8 +207,8 @@ func GenerateKeyImage(privkey crypto.PrivKey, pubkey []byte) (*KeyImage, error) 
 	return &image, nil
 }
 
-// CheckRingSignature 效验环签名的签名信息
-// 效验数据datahash是一个哈
+// CheckRingSignature 
+// datahas 
 func CheckRingSignature(datahash []byte, signatures *types.RingSignatureItem, publickeys [][]byte, keyimage []byte) bool {
 	var image KeyImage
 	var pubs []*PubKeyPrivacy
@@ -217,7 +217,7 @@ func CheckRingSignature(datahash []byte, signatures *types.RingSignatureItem, pu
 	if signatures == nil || len(signatures.GetSignature()) != len(publickeys) {
 		return false
 	}
-	// 转换协议
+	// 
 	copy(image[:], keyimage)
 	count := len(publickeys)
 	pubs = make([]*PubKeyPrivacy, count)

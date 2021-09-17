@@ -13,7 +13,7 @@ import (
 	"github.com/33cn/chain33/types"
 )
 
-// 0 -> 未成熟 1 -> 可挖矿 2 -> 已挖成功 3-> 已关闭
+// 0 ->  1 ->  2 ->  3-> 
 const (
 	//TicketInit ticket　init status
 	TicketInit = iota
@@ -47,9 +47,9 @@ const (
 	// TicketActionClose action type
 	TicketActionClose = 13
 	// TicketActionList  action type
-	TicketActionList = 14 //读的接口不直接经过transaction
+	TicketActionList = 14 / transaction
 	// TicketActionInfos action type
-	TicketActionInfos = 15 //读的接口不直接经过transaction
+	TicketActionInfos = 15 / transaction
 	// TicketActionMiner action miner
 	TicketActionMiner = 16
 	// TicketActionBind action bind
@@ -159,7 +159,7 @@ type TicketMinerParam struct {
 	RetargetAdjustmentFactor int64
 }
 
-// GetTicketMinerParam 获取ticket miner config params
+// GetTicketMinerParam ticket miner config params
 func GetTicketMinerParam(cfg *types.Chain33Config, height int64) *TicketMinerParam {
 	conf := types.Conf(cfg, "mver.consensus.ticket")
 	c := &TicketMinerParam{}

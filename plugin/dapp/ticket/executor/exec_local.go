@@ -12,12 +12,12 @@ import (
 func (t *Ticket) execLocal(receiptData *types.ReceiptData) (*types.LocalDBSet, error) {
 	dbSet := &types.LocalDBSet{}
 	for _, item := range receiptData.Logs {
-		//这三个是ticket 的log
+		/ ticket log
 		if item.Ty == ty.TyLogNewTicket || item.Ty == ty.TyLogMinerTicket || item.Ty == ty.TyLogCloseTicket {
 			var ticketlog ty.ReceiptTicket
 			err := types.Decode(item.Log, &ticketlog)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			kv := t.saveTicket(&ticketlog)
 			dbSet.KV = append(dbSet.KV, kv...)
@@ -25,7 +25,7 @@ func (t *Ticket) execLocal(receiptData *types.ReceiptData) (*types.LocalDBSet, e
 			var ticketlog ty.ReceiptTicketBind
 			err := types.Decode(item.Log, &ticketlog)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			kv := t.saveTicketBind(&ticketlog)
 			dbSet.KV = append(dbSet.KV, kv...)

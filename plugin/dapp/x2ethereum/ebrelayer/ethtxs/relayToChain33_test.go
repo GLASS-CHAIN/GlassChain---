@@ -25,7 +25,7 @@ func Test_RelayToChain33(t *testing.T) {
 	ret.IsOk = true
 
 	mockapi := &mocks.QueueProtocolAPI{}
-	// 这里对需要mock的方法打桩,Close是必须的，其它方法根据需要
+	// moc ,Clos  
 	mockapi.On("Close").Return()
 	mockapi.On("AddPushSubscribe", mock.Anything).Return(&ret, nil)
 	mockapi.On("CreateTransaction", mock.Anything).Return(&tx, nil)
@@ -36,7 +36,7 @@ func Test_RelayToChain33(t *testing.T) {
 	mock33 := testnode.New("", mockapi)
 	defer mock33.Close()
 	rpcCfg := mock33.GetCfg().RPC
-	// 这里必须设置监听端口，默认的是无效值
+	//  
 	rpcCfg.JrpcBindAddr = "127.0.0.1:8801"
 	mock33.GetRPC().Listen()
 

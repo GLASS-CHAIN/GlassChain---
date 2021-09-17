@@ -96,7 +96,7 @@ func TestTicket(t *testing.T) {
 	for i := mock33.GetLastBlock().Height; i < 100; i++ {
 		err = mock33.WaitHeight(i)
 		assert.Nil(t, err)
-		//查询票是否自动close，并且购买了新的票
+		/ close 
 		req := &types.ReqWalletTransactionList{Count: 1000}
 		resp, err := mock33.GetAPI().ExecWalletFunc("wallet", "WalletTransactionList", req)
 		assert.Nil(t, err)

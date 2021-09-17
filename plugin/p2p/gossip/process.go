@@ -18,22 +18,22 @@ import (
 
 var (
 
-	//接收交易和区块过滤缓存, 避免重复提交到mempool或blockchain
+	/ , mempoo blockchain
 	txHashFilter    = utils.NewFilter(TxRecvFilterCacheNum)
 	blockHashFilter = utils.NewFilter(BlockFilterCacheNum)
 
-	//发送交易和区块时过滤缓存, 解决冗余广播发送
+	/ , 
 	txSendFilter    = utils.NewFilter(TxSendFilterCacheNum)
 	blockSendFilter = utils.NewFilter(BlockFilterCacheNum)
 
-	//发送交易短哈希广播,在本地暂时缓存一些区块数据, 限制最大大小
+	/  , 
 	totalBlockCache = utils.NewSpaceLimitCache(BlockCacheNum, MaxBlockCacheByteSize)
-	//接收到短哈希区块数据,只构建出区块部分交易,需要缓存, 并继续向对端节点请求剩余数据
+	/   , 
 	ltBlockCache = utils.NewSpaceLimitCache(BlockCacheNum/2, MaxBlockCacheByteSize/2)
 )
 
 type sendFilterInfo struct {
-	//记录广播交易或区块时需要忽略的节点, 这些节点可能是交易的来源节点,也可能节点间维护了多条连接, 冗余发送
+	/ ,  , 
 	ignoreSendPeers map[string]bool
 }
 
@@ -44,7 +44,7 @@ func (n *Node) pubToPeer(data interface{}, pid string) {
 }
 
 func (n *Node) processSendP2P(rawData interface{}, peerVersion int32, pid, peerAddr string) (sendData *types.BroadCastData, doSend bool) {
-	//出错处理
+	/ 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error("processSendP2P_Panic", "sendData", rawData, "peerAddr", peerAddr, "recoverErr", r)
@@ -72,7 +72,7 @@ func (n *Node) processSendP2P(rawData interface{}, peerVersion int32, pid, peerA
 
 func (n *Node) processRecvP2P(data *types.BroadCastData, pid string, pubPeerFunc pubFuncType, peerAddr string) (handled bool) {
 
-	//接收网络数据不可靠
+	/ 
 	defer func() {
 		if r := recover(); r != nil {
 			log.Error("ProcessRecvP2P_Panic", "recvData", data, "peerAddr", peerAddr, "recoverErr", r)
@@ -106,7 +106,7 @@ func (n *Node) sendBlock(block *types.P2PBlock, p2pData *types.BroadCastData, pe
 
 	byteHash := block.Block.Hash(n.chainCfg)
 	blockHash := hex.EncodeToString(byteHash)
-	//检测冗余发送
+	/ 
 	ignoreSend := n.addIgnoreSendPeerAtomic(blockSendFilter, blockHash, pid)
 	log.Debug("P2PSendBlock", "blockHash", blockHash, "peerIsLtVersion", peerVersion >= lightBroadCastVersion,
 		"peerAddr", peerAddr, "ignoreSend", ignoreSend)
@@ -157,22 +157,22 @@ func (n *Node) sendTx(tx *types.P2PTx, p2pData *types.BroadCastData, peerVersion
 	txHash := hex.EncodeToString(tx.Tx.Hash())
 	ttl := tx.GetRoute().GetTTL()
 
-	//超过最大的ttl, 不再发送
+	/ ttl, 
 	if ttl > n.nodeInfo.cfg.MaxTTL {
 		return false
 	}
 
 	isLightSend := peerVersion >= lightBroadCastVersion && ttl >= n.nodeInfo.cfg.LightTxTTL
-	//检测冗余发送
+	/ 
 	if n.addIgnoreSendPeerAtomic(txSendFilter, txHash, pid) {
 		return false
 	}
 
 	//log.Debug("P2PSendTx", "txHash", txHash, "ttl", ttl, "isLightSend", isLightSend, "peerAddr", peerAddr, "ignoreSend", ignoreSend)
 
-	//新版本且ttl达到设定值
+	/ tt 
 	if isLightSend {
-		p2pData.Value = &types.BroadCastData_LtTx{ //超过最大的ttl, 不再发送
+		p2pData.Value = &types.BroadCastData_LtTx{ / ttl, 
 			LtTx: &types.LightTx{
 				TxHash: tx.Tx.Hash(),
 				Route:  tx.GetRoute(),
@@ -189,15 +189,15 @@ func (n *Node) recvTx(tx *types.P2PTx, pid, peerAddr string) {
 		return
 	}
 	txHash := hex.EncodeToString(tx.GetTx().Hash())
-	//将节点id添加到发送过滤, 避免冗余发送
+	/ i , 
 	n.addIgnoreSendPeerAtomic(txSendFilter, txHash, pid)
-	//重复接收
+	/ 
 	isDuplicate := txHashFilter.AddWithCheckAtomic(txHash, true)
 	//log.Debug("recvTx", "tx", txHash, "ttl", tx.GetRoute().GetTTL(), "peerAddr", peerAddr, "duplicateTx", isDuplicate)
 	if isDuplicate {
 		return
 	}
-	//有可能收到老版本的交易路由,此时route是空指针
+	/  rout 
 	if tx.GetRoute() == nil {
 		tx.Route = &types.P2PRoute{TTL: 1}
 	}
@@ -213,11 +213,11 @@ func (n *Node) recvTx(tx *types.P2PTx, pid, peerAddr string) {
 func (n *Node) recvLtTx(tx *types.LightTx, pid, peerAddr string, pubPeerFunc pubFuncType) {
 
 	txHash := hex.EncodeToString(tx.TxHash)
-	//将节点id添加到发送过滤, 避免冗余发送
+	/ i , 
 	n.addIgnoreSendPeerAtomic(txSendFilter, txHash, pid)
 	exist := txHashFilter.Contains(txHash)
 	//log.Debug("recvLtTx", "txHash", txHash, "ttl", tx.GetRoute().GetTTL(), "peerAddr", peerAddr, "exist", exist)
-	//本地不存在, 需要向对端节点发起完整交易请求. 如果存在则表示本地已经接收过此交易, 不做任何操作
+	/ , . , 
 	if !exist {
 
 		query := &types.P2PQueryData{}
@@ -226,7 +226,7 @@ func (n *Node) recvLtTx(tx *types.LightTx, pid, peerAddr string, pubPeerFunc pub
 				TxHash: tx.TxHash,
 			},
 		}
-		//发布到指定的节点
+		/ 
 		pubPeerFunc(query, pid)
 	}
 }
@@ -237,16 +237,16 @@ func (n *Node) recvBlock(block *types.P2PBlock, pid, peerAddr string) {
 		return
 	}
 	blockHash := hex.EncodeToString(block.GetBlock().Hash(n.chainCfg))
-	//将节点id添加到发送过滤, 避免冗余发送
+	/ i , 
 	n.addIgnoreSendPeerAtomic(blockSendFilter, blockHash, pid)
-	//如果重复接收, 则不再发到blockchain执行
+	/ , blockchai 
 	isDuplicate := blockHashFilter.AddWithCheckAtomic(blockHash, true)
 	log.Debug("recvBlock", "blockHeight", block.GetBlock().GetHeight(), "peerAddr", peerAddr,
 		"block size(KB)", float32(block.Block.Size())/1024, "blockHash", blockHash, "duplicateBlock", isDuplicate)
 	if isDuplicate {
 		return
 	}
-	//发送至blockchain执行
+	/ blockchai 
 	if err := n.postBlockChain(blockHash, pid, block.GetBlock()); err != nil {
 		log.Error("recvBlock", "send block to blockchain Error", err.Error())
 	}
@@ -256,16 +256,16 @@ func (n *Node) recvBlock(block *types.P2PBlock, pid, peerAddr string) {
 func (n *Node) recvLtBlock(ltBlock *types.LightBlock, pid, peerAddr string, pubPeerFunc pubFuncType) {
 
 	blockHash := hex.EncodeToString(ltBlock.Header.Hash)
-	//将节点id添加到发送过滤, 避免冗余发送
+	/ i , 
 	n.addIgnoreSendPeerAtomic(blockSendFilter, blockHash, pid)
-	//检测是否已经收到此block
+	/ block
 	isDuplicate := blockHashFilter.AddWithCheckAtomic(blockHash, true)
 	log.Debug("recvLtBlock", "blockHash", blockHash, "blockHeight", ltBlock.GetHeader().GetHeight(),
 		"peerAddr", peerAddr, "duplicateBlock", isDuplicate)
 	if isDuplicate {
 		return
 	}
-	//组装block
+	/ block
 	block := &types.Block{}
 	block.TxHash = ltBlock.Header.TxHash
 	block.Signature = ltBlock.Header.Signature
@@ -305,12 +305,12 @@ func (n *Node) recvLtBlock(ltBlock *types.LightBlock, pid, peerAddr string, pubP
 			group, err := tx.GetTxGroup()
 			if err != nil {
 				log.Error("recvLtBlock", "getTxGroupErr", err)
-				//触发请求所有
+				/ 
 				nilTxIndices = nilTxIndices[:0]
 				break
 			}
 			block.Txs = append(block.Txs, group.Txs...)
-			//跳过遍历
+			/ 
 			i += len(group.Txs) - 1
 			continue
 		}
@@ -318,12 +318,12 @@ func (n *Node) recvLtBlock(ltBlock *types.LightBlock, pid, peerAddr string, pubP
 		block.Txs = append(block.Txs, tx)
 	}
 	nilTxLen := len(nilTxIndices)
-	//需要比较交易根哈希是否一致, 不一致需要请求区块内所有的交易
+	/ , 
 	if nilTxLen == 0 && len(block.Txs) == int(ltBlock.Header.TxCount) {
 		if bytes.Equal(block.TxHash, merkle.CalcMerkleRoot(n.chainCfg, block.Height, block.Txs)) {
 			log.Debug("recvLtBlock", "height", block.GetHeight(), "peerAddr", peerAddr,
 				"blockHash", blockHash, "block size(KB)", float32(ltBlock.Size)/1024)
-			//发送至blockchain执行
+			/ blockchai 
 			if err := n.postBlockChain(blockHash, pid, block); err != nil {
 				log.Error("recvLtBlock", "send block to blockchain Error", err.Error())
 			}
@@ -332,7 +332,7 @@ func (n *Node) recvLtBlock(ltBlock *types.LightBlock, pid, peerAddr string, pubP
 		log.Debug("recvLtBlock:TxHashCheckFail", "height", block.GetHeight(), "peerAddr", peerAddr,
 			"blockHash", blockHash, "block.Txs", block.Txs)
 	}
-	// 缺失的交易个数大于总数1/3 或者缺失数据大小大于2/3, 触发请求区块所有交易数据
+	// 1/3 2/3, 
 	if nilTxLen > 0 && (float32(nilTxLen) > float32(ltBlock.Header.TxCount)/3 ||
 		float32(block.Size()) < float32(ltBlock.Size)/3) {
 		nilTxIndices = nilTxIndices[:0]
@@ -348,7 +348,7 @@ func (n *Node) recvLtBlock(ltBlock *types.LightBlock, pid, peerAddr string, pubP
 			},
 		},
 	}
-	//需要将不完整的block预存
+	/ bloc 
 	ltBlockCache.Add(blockHash, block, block.Size())
 	//pub to specified peer
 	pubPeerFunc(query, pid)
@@ -360,7 +360,7 @@ func (n *Node) recvQueryData(query *types.P2PQueryData, pid, peerAddr string, pu
 
 		txHash := hex.EncodeToString(txReq.TxHash)
 		log.Debug("recvQueryTx", "txHash", txHash, "peerAddr", peerAddr)
-		//向mempool请求交易
+		/ mempoo 
 		resp, err := n.queryMempool(types.EventTxListByHash, &types.ReqTxHashList{Hashes: []string{string(txReq.TxHash)}})
 		if err != nil {
 			log.Error("recvQuery", "queryMempoolErr", err)
@@ -368,13 +368,13 @@ func (n *Node) recvQueryData(query *types.P2PQueryData, pid, peerAddr string, pu
 		}
 
 		txList, _ := resp.(*types.ReplyTxList)
-		//返回的数据检测
+		/ 
 		if len(txList.GetTxs()) != 1 || txList.GetTxs()[0] == nil {
 			log.Error("recvQueryTx", "txHash", txHash, "err", "recvNilTxFromMempool")
 			return
 		}
 		p2pTx := &types.P2PTx{Tx: txList.Txs[0]}
-		//再次发送完整交易至节点, ttl重设为1
+		/ , tt 1
 		p2pTx.Route = &types.P2PRoute{TTL: 1}
 		n.removeIgnoreSendPeerAtomic(txSendFilter, txHash, pid)
 		pubPeerFunc(p2pTx, pid)
@@ -390,7 +390,7 @@ func (n *Node) recvQueryData(query *types.P2PQueryData, pid, peerAddr string, pu
 			for _, idx := range blcReq.TxIndices {
 				blockRep.Txs = append(blockRep.Txs, block.Txs[idx])
 			}
-			//请求所有的交易
+			/ 
 			if len(blockRep.TxIndices) == 0 {
 				blockRep.Txs = block.Txs
 			}
@@ -412,23 +412,23 @@ func (n *Node) recvQueryReply(rep *types.P2PBlockTxReply, pid, peerAddr string, 
 		block.Txs[idx] = rep.Txs[i]
 	}
 
-	//所有交易覆盖
+	/ 
 	if len(rep.TxIndices) == 0 {
 		block.Txs = rep.Txs
 	}
 
-	//计算的root hash是否一致
+	/ root has 
 	if bytes.Equal(block.TxHash, merkle.CalcMerkleRoot(n.chainCfg, block.Height, block.Txs)) {
 
 		log.Debug("recvQueryReplyBlock", "blockHeight", block.GetHeight(), "peerAddr", peerAddr,
 			"block size(KB)", float32(block.Size())/1024, "blockHash", rep.BlockHash)
-		//发送至blockchain执行
+		/ blockchai 
 		if err := n.postBlockChain(rep.BlockHash, pid, block); err != nil {
 			log.Error("recvQueryReplyBlock", "send block to blockchain Error", err.Error())
 		}
 	} else if len(rep.TxIndices) != 0 {
 		log.Debug("recvQueryReplyBlock", "GetTotalBlock", block.GetHeight())
-		//不一致尝试请求整个区块的交易, 且判定是否已经请求过完整交易
+		/ , 
 		query := &types.P2PQueryData{
 			Value: &types.P2PQueryData_BlockTxReq{
 				BlockTxReq: &types.P2PBlockTxReq{
@@ -468,7 +468,7 @@ func (n *Node) postMempool(txHash string, tx *types.Transaction) error {
 	return n.p2pMgr.PubBroadCast(txHash, tx, types.EventTx)
 }
 
-//检测是否冗余发送, 或者添加到发送过滤(内部存在直接修改读写保护的数据, 对filter lru的读写需要外层锁保护)
+/ ,  , filter lr )
 func (n *Node) addIgnoreSendPeerAtomic(filter *utils.Filterdata, key, pid string) (exist bool) {
 
 	filter.GetAtomicLock()
@@ -486,7 +486,7 @@ func (n *Node) addIgnoreSendPeerAtomic(filter *utils.Filterdata, key, pid string
 	return exist
 }
 
-// 删除发送过滤器记录
+// 
 func (n *Node) removeIgnoreSendPeerAtomic(filter *utils.Filterdata, key, pid string) {
 
 	filter.GetAtomicLock()

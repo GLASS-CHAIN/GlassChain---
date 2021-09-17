@@ -8,9 +8,9 @@ import (
 	"github.com/33cn/chain33/types"
 )
 
-//On_MultiSigAddresList 获取owner对应的多重签名地址列表
+//On_MultiSigAddresList owne 
 func (policy *multisigPolicy) On_MultiSigAddresList(req *types.ReqString) (types.Message, error) {
-	//获取本钱包中记录的所有多重签名地址
+	/ 
 	if req.Data == "" {
 		reply, err := policy.store.listOwnerAttrs()
 		if err != nil {
@@ -18,7 +18,7 @@ func (policy *multisigPolicy) On_MultiSigAddresList(req *types.ReqString) (types
 		}
 		return reply, err
 	}
-	//值查询指定owner地址拥有的多重签名地址列表
+	/ owne 
 	reply, err := policy.store.listOwnerAttrsByAddr(req.Data)
 	if err != nil {
 		bizlog.Error("On_MultiSigAddresList listOwnerAttrsByAddr", "owneraddr", req.Data, "err", err)

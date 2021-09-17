@@ -112,13 +112,13 @@ func (m *SyncTxReceiptConfig) String() string { return proto.CompactTextString(m
 func (*SyncTxReceiptConfig) ProtoMessage()    {}
 
 type Deploy struct {
-	// 操作管理员地址
+	// 
 	OperatorAddr string `protobuf:"bytes,1,opt,name=operatorAddr" json:"operatorAddr,omitempty"`
-	// 合约部署人员私钥，用于部署合约时签名使用
+	//  
 	DeployerPrivateKey string `protobuf:"bytes,2,opt,name=deployerPrivateKey" json:"deployerPrivateKey,omitempty"`
-	// 验证人地址
+	// 
 	ValidatorsAddr []string `protobuf:"bytes,3,rep,name=validatorsAddr" json:"validatorsAddr,omitempty"`
-	// 验证人权重
+	// 
 	InitPowers []int64 `protobuf:"varint,4,rep,name=initPowers" json:"initPowers,omitempty"`
 }
 

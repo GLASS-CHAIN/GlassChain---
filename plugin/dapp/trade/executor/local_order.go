@@ -17,18 +17,18 @@ import (
 )
 
 /*
-现有接口
- 1.  查询地址对应的买单 （无分页）
-   1.1 只指定地址   -> owner
-   1.2 同时指定地址和token  -> owner_asset
-   1.3 显示一个用户成交的所有买单 -> owner
-   1.4 显示一个用户成交的指定一个或者多个token所有买单 -> owner_asset 不支持多个
- 2. 分状态查询地址的买单： 状态 地址 （无分页） -> owner_status
- 3. 显示一个token 指定数量的买单 GetTokenBuyOrderByStatus  -> asset_inBuy_status
- 4. 显示指定token出售者的一个或多个token 或 不指定token 的卖单 （无分页） -> owner_asset/owner_asset_isSell 不支持多个
- 5. 显示指定状态下的某地址卖单 （无分页）  -> owner_isSell_status
- 6. 显示一个token 指定数量的卖单    -> asset_isSell
- 7. 根据状态分页列出某地址的订单（包括买单卖单） owner_status
+ 
+ 1.    ）
+   1.1    -> owner
+   1.2 token  -> owner_asset
+   1.3  -> owner
+   1.4 toke  -> owner_asset 
+ 2. ：    ） -> owner_status
+ 3. token  GetTokenBuyOrderByStatus  -> asset_inBuy_status
+ 4. toke token  token   ） -> owner_asset/owner_asset_isSell 
+ 5.   ）  -> owner_isSell_status
+ 6. token     -> asset_isSell
+ 7.  ） owner_status
 */
 var opt_order_table = &table.Option{
 	Prefix:  "LODB-trade",
@@ -36,28 +36,28 @@ var opt_order_table = &table.Option{
 	Primary: "txIndex",
 	// asset = asset_exec+asset_symbol
 	//
-	// status: 设计为可以同时查询几种的并集 , 存储为前缀， 需要提前设计需要合并的， 用前缀表示
-	//    进行中，  撤销，  部分成交 ， 全部成交，  完成状态统一前缀. 数字和原来不一样
+	// status:  , ， ， 
+	//    ，  ，   ， ，  . 
 	//      00     10     11          12         1*
-	// 排序过滤条件： 可以组合，status&isSell 和前缀冲突
+	// ： ，status&isSell 
 	Index: []string{
-		"key",                 // 内部查询用
-		"asset",               // 按资产统计订单
-		"asset_isSell_status", // 接口 3
-		// "asset_status", 可能需求， 用于资产的交易历史
+		"key",                 // 
+		"asset",               // 
+		"asset_isSell_status", //  3
+		// "asset_status", ， 
 		// "asset_isSell",
-		"owner",              // 接口 1.1， 1.3
-		"owner_asset",        // 接口 1.2, 1.4, 4, 7
-		"owner_asset_isSell", // 接口 4
-		"owner_asset_status", // 新需求， 在
-		"owner_isSell",       // 接口 6
-		// "owner_isSell_status",  可能需求， 界面分开显示订单
-		// "owner_isSell_statusPrefix", // 状态可以定制组合, 成交历史需求
-		"owner_status",             // 接口 2
-		"assset_isSell_isFinished", // 用 isFinish, 进行订单是否完成的列表功能
+		"owner",              //  1.1， 1.3
+		"owner_asset",        //  1.2, 1.4, 4, 7
+		"owner_asset_isSell", //  4
+		"owner_asset_status", // ， 
+		"owner_isSell",       //  6
+		// "owner_isSell_status",  ， 
+		// "owner_isSell_statusPrefix", // , 
+		"owner_status",             //  2
+		"assset_isSell_isFinished", //  isFinish, 
 		"owner_asset_isFinished",
 		"owner_isFinished",
-		// "owner_statusPrefix", // 状态可以定制组合 , 成交历史需求
+		// "owner_statusPrefix", //  , 
 	},
 }
 
@@ -141,12 +141,12 @@ func (r *OrderRow) isFinished() int {
 	return 0
 }
 
-// status: 设计为可以同时查询几种的并集 , 存储为前缀， 需要提前设计需要合并的， 用前缀表示
-//    进行中，  撤销，  部分成交 ， 全部成交，  完成状态统一前缀. 数字和原来不一样
+// status:  , ， ， 
+//    ，  ，   ， ，  . 
 //      01     10     11          12        19 -> 1*
 func (r *OrderRow) status() string {
 	if r.Status == pty.TradeOrderStatusOnBuy || r.Status == pty.TradeOrderStatusOnSale {
-		return "01" // 试图用1 可以匹配所有完成的
+		return "01" // 1 
 	} else if r.Status == pty.TradeOrderStatusSoldOut || r.Status == pty.TradeOrderStatusBoughtOut {
 		return "12"
 	} else if r.Status == pty.TradeOrderStatusRevoked || r.Status == pty.TradeOrderStatusBuyRevoked {
@@ -242,8 +242,8 @@ func (t *trade) rollBackSellLimit(tx *types.Transaction, sell *pty.ReceiptSellBa
 		return nil
 
 	}
-	// 撤销订单回滚, 只需要修改状态
-	// 其他的操作需要还修改数量
+	// , 
+	// 
 	order.Status = pty.TradeOrderStatusOnSale
 	order.TxHash = order.TxHash[:len(order.TxHash)-1]
 	order.TradedBoardlot = order.TradedBoardlot - tradedBoardlot

@@ -6,7 +6,7 @@ import (
 	pty "github.com/33cn/plugin/plugin/dapp/trade/types"
 )
 
-// 文档 1.8 根据token 分页显示未完成成交卖单
+//  1.8 token 
 func (t *trade) Query_GetTokenSellOrderByStatus(req *pty.ReqTokenSellOrder) (types.Message, error) {
 	return t.GetTokenSellOrderByStatus(req, req.Status)
 }
@@ -40,7 +40,7 @@ func (t *trade) GetTokenOrderByStatus(isSell bool, req *pty.ReqTokenSellOrder, s
 	return t.toTradeOrders(rows)
 }
 
-// 1.3 根据token 分页显示未完成成交买单
+// 1.3 token 
 func (t *trade) Query_GetTokenBuyOrderByStatus(req *pty.ReqTokenBuyOrder) (types.Message, error) {
 	if req.Status == 0 {
 		req.Status = pty.TradeOrderStatusOnBuy
@@ -51,7 +51,7 @@ func (t *trade) Query_GetTokenBuyOrderByStatus(req *pty.ReqTokenBuyOrder) (types
 // GetTokenBuyOrderByStatus by status
 // buy & TokenSymbol & status buy sort by price
 func (t *trade) GetTokenBuyOrderByStatus(req *pty.ReqTokenBuyOrder, status int32) (types.Message, error) {
-	// List Direction 是升序， 买单是要降序， 把高价买的放前面， 在下一页操作时， 显示买价低的。
+	// List Direction ， ， ， ， 。
 	direction := 1 - req.Direction
 	req2 := pty.ReqTokenSellOrder{
 		TokenSymbol: req.TokenSymbol,
@@ -64,12 +64,12 @@ func (t *trade) GetTokenBuyOrderByStatus(req *pty.ReqTokenBuyOrder, status int32
 }
 
 // addr part
-// 1.4 addr(-token) 的所有订单， 不分页
+// 1.4 addr(-token) ， 
 func (t *trade) Query_GetOnesSellOrder(req *pty.ReqAddrAssets) (types.Message, error) {
 	return t.GetOnesSellOrder(req)
 }
 
-// 1.1 addr(-token) 的所有订单， 不分页
+// 1.1 addr(-token) ， 
 func (t *trade) Query_GetOnesBuyOrder(req *pty.ReqAddrAssets) (types.Message, error) {
 	return t.GetOnesBuyOrder(req)
 }
@@ -119,13 +119,13 @@ func (t *trade) GetOnesOrder(isSell bool, addrTokens *pty.ReqAddrAssets) (types.
 	return &replys, nil
 }
 
-// Query_GetOnesBuyOrderWithStatus 1.5 没找到
-// 按 用户状态来 addr-status
+// Query_GetOnesBuyOrderWithStatus 1.5 
+//   addr-status
 func (t *trade) Query_GetOnesSellOrderWithStatus(req *pty.ReqAddrAssets) (types.Message, error) {
 	return t.GetOnesSellOrdersWithStatus(req)
 }
 
-// Query_GetOnesBuyOrderWithStatus 1.2 按 用户状态来 addr-status
+// Query_GetOnesBuyOrderWithStatus 1.2   addr-status
 func (t *trade) Query_GetOnesBuyOrderWithStatus(req *pty.ReqAddrAssets) (types.Message, error) {
 	return t.GetOnesBuyOrdersWithStatus(req)
 }
@@ -156,7 +156,7 @@ func (t *trade) GetOnesStatusOrder(isSell bool, req *pty.ReqAddrAssets) (types.M
 }
 
 // util
-// 在老版本中，默认查询token相关的订单
+//  toke 
 func (t *trade) setQueryAsset(order *pty.LocalOrder, tokenSymbol string) {
 	order.AssetSymbol = tokenSymbol
 	order.AssetExec = defaultAssetExec
@@ -164,7 +164,7 @@ func (t *trade) setQueryAsset(order *pty.LocalOrder, tokenSymbol string) {
 	order.PriceExec = t.GetAPI().GetConfig().GetCoinExec()
 }
 
-// 转换数据结构， 输出前调用
+// ， 
 func (t *trade) toTradeOrders(rows []*table.Row) (*pty.ReplyTradeOrders, error) {
 	var replys pty.ReplyTradeOrders
 	cfg := t.GetAPI().GetConfig()

@@ -12,7 +12,7 @@ ethValidatorAddrKeyA="3fa21584ae2e4fd74db9b58e2386f5481607dfa4d7ba0617aaa7858e50
 ethValidatorAddrKeyB="a5f3063552f4483cfc20ac4f40f45b798791379862219de9e915c64722c1d400"
 ethValidatorAddrKeyC="bbf5e65539e9af0eb0cfac30bad475111054b09c11d668fc0731d54ea777471e"
 ethValidatorAddrKeyD="c9fa31d7984edf81b8ef3b40c761f1847f6fcd5711ab2462da97dc458f1f896b"
-# 新增地址 chain33 需要导入地址 转入 10 bty当收费费
+#  chain33   10 bt 
 chain33Validator1="1GTxrmuWiXavhcvsaH5w9whgVxUrWsUMdV"
 chain33Validator2="155ooMPBTF8QQsGAknkK7ei5D78rwDEFe6"
 chain33Validator3="13zBdQwuyDh7cKN79oT2odkxYuDbgQiXFv"
@@ -84,14 +84,14 @@ function StartRelayerAndDeploy() {
     dockerAddr=$(get_docker_addr "${dockerNamePrefix}_ganachetest_1")
     ethUrl="http://${dockerAddr}:8545"
 
-    # 修改 relayer.toml 配置文件
+    #  relayer.toml 
     updata_relayer_a_toml "${dockerAddr}" "${dockerNamePrefix}_ebrelayera_1" "./relayer.toml"
     # start ebrelayer A
     start_ebrelayerA
-    # 部署合约
+    # 
     InitAndDeploy
 
-    # 获取 BridgeRegistry 地址
+    #  BridgeRegistry 
     result=$(${CLIA} relayer ethereum bridgeRegistry)
     BridgeRegistry=$(cli_ret "${result}" "bridgeRegistry" ".addr")
 
@@ -99,9 +99,9 @@ function StartRelayerAndDeploy() {
     kill_docker_ebrelayer "${dockerNamePrefix}_ebrelayera_1"
     sleep 1
 
-    # 修改 relayer.toml 配置文件
+    #  relayer.toml 
     updata_relayer_toml "${BridgeRegistry}" ${maturityDegree} "./relayer.toml"
-    # 重启
+    # 
     start_ebrelayerA
 
     # start ebrelayer B C D
@@ -109,7 +109,7 @@ function StartRelayerAndDeploy() {
         local file="./relayer$name.toml"
         cp './relayer.toml' "${file}"
 
-        # 删除配置文件中不需要的字段
+        # 
         for deleteName in "deployerPrivateKey" "operatorAddr" "validatorsAddr" "initPowers" "deployerPrivateKey" "deploy"; do
             delete_line "${file}" "${deleteName}"
         done
@@ -133,9 +133,9 @@ function StartRelayerAndDeploy() {
 
 function EthImportKey() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # 重启 ebrelayer 并解锁
+    #  ebrelayer 
     for name in a b c d; do
-        # 导入测试地址私钥
+        # 
         # shellcheck disable=SC2154
         CLI="docker exec ${dockerNamePrefix}_ebrelayer${name}_1 /root/ebcli_A"
 
@@ -166,10 +166,10 @@ function EthImportKey() {
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# chian33 添加验证着及权重
+# chian33 
 function InitChain33Vilators() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # 导入 chain33Validators 私钥生成地址
+    #  chain33Validators 
     result=$(${Chain33Cli} account import_key -k ${chain33ValidatorKey1} -l validator1)
     check_addr "${result}" ${chain33Validator1}
     result=$(${Chain33Cli} account import_key -k ${chain33ValidatorKey2} -l validator2)
@@ -197,14 +197,14 @@ function InitChain33Vilators() {
     totalPower=$(${Chain33Cli} send x2ethereum query totalpower -k 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv | jq .totalPower | sed 's/\"//g')
     check_number 100 "${totalPower}"
 
-    # cions 转帐到 x2ethereum 合约地址
+    # cions  x2ethereum 
     hash=$(${Chain33Cli} send coins send_exec -e x2ethereum -a 200 -k 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv)
 
     check_tx "${Chain33Cli}" "${hash}"
     result=$(${Chain33Cli} account balance -a 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -e x2ethereum)
     balance_ret "${result}" "200.0000"
 
-    # chain33Validator 要有手续费
+    # chain33Validator 
     hash=$(${Chain33Cli} send coins transfer -a 10 -t "${chain33Validator1}" -k 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv)
     check_tx "${Chain33Cli}" "${hash}"
     result=$(${Chain33Cli} account balance -a "${chain33Validator1}" -e coins)
@@ -230,7 +230,7 @@ function InitChain33Vilators() {
 
 function TestChain33ToEthAssets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # token4chain33 在 以太坊 上先有 bty
+    # token4chain33    bty
     result=$(${CLIA} relayer ethereum token4chain33 -s coins.bty)
     tokenAddrBty=$(cli_ret "${result}" "token4chain33" ".addr")
 
@@ -257,7 +257,7 @@ function TestChain33ToEthAssets() {
     result=$(${CLIA} relayer ethereum balance -o "${ethReceiverAddr1}" -t "${tokenAddrBty}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 
     result=$(${Chain33Cli} account balance -a "${chain33SenderAddr}" -e x2ethereum)
@@ -267,7 +267,7 @@ function TestChain33ToEthAssets() {
 }
 
 # eth to chain33
-# 在以太坊上锁定资产,然后在 chain33 上铸币,针对 eth 资产
+#   chain33   eth 
 function TestETH2Chain33Assets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
@@ -285,7 +285,7 @@ function TestETH2Chain33Assets() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}")
     cli_ret "${result}" "balance" ".balance" "0.1"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 
     result=$(${Chain33Cli} x2ethereum balance -s 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -t eth | jq ".res" | jq ".[]")
@@ -316,12 +316,12 @@ function TestETH2Chain33Erc20() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
 
-    # token4erc20 在 chain33 上先有 token,同时 mint
+    # token4erc20  chain33  token  mint
     tokenSymbol="testc"
     result=$(${CLIA} relayer ethereum token4erc20 -s "${tokenSymbol}")
     tokenAddr=$(cli_ret "${result}" "token4erc20" ".addr")
 
-    # 先铸币 1000
+    #  1000
     result=$(${CLIA} relayer ethereum mint -m 1000 -o "${ethReceiverAddr1}" -t "${tokenAddr}")
     cli_ret "${result}" "mint"
 
@@ -344,7 +344,7 @@ function TestETH2Chain33Erc20() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}" -t "${tokenAddr}")
     cli_ret "${result}" "balance" ".balance" "100"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 
     result=$(${Chain33Cli} x2ethereum balance -s "${chain33Validator1}" -t "${tokenSymbol}" -a "${tokenAddr}" | jq ".res" | jq ".[]")
@@ -373,7 +373,7 @@ function TestChain33ToEthAssetsKill() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 
     if [ "${tokenAddrBty}" == "" ]; then
-        # token4chain33 在 以太坊 上先有 bty
+        # token4chain33    bty
         result=$(${CLIA} relayer ethereum token4chain33 -s coins.bty)
         tokenAddrBty=$(cli_ret "${result}" "token4chain33" ".addr")
     fi
@@ -406,7 +406,7 @@ function TestChain33ToEthAssetsKill() {
     result=$(${CLIA} relayer ethereum balance -o "${ethReceiverAddr2}" -t "${tokenAddrBty}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 
     result=$(${Chain33Cli} account balance -a "${chain33Validator1}" -e x2ethereum)
@@ -421,7 +421,7 @@ function TestChain33ToEthAssetsKill() {
 }
 
 # eth to chain33
-# 在以太坊上锁定资产,然后在 chain33 上铸币,针对 eth 资产
+#   chain33   eth 
 function TestETH2Chain33AssetsKill() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
@@ -442,7 +442,7 @@ function TestETH2Chain33AssetsKill() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}")
     cli_ret "${result}" "balance" ".balance" "0.1"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 
     result=$(${Chain33Cli} x2ethereum balance -s 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -t eth | jq ".res" | jq ".[]")
@@ -485,12 +485,12 @@ function TestETH2Chain33Erc20Kill() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
 
-    # token4erc20 在 chain33 上先有 token,同时 mint
+    # token4erc20  chain33  token  mint
     tokenSymbol="testcc"
     result=$(${CLIA} relayer ethereum token4erc20 -s "${tokenSymbol}")
     tokenAddr2=$(cli_ret "${result}" "token4erc20" ".addr")
 
-    # 先铸币 1000
+    #  1000
     result=$(${CLIA} relayer ethereum mint -m 1000 -o "${ethReceiverAddr1}" -t "${tokenAddr2}")
     cli_ret "${result}" "mint"
 
@@ -516,7 +516,7 @@ function TestETH2Chain33Erc20Kill() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}" -t "${tokenAddr2}")
     cli_ret "${result}" "balance" ".balance" "100"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 
     result=$(${Chain33Cli} x2ethereum balance -s "${chain33Validator1}" -t "${tokenSymbol}" -a "${tokenAddr2}" | jq ".res" | jq ".[]")

@@ -29,12 +29,12 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(OracleX, NewType(cfg))
 }
 
-// OracleType 预言机执行器类型
+// OracleType 
 type OracleType struct {
 	types.ExecTypeBase
 }
 
-// NewType 创建执行器类型
+// NewType 
 func NewType(cfg *types.Chain33Config) *OracleType {
 	c := &OracleType{}
 	c.SetChild(c)
@@ -42,17 +42,17 @@ func NewType(cfg *types.Chain33Config) *OracleType {
 	return c
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (o *OracleType) GetName() string {
 	return OracleX
 }
 
-// GetPayload 获取oracle action
+// GetPayload oracle action
 func (o *OracleType) GetPayload() types.Message {
 	return &OracleAction{}
 }
 
-// GetTypeMap 获取类型map
+// GetTypeMap map
 func (o *OracleType) GetTypeMap() map[string]int32 {
 	return map[string]int32{
 		"EventPublish":     ActionEventPublish,
@@ -63,7 +63,7 @@ func (o *OracleType) GetTypeMap() map[string]int32 {
 	}
 }
 
-// GetLogMap 获取日志map
+// GetLogMap map
 func (o *OracleType) GetLogMap() map[int64]*types.LogInfo {
 	return map[int64]*types.LogInfo{
 		TyLogEventPublish:     {Ty: reflect.TypeOf(ReceiptOracle{}), Name: "LogEventPublish"},

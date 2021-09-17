@@ -2,7 +2,7 @@
 # shellcheck disable=SC2128
 # shellcheck source=/dev/null
 
-# 测试前请先阅读文档，对代码进行修改 http://note.youdao.com/noteshare?id=675ce9a1162b6639182206864985e935&sub=14A1CFAA14CB4318B207EAEC94991A93
+#   http://note.youdao.com/noteshare?id=675ce9a1162b6639182206864985e935&sub=14A1CFAA14CB4318B207EAEC94991A93
 set -x
 set +e
 
@@ -19,7 +19,7 @@ ethValidatorAddrKeyA="3fa21584ae2e4fd74db9b58e2386f5481607dfa4d7ba0617aaa7858e50
 ethValidatorAddrKeyB="a5f3063552f4483cfc20ac4f40f45b798791379862219de9e915c64722c1d400"
 ethValidatorAddrKeyC="bbf5e65539e9af0eb0cfac30bad475111054b09c11d668fc0731d54ea777471e"
 ethValidatorAddrKeyD="c9fa31d7984edf81b8ef3b40c761f1847f6fcd5711ab2462da97dc458f1f896b"
-# 新增地址 chain33 需要导入地址 转入 10 bty当收费费
+#  chain33   10 bt 
 chain33Validator1="1GTxrmuWiXavhcvsaH5w9whgVxUrWsUMdV"
 chain33Validator2="155ooMPBTF8QQsGAknkK7ei5D78rwDEFe6"
 chain33Validator3="13zBdQwuyDh7cKN79oT2odkxYuDbgQiXFv"
@@ -80,26 +80,26 @@ function StartRelayerAndDeploy() {
 
     start_ebrelayer_and_setpwd_unlock A
 
-    # 部署合约
+    # 
     InitAndDeploy
 
-    # 获取 BridgeRegistry 地址
+    #  BridgeRegistry 
     result=$(${CLIA} relayer ethereum bridgeRegistry)
     BridgeRegistry=$(cli_ret "${result}" "bridgeRegistry" ".addr")
     #    BridgeRegistry="0xcA5E8FCE034888ea51eB568CCA83C413b9DE3F73"
 
     kill_ebrelayer "./A/ebrelayer"
-    # 修改 relayer.toml 配置文件
+    #  relayer.toml 
     updata_relayer_toml_ropston "${BridgeRegistry}" ${maturityDegree} "./A/relayer.toml"
     updata_all_relayer_toml2
 
     echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 }
 
-# chian33 添加验证着及权重
+# chian33 
 function InitChain33Vilators() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # 导入 chain33Validators 私钥生成地址
+    #  chain33Validators 
     result=$(${Chain33Cli} account import_key -k ${chain33ValidatorKey1} -l validator1)
     check_addr "${result}" ${chain33Validator1}
     result=$(${Chain33Cli} account import_key -k ${chain33ValidatorKey2} -l validator2)
@@ -127,14 +127,14 @@ function InitChain33Vilators() {
     totalPower=$(${Chain33Cli} send x2ethereum query totalpower -k 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv | jq .totalPower | sed 's/\"//g')
     check_number 100 "${totalPower}"
 
-    # cions 转帐到 x2ethereum 合约地址
+    # cions  x2ethereum 
     hash=$(${Chain33Cli} send coins send_exec -e x2ethereum -a 200 -k 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv)
 
     check_tx "${Chain33Cli}" "${hash}"
     result=$(${Chain33Cli} account balance -a 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -e x2ethereum)
     balance_ret "${result}" "200.0000"
 
-    # chain33Validator 要有手续费
+    # chain33Validator 
     hash=$(${Chain33Cli} send coins transfer -a 10 -t "${chain33Validator1}" -k 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv)
     check_tx "${Chain33Cli}" "${hash}"
     result=$(${Chain33Cli} account balance -a "${chain33Validator1}" -e coins)
@@ -161,7 +161,7 @@ function InitChain33Vilators() {
 function StartAllEbrelayer() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     start_ebrelayer_and_unlock A
-    # 重启 ebrelayer 并解锁
+    #  ebrelayer 
     for name in B C D; do
         start_ebrelayer_and_setpwd_unlock $name
     done
@@ -193,7 +193,7 @@ function EthImportKey() {
 
 function TestChain33ToEthAssets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-    # token4chain33 在 以太坊 上先有 bty
+    # token4chain33    bty
     tokenSymbol="coins.bty"
 
     result=$(${CLIA} relayer ethereum token4chain33 -s "${tokenSymbol}")
@@ -224,7 +224,7 @@ function TestChain33ToEthAssets() {
     result=$(${CLIA} relayer ethereum balance -o "${ethReceiverAddr1}" -t "${tokenAddrBty}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 3)) https://ropsten-rpc.linkpool.io/
 
     result=$(${Chain33Cli} account balance -a "${chain33SenderAddr}" -e x2ethereum)
@@ -234,7 +234,7 @@ function TestChain33ToEthAssets() {
 }
 
 # eth to chain33
-# 在以太坊上锁定资产,然后在 chain33 上铸币,针对 eth 资产
+#   chain33   eth 
 function TestETH2Chain33Assets() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
@@ -252,7 +252,7 @@ function TestETH2Chain33Assets() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}")
     cli_ret "${result}" "balance" ".balance" "0.1"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 3)) https://ropsten-rpc.linkpool.io/
 
     result=$(${Chain33Cli} x2ethereum balance -s 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -t eth | jq ".res" | jq ".[]")
@@ -283,13 +283,13 @@ function TestETH2Chain33Erc20() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
 
-    # token4erc20 在 chain33 上先有 token,同时 mint
+    # token4erc20  chain33  token  mint
     tokenSymbol="testc"
     result=$(${CLIA} relayer ethereum token4erc20 -s "${tokenSymbol}")
     tokenAddr=$(cli_ret "${result}" "token4erc20" ".addr")
     #tokenAddr="0x47F62ba65bCa4150BE98F31566DC559b9b04fc2D"
 
-    # 先铸币 1000
+    #  1000
     result=$(${CLIA} relayer ethereum mint -m 1000 -o "${ethReceiverAddr1}" -t "${tokenAddr}")
     cli_ret "${result}" "mint"
 
@@ -312,7 +312,7 @@ function TestETH2Chain33Erc20() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}" -t "${tokenAddr}")
     cli_ret "${result}" "balance" ".balance" "100"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 3)) https://ropsten-rpc.linkpool.io/
 
     result=$(${Chain33Cli} x2ethereum balance -s "${chain33Validator1}" -t "${tokenSymbol}" -a "${tokenAddr}" | jq ".res" | jq ".[]")
@@ -342,7 +342,7 @@ function TestChain33ToEthAssetsKill() {
 
     tokenSymbol="coins.bty"
     if [ "${tokenAddrBty}" == "" ]; then
-        # token4chain33 在 以太坊 上先有 bty
+        # token4chain33    bty
         result=$(${CLIA} relayer ethereum token4chain33 -s "${tokenSymbol}")
         tokenAddrBty=$(cli_ret "${result}" "token4chain33" ".addr")
     fi
@@ -377,7 +377,7 @@ function TestChain33ToEthAssetsKill() {
     result=$(${CLIA} relayer ethereum balance -o "${ethReceiverAddr2}" -t "${tokenAddrBty}")
     cli_ret "${result}" "balance" ".balance" "0"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 3)) https://ropsten-rpc.linkpool.io/
 
     result=$(${Chain33Cli} account balance -a "${chain33Validator1}" -e x2ethereum)
@@ -392,7 +392,7 @@ function TestChain33ToEthAssetsKill() {
 }
 
 # eth to chain33
-# 在以太坊上锁定资产,然后在 chain33 上铸币,针对 eth 资产
+#   chain33   eth 
 function TestETH2Chain33AssetsKill() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
@@ -413,7 +413,7 @@ function TestETH2Chain33AssetsKill() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}")
     cli_ret "${result}" "balance" ".balance" "$(echo "${balance}+0.133" | bc)"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 3)) https://ropsten-rpc.linkpool.io/
 
     balance=$(${Chain33Cli} x2ethereum balance -s 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -t eth | jq ".res" | jq ".[]" | jq -r ".balance")
@@ -456,12 +456,12 @@ function TestETH2Chain33Erc20Kill() {
     echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
     ${CLIA} relayer unlock -p 123456hzj
 
-    # token4erc20 在 chain33 上先有 token,同时 mint
+    # token4erc20  chain33  token  mint
     tokenSymbol="testcc"
     result=$(${CLIA} relayer ethereum token4erc20 -s "${tokenSymbol}")
     tokenAddr=$(cli_ret "${result}" "token4erc20" ".addr")
 
-    # 先铸币 1000
+    #  1000
     result=$(${CLIA} relayer ethereum mint -m 1000 -o "${ethReceiverAddr1}" -t "${tokenAddr}")
     cli_ret "${result}" "mint"
 
@@ -487,7 +487,7 @@ function TestETH2Chain33Erc20Kill() {
     result=$(${CLIA} relayer ethereum balance -o "${bridgeBankAddr}" -t "${tokenAddr}")
     cli_ret "${result}" "balance" ".balance" "100"
 
-    # eth 等待 10 个区块
+    # eth  10 
     eth_block_wait $((maturityDegree + 3)) https://ropsten-rpc.linkpool.io/
 
     result=$(${Chain33Cli} x2ethereum balance -s "${chain33Validator1}" -t "${tokenSymbol}" -a "${tokenAddr}" | jq ".res" | jq ".[]")

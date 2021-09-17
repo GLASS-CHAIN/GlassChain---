@@ -9,7 +9,7 @@ import (
 )
 
 /*
- * 初始化dapp相关的组件
+ * dap 
  */
 
 func init() {

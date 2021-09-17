@@ -143,8 +143,8 @@ func (e *Paracross) ExecDelLocal_NodeGroupConfig(payload *pt.ParaNodeGroupConfig
 func (e *Paracross) ExecDelLocal_AssetTransfer(payload *types.AssetsTransfer, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	var set types.LocalDBSet
 
-	//  主链转出记录，
-	//  转入在 commit done 时记录， 因为没有日志里没有当时tx信息
+	//  ，
+	//   commit done ， t 
 	r, err := e.initLocalAssetTransfer(tx, true, nil)
 	if err != nil {
 		return nil, err

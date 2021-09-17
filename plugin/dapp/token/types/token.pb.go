@@ -218,7 +218,7 @@ func (*TokenAction_TokenMint) isTokenAction_Value() {}
 
 func (*TokenAction_TokenBurn) isTokenAction_Value() {}
 
-//创建token，支持最大精确度是8位小数,即存入数据库的实际总额需要放大1e8倍
+/ token   1e 
 type TokenPreCreate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -784,7 +784,7 @@ type LocalToken struct {
 	PrepareCreateHeight int64  `protobuf:"varint,11,opt,name=prepareCreateHeight,proto3" json:"prepareCreateHeight,omitempty"`
 	PrepareCreateTime   int64  `protobuf:"varint,12,opt,name=prepareCreateTime,proto3" json:"prepareCreateTime,omitempty"`
 	Precision           int32  `protobuf:"varint,13,opt,name=precision,proto3" json:"precision,omitempty"`
-	// 如果需要这个项可以单独做一个域存储
+	// 
 	TotalTransferTimes int64 `protobuf:"varint,14,opt,name=totalTransferTimes,proto3" json:"totalTransferTimes,omitempty"`
 	RevokedHeight      int64 `protobuf:"varint,15,opt,name=revokedHeight,proto3" json:"revokedHeight,omitempty"`
 	RevokedTime        int64 `protobuf:"varint,16,opt,name=revokedTime,proto3" json:"revokedTime,omitempty"`
@@ -1547,7 +1547,7 @@ type ReqTokenTx struct {
 	unknownFields protoimpl.UnknownFields
 
 	Symbol string `protobuf:"bytes,1,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	//表示取所有/from/to/其他的hash列表
+	/ /from/to has 
 	Flag      int32  `protobuf:"varint,2,opt,name=flag,proto3" json:"flag,omitempty"`
 	Count     int32  `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
 	Direction int32  `protobuf:"varint,4,opt,name=direction,proto3" json:"direction,omitempty"`
@@ -2280,8 +2280,8 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type TokenClient interface {
-	// token 对外提供服务的接口
-	//区块链接口
+	// token 
+	/ 
 	GetTokenBalance(ctx context.Context, in *ReqTokenBalance, opts ...grpc.CallOption) (*types.Accounts, error)
 }
 
@@ -2304,8 +2304,8 @@ func (c *tokenClient) GetTokenBalance(ctx context.Context, in *ReqTokenBalance, 
 
 // TokenServer is the server API for Token service.
 type TokenServer interface {
-	// token 对外提供服务的接口
-	//区块链接口
+	// token 
+	/ 
 	GetTokenBalance(context.Context, *ReqTokenBalance) (*types.Accounts, error)
 }
 

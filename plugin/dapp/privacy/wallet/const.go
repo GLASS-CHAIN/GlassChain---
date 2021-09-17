@@ -5,11 +5,11 @@
 package wallet
 
 const (
-	// AddTx 增加交易
+	// AddTx 
 	AddTx int32 = 20001
-	// DelTx 删除交易
+	// DelTx 
 	DelTx int32 = 20002
-	// 交易收发方向
+	// 
 	sendTx int32 = 30001
 	recvTx int32 = 30002
 )

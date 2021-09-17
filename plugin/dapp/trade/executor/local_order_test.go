@@ -58,7 +58,7 @@ var order2 = &pty.LocalOrder{
 	PriceSymbol:       "CCNY",
 }
 
-// 两个fork前的数据
+// for 
 var order3 = &pty.LocalOrder{
 	AssetSymbol:       "CCNY",
 	Owner:             "O1",

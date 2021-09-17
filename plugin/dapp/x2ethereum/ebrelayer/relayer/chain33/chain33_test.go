@@ -36,7 +36,7 @@ package chain33
 //	"github.com/stretchr/testify/assert"
 //	"github.com/stretchr/testify/require"
 //
-//	// 需要显示引用系统插件，以加载系统内置合约
+//	//  
 //	"github.com/33cn/chain33/client/mocks"
 //	_ "github.com/33cn/chain33/system"
 //	"github.com/stretchr/testify/mock"
@@ -122,7 +122,7 @@ package chain33
 //	//Test_1_ImportPrivateKey()
 //	ctx := context.Background()
 //
-//	//2nd：订阅事件
+//	//2nd 
 //	eventName := "LogNewBridgeToken"
 //	bridgeBankABI := ethtxs.LoadABI(ethtxs.BridgeBankABI)
 //	logNewBridgeTokenSig := bridgeBankABI.Events[eventName].ID.Hex()
@@ -146,7 +146,7 @@ package chain33
 //	require.Nil(t, err)
 //	assert.Equal(t, tokenCount.Int64(), int64(0))
 //
-//	//3rd：创建token
+//	//3rd token
 //	symbol := "BTY"
 //	auth, err := ethtxs.PrepareAuth(sim, para.DeployPrivateKey, para.Operator)
 //	require.Nil(t, err)
@@ -167,7 +167,7 @@ package chain33
 //			require.Nil(t, err)
 //			require.Equal(t, symbol, logEvent.Symbol)
 //
-//			//tokenCount正确加1
+//			//tokenCoun 1
 //			tokenCount, err = x2EthContracts.BridgeBank.BridgeTokenCount(opts)
 //			require.Nil(t, err)
 //			require.Equal(t, tokenCount.Int64(), int64(1))
@@ -364,7 +364,7 @@ package chain33
 //	var he = types.Header{Height: 10000}
 //
 //	mockapi := &mocks.QueueProtocolAPI{}
-//	// 这里对需要mock的方法打桩,Close是必须的，其它方法根据需要
+//	// moc ,Clos  
 //	mockapi.On("Close").Return()
 //	mockapi.On("AddPushSubscribe", mock.Anything).Return(&ret, nil)
 //	mockapi.On("GetLastHeader", mock.Anything).Return(&he, nil)
@@ -372,7 +372,7 @@ package chain33
 //	mock33 := testnode.New("", mockapi)
 //	//defer mock33.Close()
 //	rpcCfg := mock33.GetCfg().RPC
-//	// 这里必须设置监听端口，默认的是无效值
+//	//  
 //	rpcCfg.JrpcBindAddr = "127.0.0.1:8801"
 //	mock33.GetRPC().Listen()
 //

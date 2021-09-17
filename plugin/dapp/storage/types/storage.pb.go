@@ -28,7 +28,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-//后面如果有其他数据模型可继续往上面添加
+/ 
 type Storage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -317,19 +317,19 @@ func (*StorageAction_EncryptShareStorage) isStorageAction_Value() {}
 
 func (*StorageAction_EncryptAdd) isStorageAction_Value() {}
 
-// 内容存证模型
+// 
 type ContentOnlyNotaryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//长度需要小于512k
+	/ 512k
 	Content []byte `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
-	//自定义的主键，可以为空，如果没传，则用txhash为key
+	/    txhas key
 	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	// Op 0表示创建 1表示追加add
+	// Op    add
 	Op int32 `protobuf:"varint,3,opt,name=op,proto3" json:"op,omitempty"`
-	//字符串值
+	/ 
 	Value string `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -393,17 +393,17 @@ func (x *ContentOnlyNotaryStorage) GetValue() string {
 	return ""
 }
 
-//哈希存证模型，推荐使用sha256哈希，限制256位得摘要值
+/  sha25  25 
 type HashOnlyNotaryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//长度固定为32字节
+	/ 3 
 	Hash []byte `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
-	//自定义的主键，可以为空，如果没传，则用txhash为key
+	/    txhas key
 	Key string `protobuf:"bytes,2,opt,name=key,proto3" json:"key,omitempty"`
-	//字符串值
+	/ 
 	Value string `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -460,19 +460,19 @@ func (x *HashOnlyNotaryStorage) GetValue() string {
 	return ""
 }
 
-// 链接存证模型
+// 
 type LinkNotaryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//存证内容的链接，可以写入URL,或者其他可用于定位源文件得线索.
+	/  URL .
 	Link []byte `protobuf:"bytes,1,opt,name=link,proto3" json:"link,omitempty"`
-	//源文件得hash值，推荐使用sha256哈希，限制256位得摘要值
+	/ has  sha25  25 
 	Hash []byte `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
-	//自定义的主键，可以为空，如果没传，则用txhash为key
+	/    txhas key
 	Key string `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
-	//字符串值
+	/ 
 	Value string `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -536,21 +536,21 @@ func (x *LinkNotaryStorage) GetValue() string {
 	return ""
 }
 
-// 隐私存证模型，如果一个文件需要存证，且不公开内容，可以选择将源文件通过对称加密算法加密后上链
+//    
 type EncryptNotaryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//存证明文内容的hash值，推荐使用sha256哈希，限制256位得摘要值
+	/ has  sha25  25 
 	ContentHash []byte `protobuf:"bytes,1,opt,name=contentHash,proto3" json:"contentHash,omitempty"`
-	//源文件得密文，由加密key及nonce对明文加密得到该值。
+	/  ke nonc 。
 	EncryptContent []byte `protobuf:"bytes,2,opt,name=encryptContent,proto3" json:"encryptContent,omitempty"`
-	//加密iv，通过AES进行加密时制定随机生成的iv,解密时需要使用该值
+	/ iv AE iv 
 	Nonce []byte `protobuf:"bytes,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	//自定义的主键，可以为空，如果没传，则用txhash为key
+	/    txhas key
 	Key string `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
-	//字符串值
+	/ 
 	Value string `protobuf:"bytes,5,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -621,21 +621,21 @@ func (x *EncryptNotaryStorage) GetValue() string {
 	return ""
 }
 
-// 分享隐私存证模型,需要完备的sdk或者相应的密钥库支持
+//  sd 
 type EncryptShareNotaryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//存证明文内容的hash值，推荐使用sha256哈希，限制256位得摘要值
+	/ has  sha25  25 
 	ContentHash []byte `protobuf:"bytes,1,opt,name=contentHash,proto3" json:"contentHash,omitempty"`
-	//源文件得密文。,用公钥地址加密
+	/ 。 
 	EncryptContent []byte `protobuf:"bytes,2,opt,name=encryptContent,proto3" json:"encryptContent,omitempty"`
-	//公钥
+	/ 
 	PubKey []byte `protobuf:"bytes,3,opt,name=pubKey,proto3" json:"pubKey,omitempty"`
-	//自定义的主键，可以为空，如果没传，则用txhash为key
+	/    txhas key
 	Key string `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
-	//字符串值
+	/ 
 	Value string `protobuf:"bytes,5,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -706,15 +706,15 @@ func (x *EncryptShareNotaryStorage) GetValue() string {
 	return ""
 }
 
-// 加密存证数据运算
+// 
 type EncryptNotaryAdd struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//源操作数存证索引
+	/ 
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	//待操作数据
+	/ 
 	EncryptAdd []byte `protobuf:"bytes,2,opt,name=encryptAdd,proto3" json:"encryptAdd,omitempty"`
 }
 
@@ -764,7 +764,7 @@ func (x *EncryptNotaryAdd) GetEncryptAdd() []byte {
 	return nil
 }
 
-//根据txhash去状态数据库中查询存储内容
+/ txhas 
 type QueryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -812,7 +812,7 @@ func (x *QueryStorage) GetTxHash() string {
 	return ""
 }
 
-//批量查询有可能导致数据库崩溃
+/ 
 type BatchQueryStorage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

@@ -8,12 +8,12 @@ import (
 )
 
 /*
- * 交易相关类型定义
- * 交易action通常有对应的log结构，用于交易回执日志记录
- * 每一种action和log需要用id数值和name名称加以区分
+ * 
+ * actio lo  
+ * actio lo i nam 
  */
 
-// action类型id和name，这些常量可以自定义修改
+// actio i name 
 const (
 	TyUnknowAction = iota + 100
 	TyCreateGroupAction
@@ -31,7 +31,7 @@ const (
 	NameUpdateMemberAction = "UpdateMember"
 )
 
-// log类型id值
+// lo i 
 const (
 	TyUnknownLog = iota + 100
 	TyCreateGroupLog
@@ -50,9 +50,9 @@ const (
 )
 
 var (
-	//VoteX 执行器名称定义
+	//VoteX 
 	VoteX = "vote"
-	//定义actionMap
+	/ actionMap
 	actionMap = map[string]int32{
 		NameCreateGroupAction:  TyCreateGroupAction,
 		NameUpdateGroupAction:  TyUpdateGroupAction,
@@ -61,7 +61,7 @@ var (
 		NameCloseVoteAction:    TyCloseVoteAction,
 		NameUpdateMemberAction: TyUpdateMemberAction,
 	}
-	//定义log的id和具体log类型及名称，填入具体自定义log类型
+	/ lo i lo  lo 
 	logMap = map[int64]*types.LogInfo{
 		TyCreateGroupLog:  {Ty: reflect.TypeOf(GroupInfo{}), Name: NameCreateGroupLog},
 		TyUpdateGroupLog:  {Ty: reflect.TypeOf(GroupInfo{}), Name: NameUpdateGroupLog},
@@ -76,7 +76,7 @@ var (
 // init defines a register function
 func init() {
 	types.AllowUserExec = append(types.AllowUserExec, []byte(VoteX))
-	//注册合约启用高度
+	/ 
 	types.RegFork(VoteX, InitFork)
 	types.RegExec(VoteX, InitExecutor)
 }
@@ -102,17 +102,17 @@ func NewType(cfg *types.Chain33Config) *voteType {
 	return c
 }
 
-// GetPayload 获取合约action结构
+// GetPayload actio 
 func (v *voteType) GetPayload() types.Message {
 	return &VoteAction{}
 }
 
-// GeTypeMap 获取合约action的id和name信息
+// GeTypeMap actio i nam 
 func (v *voteType) GetTypeMap() map[string]int32 {
 	return actionMap
 }
 
-// GetLogMap 获取合约log相关信息
+// GetLogMap lo 
 func (v *voteType) GetLogMap() map[int64]*types.LogInfo {
 	return logMap
 }

@@ -15,7 +15,7 @@ var (
 )
 
 // log for x2ethereum
-// log类型id值
+// lo i 
 const (
 	TyUnknownLog = iota + 100
 	TyEth2Chain33Log
@@ -32,7 +32,7 @@ const (
 	TyWithdrawFromExecLog
 )
 
-// action类型id和name，这些常量可以自定义修改
+// actio i name 
 const (
 	TyUnknowAction = iota + 100
 	TyEth2Chain33Action

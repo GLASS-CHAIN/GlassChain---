@@ -42,7 +42,7 @@ func getNodeID(db dbm.KV, id string) (*pt.ParaNodeIdStatus, error) {
 	return &status, err
 }
 
-//分叉之前 id是"mavl-paracros-...0x12342308b"格式，分叉以后只支持输入为去掉了mavl-paracross前缀的交易id，系统会为id加上前缀
+/  i "mavl-paracros-...0x12342308b  mavl-paracros id i 
 func getNodeIDWithFork(cfg *types.Chain33Config, db dbm.KV, title string, height int64, id string) (*pt.ParaNodeIdStatus, error) {
 	if pt.IsParaForkHeight(cfg, height, pt.ForkLoopCheckCommitTxDone) {
 		id = calcParaNodeIDKey(title, id)
@@ -70,7 +70,7 @@ func getDb(db dbm.KV, key []byte) ([]byte, error) {
 	return val, nil
 }
 
-//分叉之前 id是"mavl-paracros-...0x12342308b"格式，分叉以后只支持输入为去掉了mavl-paracross前缀的交易id，系统会为id加上前缀
+/  i "mavl-paracros-...0x12342308b  mavl-paracros id i 
 func getNodeGroupID(cfg *types.Chain33Config, db dbm.KV, title string, height int64, id string) (*pt.ParaNodeGroupStatus, error) {
 	if pt.IsParaForkHeight(cfg, height, pt.ForkLoopCheckCommitTxDone) {
 		id = calcParaNodeGroupIDKey(title, id)
@@ -222,7 +222,7 @@ func (a *action) checkValidNode(config *pt.ParaNodeAddrConfig) (bool, error) {
 	if err != nil {
 		return false, errors.Wrapf(err, "getNodes for title:%s", config.Title)
 	}
-	//有可能申请地址和配置地址不是同一个
+	/ 
 	if validNode(config.Addr, nodes) {
 		return true, nil
 	}
@@ -319,7 +319,7 @@ func (a *action) nodeCancel(config *pt.ParaNodeAddrConfig) (*types.Receipt, erro
 		return nil, err
 	}
 
-	//只能提案发起人撤销
+	/ 
 	if a.fromaddr != stat.FromAddr {
 		return nil, errors.Wrapf(types.ErrNotAllow, "id create by:%s,not by:%s", stat.FromAddr, a.fromaddr)
 	}
@@ -366,7 +366,7 @@ func (a *action) nodeModify(config *pt.ParaNodeAddrConfig) (*types.Receipt, erro
 		return nil, errors.Wrapf(err, "nodeAddr:%s get error", config.Addr)
 	}
 
-	//只能提案发起人撤销
+	/ 
 	if a.fromaddr != config.Addr {
 		return nil, errors.Wrapf(types.ErrNotAllow, "addr create by:%s,not by:%s", config.Addr, a.fromaddr)
 	}
@@ -408,7 +408,7 @@ func hasVoted(addrs []string, addr string) (bool, int) {
 	return hasCommited(addrs, addr)
 }
 
-//主链配置平行链停止块数， 反应到主链上为对应平行链空块间隔×停止块数，如果主链当前高度超过平行链共识高度对应主链高度后面这个主链块数就表示通过
+/ ，   
 func (a *action) superManagerVoteProc(title string) error {
 	status, err := getNodeGroupStatus(a.db, title)
 	if err != nil {
@@ -424,7 +424,7 @@ func (a *action) superManagerVoteProc(title string) error {
 	}
 	var consensMainHeight int64
 	consensHeight := data.(*pt.ParacrossStatus).Height
-	//如果group建立后一直没有共识，则从approve时候开始算
+	/ grou  approv 
 	if consensHeight == -1 {
 		consensMainHeight = status.Height
 	} else {
@@ -455,7 +455,7 @@ func updateVotes(in *pt.ParaNodeVoteDetail, nodes map[string]struct{}) *pt.ParaN
 	return votes
 }
 
-//由于propasal id 和quit id分开，quit id不知道对应addr　proposal id的coinfrozen信息，需要维护一个围绕addr的数据库结构信息
+/ propasal id quit i ，quit i addr　proposal i coinfroze  add 
 func (a *action) updateNodeAddrStatus(stat *pt.ParaNodeIdStatus) (*types.Receipt, error) {
 	cfg := a.api.GetConfig()
 	addrStat, err := getNodeAddr(a.db, stat.Title, stat.TargetAddr)
@@ -507,7 +507,7 @@ func (a *action) updateNodeAddrStatus(stat *pt.ParaNodeIdStatus) (*types.Receipt
 func (a *action) checkIsSuperManagerVote(config *pt.ParaNodeAddrConfig, nodes map[string]struct{}) (bool, error) {
 	cfg := a.api.GetConfig()
 
-	//平行链：主链成功的交易如果不是nodegroup节点，就是superManager,为了不需在平行链配置superManger,间接判断是否是superManager
+	/  nodegrou  superManager superManger superManager
 	if cfg.IsPara() {
 		if validNode(a.fromaddr, nodes) {
 			return false, nil
@@ -515,7 +515,7 @@ func (a *action) checkIsSuperManagerVote(config *pt.ParaNodeAddrConfig, nodes ma
 		return true, nil
 	}
 
-	//主链：只检查超级管理员处理
+	/  
 	if !isSuperManager(cfg, a.fromaddr) {
 		return false, nil
 	}
@@ -532,7 +532,7 @@ func (a *action) nodeVote(config *pt.ParaNodeAddrConfig) (*types.Receipt, error)
 		return nil, errors.Wrapf(err, "getNodes for title:%s", config.Title)
 	}
 	cfg := a.api.GetConfig()
-	//只在主链检查，　只有nodegroup成员和supermanager可以vote
+	/ ， nodegrou supermanage vote
 	if !cfg.IsPara() && !validNode(a.fromaddr, nodes) && !isSuperManager(cfg, a.fromaddr) {
 		return nil, errors.Wrapf(pt.ErrNodeNotForTheTitle, "not validNode:%s", a.fromaddr)
 	}
@@ -548,7 +548,7 @@ func (a *action) nodeVote(config *pt.ParaNodeAddrConfig) (*types.Receipt, error)
 		return nil, errors.Wrapf(pt.ErrParaNodeOpStatusWrong, "config id:%s,status:%d", config.Id, stat.Status)
 	}
 
-	//已经被其他id pass 场景
+	/ id pass 
 	if stat.Status == pt.ParaApplyJoining && validNode(stat.TargetAddr, nodes) {
 		return nil, errors.Wrapf(pt.ErrParaNodeAddrExisted, "config id:%s,addr:%s", config.Id, stat.TargetAddr)
 	}
@@ -568,7 +568,7 @@ func (a *action) nodeVote(config *pt.ParaNodeAddrConfig) (*types.Receipt, error)
 		stat.Votes.Votes = append(stat.Votes.Votes, pt.ParaNodeVoteStr[config.Value])
 	}
 
-	//剔除已退出nodegroup的addr的投票
+	/ nodegrou add 
 	stat.Votes = updateVotes(stat.Votes, nodes)
 
 	most, vote := getMostVote(stat.Votes)
@@ -578,7 +578,7 @@ func (a *action) nodeVote(config *pt.ParaNodeAddrConfig) (*types.Receipt, error)
 			return nil, err
 		}
 
-		//超级用户投yes票，共识停止了一定高度就可以通过，防止当前所有授权节点都忘掉私钥场景
+		/ ye   
 		if !(superManagerPass && most > 0 && vote == pt.ParaVoteYes) {
 			return makeNodeConfigReceipt(a.fromaddr, config, copyStat, stat), nil
 		}
@@ -633,7 +633,7 @@ func (a *action) nodeVote(config *pt.ParaNodeAddrConfig) (*types.Receipt, error)
 			receipt = mergeReceipt(receipt, r)
 
 			if a.exec.GetMainHeight() > pt.GetDappForkHeight(cfg, pt.ForkLoopCheckCommitTxDone) {
-				//node quit后，如果committx满足2/3目标，自动触发commitDone
+				//node qui  committ 2/  commitDone
 				r, err = a.loopCommitTxDone(config.Title)
 				if err != nil {
 					clog.Error("unpdateNodeGroup.loopCommitTxDone", "title", title, "err", err.Error())
@@ -680,7 +680,7 @@ func unpdateNodeGroup(db dbm.KV, title, addr string, add bool) (*types.Receipt, 
 		clog.Info("unpdateNodeGroup add", "addr", addr, "from", copyItem.GetArr().Value, "to", item.GetArr().Value)
 
 	} else {
-		//必须保留至少1个授权账户
+		/  
 		if len(item.GetArr().Value) <= 1 {
 			return nil, pt.ErrParaNodeGroupLastAddr
 		}
@@ -859,7 +859,7 @@ func (a *action) nodeGroupQuit(config *pt.ParaNodeGroupConfig) (*types.Receipt, 
 		return nil, err
 	}
 
-	//只能提案发起人撤销
+	/ 
 	if a.fromaddr != status.FromAddr {
 		return nil, errors.Wrapf(types.ErrNotAllow, "id create by:%s,not by:%s", status.FromAddr, a.fromaddr)
 	}
@@ -917,8 +917,8 @@ func (a *action) nodeGroupApproveModify(config *pt.ParaNodeGroupConfig, modify *
 	receipt.KV = append(receipt.KV, r.KV...)
 	receipt.Logs = append(receipt.Logs, r.Logs...)
 
-	//对已经approved group和addrs不再统一修改active&frozen改动的coins，因为可能有些addr已经退出group了，没退出的，退出时候按最初设置解冻
-	// 这里只修改参数，对后面再加入的节点起作用
+	/ approved grou addr active&froze coins add grou   
+	//  
 	copyStat := *stat
 	stat.Id = modify.Id
 	stat.CoinsFrozen = modify.CoinsFrozen
@@ -964,7 +964,7 @@ func (a *action) nodeGroupApproveApply(config *pt.ParaNodeGroupConfig, apply *pt
 	receipt.Logs = append(receipt.Logs, r.Logs...)
 	cfg := a.api.GetConfig()
 	if cfg.IsPara() && cfg.IsDappFork(a.height, pt.ParaX, pt.ForkParaSelfConsStages) {
-		//不允许主链成功平行链失败导致不一致的情况，这里如果失败则手工设置init stage
+		/  init stage
 		r = selfConsensInitStage(cfg)
 		receipt.KV = append(receipt.KV, r.KV...)
 		receipt.Logs = append(receipt.Logs, r.Logs...)
@@ -977,7 +977,7 @@ func (a *action) nodeGroupApproveApply(config *pt.ParaNodeGroupConfig, apply *pt
 // NodeGroupApprove super addr approve the node group apply
 func (a *action) nodeGroupApprove(config *pt.ParaNodeGroupConfig) (*types.Receipt, error) {
 	cfg := a.api.GetConfig()
-	//只在主链检查
+	/ 
 	if !cfg.IsPara() && !isSuperManager(cfg, a.fromaddr) {
 		return nil, errors.Wrapf(types.ErrNotAllow, "node group approve not super manager:%s", a.fromaddr)
 	}
@@ -1103,10 +1103,10 @@ func (a *action) NodeConfig(config *pt.ParaNodeAddrConfig) (*types.Receipt, erro
 	case pt.ParaOpNewApply:
 		return a.nodeJoin(config)
 	case pt.ParaOpQuit:
-		//退出nodegroup
+		/ nodegroup
 		return a.nodeQuit(config)
 	case pt.ParaOpCancel:
-		//撤销未批准的申请
+		/ 
 		if config.Id == "" {
 			return nil, types.ErrInvalidParam
 		}
@@ -1117,7 +1117,7 @@ func (a *action) NodeConfig(config *pt.ParaNodeAddrConfig) (*types.Receipt, erro
 		}
 		return a.nodeVote(config)
 	case pt.ParaOpModify:
-		//修改addr相关联的参数，只能原创地址修改
+		/ add  
 		return a.nodeModify(config)
 	default:
 		return nil, pt.ErrParaUnSupportNodeOper

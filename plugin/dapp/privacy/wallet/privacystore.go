@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	// PRIVACYDBVERSION 隐私交易数据库版本号
+	// PRIVACYDBVERSION 
 	PRIVACYDBVERSION int64 = 1
 )
 
@@ -27,7 +27,7 @@ func newStore(db db.DB, cfg *types.Chain33Config) *privacyStore {
 	return &privacyStore{Store: wcom.NewStore(db), Chain33Config: cfg}
 }
 
-// privacyStore 隐私交易数据库存储操作类
+// privacyStore 
 type privacyStore struct {
 	*types.Chain33Config
 	*wcom.Store
@@ -301,10 +301,10 @@ func (store *privacyStore) getPrivacyTokenUTXOs(assetExec, token, addr string) (
 	return wutxos, nil
 }
 
-//calcUTXOKey4TokenAddr---X--->calcUTXOKey 被删除,该地址下某种token的这个utxo变为不可用
-//calcKey4UTXOsSpentInTx------>types.FTXOsSTXOsInOneTx,将当前交易的所有花费的utxo进行打包，设置为ftxo，同时通过支付交易hash索引
-//calcKey4FTXOsInTx----------->calcKey4UTXOsSpentInTx,创建该交易冻结的所有的utxo的信息
-//状态转移，将utxo转移至ftxo，同时记录该生成tx的花费的utxo，这样在确认执行成功之后就可以快速将相应的FTXO转换成STXO
+//calcUTXOKey4TokenAddr---X--->calcUTXOKey  toke utx 
+//calcKey4UTXOsSpentInTx------>types.FTXOsSTXOsInOneTx utx  ftxo has 
+//calcKey4FTXOsInTx----------->calcKey4UTXOsSpentInTx utx 
+/  utx ftxo t utxo FTX STXO
 func (store *privacyStore) moveUTXO2FTXO(expire int64, assetExec, token, sender, txhash string, selectedUtxos []*txOutputInfo) {
 	FTXOsInOneTx := &privacytypes.FTXOsSTXOsInOneTx{
 		AssetExec: assetExec,
@@ -326,12 +326,12 @@ func (store *privacyStore) moveUTXO2FTXO(expire int64, assetExec, token, sender,
 		FTXOsInOneTx.Utxos = append(FTXOsInOneTx.Utxos, utxo)
 	}
 	FTXOsInOneTx.SetExpire(expire)
-	//设置在该交易中花费的UTXO
+	/ UTXO
 	key1 := calcKey4UTXOsSpentInTx(txhash)
 	value1 := types.Encode(FTXOsInOneTx)
 	newbatch.Set(key1, value1)
 
-	//设置ftxo的key，使其能够方便地获取到对应的交易花费的utxo
+	/ ftx key utxo
 	key2 := calcKey4FTXOsInTx(assetExec, token, sender, txhash)
 	value2 := key1
 	newbatch.Set(key2, value2)
@@ -475,22 +475,22 @@ func (store *privacyStore) moveUTXO2STXO(assetExec, owner, token, txhash string,
 	for _, utxo := range utxos {
 		Txhash := utxo.UtxoBasic.UtxoGlobalIndex.Txhash
 		Outindex := utxo.UtxoBasic.UtxoGlobalIndex.Outindex
-		//删除存在的UTXO索引
+		/ UTX 
 		key := calcUTXOKey4TokenAddr(assetExec, token, owner, hex.EncodeToString(Txhash), int(Outindex))
 		newbatch.Delete(key)
 	}
 
-	//设置在该交易中花费的UTXO
+	/ UTXO
 	key1 := calcKey4UTXOsSpentInTx(txhash)
 	value1 := types.Encode(FTXOsInOneTx)
 	newbatch.Set(key1, value1)
 
-	//设置花费stxo的key
+	/ stx key
 	key2 := calcKey4STXOsInTx(txhash)
 	value2 := key1
 	newbatch.Set(key2, value2)
 
-	// 在此处加入stxo-token-addr-txhash 作为key，便于查找花费出去交易
+	// stxo-token-addr-txhash key 
 	key3 := calcSTXOTokenAddrTxKey(assetExec, FTXOsInOneTx.Tokenname, FTXOsInOneTx.Sender, FTXOsInOneTx.Txhash)
 	value3 := key1
 	newbatch.Set(key3, value3)
@@ -555,7 +555,7 @@ func (store *privacyStore) selectCurrentWalletPrivacyTx(txDetal *types.Transacti
 		assetExec = store.Chain33Config.GetCoinExec()
 	}
 
-	//处理output
+	/ output
 	if nil != privacyOutput && len(privacyOutput.Keyoutput) > 0 {
 		utxoProcessed := make([]bool, len(privacyOutput.Keyoutput))
 		for _, info := range privacyInfo {
@@ -573,17 +573,17 @@ func (store *privacyStore) selectCurrentWalletPrivacyTx(txDetal *types.Transacti
 				if err == nil {
 					recoverPub := priv.PubKey().Bytes()[:]
 					if bytes.Equal(recoverPub, output.Onetimepubkey) {
-						//为了避免匹配成功之后不必要的验证计算，需要统计匹配次数
-						//因为目前只会往一个隐私账户转账，
-						//1.一般情况下，只会匹配一次，如果是往其他钱包账户转账，
-						//2.但是如果是往本钱包的其他地址转账，因为可能存在的change，会匹配2次
+						/  
+						/ ，
+						//1   ，
+						//2  change  
 						utxoProcessed[indexoutput] = true
 						bizlog.Debug("SelectCurrentWalletPrivacyTx got privacy tx belong to current wallet",
 							"Address", *info.Addr, "tx with hash", txhash, "Amount", amount)
-						//只有当该交易执行成功才进行相应的UTXO的处理
+						/ UTX 
 						if types.ExecOk == txExecRes {
 
-							// 先判断该UTXO的hash是否存在，不存在则写入
+							// UTX has  
 							accPrivacy, err := store.isUTXOExist(hex.EncodeToString(txhashInbytes), indexoutput)
 							if err == nil && accPrivacy != nil {
 								continue
@@ -625,7 +625,7 @@ func (store *privacyStore) selectCurrentWalletPrivacyTx(txDetal *types.Transacti
 		}
 	}
 
-	//处理input
+	/ input
 	if nil != privacyInput && len(privacyInput.Keyinput) > 0 {
 		var utxoGlobalIndexs []*privacytypes.UTXOGlobalIndex
 		for _, input := range privacyInput.Keyinput {
@@ -638,14 +638,14 @@ func (store *privacyStore) selectCurrentWalletPrivacyTx(txDetal *types.Transacti
 	}
 }
 
-// setUTXO 添加UTXO信息
-// addr 接收该UTXO的账户地址,表示该地址拥有了UTXO的使用权
-// txhash 该UTXO的来源交易输出的交易哈希,没有0x
-// outindex 该UTXO的来源交易输出的索引位置
-// dbStore 构建的钱包UTXO详细数据信息
+// setUTXO UTX 
+// addr UTX  UTX 
+// txhash UTX  0x
+// outindex UTX 
+// dbStore UTX 
 //UTXO---->moveUTXO2FTXO---->FTXO---->moveFTXO2STXO---->STXO
-//1.calcUTXOKey------------>types.PrivacyDBStore 该kv值在db中的存储一旦写入就不再改变，除非产生该UTXO的交易被撤销
-//2.calcUTXOKey4TokenAddr-->calcUTXOKey，创建kv，方便查询现在某个地址下某种token的可用utxo
+//1.calcUTXOKey------------>types.PrivacyDBStore k d  UTX 
+//2.calcUTXOKey4TokenAddr-->calcUTXOKey kv toke utxo
 func (store *privacyStore) setUTXO(utxoInfo *privacytypes.PrivacyDBStore, txHash string, newbatch db.Batch) error {
 
 	privacyStorebyte := types.Encode(utxoInfo)
@@ -766,11 +766,11 @@ func (store *privacyStore) getFTXOlist() ([]*privacytypes.FTXOsSTXOsInOneTx, [][
 	return curFTXOTxs, keys
 }
 
-//calcKey4FTXOsInTx-----x------>calcKey4UTXOsSpentInTx,被删除，
+//calcKey4FTXOsInTx-----x------>calcKey4UTXOsSpentInTx ，
 //calcKey4STXOsInTx------------>calcKey4UTXOsSpentInTx
-//切换types.FTXOsSTXOsInOneTx的状态
+/ types.FTXOsSTXOsInOneT 
 func (store *privacyStore) moveFTXO2STXO(key1 []byte, txhash string, newbatch db.Batch) error {
-	//设置在该交易中花费的UTXO
+	/ UTXO
 	value1, err := store.Get(key1)
 	if err != nil {
 		bizlog.Error("moveFTXO2STXO", "Get(key1) error ", err, "key1", string(key1))
@@ -782,12 +782,12 @@ func (store *privacyStore) moveFTXO2STXO(key1 []byte, txhash string, newbatch db
 	}
 	newbatch.Delete(key1)
 
-	//设置ftxo的key，使其能够方便地获取到对应的交易花费的utxo
+	/ ftx key utxo
 	key2 := calcKey4STXOsInTx(txhash)
 	value2 := value1
 	newbatch.Set(key2, value2)
 
-	// 在此处加入stxo-token-addr-txhash 作为key，便于查找花费出去交易
+	// stxo-token-addr-txhash key 
 	key := value2
 	value, err := store.Get(key)
 	if err != nil {
@@ -806,11 +806,11 @@ func (store *privacyStore) moveFTXO2STXO(key1 []byte, txhash string, newbatch db
 	return nil
 }
 
-//将FTXO重置为UTXO
-// moveFTXO2UTXO 当交易因为区块被回退而进行回滚时,需要将交易对应的冻结UTXO移动到可用UTXO队列中
-// 由于交易回退可能会因为UTXO对应的交易过期,未被打入区块等情况,导致UTXO不可用,所以需要检查UTXO对应的交易是否有效
+/ FTX UTXO
+// moveFTXO2UTXO  UTX UTX 
+// UTX   UTX  UTX 
 func (store *privacyStore) moveFTXO2UTXO(key1 []byte, newbatch db.Batch) {
-	//设置ftxo的key，使其能够方便地获取到对应的交易花费的utxo
+	/ ftx key utxo
 	value1, err := store.Get(key1)
 	if err != nil {
 		bizlog.Error("moveFTXO2UTXO", "db Get(key1) error ", err)
@@ -852,28 +852,28 @@ func (store *privacyStore) moveFTXO2UTXO(key1 []byte, newbatch db.Batch) {
 	bizlog.Debug("moveFTXO2UTXO", "addr", ftxosInOneTx.Sender, "tx with hash", ftxosInOneTx.Txhash)
 }
 
-// unsetUTXO 当区块发生回退时,交易也需要回退,从而需要更新钱包中的UTXO相关信息,其具体步骤如下
-// 1.清除可用UTXO列表中的UTXO索引信息
-// 2.清除冻结UTXO列表中的UTXO索引信息
-// 3.清除因为回退而将花费UTXO移入到冻结UTXO列表的UTXO索引信息
-// 4.清除UTXO信息
-// addr 使用UTXO的地址
-// txhash 使用UTXO的交易哈希,没有0x
+// unsetUTXO   UTX  
+// 1 UTX UTX 
+// 2 UTX UTX 
+// 3 UTX UTX UTX 
+// 4 UTX 
+// addr UTX 
+// txhash UTX  0x
 func (store *privacyStore) unsetUTXO(assetExec, token, addr, txhash string, outindex int, newbatch db.Batch) error {
 	if 0 == len(addr) || 0 == len(txhash) || outindex < 0 || len(token) <= 0 {
 		bizlog.Error("unsetUTXO", "InvalidParam addr", addr, "txhash", txhash, "outindex", outindex, "token", token)
 		return types.ErrInvalidParam
 	}
-	// 1.删除可用UTXO列表的索引关系
+	// 1 UTX 
 	ftxokey := calcUTXOKey(txhash, outindex)
 	newbatch.Delete(ftxokey)
-	// 2.删除冻结UTXO列表的索引关系
+	// 2 UTX 
 	ftxokey = calcKey4FTXOsInTx(assetExec, token, addr, txhash)
 	newbatch.Delete(ftxokey)
-	// 3.删除回退冻结UTXO列表中的索引关系
+	// 3 UTX 
 	ftxokey = calcRevertSendTxKey(assetExec, token, addr, txhash)
 	newbatch.Delete(ftxokey)
-	// 4.清除可用UTXO索引信息
+	// 4 UTX 
 	utxokey := calcUTXOKey4TokenAddr(assetExec, token, addr, txhash, outindex)
 	newbatch.Delete(utxokey)
 
@@ -881,10 +881,10 @@ func (store *privacyStore) unsetUTXO(assetExec, token, addr, txhash string, outi
 	return nil
 }
 
-//由于块的回退的原因，导致其中的交易需要被回退，即将stxo回退到ftxo，
-//正常情况下，被回退的交易会被重新加入到新的区块中并得到执行
+/   stx ftxo，
+/  
 func (store *privacyStore) moveSTXO2FTXO(tx *types.Transaction, txhash string, newbatch db.Batch) error {
-	//设置ftxo的key，使其能够方便地获取到对应的交易花费的utxo
+	/ ftx key utxo
 	key2 := calcKey4STXOsInTx(txhash)
 	value2, err := store.Get(key2)
 	if err != nil {
@@ -909,11 +909,11 @@ func (store *privacyStore) moveSTXO2FTXO(tx *types.Transaction, txhash string, n
 		bizlog.Error("moveSTXO2FTXO", "Failed to decode FTXOsSTXOsInOneTx for value", value)
 	}
 
-	//删除stxo-token-addr-txhash key
+	/ stxo-token-addr-txhash key
 	key3 := calcSTXOTokenAddrTxKey(ftxosInOneTx.AssetExec, ftxosInOneTx.Tokenname, ftxosInOneTx.Sender, ftxosInOneTx.Txhash)
 	newbatch.Delete(key3)
 
-	//设置在该交易中花费的UTXO
+	/ UTXO
 	key1 := calcRevertSendTxKey(ftxosInOneTx.AssetExec, ftxosInOneTx.Tokenname, ftxosInOneTx.Sender, txhash)
 	value1 := value2
 	newbatch.Set(key1, value1)

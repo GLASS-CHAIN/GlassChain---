@@ -41,7 +41,7 @@ func (s *StorageAction) GetKVSet(payload proto.Message) (kvset []*types.KeyValue
 //ContentStorage ...
 func (s *StorageAction) ContentStorage(payload *ety.ContentOnlyNotaryStorage) (*types.Receipt, error) {
 
-	//TODO 这里可以加具体得文本内容限制，超过指定大小的数据不容许写到状态数据库中
+	//TODO  
 	var logs []*types.ReceiptLog
 	var kvs []*types.KeyValue
 	cfg := s.api.GetConfig()
@@ -255,7 +255,7 @@ func QueryStorage(statedb, localdb dbm.KV, txHash string) (*ety.Storage, error) 
 	if txHash == "" {
 		return nil, fmt.Errorf("txhash can't equail nil")
 	}
-	//先去localdb中查询，如果没有，则再去状态数据库中查询
+	/ locald   
 	storage, err := QueryStorageFromLocalDB(localdb, txHash)
 	if err != nil {
 		return QueryStorageByTxHash(statedb, txHash)
@@ -279,7 +279,7 @@ func BatchQueryStorage(statedb, localdb dbm.KV, in *ety.BatchQueryStorage) (type
 	return &storage, nil
 }
 
-//QueryStorageFromLocalDB 因为table表不支持嵌套多种数据存储结构，改成手动KV存储
+//QueryStorageFromLocalDB tabl  K 
 func QueryStorageFromLocalDB(localdb dbm.KV, key string) (*ety.Storage, error) {
 	data, err := localdb.Get(getLocalDBKey(key))
 	if err != nil {

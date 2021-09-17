@@ -29,19 +29,19 @@ import (
 )
 
 var (
-	// 测试的私钥
+	// 
 	testPrivateKeys = []string{
 		"0x8dea7332c7bb3e3b0ce542db41161fd021e3cfda9d7dabacf24f98f2dfd69558",
 		"0x920976ffe83b5a98f603b999681a0bc790d97e22ffc4e578a707c2234d55cc8a",
 		"0xb59f2b02781678356c231ad565f73699753a28fd3226f1082b513ebf6756c15c",
 	}
-	// 测试的地址
+	// 
 	testAddrs = []string{
 		"1EDDghAtgBsamrNEtNmYdQzC1QEhLkr87t",
 		"13cS5G1BDN2YfGudsxRxr7X25yu6ZdgxMU",
 		"1JSRSwp16NvXiTjYBYK9iUQ9wqp3sCxz2p",
 	}
-	// 测试的隐私公钥对
+	// 
 	testPubkeyPairs = []string{
 		"92fe6cfec2e19cd15f203f83b5d440ddb63d0cb71559f96dc81208d819fea85886b08f6e874fca15108d244b40f9086d8c03260d4b954a40dfb3cbe41ebc7389",
 		"6326126c968a93a546d8f67d623ad9729da0e3e4b47c328a273dfea6930ffdc87bcc365822b80b90c72d30e955e7870a7a9725e9a946b9e89aec6db9455557eb",
@@ -128,7 +128,7 @@ func (mock *testDataMock) importPrivateKey(PrivKey *types.ReqWalletImportPrivkey
 		return
 	}
 
-	//校验label是否已经被使用
+	/ labe 
 	Account, err := wallet.GetAccountByLabel(PrivKey.GetLabel())
 	if Account != nil || err != nil {
 		return
@@ -158,10 +158,10 @@ func (mock *testDataMock) importPrivateKey(PrivKey *types.ReqWalletImportPrivkey
 		return
 	}
 
-	//对私钥加密
+	/ 
 	Encryptered := wcom.CBCEncrypterPrivkey([]byte(wallet.Password), privkeybyte)
 	Encrypteredstr := common.ToHex(Encryptered)
-	//校验PrivKey对应的addr是否已经存在钱包中
+	/ PrivKe add 
 	Account, err = wallet.GetAccountByAddr(addr)
 	if Account != nil || err != nil {
 		if Account.Privkey == Encrypteredstr {
@@ -171,23 +171,23 @@ func (mock *testDataMock) importPrivateKey(PrivKey *types.ReqWalletImportPrivkey
 
 	var walletaccount types.WalletAccount
 	var WalletAccStore types.WalletAccountStore
-	WalletAccStore.Privkey = Encrypteredstr //存储加密后的私钥
+	WalletAccStore.Privkey = Encrypteredstr / 
 	WalletAccStore.Label = PrivKey.GetLabel()
 	WalletAccStore.Addr = addr
-	//存储Addr:label+privkey+addr到数据库
+	/ Addr:label+privkey+add 
 	err = wallet.SetWalletAccount(false, addr, &WalletAccStore)
 	if err != nil {
 		return
 	}
 
-	//获取地址对应的账户信息从account模块
+	/ accoun 
 	addrs := make([]string, 1)
 	addrs[0] = addr
 	accounts, err := mock.accdb.LoadAccounts(wallet.GetAPI(), addrs)
 	if err != nil {
 		return
 	}
-	// 本账户是首次创建
+	// 
 	if len(accounts[0].Addr) == 0 {
 		accounts[0].Addr = addr
 	}
@@ -296,7 +296,7 @@ func Test_EnablePrivacy(t *testing.T) {
 func Test_ShowPrivacyKey(t *testing.T) {
 	mock := &testDataMock{}
 	mock.init()
-	// 设置第0个地址开启隐私交易
+	//  
 	mock.wallet.GetAPI().ExecWalletFunc(ty.PrivacyX, "EnablePrivacy", &ty.ReqEnablePrivacy{Addrs: []string{testAddrs[0]}})
 
 	testCases := []struct {
@@ -336,10 +336,10 @@ func Test_CreateTransaction(t *testing.T) {
 	}
 	mock.init()
 	mock.enablePrivacy()
-	// 创建辅助对象
+	// 
 	privacyMock := privacy.PrivacyMock{}
 	privacyMock.Init(mock.wallet, mock.password)
-	// 创建几条可用UTXO
+	// UTXO
 	privacyMock.CreateUTXOs(testAddrs[0], testPubkeyPairs[0], 17*types.DefaultCoinPrecision, 10000, 5)
 	mock.setBlockChainHeight(10020)
 
@@ -351,7 +351,7 @@ func Test_CreateTransaction(t *testing.T) {
 		{
 			needError: types.ErrInvalidParam,
 		},
-		{ // 公对私测试
+		{ // 
 			req: &ty.ReqCreatePrivacyTx{
 				AssetExec:  "coins",
 				Tokenname:  types.BTY,
@@ -362,7 +362,7 @@ func Test_CreateTransaction(t *testing.T) {
 			},
 			//needError:types.ErrAddrNotExist,
 		},
-		{ // 私对私测试
+		{ // 
 			req: &ty.ReqCreatePrivacyTx{
 				AssetExec:  "coins",
 				Tokenname:  types.BTY,
@@ -373,7 +373,7 @@ func Test_CreateTransaction(t *testing.T) {
 			},
 			needError: types.ErrAddrNotExist,
 		},
-		{ // 私对公测试
+		{ // 
 			req: &ty.ReqCreatePrivacyTx{
 				AssetExec:  "coins",
 				Tokenname:  types.BTY,

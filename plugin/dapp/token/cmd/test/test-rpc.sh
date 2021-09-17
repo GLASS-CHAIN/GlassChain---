@@ -11,8 +11,8 @@ tokenSymbol="ABCDE"
 token_addr=""
 execName="token"
 
-# 查询交易的执行结果
-# 根据传入的规则，校验查询的结果 （参数1: 校验规则 参数2: 预期匹配结果）
+# 
+#    1:  2: ）
 function queryTransaction() {
     validator=$1
     expectRes=$2

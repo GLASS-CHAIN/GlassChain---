@@ -4,24 +4,24 @@ FixTime=false
 
 [crypto]
 [log]
-# 日志级别，支持debug(dbug)/info/warn/error(eror)/crit
+#  debug(dbug)/info/warn/error(eror)/crit
 loglevel = "debug"
 logConsoleLevel = "info"
-# 日志文件名，可带目录，所有生成的日志文件都放到此目录下
+#   
 logFile = "logs/chain33.log"
-# 单个日志文件的最大值（单位：兆）
+#   ）
 maxFileSize = 300
-# 最多保存的历史日志文件个数
+# 
 maxBackups = 100
-# 最多保存的历史日志消息（单位：天）
+#   ）
 maxAge = 28
-# 日志文件名是否使用本地事件（否则使用UTC时间）
+#  UT ）
 localTime = true
-# 历史日志文件是否压缩（压缩格式为gz）
+#  gz）
 compress = true
-# 是否打印调用源文件和行号
+# 
 callerFile = false
-# 是否打印调用方法
+# 
 callerFunction = false
 
 [blockchain]
@@ -173,11 +173,11 @@ tokenApprs = [
 genesis="14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"
 
 [exec.sub.cert]
-# 是否启用证书验证和签名
+# 
 enable=false
-# 加密文件路径
+# 
 cryptoPath="authdir/crypto"
-# 带证书签名类型，支持"auth_ecdsa", "auth_sm2"
+#  "auth_ecdsa", "auth_sm2"
 signType="auth_ecdsa"
 
 [exec.sub.manage]
@@ -191,8 +191,8 @@ superManager=[
 total="16htvcBNSEA7fZhAdLJphDwQRQJaHpyHTp"
 useBalance=false
 
-#系统中所有的fork,默认用chain33的测试网络的
-#但是我们可以替换
+ fork chain3 
+ 
 [fork.system]
 ForkChainParamV1= 0
 ForkCheckTxDup=0
@@ -248,10 +248,10 @@ Enable=0
 ForkParacrossWithdrawFromParachain=0
 ForkParacrossCommitTx=0
 ForkLoopCheckCommitTxDone=0
-#仅平行链适用，自共识分阶段开启，缺省是0，若对应主链高度7200000之前开启过自共识，需要重新配置此分叉，并为之前自共识设置selfConsensEnablePreContract配置项
+   0 720000   selfConsensEnablePreContrac 
 ForkParaSelfConsStages=0
 ForkParaAssetTransferRbk=0
-#仅平行链适用，开启挖矿交易的高度，已有代码版本可能未在0高度开启挖矿，需要设置这个高度，新版本默认从0开启挖矿，通过交易配置分阶段奖励
+        
 ForkParaFullMinerHeight=0
 
 [fork.sub.qbftNode]

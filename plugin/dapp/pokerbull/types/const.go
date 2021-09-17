@@ -14,9 +14,9 @@ const (
 )
 
 const (
-	// PlayStyleDefault 默认游戏类型
+	// PlayStyleDefault 
 	PlayStyleDefault = iota + 1
-	// PlayStyleDealer 庄家玩法
+	// PlayStyleDealer 
 	PlayStyleDealer
 )
 
@@ -33,9 +33,9 @@ const (
 	TyLogPBGamePlay = 725
 )
 
-//包的名字可以通过配置文件来配置
-//建议用github的组织名称，或者用户名字开头, 再加上自己的插件的名字
-//如果发生重名，可以通过配置文件修改这些名字
+/ 
+/ githu  , 
+/  
 var (
 	JRPCName        = "pokerbull"
 	PokerBullX      = "pokerbull"
@@ -43,47 +43,47 @@ var (
 )
 
 const (
-	// FuncNameQueryGameListByIDs 根据id列表查询game列表
+	// FuncNameQueryGameListByIDs i gam 
 	FuncNameQueryGameListByIDs = "QueryGameListByIDs"
-	// FuncNameQueryGameByID 根据id查询game
+	// FuncNameQueryGameByID i game
 	FuncNameQueryGameByID = "QueryGameByID"
-	// FuncNameQueryGameByAddr 根据地址查询game
+	// FuncNameQueryGameByAddr game
 	FuncNameQueryGameByAddr = "QueryGameByAddr"
-	// FuncNameQueryGameByStatus 根据status查询game
+	// FuncNameQueryGameByStatus statu game
 	FuncNameQueryGameByStatus = "QueryGameByStatus"
-	// FuncNameQueryGameByRound 查询某一回合游戏结果
+	// FuncNameQueryGameByRound 
 	FuncNameQueryGameByRound = "QueryGameByRound"
-	// CreateStartTx 创建开始交易
+	// CreateStartTx 
 	CreateStartTx = "Start"
-	// CreateContinueTx 创建继续交易
+	// CreateContinueTx 
 	CreateContinueTx = "Continue"
-	// CreateQuitTx 创建退出交易
+	// CreateQuitTx 
 	CreateQuitTx = "Quit"
-	// CreatePlayTx 创建已匹配玩家交易
+	// CreatePlayTx 
 	CreatePlayTx = "Play"
 )
 
 const (
-	// ListDESC 降序
+	// ListDESC 
 	ListDESC = int32(0)
-	// DefaultCount 默认一次取多少条记录
+	// DefaultCount 
 	DefaultCount = int32(20)
-	// MaxPlayerNum 最大玩家数
+	// MaxPlayerNum 
 	MaxPlayerNum = 5
-	// MinPlayerNum 最小玩家数
+	// MinPlayerNum 
 	MinPlayerNum = 2
-	// MinPlayValue 最小赌注
+	// MinPlayValue 
 	MinPlayValue = 10
-	// DefaultStyle 默认游戏类型
+	// DefaultStyle 
 	DefaultStyle = PlayStyleDefault
-	// PlatformAddress 平台地址
+	// PlatformAddress 
 	PlatformAddress = "1PHtChNt3UcfssR7v7trKSk3WJtAWjKjjX"
-	// PlatformFee 平台佣金
+	// PlatformFee 
 	PlatformFee = 0.005
-	// DeveloperAddress 开发着地址
+	// DeveloperAddress 
 	DeveloperAddress = "1D6RFZNp2rh6QdbcZ1d7RWuBUz61We6SD7"
-	// DeveloperFee 开发者佣金
+	// DeveloperFee 
 	DeveloperFee = 0.005
-	// PlatformSignAddress 平台签名地址
+	// PlatformSignAddress 
 	PlatformSignAddress = "1Geb4ppNiAwMKKyrJgcis3JA57FkqsXvdR"
 )

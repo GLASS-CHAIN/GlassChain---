@@ -45,13 +45,13 @@ const (
 
 //const ...
 const (
-	// utxo缓存数量
+	// utx 
 	UTXOCacheCount = 256
-	// UtxoMaturityDegree utxo 成熟度
+	// UtxoMaturityDegree utxo 
 	UtxoMaturityDegree = 12
 	BTYDustThreshold   = 1
 	ConfirmedHeight    = 12
 	SignatureSize      = (4 + 33 + 65)
-	// Size1Kshiftlen tx消息大小1k
+	// Size1Kshiftlen t 1k
 	Size1Kshiftlen = 10
 )

@@ -76,7 +76,7 @@ type NodeManageTestSuite struct {
 func (suite *NodeManageTestSuite) SetupSuite() {
 
 	suite.stateDB, _ = dbm.NewGoMemDB("state", "state", 1024)
-	// memdb 不支持KVDB接口， 等测试完Exec ， 再扩展 memdb
+	// memdb KVD ， Exec ，  memdb
 	//suite.localDB, _ = dbm.NewGoMemDB("local", "local", 1024)
 	suite.localDB = new(dbmock.KVDB)
 	suite.api = new(apimock.QueueProtocolAPI)

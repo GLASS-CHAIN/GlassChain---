@@ -6,7 +6,7 @@ import (
 )
 
 /*
- * 实现合约对应客户端
+ * 
  */
 
 // Cmd storage client command

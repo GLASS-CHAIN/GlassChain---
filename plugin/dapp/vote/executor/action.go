@@ -56,7 +56,7 @@ func (a *action) createGroup(create *vty.CreateGroup) (*types.Receipt, error) {
 	group := &vty.GroupInfo{}
 	group.Name = create.Name
 	group.ID = formatGroupID(dapp.HeightIndexStr(a.height, int64(a.index)))
-	//添加创建者作为默认管理员
+	/ 
 	group.Admins = append(group.Admins, a.fromAddr)
 	for _, addr := range create.GetAdmins() {
 		if addr != a.fromAddr {
@@ -168,7 +168,7 @@ func (a *action) commitVote(commit *vty.CommitVote) (*types.Receipt, error) {
 		elog.Error("vote exec commitVote", "txHash", a.txHash, "vid", commit.VoteID, "get vote err", err)
 		return nil, errStateDBGet
 	}
-	// 由于目前底层检测交易阶段提供区块时间可能不是最新区块的，依赖区块时间的比较需要放在执行阶段处理
+	//  
 	if vote.BeginTimestamp > a.blockTime {
 		elog.Error("vote exec commitVote", "txHash", a.txHash, "vid", commit.VoteID,
 			"beginTime", vote.BeginTimestamp, "blockTime", a.blockTime, "err", errVoteNotStarted)
@@ -195,7 +195,7 @@ func (a *action) commitVote(commit *vty.CommitVote) (*types.Receipt, error) {
 	info := &vty.CommitInfo{Addr: a.fromAddr}
 	vote.CommitInfos = append(vote.CommitInfos, info)
 	voteValue := types.Encode(vote)
-	//提交的哈希和权重等信息不记录到statedb中
+	/ stated 
 	info.VoteWeight = voteWeight
 	info.TxHash = hex.EncodeToString(a.txHash)
 	receipt.KV = append(receipt.KV, &types.KeyValue{Key: formatStateIDKey(vote.ID), Value: voteValue})

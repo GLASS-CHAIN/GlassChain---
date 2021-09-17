@@ -36,12 +36,12 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(TokenX, NewType(cfg))
 }
 
-// TokenType 执行器基类结构体
+// TokenType 
 type TokenType struct {
 	types.ExecTypeBase
 }
 
-// NewType 创建执行器类型
+// NewType 
 func NewType(cfg *types.Chain33Config) *TokenType {
 	c := &TokenType{}
 	c.SetChild(c)
@@ -49,17 +49,17 @@ func NewType(cfg *types.Chain33Config) *TokenType {
 	return c
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (t *TokenType) GetName() string {
 	return TokenX
 }
 
-// GetPayload 获取token action
+// GetPayload token action
 func (t *TokenType) GetPayload() types.Message {
 	return &TokenAction{}
 }
 
-// GetTypeMap 根据action的name获取type
+// GetTypeMap actio nam type
 func (t *TokenType) GetTypeMap() map[string]int32 {
 	return map[string]int32{
 		"Transfer":          ActionTransfer,
@@ -74,7 +74,7 @@ func (t *TokenType) GetTypeMap() map[string]int32 {
 	}
 }
 
-// GetLogMap 获取log的映射对应关系
+// GetLogMap lo 
 func (t *TokenType) GetLogMap() map[int64]*types.LogInfo {
 	return map[int64]*types.LogInfo{
 		TyLogTokenTransfer:        {Ty: reflect.TypeOf(types.ReceiptAccountTransfer{}), Name: "LogTokenTransfer"},
@@ -94,7 +94,7 @@ func (t *TokenType) GetLogMap() map[int64]*types.LogInfo {
 	}
 }
 
-// RPC_Default_Process rpc 默认处理
+// RPC_Default_Process rpc 
 func (t *TokenType) RPC_Default_Process(action string, msg interface{}) (*types.Transaction, error) {
 	var create *types.CreateTx
 	if _, ok := msg.(*types.CreateTx); !ok {
@@ -108,7 +108,7 @@ func (t *TokenType) RPC_Default_Process(action string, msg interface{}) (*types.
 	if err != nil {
 		return nil, err
 	}
-	//to地址的问题,如果是主链交易，to地址就是直接是设置to
+	//t  ，t to
 	cfg := t.GetConfig()
 	if !cfg.IsPara() {
 		tx.To = create.To
@@ -116,7 +116,7 @@ func (t *TokenType) RPC_Default_Process(action string, msg interface{}) (*types.
 	return tx, err
 }
 
-// CreateTx token 创建合约
+// CreateTx token 
 func (t *TokenType) CreateTx(action string, msg json.RawMessage) (*types.Transaction, error) {
 	tx, err := t.ExecTypeBase.CreateTx(action, msg)
 	if err != nil {

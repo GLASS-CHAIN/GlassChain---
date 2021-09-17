@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// TradeCmd : cmd related to trade,安装trade合约相关命令
+// TradeCmd : cmd related to trade trad 
 func TradeCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "trade",
@@ -542,7 +542,7 @@ func tokenSell(cmd *cobra.Command, args []string) {
 		fmt.Fprintln(os.Stderr, errors.Wrapf(err, "FormatFloatDisplay2Value.fee"))
 		return
 	}
-	//缺省一手是0.01个coin，如果精度小于100，就是1
+	/ 0.0 coin 100 1
 	oneHand := int64(1)
 	if cfg.CoinPrecision > 1e2 {
 		oneHand = cfg.CoinPrecision / 1e2
@@ -716,7 +716,7 @@ func tokenBuyLimit(cmd *cobra.Command, args []string) {
 		fmt.Fprintln(os.Stderr, errors.Wrapf(err, "FormatFloatDisplay2Value.fee"))
 		return
 	}
-	//缺省一手是0.01个coin，如果精度小于100，就是1
+	/ 0.0 coin 100 1
 	oneHand := int64(1)
 	if cfg.CoinPrecision > 1e2 {
 		oneHand = cfg.CoinPrecision / 1e2

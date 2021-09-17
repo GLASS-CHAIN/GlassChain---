@@ -106,7 +106,7 @@ func (w *Wasm) Exec_Update(payload *types2.WasmUpdate, tx *types.Transaction, in
 
 	kvc.AddNoPrefix(contractKey(name), code)
 
-	// 删除旧合约缓存
+	// 
 	delete(w.VMCache, name)
 
 	receiptLog := &types.ReceiptLog{

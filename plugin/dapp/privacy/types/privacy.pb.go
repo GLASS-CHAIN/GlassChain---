@@ -866,7 +866,7 @@ func (x *ReqUTXOPubKeys) GetGroupUTXOGlobalIndex() []*GroupUTXOGlobalIndex {
 	return nil
 }
 
-// 一个公钥信息
+// 
 type PublicKeyData struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -920,7 +920,7 @@ type GroupUTXOPubKey struct {
 	unknownFields protoimpl.UnknownFields
 
 	Amount int64 `protobuf:"varint,1,opt,name=amount,proto3" json:"amount,omitempty"`
-	// 输出签名的所有公钥
+	// 
 	Pubkey [][]byte `protobuf:"bytes,2,rep,name=pubkey,proto3" json:"pubkey,omitempty"`
 }
 
@@ -1292,7 +1292,7 @@ func (x *ReceiptPrivacyOutput) GetKeyoutput() []*KeyOutput {
 	return nil
 }
 
-//各种amount额度的UTXO在链上的数量
+/ amoun UTX 
 type AmountsOfUTXO struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1387,7 +1387,7 @@ func (x *TokenNamesOfUTXO) GetTokensMap() map[string]string {
 	return nil
 }
 
-// 用以转换成json后继续可见的结构
+// jso 
 type UTXOGlobalIndex4Print struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2743,7 +2743,7 @@ type FTXOsSTXOsInOneTx struct {
 
 	Tokenname string `protobuf:"bytes,1,opt,name=tokenname,proto3" json:"tokenname,omitempty"`
 	Sender    string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	// FTXO的超期，设定原则与Transaction.expire一致
+	// FTX  Transaction.expir 
 	Expire    int64   `protobuf:"varint,3,opt,name=expire,proto3" json:"expire,omitempty"`
 	Txhash    string  `protobuf:"bytes,4,opt,name=txhash,proto3" json:"txhash,omitempty"`
 	Utxos     []*UTXO `protobuf:"bytes,5,rep,name=utxos,proto3" json:"utxos,omitempty"`
@@ -2932,13 +2932,13 @@ type CreateTransactionCache struct {
 	unknownFields protoimpl.UnknownFields
 
 	Key []byte `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	// 记录创建时间，用以处理过期的交易
+	//  
 	Createtime int64 `protobuf:"varint,2,opt,name=createtime,proto3" json:"createtime,omitempty"`
-	// 记录签名成功的时间，用以处理过期交易
+	//  
 	Signtime int64 `protobuf:"varint,3,opt,name=signtime,proto3" json:"signtime,omitempty"`
-	// 缓存状态
-	// 0 - 创建状态
-	// 1 - 已经签名状态
+	// 
+	// 0 - 
+	// 1 - 
 	Status int32 `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
 	//
 	Transaction  *types.Transaction `protobuf:"bytes,5,opt,name=transaction,proto3" json:"transaction,omitempty"`
@@ -3152,11 +3152,11 @@ type ReqPrivacyAccount struct {
 
 	Addr  string `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`
 	Token string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty"`
-	// 设定显示的数据类型信息
-	// 0： 只显示账户的数值信息
-	// 1： 显示UTXO明细
-	// 2： 显示FTXO明细
-	// 3： 全部显示
+	// 
+	// 0： 
+	// 1： UTX 
+	// 2： FTX 
+	// 3： 
 	Displaymode int32  `protobuf:"varint,3,opt,name=displaymode,proto3" json:"displaymode,omitempty"`
 	AssetExec   string `protobuf:"bytes,4,opt,name=assetExec,proto3" json:"assetExec,omitempty"`
 }
@@ -3221,15 +3221,15 @@ func (x *ReqPrivacyAccount) GetAssetExec() string {
 	return ""
 }
 
-// 请求隐私账户信息的应答
+// 
 type ReplyPrivacyAccount struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// 未花费的UTXO
+	// UTXO
 	Utxos *UTXOs `protobuf:"bytes,1,opt,name=utxos,proto3" json:"utxos,omitempty"`
-	// 冻结的UTXO
+	// UTXO
 	Ftxos       *UTXOs `protobuf:"bytes,2,opt,name=ftxos,proto3" json:"ftxos,omitempty"`
 	Displaymode int32  `protobuf:"varint,3,opt,name=displaymode,proto3" json:"displaymode,omitempty"`
 }
@@ -3350,17 +3350,17 @@ type ReqPrivacyTransactionList struct {
 
 	// 1:sendtx  2:recvtx
 	SendRecvFlag int32 `protobuf:"varint,2,opt,name=sendRecvFlag,proto3" json:"sendRecvFlag,omitempty"`
-	// 列表顺序，0降1升
+	// ，  
 	Direction int32 `protobuf:"varint,3,opt,name=direction,proto3" json:"direction,omitempty"`
-	// 单次列表数量
+	// 
 	Count int32 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
-	// 交易相关的地址，发送方或接收方
+	//  
 	Address string `protobuf:"bytes,6,opt,name=address,proto3" json:"address,omitempty"`
-	// 资产执行器
+	// 
 	AssetExec string `protobuf:"bytes,8,opt,name=assetExec,proto3" json:"assetExec,omitempty"`
-	// 资产符号
+	// 
 	AssetSymbol string `protobuf:"bytes,9,opt,name=assetSymbol,proto3" json:"assetSymbol,omitempty"`
-	// 指定列表请求开始位置
+	// 
 	StartTxHeightIndex string `protobuf:"bytes,10,opt,name=startTxHeightIndex,proto3" json:"startTxHeightIndex,omitempty"`
 }
 
@@ -3767,7 +3767,7 @@ func (x *RepEnablePrivacy) GetResults() []*PriAddrResult {
 	return nil
 }
 
-// 隐私交易三步发送时，临时存储签名需要的数据信息结构
+//  
 type PrivacySignatureParam struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -3902,22 +3902,22 @@ func (x *WalletAccountPrivacy) GetSpendPrivKey() []byte {
 	return nil
 }
 
-// 创建隐私交易请求
+// 
 type ReqCreatePrivacyTx struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Tokenname string `protobuf:"bytes,1,opt,name=tokenname,proto3" json:"tokenname,omitempty"`
-	// 构建交易类型
+	// 
 	ActionType int32  `protobuf:"varint,2,opt,name=actionType,proto3" json:"actionType,omitempty"`
 	Amount     int64  `protobuf:"varint,3,opt,name=amount,proto3" json:"amount,omitempty"`
 	Note       string `protobuf:"bytes,4,opt,name=note,proto3" json:"note,omitempty"`
-	// 普通交易的发送方
+	// 
 	From string `protobuf:"bytes,5,opt,name=from,proto3" json:"from,omitempty"`
-	// 普通交易的接收方
+	// 
 	To string `protobuf:"bytes,6,opt,name=to,proto3" json:"to,omitempty"`
-	// 隐私交易，接收方的公钥对
+	//  
 	Pubkeypair string `protobuf:"bytes,10,opt,name=pubkeypair,proto3" json:"pubkeypair,omitempty"`
 	Mixcount   int32  `protobuf:"varint,11,opt,name=mixcount,proto3" json:"mixcount,omitempty"`
 	Expire     int64  `protobuf:"varint,12,opt,name=expire,proto3" json:"expire,omitempty"`
@@ -5476,13 +5476,13 @@ const _ = grpc.SupportPackageIsVersion6
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PrivacyClient interface {
 	// Privacy Trading
-	// 显示指定地址的公钥对信息，可以作为后续交易参数
+	//  
 	ShowPrivacyKey(ctx context.Context, in *types.ReqString, opts ...grpc.CallOption) (*ReplyPrivacyPkPair, error)
-	// 扫描UTXO以及获取扫描UTXO后的状态
+	// UTX UTX 
 	RescanUtxos(ctx context.Context, in *ReqRescanUtxos, opts ...grpc.CallOption) (*RepRescanUtxos, error)
-	// 使能隐私账户
+	// 
 	EnablePrivacy(ctx context.Context, in *ReqEnablePrivacy, opts ...grpc.CallOption) (*RepEnablePrivacy, error)
-	// 创建隐私交易
+	// 
 	CreateRawTransaction(ctx context.Context, in *ReqCreatePrivacyTx, opts ...grpc.CallOption) (*types.Transaction, error)
 }
 
@@ -5533,13 +5533,13 @@ func (c *privacyClient) CreateRawTransaction(ctx context.Context, in *ReqCreateP
 // PrivacyServer is the server API for Privacy service.
 type PrivacyServer interface {
 	// Privacy Trading
-	// 显示指定地址的公钥对信息，可以作为后续交易参数
+	//  
 	ShowPrivacyKey(context.Context, *types.ReqString) (*ReplyPrivacyPkPair, error)
-	// 扫描UTXO以及获取扫描UTXO后的状态
+	// UTX UTX 
 	RescanUtxos(context.Context, *ReqRescanUtxos) (*RepRescanUtxos, error)
-	// 使能隐私账户
+	// 
 	EnablePrivacy(context.Context, *ReqEnablePrivacy) (*RepEnablePrivacy, error)
-	// 创建隐私交易
+	// 
 	CreateRawTransaction(context.Context, *ReqCreatePrivacyTx) (*types.Transaction, error)
 }
 

@@ -14,7 +14,7 @@ func newStore(db db.DB) *ticketStore {
 	return &ticketStore{Store: wcom.NewStore(db)}
 }
 
-// ticketStore ticket合约类型数据库操作类
+// ticketStore ticke 
 type ticketStore struct {
 	*wcom.Store
 }

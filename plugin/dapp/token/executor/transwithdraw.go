@@ -18,7 +18,7 @@ func (t *token) ExecTransWithdraw(accountDB *account.DB, tx *types.Transaction, 
 	if (action.Ty == tokenty.ActionTransfer) && action.GetTransfer() != nil {
 		transfer := action.GetTransfer()
 		from := tx.From()
-		//to 是 execs 合约地址
+		//to  execs 
 		if drivers.IsDriverAddress(tx.GetRealToAddr(), t.GetHeight()) {
 			return accountDB.TransferToExec(from, tx.GetRealToAddr(), transfer.Amount)
 		}
@@ -29,7 +29,7 @@ func (t *token) ExecTransWithdraw(accountDB *account.DB, tx *types.Transaction, 
 			withdraw.ExecName = ""
 		}
 		from := tx.From()
-		//to 是 execs 合约地址
+		//to  execs 
 		if drivers.IsDriverAddress(tx.GetRealToAddr(), t.GetHeight()) || isExecAddrMatch(withdraw.ExecName, tx.GetRealToAddr()) {
 			return accountDB.TransferWithdraw(from, tx.GetRealToAddr(), withdraw.Amount)
 		}
@@ -49,7 +49,7 @@ func (t *token) ExecTransWithdraw(accountDB *account.DB, tx *types.Transaction, 
 		}
 		transfer := action.GetTransferToExec()
 		from := tx.From()
-		//to 是 execs 合约地址
+		//to  execs 
 		if !isExecAddrMatch(transfer.ExecName, tx.GetRealToAddr()) {
 			return nil, types.ErrToAddrNotSameToExecAddr
 		}
@@ -73,7 +73,7 @@ func (t *token) ExecLocalTransWithdraw(tx *types.Transaction, receipt *types.Rec
 	if receipt.GetTy() != types.ExecOk {
 		return set, nil
 	}
-	//执行成功
+	/ 
 	var action tokenty.TokenAction
 	err := types.Decode(tx.GetPayload(), &action)
 	if err != nil {
@@ -108,7 +108,7 @@ func (t *token) ExecDelLocalLocalTransWithdraw(tx *types.Transaction, receipt *t
 	if receipt.GetTy() != types.ExecOk {
 		return set, nil
 	}
-	//执行成功
+	/ 
 	var action tokenty.TokenAction
 	err := types.Decode(tx.GetPayload(), &action)
 	if err != nil {

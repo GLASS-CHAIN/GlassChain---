@@ -18,11 +18,11 @@ priTxFee2=0
 priTxindex=0
 priTxHashs1=("")
 priTxHashs2=("")
-priRepeatTx=1 #重复发送交易次数
+priRepeatTx=1  
 priTotalAmount1="300.0000"
 priTotalAmount2="300.0000"
 
-# 将钱包进行解锁的操作
+# 
 # $1 name
 # $2 pswd
 function unlockWallet() {
@@ -35,7 +35,7 @@ function unlockWallet() {
     sleep 1
 }
 
-# 保存随机种子到钱包数据库
+# 
 # $1 name
 # $2 pswd
 # $3 seed
@@ -51,7 +51,7 @@ function saveSeed() {
     sleep 1
 }
 
-# 导入账号私钥到钱包
+# 
 # $1 name
 # $2 key
 # $3 label
@@ -66,7 +66,7 @@ function importKey() {
     sleep 1
 }
 
-# 开启或停止钱包的挖矿功能
+# 
 # $1 name
 # $2 flag 0:close 1:open
 function setAutomine() {
@@ -101,12 +101,12 @@ function peersCount() {
 
     for ((i = 0; i < retryTime; i++)); do
         peersCount=$($name net peer | jq '.[] | length')
-        printf '查询节点 %s ,所需节点数 %d ,当前节点数 %s \n' "${name}" "${needCount}" "${peersCount}"
+        printf   %s   %d   %s \n' "${name}" "${needCount}" "${peersCount}"
         if [ "${peersCount}" = "$needCount" ]; then
-            echo "============= 符合节点数要求 ============="
+            echo "=============  ============="
             return 0
         else
-            echo "============= 休眠 ${sleepTime}s 继续查询 ============="
+            echo "=============  ${sleepTime}s  ============="
             sleep ${sleepTime}
         fi
     done
@@ -319,7 +319,7 @@ function showPrivacyTotalAmount() {
 # $2 keypair
 # $3 amount
 # $4 expire
-# 返回 returnStr1 交易的编码字符串
+#  returnStr1 
 function createPrivacyPub2PrivTx() {
     name=$1
     keypair=$2
@@ -336,7 +336,7 @@ function createPrivacyPub2PrivTx() {
 # $3 amount
 # $4 sender
 # $5 expire
-# 返回 returnStr1 交易的编码字符串
+#  returnStr1 
 function createPrivacyPriv2PrivTx() {
     name=$1
     keypair=$2
@@ -349,13 +349,13 @@ function createPrivacyPriv2PrivTx() {
     returnStr1=$result
 }
 
-# 创建一个隐私到公开的交易,返回编码过的交易字符串
+#  
 # $1 name
 # $2 from
 # $3 to
 # $4 amount
 # $5 expire
-# 返回 returnStr1 交易的编码字符串
+#  returnStr1 
 function createPrivacyPriv2PubTx() {
     name=$1
     from=$2
@@ -368,11 +368,11 @@ function createPrivacyPriv2PubTx() {
     returnStr1=$result
 }
 
-# 对创建的交易进行签名
+# 
 # $1 name
 # $2 addr
 # $3 data
-# 返回 returnStr1 交易的编码字符串
+#  returnStr1 
 function signRawTx() {
     name=$1
     addr=$2
@@ -381,7 +381,7 @@ function signRawTx() {
     returnStr1=$result
 }
 
-# 将签名后的交易发送到内存池并广播
+# 
 # $1 name
 # $2 data
 function sendRawTx() {
@@ -462,9 +462,9 @@ function displayPrivateTotalAmount() {
 }
 
 function genFirstChainPritx() {
-    echo "====== 发送公对私交易 ======"
+    echo "======  ======"
     name=$CLI
-    echo "当前链为：${name}"
+    echo  ：${name}"
     for ((i = 0; i < priRepeatTx; i++)); do
         fromAdd=$CLIfromAddr1
         priAdd=$CLIprivKey1
@@ -475,13 +475,13 @@ function genFirstChainPritx() {
 
         sleep 1
         height=$(${name} block last_header | jq ".height")
-        printf '发送公对私第 %d 笔交易当前高度 %s \n' $i "${height}"
+        printf   %d  %s \n' $i "${height}"
     done
 
     block_wait_timeout "${CLI}" 5 80
 
     priTxindex=0
-    echo "====== 发送私对私交易 ======"
+    echo "======  ======"
     for ((i = 0; i < priRepeatTx; i++)); do
         fromAdd=$CLIfromAddr1
         priAdd=$CLIprivKey2
@@ -495,12 +495,12 @@ function genFirstChainPritx() {
 
         sleep 1
         height=$(${name} block last_header | jq ".height")
-        printf '发送私对私第 %d 笔交易当前高度 %s \n' $i "${height}"
+        printf   %d  %s \n' $i "${height}"
     done
 
     block_wait_timeout "${CLI}" 5 80
 
-    echo "====== 发送私对公交易 ======"
+    echo "======  ======"
     for ((i = 0; i < priRepeatTx; i++)); do
         fromAdd=$CLIfromAddr1
         toAdd=$CLIfromAddr1
@@ -514,10 +514,10 @@ function genFirstChainPritx() {
 
         sleep 1
         height=$(${name} block last_header | jq ".height")
-        printf '发送私对公第 %d 笔交易当前高度 %s \n' $i "${height}"
+        printf   %d  %s \n' $i "${height}"
     done
 
-    echo "=============查询当前隐私余额============="
+    echo "============ ============="
 
     fromAdd=$CLIfromAddr1
     showPrivacyBalance "${name}" $fromAdd
@@ -527,9 +527,9 @@ function genFirstChainPritx() {
 }
 
 function genSecondChainPritx() {
-    echo "====== 发送公对私交易 ======"
+    echo "======  ======"
     name=$CLI4
-    echo "当前链为：${name}"
+    echo  ：${name}"
     for ((i = 0; i < priRepeatTx; i++)); do
         fromAdd=$CLI4fromAddr1
         priAdd=$CLI4privKey11
@@ -540,14 +540,14 @@ function genSecondChainPritx() {
 
         sleep 1
         height=$(${name} block last_header | jq ".height")
-        printf '发送公对私第 %d 笔交易当前高度 %s \n' $i "${height}"
+        printf   %d  %s \n' $i "${height}"
     done
 
     block_wait_timeout "${name}" 5 80
 
     priTxHashs2=("")
     priTxindex=0
-    echo "====== 发送私对私交易 ======"
+    echo "======  ======"
     for ((i = 0; i < priRepeatTx; i++)); do
         fromAdd=$CLI4fromAddr1
         priAdd=$CLI4privKey12
@@ -561,12 +561,12 @@ function genSecondChainPritx() {
 
         sleep 1
         height=$(${name} block last_header | jq ".height")
-        printf '发送私对私第 %d 笔交易当前高度 %s \n' $i "${height}"
+        printf   %d  %s \n' $i "${height}"
     done
 
     block_wait_timeout "${name}" 5 80
 
-    echo "====== 发送私对公交易 ======"
+    echo "======  ======"
     for ((i = 0; i < priRepeatTx; i++)); do
         fromAdd=$CLI4fromAddr1
         toAdd=$CLI4fromAddr1
@@ -580,10 +580,10 @@ function genSecondChainPritx() {
 
         sleep 1
         height=$(${name} block last_header | jq ".height")
-        printf '发送私对私第 %d 笔交易当前高度 %s \n' $i "${height}"
+        printf   %d  %s \n' $i "${height}"
     done
 
-    echo "=============查询当前隐私余额============="
+    echo "============ ============="
 
     fromAdd=$CLI4fromAddr1
     showPrivacyBalance "${name}" $fromAdd
@@ -599,7 +599,7 @@ function checkPriResult() {
     name1=$CLI
     name2=$CLI4
 
-    echo "====================检查第一组docker运行结果================="
+    echo "=================== docke ================="
 
     for ((i = 0; i < ${#priTxHashs1[*]}; i++)); do
         txHash=${priTxHashs1[$i]}
@@ -627,18 +627,18 @@ function checkPriResult() {
     showPrivacyBalance "${name1}" $fromAdd
     value3=$returnStr1
 
-    printf '中间交易费为%d \n' "${priTxFee1}"
+    printf  %d \n' "${priTxFee1}"
 
     actTotal=$(echo "$value1 + $value2 + $value3 + $priTxFee1" | bc)
-    echo "${name1} 实际金额：$actTotal"
+    echo "${name1} ：$actTotal"
 
     if [ "${actTotal}" = $priTotalAmount1 ]; then
-        echo "${name1} 分叉后检查实际金额符合"
+        echo "${name1} "
     else
-        echo "${name1} 分叉后检查实际金额不符合"
+        echo "${name1} "
     fi
 
-    echo "====================检查第二组docker运行结果================="
+    echo "=================== docke ================="
     for ((i = 0; i < ${#priTxHashs2[*]}; i++)); do
         txHash=${priTxHashs2[$i]}
         txQuery "${name2}" "$txHash"
@@ -663,15 +663,15 @@ function checkPriResult() {
     showPrivacyBalance "${name2}" $fromAdd
     value3=$returnStr1
 
-    printf '中间交易费为%d \n' "${priTxFee2}"
+    printf  %d \n' "${priTxFee2}"
 
     actTotal=$(echo "$value1 + $value2 + $value3 + $priTxFee2" | bc)
-    echo "${name2} 实际金额：$actTotal"
+    echo "${name2} ：$actTotal"
 
     if [ "${actTotal}" = $priTotalAmount2 ]; then
-        echo "${name2} 分叉后检查实际金额符合"
+        echo "${name2} "
     else
-        echo "${name2} 分叉后检查实际金额不符合"
+        echo "${name2} "
     fi
 
     sleep 1
@@ -714,42 +714,42 @@ function genPrivacy2PublicTx() {
     fi
 }
 
-# 使用三步发送交易的模式
+# 
 # $1 name
-# $2 fromAddr1  发起者的地址,以及私对公的接收者
-# $3 pk1        公对私的接收者
-# $4 pk2        私对私的接收者
-# $5 group      1表示Docker分组1,2表示Docker分组2
+# $2 fromAddr1   
+# $3 pk1        
+# $4 pk2        
+# $5 group       Docke 1, Docke 2
 function genTransactionInType4() {
     name=$1
     fromAddr1=$2
     pk1=$3
     pk2=$4
     group=$5
-    echo "当前操作的链节点为：${name}, 分组类型为${group}"
+    echo  ：${name}, ${group}"
     expire=120
 
     height=$(${name} block last_header | jq ".height")
     amount=17
-    printf '公对私交易 高度为:%s 转账金额为:%s \n' "${height}" "${amount}"
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私120秒超时" 12 120
+    printf   :%s :%s \n' "${height}" "${amount}"
+    pub2priv "${name}" "$fromAddr1" "$pk1"  12 " 12 120
     block_wait_timeout "${name}" 1 16
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私3600秒超时" 13 3600
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私1800秒超时" 17 1800
+    pub2priv "${name}" "$fromAddr1" "$pk1"  360 " 13 3600
+    pub2priv "${name}" "$fromAddr1" "$pk1"  180 " 17 1800
     block_wait_timeout "${name}" 5 80
 
     height=$(${name} block last_header | jq ".height")
     amount=7
     mixcount=0
-    printf '私对私交易 高度为:%s 转账金额为:%s \n' "${height}" "${amount}"
-    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2" "私对私120秒超时" 7 $mixcount 120
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私120秒超时" 12 120
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私1800秒超时" 17 1800
+    printf   :%s :%s \n' "${height}" "${amount}"
+    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2"  12 " 7 $mixcount 120
+    pub2priv "${name}" "$fromAddr1" "$pk1"  12 " 12 120
+    pub2priv "${name}" "$fromAddr1" "$pk1"  180 " 17 1800
     block_wait_timeout "${name}" 1 16
-    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2" "私对私3600秒超时" 9 $mixcount 3600
-    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2" "私对私3600秒超时" 19 $mixcount 3600
+    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2"  360 " 9 $mixcount 3600
+    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2"  360 " 19 $mixcount 3600
     block_wait_timeout "${name}" 1 16
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私120秒超时" 19 120
+    pub2priv "${name}" "$fromAddr1" "$pk1"  12 " 19 120
     block_wait_timeout "${name}" 5 80
 
     height=$(${name} block last_header | jq ".height")
@@ -757,19 +757,19 @@ function genTransactionInType4() {
     from=$fromAddr1
     to=$fromAddr1
     mixcount=0
-    printf '私对公交易 高度为:%s 转账金额为:%s \n' "${height}" "${amount}"
-    pub2priv "${name}" "$fromAddr1" "$pk1" "公对私120秒超时" 12 120
-    genPrivacy2PublicTx "${name}" "$from" "$to" "私对公120秒超时" $amount $mixcount 120
-    genPrivacy2PublicTx "${name}" "$from" "$to" "私对公3600秒超时" $amount $mixcount 3600
+    printf   :%s :%s \n' "${height}" "${amount}"
+    pub2priv "${name}" "$fromAddr1" "$pk1"  12 " 12 120
+    genPrivacy2PublicTx "${name}" "$from" "$to"  12 " $amount $mixcount 120
+    genPrivacy2PublicTx "${name}" "$from" "$to"  360 " $amount $mixcount 3600
     block_wait_timeout "${name}" 1 16
-    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2" "私对私120秒超时" 7 $mixcount 120
+    genPrivacy2PrivacyTx "${name}" "$fromAddr1" "$pk2"  12 " 7 $mixcount 120
     block_wait_timeout "${name}" 5 80
 }
 
 function genFirstChainPritxType4() {
     genTransactionInType4 "${CLI}" $CLIfromAddr1 $CLIprivKey1 $CLIprivKey2 1
 
-    echo "=============查询当前隐私余额============="
+    echo "============ ============="
     showPrivacyBalance "${name}" $CLIfromAddr1
     showPrivacyBalance "${name}" $CLIfromAddr2
 }
@@ -777,7 +777,7 @@ function genFirstChainPritxType4() {
 function genSecondChainPritxType4() {
     genTransactionInType4 "${CLI4}" $CLI4fromAddr1 $CLI4privKey11 $CLI4privKey12 2
 
-    echo "=============查询当前隐私余额============="
+    echo "============ ============="
     showPrivacyBalance "${name}" $CLI4fromAddr1
     showPrivacyBalance "${name}" $CLI4fromAddr2
 }

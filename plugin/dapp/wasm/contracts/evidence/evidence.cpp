@@ -9,13 +9,13 @@ int AddStateTx()
     if(totalENV() != 2) return -1;
     char ChKey[128] = {0};
     char ChValue[128] = {0};
-    //环境变量索引是从0开始的,0,1,2,3...
+    /  ,0,1,2,3...
     getENV(0, ChKey, getENVSize(0));
     getENV(1, ChValue, getENVSize(1));
     if (string_size(ChKey) == 0) return -1;
-    //1.检查存在这样的记录
+    //1 
     if (getStateDBSize(ChKey, string_size(ChKey)) != 0) return -1;
-    //2.插入到链上数据库
+    //2 
     setStateDB(ChKey, string_size(ChKey), ChValue, string_size(ChValue));
     return SUCC;
 }
@@ -23,11 +23,11 @@ int AddStateTx()
 int DelStateTx()
 {
     if(totalENV() !=1) return -1;
-    //1.从环境变量中获取变量值
+    //1 
     char ChKey[128] = {0};
     getENV(0, ChKey, getENVSize(0));
     if (string_size(ChKey) == 0) return -1;
-    //2.获取对应的记录
+    //2 
     if(getStateDBSize(ChKey, string_size(ChKey)) == 0) {
         const char info[128] = "DelStateTx::getStateDBSize Not Exists\0";
         printlog(info, string_size(info));
@@ -49,7 +49,7 @@ int ModStateTx()
     getENV(0, ChKey, getENVSize(0));
     getENV(1, ChValue, getENVSize(1));
     if ((string_size(ChKey) == 0) || (string_size(ChValue) == 0)) return -1;
-    //查询旧值，非空为存在旧值
+    /  
     if(getStateDBSize(ChKey, string_size(ChKey)) == 0) {
         const char info[128] = "ModStateTx::getStateDBSize failed\0";
         printlog(info, string_size(info));
@@ -69,9 +69,9 @@ int AddLocalTx()
     getENV(0, ChKey, getENVSize(0));
     getENV(1, ChValue, getENVSize(1));
     if (string_size(ChKey) == 0) return -1;
-    //1.检查存在这样的记录
+    //1 
     if (getLocalDBSize(ChKey, string_size(ChKey)) != 0) return -1;
-    //2.存储本地数据
+    //2 
     setLocalDB(ChKey, string_size(ChKey), ChValue, string_size(ChValue));
     return SUCC;
 }
@@ -103,7 +103,7 @@ int ModLocalTx()
     getENV(0, ChKey, getENVSize(0));
     getENV(1, ChValue, getENVSize(1));
     if (string_size(ChKey) == 0) return -1;
-    //1.检查数据记录是否存在
+    //1 
     if(getLocalDBSize(ChKey, string_size(ChKey)) == 0) {
         const char info[128] = "ModLocalTx::getLocalDBSize Not Exist\0";
         printlog(info, string_size(info));

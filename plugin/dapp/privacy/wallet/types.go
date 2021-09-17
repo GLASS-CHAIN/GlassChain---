@@ -14,7 +14,7 @@ type addrAndprivacy struct {
 	Addr           *string
 }
 
-// buildInputInfo 构建隐私交易输入的参数结构
+// buildInputInfo 
 type buildInputInfo struct {
 	assetExec   string
 	assetSymbol string
@@ -23,7 +23,7 @@ type buildInputInfo struct {
 	mixcount    int32
 }
 
-// txOutputInfo 存储当前钱包地址下被选中的UTXO信息
+// txOutputInfo UTX 
 type txOutputInfo struct {
 	amount           int64
 	utxoGlobalIndex  *privacytypes.UTXOGlobalIndex

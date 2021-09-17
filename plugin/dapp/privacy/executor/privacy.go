@@ -5,17 +5,17 @@
 package executor
 
 /*
-privacy执行器支持隐私交易的执行，
+privac ，
 
-主要提供操作有以下几种：
-1）公开地址转账到一次性地址中，即：public address -> one-time addrss
-2）隐私转账，隐私余额会被继续转账到一次性地址中 one-time address -> one-time address；
-3）隐私余额转账到公开地址中， 即：one-time address -> public address
+ ：
+1  ：public address -> one-time addrss
+2   one-time address -> one-time address；
+3 ， ：one-time address -> public address
 
-操作流程：
-1）如果需要进行coin或token的隐私转账，则需要首先将其balance转账至privacy合约账户中；
-2）此时用户可以发起隐私交易，在交易信息中指定接收的公钥对(A,B),执行成功之后，balance会被存入到一次性地址中；
-3）发起交易，
+ ：
+1 coi toke  balanc privac ；
+2  (A,B) ，balanc ；
+3 ，
 
 */
 
@@ -41,7 +41,7 @@ var driverName = "privacy"
 // Init initialize executor driver
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	drivers.Register(cfg, GetName(), newPrivacy, cfg.GetDappFork(driverName, "Enable"))
-	// 如果需要在开发环境下使用隐私交易，则需要使用下面这行代码，否则用上面的代码
+	//   
 	//drivers.Register(newPrivacy().GetName(), newPrivacy, 0)
 	InitExecType()
 }
@@ -148,9 +148,9 @@ func (p *privacy) getGlobalUtxoIndex(req *pty.ReqUTXOGlobalIndex) (types.Message
 	return utxoGlobalIndexResp, nil
 }
 
-//ShowAmountsOfUTXO 获取指定amount下的所有utxo，这样就可以查询当前系统不同amout下存在的UTXO,可以帮助查询用于混淆用的资源
-//也可以确认币种的碎片化问题
-//显示存在的各种不同的额度的UTXO,如1,3,5,10,20,30,100...
+//ShowAmountsOfUTXO amoun utxo amou UTXO 
+/ 
+/ UTXO 1,3,5,10,20,30,100...
 func (p *privacy) ShowAmountsOfUTXO(reqtoken *pty.ReqPrivacyToken) (types.Message, error) {
 	querydb := p.GetLocalDB()
 
@@ -177,7 +177,7 @@ func (p *privacy) ShowAmountsOfUTXO(reqtoken *pty.ReqPrivacyToken) (types.Messag
 	return replyAmounts, nil
 }
 
-//ShowUTXOs4SpecifiedAmount 显示在指定额度下的UTXO的具体信息，如区块高度，交易hash，输出索引等具体信息
+//ShowUTXOs4SpecifiedAmount UTX   hash 
 func (p *privacy) ShowUTXOs4SpecifiedAmount(reqtoken *pty.ReqPrivacyToken) (types.Message, error) {
 	querydb := p.GetLocalDB()
 
@@ -217,14 +217,14 @@ func (p *privacy) CheckTx(tx *types.Transaction, index int) error {
 		return nil
 	}
 	input := action.GetInput()
-	//无论是私对私还是私对公, input都不能为空
+	/ , inpu 
 	if len(input.GetKeyinput()) == 0 {
 		privacylog.Error("PrivacyTrading CheckTx", "txhash", txhashstr)
 		return pty.ErrNilUtxoInput
 	}
 
 	output := action.GetOutput()
-	//私对私必须有utxo输出
+	/ utx 
 	if action.GetPrivacy2Privacy() != nil && len(output.GetKeyoutput()) == 0 {
 		privacylog.Error("PrivacyTrading CheckTx", "txhash", txhashstr)
 		return pty.ErrNilUtxoOutput
@@ -269,7 +269,7 @@ func (p *privacy) CheckTx(tx *types.Transaction, index int) error {
 		return pty.ErrPubkeysOfUTXO
 	}
 
-	//只有主链coins隐私转账才收取特殊交易费, assertExec空情况适配老版本
+	/ coin , assertExe 
 
 	if !cfg.IsPara() && (assertExec == "" || assertExec == cfg.GetCoinExec()) {
 
@@ -281,7 +281,7 @@ func (p *privacy) CheckTx(tx *types.Transaction, index int) error {
 			privacylog.Error("PrivacyTrading CheckTx", "txhash", txhashstr, "fee set:", tx.Fee, "required:", pty.PrivacyTxFee*cfg.GetCoinPrecision(), " error ErrPrivacyTxFeeNotEnough")
 			return pty.ErrPrivacyTxFeeNotEnough
 		}
-		//如果是私到私 或者私到公，交易费扣除则需要utxo实现,交易费并不生成真正的UTXO,也是即时燃烧掉而已
+		/   utx  UTXO 
 		var feeAmount int64
 		if action.Ty == pty.ActionPrivacy2Privacy {
 			feeAmount = totalInput - totalOutput
@@ -308,7 +308,7 @@ func batchGet(stateDB db.KV, keyImages [][]byte) (values [][]byte, err error) {
 	return values, nil
 }
 
-//通过keyImage确认是否存在双花，有效即不存在双花，返回true，反之则返回false
+/ keyImag   true false
 func (p *privacy) checkUTXOValid(keyImages [][]byte) (bool, int32) {
 	stateDB := p.GetStateDB()
 	values, err := batchGet(stateDB, keyImages)

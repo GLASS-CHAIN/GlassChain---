@@ -22,7 +22,7 @@ message TokenAction {
     int32 Ty = 7;
 }
 
-//创建token，支持最大精确度是8位小数,即存入数据库的实际总额需要放大1e8倍
+/ token   1e 
 message TokenPreCreate {
     string name         = 1;
     string symbol       = 2;
@@ -93,7 +93,7 @@ message LocalToken {
     int64  prepareCreateHeight = 11;
     int64  prepareCreateTime   = 12;
     int32  precision           = 13;
-    // 如果需要这个项可以单独做一个域存储
+    // 
     int64 totalTransferTimes = 14;
     int64 revokedHeight      = 15;
     int64 revokedTime        = 16;
@@ -158,7 +158,7 @@ message ReqAddrTokens {
 
 message ReqTokenTx {
     string symbol = 1;
-    //表示取所有/from/to/其他的hash列表
+    / /from/to has 
     int32  flag      = 2;
     int32  count     = 3;
     int32  direction = 4;
@@ -172,7 +172,7 @@ message ReplyTokenLogs {
 }
 
 service token {
-    // token 对外提供服务的接口
-    //区块链接口
+    // token 
+    / 
     rpc GetTokenBalance(ReqTokenBalance) returns (Accounts) {}
 }

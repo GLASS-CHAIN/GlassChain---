@@ -64,12 +64,12 @@ var (
 	walletPass        = "fzm123"
 )
 
-//测试过程：
-//1. 初始化账户，导入有钱的私钥，创建一个新账户，往这个新账户打钱（用来签名和扣手续费）
-//2. 产生precreate的一种token
-//3. finish这个token
-//4. 向一个地址转账token
-//5. 可选：在平行链上进行query
+/ ：
+//1.     ）
+//2. precreat token
+//3. finis token
+//4. token
+//5.  query
 
 func init() {
 	fmt.Println("Init start")
@@ -448,17 +448,17 @@ func TestToken_validSymbolWithHeight(t *testing.T) {
 		expect bool
 	}{
 		{[]byte("x"), forkBadTokenSymbol - 1, false},
-		{[]byte("X林"), forkBadTokenSymbol - 1, true},
+		{[]byte(" "), forkBadTokenSymbol - 1, true},
 
 		{[]byte("x"), forkBadTokenSymbol, false},
-		{[]byte("X林"), forkBadTokenSymbol, false},
+		{[]byte(" "), forkBadTokenSymbol, false},
 
 		{[]byte("x"), forkTokenSymbolWithNumber - 1, false},
-		{[]byte("X林"), forkTokenSymbolWithNumber - 1, false},
+		{[]byte(" "), forkTokenSymbolWithNumber - 1, false},
 		{[]byte("X1"), forkTokenSymbolWithNumber - 1, false},
 
 		{[]byte("x"), forkTokenSymbolWithNumber, false},
-		{[]byte("X林"), forkTokenSymbolWithNumber, false},
+		{[]byte(" "), forkTokenSymbolWithNumber, false},
 		{[]byte("X1"), forkTokenSymbolWithNumber, true},
 	}
 

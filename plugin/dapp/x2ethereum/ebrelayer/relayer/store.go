@@ -18,66 +18,66 @@ var (
 
 const (
 	keyEncryptionFlag     = "Encryption"
-	keyEncryptionCompFlag = "EncryptionFlag" // 中间有一段时间运行了一个错误的密码版本，导致有部分用户信息发生错误，需要兼容下
+	keyEncryptionCompFlag = "EncryptionFlag" //   
 	keyPasswordHash       = "PasswordHash"
 )
 
-// CalcEncryptionFlag 加密标志Key
+// CalcEncryptionFlag Key
 func calcEncryptionFlag() []byte {
 	return []byte(keyEncryptionFlag)
 }
 
-// calckeyEncryptionCompFlag 加密比较标志Key
+// calckeyEncryptionCompFlag Key
 func calckeyEncryptionCompFlag() []byte {
 	return []byte(keyEncryptionCompFlag)
 }
 
-// CalcPasswordHash 密码hash的Key
+// CalcPasswordHash has Key
 func calcPasswordHash() []byte {
 	return []byte(keyPasswordHash)
 }
 
-// NewStore 新建存储对象
+// NewStore 
 func NewStore(db db.DB) *Store {
 	return &Store{db: db}
 }
 
-// Store 钱包通用数据库存储类，实现对钱包账户数据库操作的基本实现
+// Store  
 type Store struct {
 	db db.DB
 }
 
-// Close 关闭数据库
+// Close 
 func (store *Store) Close() {
 	store.db.Close()
 }
 
-// GetDB 获取数据库操作接口
+// GetDB 
 func (store *Store) GetDB() db.DB {
 	return store.db
 }
 
-// NewBatch 新建批处理操作对象接口
+// NewBatch 
 func (store *Store) NewBatch(sync bool) db.Batch {
 	return store.db.NewBatch(sync)
 }
 
-// Get 取值
+// Get 
 func (store *Store) Get(key []byte) ([]byte, error) {
 	return store.db.Get(key)
 }
 
-// Set 设置值
+// Set 
 func (store *Store) Set(key []byte, value []byte) (err error) {
 	return store.db.Set(key, value)
 }
 
-// NewListHelper 新建列表复制操作对象
+// NewListHelper 
 func (store *Store) NewListHelper() *db.ListHelper {
 	return db.NewListHelper(store.db)
 }
 
-// SetEncryptionFlag 设置加密方式标志
+// SetEncryptionFlag 
 func (store *Store) SetEncryptionFlag(batch db.Batch) error {
 	var flag int64 = 1
 	data, err := json.Marshal(flag)
@@ -90,7 +90,7 @@ func (store *Store) SetEncryptionFlag(batch db.Batch) error {
 	return nil
 }
 
-// GetEncryptionFlag 获取加密方式
+// GetEncryptionFlag 
 func (store *Store) GetEncryptionFlag() int64 {
 	var flag int64
 	data, err := store.Get(calcEncryptionFlag())
@@ -108,14 +108,14 @@ func (store *Store) GetEncryptionFlag() int64 {
 	return flag
 }
 
-// SetPasswordHash 保存密码哈希
+// SetPasswordHash 
 func (store *Store) SetPasswordHash(password string, batch db.Batch) error {
 	var WalletPwHash types.WalletPwHash
-	//获取一个随机字符串
+	/ 
 	randstr := fmt.Sprintf("fuzamei:$@%s", crypto.CRandHex(16))
 	WalletPwHash.Randstr = randstr
 
-	//通过password和随机字符串生成一个hash值
+	/ passwor has 
 	pwhashstr := fmt.Sprintf("%s:%s", password, WalletPwHash.Randstr)
 	pwhash := sha256.Sum256([]byte(pwhashstr))
 	WalletPwHash.PwHash = pwhash[:]
@@ -129,7 +129,7 @@ func (store *Store) SetPasswordHash(password string, batch db.Batch) error {
 	return nil
 }
 
-// VerifyPasswordHash 检查密码有效性
+// VerifyPasswordHash 
 func (store *Store) VerifyPasswordHash(password string) bool {
 	var WalletPwHash types.WalletPwHash
 	pwhashbytes, err := store.Get(calcPasswordHash())
@@ -144,6 +144,6 @@ func (store *Store) VerifyPasswordHash(password string) bool {
 	pwhashstr := fmt.Sprintf("%s:%s", password, WalletPwHash.Randstr)
 	pwhash := sha256.Sum256([]byte(pwhashstr))
 	Pwhash := pwhash[:]
-	//通过新的密码计算pwhash最对比
+	/ pwhas 
 	return bytes.Equal(WalletPwHash.GetPwHash(), Pwhash)
 }

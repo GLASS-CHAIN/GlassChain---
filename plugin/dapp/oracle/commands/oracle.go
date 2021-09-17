@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// OracleCmd 预言机命令行
+// OracleCmd 
 func OracleCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "oracle",
@@ -39,7 +39,7 @@ func OracleCmd() *cobra.Command {
 	return cmd
 }
 
-// OraclePublishEventRawTxCmd 发布事件
+// OraclePublishEventRawTxCmd 
 func OraclePublishEventRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "publish_event",
@@ -137,7 +137,7 @@ func publishEvent(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// OracleAbortEventRawTxCmd 取消发布事件
+// OracleAbortEventRawTxCmd 
 func OracleAbortEventRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "abort_publish_event",
@@ -180,7 +180,7 @@ func abortPublishEvent(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// OraclePrePublishResultRawTxCmd 预发布结果
+// OraclePrePublishResultRawTxCmd 
 func OraclePrePublishResultRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "prepublish_result",
@@ -247,7 +247,7 @@ func prePublishResult(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// OracleAbortPrePubResultRawTxCmd 取消预发布的事件结果
+// OracleAbortPrePubResultRawTxCmd 
 func OracleAbortPrePubResultRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "abort_result",
@@ -290,7 +290,7 @@ func abortPrePubResult(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// OraclePublishResultRawTxCmd 发布事件结果
+// OraclePublishResultRawTxCmd 
 func OraclePublishResultRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "publish_result",
@@ -357,7 +357,7 @@ func publishResult(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// OracleQueryRawTxCmd 查询事件
+// OracleQueryRawTxCmd 
 func OracleQueryRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",

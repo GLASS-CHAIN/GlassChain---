@@ -5,11 +5,11 @@
 package executor
 
 /*
-coins 是一个货币的exec。内置货币的执行器。
+coins exec 。
 
-主要提供两种操作：
+ ：
 
-EventTransfer -> 转移资产
+EventTransfer -> 
 */
 
 //package none execer for unknow execer
@@ -63,7 +63,7 @@ func (t *Ticket) GetDriverName() string {
 }
 
 func (t *Ticket) saveTicketBind(b *ty.ReceiptTicketBind) (kvs []*types.KeyValue) {
-	//解除原来的绑定
+	/ 
 	if len(b.OldMinerAddress) > 0 {
 		kv := &types.KeyValue{
 			Key:   calcBindMinerKey(b.OldMinerAddress, b.ReturnAddress),
@@ -86,14 +86,14 @@ func (t *Ticket) saveTicketBind(b *ty.ReceiptTicketBind) (kvs []*types.KeyValue)
 }
 
 func (t *Ticket) delTicketBind(b *ty.ReceiptTicketBind) (kvs []*types.KeyValue) {
-	//被取消了，刚好操作反
+	/  
 	kv := &types.KeyValue{
 		Key:   calcBindMinerKey(b.NewMinerAddress, b.ReturnAddress),
 		Value: nil,
 	}
 	kvs = append(kvs, kv)
 	if len(b.OldMinerAddress) > 0 {
-		//恢复旧的绑定
+		/ 
 		kv := &types.KeyValue{Key: calcBindReturnKey(b.ReturnAddress), Value: []byte(b.OldMinerAddress)}
 		kvs = append(kvs, kv)
 		kv = &types.KeyValue{
@@ -102,7 +102,7 @@ func (t *Ticket) delTicketBind(b *ty.ReceiptTicketBind) (kvs []*types.KeyValue) 
 		}
 		kvs = append(kvs, kv)
 	} else {
-		//删除旧的数据
+		/ 
 		kv := &types.KeyValue{Key: calcBindReturnKey(b.ReturnAddress), Value: nil}
 		kvs = append(kvs, kv)
 	}
@@ -169,7 +169,7 @@ func delticket(addr string, ticketID string, status int32) *types.KeyValue {
 // IsFriend check is fri
 func (t *Ticket) IsFriend(myexec, writekey []byte, tx *types.Transaction) bool {
 	clog.Error("ticket  IsFriend", "myex", string(myexec), "writekey", string(writekey))
-	//不允许平行链
+	/ 
 	return false
 }
 

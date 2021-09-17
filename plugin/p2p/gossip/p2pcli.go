@@ -79,9 +79,9 @@ func (m *Cli) BroadCastTx(msg *queue.Message, taskindex int64) {
 
 	if tx, ok := msg.GetData().(*pb.Transaction); ok {
 		txHash := hex.EncodeToString(tx.Hash())
-		//此处使用新分配结构，避免重复修改已保存的ttl
+		/  ttl
 		route := &pb.P2PRoute{TTL: 1}
-		//是否已存在记录，不存在表示本节点发起的交易
+		/  
 		data, exist := txHashFilter.Get(txHash)
 		if ttl, ok := data.(*pb.P2PRoute); exist && ok {
 			route.TTL = ttl.GetTTL() + 1
@@ -104,7 +104,7 @@ func (m *Cli) GetMemPool(msg *queue.Message, taskindex int64) {
 	peers, _ := m.network.node.GetActivePeers()
 
 	for _, peer := range peers {
-		//获取远程 peer invs
+		/  peer invs
 		resp, err := peer.mconn.gcli.GetMemPool(context.Background(),
 			&pb.P2PGetMempool{Version: m.network.node.nodeInfo.channelVersion}, grpc.FailFast(true))
 		P2pComm.CollectPeerStat(err, peer)
@@ -117,7 +117,7 @@ func (m *Cli) GetMemPool(msg *queue.Message, taskindex int64) {
 		}
 
 		invs := resp.GetInvs()
-		//与本地mempool 对比 tx数组
+		/ mempool  t 
 		tmpMsg := m.network.client.NewMessage("mempool", pb.EventGetMempool, nil)
 		txresp, err := m.network.client.Wait(tmpMsg)
 		if err != nil {
@@ -130,13 +130,13 @@ func (m *Cli) GetMemPool(msg *queue.Message, taskindex int64) {
 			txmap[hex.EncodeToString(tx.Hash())] = tx
 		}
 
-		//去重过滤
+		/ 
 		for _, inv := range invs {
 			if _, ok := txmap[hex.EncodeToString(inv.Hash)]; !ok {
 				ableInv = append(ableInv, inv)
 			}
 		}
-		//获取真正的交易Tx call GetData
+		/ Tx call GetData
 		datacli, dataerr := peer.mconn.gcli.GetData(context.Background(),
 			&pb.P2PGetData{Invs: ableInv, Version: m.network.node.nodeInfo.channelVersion}, grpc.FailFast(true))
 		P2pComm.CollectPeerStat(dataerr, peer)
@@ -212,7 +212,7 @@ func (m *Cli) GetAddrList(peer *Peer) (map[string]*pb.P2PPeerInfo, error) {
 	if err != nil {
 		return addrlist, err
 	}
-	//获取本地高度
+	/ 
 	client := peer.node.nodeInfo.client
 	msg := client.NewMessage("blockchain", pb.EventGetLastHeader, nil)
 	err = client.SendTimeout(msg, true, time.Second*10)
@@ -290,7 +290,7 @@ func (m *Cli) SendVersion(peer *Peer, nodeinfo *NodeInfo) (string, error) {
 
 			log.Debug("sendVersion", "expect ip", ip, "pre externalip", nodeinfo.GetExternalAddr().IP.String())
 			if peer.IsPersistent() {
-				//永久加入黑名单
+				/ 
 				nodeinfo.blacklist.Add(ip, 0)
 			}
 		}
@@ -397,7 +397,7 @@ func (m *Cli) GetHeaders(msg *queue.Message, taskindex int64) {
 			log.Error("GetBlocks", "Err", err.Error())
 			if err == pb.ErrVersion {
 				peer.version.SetSupport(false)
-				P2pComm.CollectPeerStat(err, peer) //把no support 消息传递过去
+				P2pComm.CollectPeerStat(err, peer) / no support 
 			}
 			return
 		}
@@ -409,7 +409,7 @@ func (m *Cli) GetHeaders(msg *queue.Message, taskindex int64) {
 			log.Error("send", "to blockchain EventAddBlockHeaders msg Err", err.Error())
 		}
 	} else {
-		//当请求的pid不是ActivePeer时需要打印日志方便问题定位
+		/ pi ActivePee 
 		log.Debug("GetHeaders", "pid", pid[0], "ActivePeers", peers, "infos", infos)
 	}
 
@@ -444,7 +444,7 @@ func (m *Cli) GetBlocks(msg *queue.Message, taskindex int64) {
 
 	var downloadPeers []*Peer
 	peers, infos := m.network.node.GetActivePeers()
-	if len(pids) > 0 && pids[0] != "" { //指定Pid 下载数据
+	if len(pids) > 0 && pids[0] != "" { / Pid 
 		log.Debug("fetch from peer in pids", "pids", pids)
 		for _, pid := range pids {
 			if peer, ok := peers[pid]; ok && peer != nil {
@@ -456,7 +456,7 @@ func (m *Cli) GetBlocks(msg *queue.Message, taskindex int64) {
 		log.Debug("fetch from all peers in pids")
 		for name, peer := range peers {
 			info, ok := infos[name]
-			if !ok || info.GetHeader().GetHeight() < req.GetStart() { //高度不符合要求
+			if !ok || info.GetHeader().GetHeight() < req.GetStart() { / 
 				continue
 			}
 			downloadPeers = append(downloadPeers, peer)
@@ -471,7 +471,7 @@ func (m *Cli) GetBlocks(msg *queue.Message, taskindex int64) {
 
 	msg.Reply(m.network.client.NewMessage("blockchain", pb.EventReply, pb.Reply{IsOk: true, Msg: []byte("downloading...")}))
 
-	//使用新的下载模式进行下载
+	/ 
 	var bChan = make(chan *pb.BlockPid, 512)
 	invs := MaxInvs.GetInvs()
 	job := NewDownloadJob(m, downloadPeers)
@@ -562,7 +562,7 @@ func (m *Cli) GetNetInfo(msg *queue.Message, taskindex int64) {
 
 // CheckPeerNatOk check peer is ok or not
 func (m *Cli) CheckPeerNatOk(addr string, info *NodeInfo) bool {
-	//连接自己的地址信息做测试
+	/ 
 	return !(len(P2pComm.AddrRouteble([]string{addr}, info.channelVersion, info.cliCreds)) == 0)
 
 }
@@ -607,7 +607,7 @@ func (m *Cli) peerInfos() []*pb.Peer {
 func (m *Cli) getLocalPeerInfo() (*pb.P2PPeerInfo, error) {
 	client := m.network.client
 	msg := client.NewMessage("mempool", pb.EventGetMempoolSize, nil)
-	err := client.SendTimeout(msg, true, time.Second*10) //发送超时
+	err := client.SendTimeout(msg, true, time.Second*10) / 
 	if err != nil {
 		log.Error("GetPeerInfo mempool", "Error", err.Error())
 		return nil, err

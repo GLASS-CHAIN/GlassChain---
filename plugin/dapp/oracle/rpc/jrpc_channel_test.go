@@ -30,7 +30,7 @@ func init() {
 }
 
 func TestJRPCChannel(t *testing.T) {
-	// 启动RPCmocker
+	// RPCmocker
 	mocker := testnode.New("--notset--", nil)
 	cfg := mocker.GetAPI().GetConfig()
 	defer func() {
@@ -119,7 +119,7 @@ func testAbortEventRawTxCmd(t *testing.T, cfg *types.Chain33Config, jrpc *jsoncl
 func testPrePublishResultRawTxCmd(t *testing.T, cfg *types.Chain33Config, jrpc *jsonclient.JSONClient) error {
 	payload := &oty.ResultPrePublish{
 		EventID: "123",
-		Source:  "新浪体育",
+		Source:   ",
 		Result:  "{\"team1\":3, \"team2\":2}",
 	}
 	params := &rpctypes.CreateTxIn{
@@ -145,7 +145,7 @@ func testAbortPrePubResultRawTxCmd(t *testing.T, cfg *types.Chain33Config, jrpc 
 func testPublishResultRawTxCmd(t *testing.T, cfg *types.Chain33Config, jrpc *jsonclient.JSONClient) error {
 	payload := &oty.ResultPrePublish{
 		EventID: "123",
-		Source:  "新浪体育",
+		Source:   ",
 		Result:  "{\"team1\":3, \"team2\":2}",
 	}
 	params := &rpctypes.CreateTxIn{

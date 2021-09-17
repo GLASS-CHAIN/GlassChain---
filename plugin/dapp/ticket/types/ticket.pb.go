@@ -37,15 +37,15 @@ type Ticket struct {
 	unknownFields protoimpl.UnknownFields
 
 	TicketId string `protobuf:"bytes,1,opt,name=ticketId,proto3" json:"ticketId,omitempty"`
-	// 0 -> 未成熟 1 -> 可挖矿 2 -> 已挖成功 3-> 已关闭
+	// 0 ->  1 ->  2 ->  3-> 
 	Status int32 `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
-	// genesis 创建的私钥比较特殊
+	// genesis 
 	IsGenesis bool `protobuf:"varint,3,opt,name=isGenesis,proto3" json:"isGenesis,omitempty"`
-	//创建时间
+	/ 
 	CreateTime int64 `protobuf:"varint,4,opt,name=createTime,proto3" json:"createTime,omitempty"`
-	//挖矿时间
+	/ 
 	MinerTime int64 `protobuf:"varint,5,opt,name=minerTime,proto3" json:"minerTime,omitempty"`
-	//挖到的币的数目
+	/ 
 	MinerValue   int64  `protobuf:"varint,8,opt,name=minerValue,proto3" json:"minerValue,omitempty"`
 	MinerAddress string `protobuf:"bytes,6,opt,name=minerAddress,proto3" json:"minerAddress,omitempty"`
 	// return wallet
@@ -289,11 +289,11 @@ type TicketMiner struct {
 	Reward   int64  `protobuf:"varint,2,opt,name=reward,proto3" json:"reward,omitempty"`
 	TicketId string `protobuf:"bytes,3,opt,name=ticketId,proto3" json:"ticketId,omitempty"`
 	Modify   []byte `protobuf:"bytes,4,opt,name=modify,proto3" json:"modify,omitempty"`
-	//挖到区块时公开
+	/ 
 	PrivHash []byte `protobuf:"bytes,5,opt,name=privHash,proto3" json:"privHash,omitempty"`
-	// VRF计算得到的hash
+	// VR hash
 	VrfHash []byte `protobuf:"bytes,6,opt,name=vrfHash,proto3" json:"vrfHash,omitempty"`
-	// VRF计算得到的proof
+	// VR proof
 	VrfProof []byte `protobuf:"bytes,7,opt,name=vrfProof,proto3" json:"vrfProof,omitempty"`
 }
 
@@ -564,15 +564,15 @@ type TicketOpen struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//用户挖矿的ticket 地址
+	/ ticket 
 	MinerAddress string `protobuf:"bytes,1,opt,name=minerAddress,proto3" json:"minerAddress,omitempty"`
-	//购买ticket的数目
+	/ ticke 
 	Count int32 `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
-	//币实际存储的地址
+	/ 
 	ReturnAddress string `protobuf:"bytes,3,opt,name=returnAddress,proto3" json:"returnAddress,omitempty"`
-	//随机种子
+	/ 
 	RandSeed int64 `protobuf:"varint,4,opt,name=randSeed,proto3" json:"randSeed,omitempty"`
-	//购买ticket时公开
+	/ ticke 
 	PubHashes [][]byte `protobuf:"bytes,5,rep,name=pubHashes,proto3" json:"pubHashes,omitempty"`
 }
 
@@ -1672,12 +1672,12 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type TicketClient interface {
-	//创建绑定挖矿
+	/ 
 	CreateBindMiner(ctx context.Context, in *ReqBindMiner, opts ...grpc.CallOption) (*ReplyBindMiner, error)
-	//查询钱包票数
+	/ 
 	GetTicketCount(ctx context.Context, in *types.ReqNil, opts ...grpc.CallOption) (*types.Int64, error)
 	// Miner
-	//设置自动挖矿
+	/ 
 	SetAutoMining(ctx context.Context, in *MinerFlag, opts ...grpc.CallOption) (*types.Reply, error)
 }
 
@@ -1718,12 +1718,12 @@ func (c *ticketClient) SetAutoMining(ctx context.Context, in *MinerFlag, opts ..
 
 // TicketServer is the server API for Ticket service.
 type TicketServer interface {
-	//创建绑定挖矿
+	/ 
 	CreateBindMiner(context.Context, *ReqBindMiner) (*ReplyBindMiner, error)
-	//查询钱包票数
+	/ 
 	GetTicketCount(context.Context, *types.ReqNil) (*types.Int64, error)
 	// Miner
-	//设置自动挖矿
+	/ 
 	SetAutoMining(context.Context, *MinerFlag) (*types.Reply, error)
 }
 

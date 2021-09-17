@@ -28,15 +28,15 @@ var (
 	configPath = flag.String("f", "signatory.toml", "configfile")
 )
 
-// 独立的服务， 提供两个功能
-//   1. 帮忙做审核token的交易签名
-//       1. a帐号有审核的权限， 客服核完需要用他的私钥对审核交易进行签名
-//       1. 输入是生成好的， 选择输入 owner, symbol
-//       1. 输出是签过名的交易
-//   1. 给指定帐号打手续费    1bty
-//       1. 指定帐号
-//       1. 输出是签过名的交易
-//  实现基于http 的 json rpc
+// ， 
+//   1. toke 
+//       1.  ， 
+//       1. ，  owner, symbol
+//       1. 
+//   1.     1bty
+//       1. 
+//       1. 
+//  http  json rpc
 //    app-proto
 //      |
 //      V
@@ -113,7 +113,7 @@ func main() {
 
 }
 
-// InitCfg 初始化配置
+// InitCfg 
 func InitCfg(path string) *signatory.Config {
 	var cfg signatory.Config
 	if _, err := tml.DecodeFile(path, &cfg); err != nil {
@@ -124,7 +124,7 @@ func InitCfg(path string) *signatory.Config {
 	return &cfg
 }
 
-// InitWhiteList 初始化白名单
+// InitWhiteList 
 func InitWhiteList(cfg *signatory.Config) map[string]bool {
 	whitelist := map[string]bool{}
 	if len(cfg.Whitelist) == 1 && cfg.Whitelist[0] == "*" {

@@ -8,12 +8,12 @@ import (
 	"github.com/33cn/chain33/rpc/types"
 )
 
-// Jrpc 申明Jrpc结构体
+// Jrpc Jrp 
 type Jrpc struct {
 	cli *channelClient
 }
 
-// Grpc 申明Grpc结构体
+// Grpc Grp 
 type Grpc struct {
 	*channelClient
 }
@@ -22,7 +22,7 @@ type channelClient struct {
 	types.ChannelClient
 }
 
-// Init 初始化rpc实例
+// Init rp 
 func Init(name string, s types.RPCServer) {
 	cli := &channelClient{}
 	grpc := &Grpc{channelClient: cli}

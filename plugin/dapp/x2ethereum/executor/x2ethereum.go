@@ -8,12 +8,12 @@ import (
 )
 
 /*
- * 执行器相关定义
- * 重载基类相关接口
+ * 
+ * 
  */
 
 var (
-	//日志
+	/ 
 	elog = log.New("module", "x2ethereum.executor")
 )
 
@@ -52,9 +52,9 @@ func (x *x2ethereum) GetDriverName() string {
 	return driverName
 }
 
-// CheckTx 实现自定义检验交易接口，供框架调用
+// CheckTx  
 // todo
-// 实现
+// 
 func (x *x2ethereum) CheckTx(tx *types.Transaction, index int) error {
 	//var action x2ethereumtypes.X2EthereumAction
 	//err := types.Decode(tx.Payload, &action)

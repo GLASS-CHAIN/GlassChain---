@@ -27,7 +27,7 @@ var (
 	defMixCount int32 = 16
 )
 
-// PrivacyCmd 添加隐私交易的命令
+// PrivacyCmd 
 func PrivacyCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "privacy",

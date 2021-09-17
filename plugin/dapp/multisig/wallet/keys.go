@@ -7,7 +7,7 @@ package wallet
 import "fmt"
 
 const (
-	// MultisigAddr 记录本钱包owner地址拥有的多重签名地址，key:"multisig-addr-owneraddr, value [](multisigaddr,owneraddr,weight)
+	// MultisigAddr owne ，key:"multisig-addr-owneraddr, value [](multisigaddr,owneraddr,weight)
 	MultisigAddr = "multisig-addr-"
 )
 

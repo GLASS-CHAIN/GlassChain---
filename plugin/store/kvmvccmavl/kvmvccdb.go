@@ -22,10 +22,10 @@ import (
 const (
 	pruningStateStart  = 1
 	pruningStateEnd    = 0
-	onceScanCount      = 10000 // 单次扫描数目
-	onceCount          = 1000  // 容器长度
+	onceScanCount      = 10000 // 
+	onceCount          = 1000  // 
 	levelPruningHeight = 100 * 10000
-	defaultPruneHeight = 10000 // 每个10000裁剪一次
+	defaultPruneHeight = 10000 // 1000 
 )
 
 var (
@@ -34,7 +34,7 @@ var (
 )
 
 var (
-	//同common/db中的mvcc相关的定义保持一致
+	/ common/d mvc 
 	mvccPrefix = []byte(".-mvcc-.")
 	//mvccMeta               = append(mvccPrefix, []byte("m.")...)
 	mvccData = append(mvccPrefix, []byte("d.")...)
@@ -146,7 +146,7 @@ func (mvccs *KVMVCCStore) MemSet(datas *types.StoreSet, hash []byte, sync bool) 
 	}
 	mvccs.kvsetmap[string(hash)] = kvset
 	mvccs.sync = sync
-	// 进行裁剪
+	// 
 	if mvccs.kvmvccCfg != nil && mvccs.kvmvccCfg.EnableMVCCPrune &&
 		!isPruning() && mvccs.kvmvccCfg.PruneHeight != 0 &&
 		datas.Height%int64(mvccs.kvmvccCfg.PruneHeight) == 0 &&
@@ -218,7 +218,7 @@ func (mvccs *KVMVCCStore) IterateRangeByStateHash(statehash []byte, start []byte
 	if !mvccs.kvmvccCfg.EnableMVCCIter {
 		panic("call IterateRangeByStateHash when disable mvcc iter")
 	}
-	//按照kv最新值来进行遍历处理，要求statehash必须是最新区块的statehash，否则不支持该接口
+	/ k  statehas statehash 
 	maxVersion, err := mvccs.mvcc.GetMaxVersion()
 	if err != nil {
 		kmlog.Error("KVMVCCStore IterateRangeByStateHash can't get max version, ignore the call.", "err", err)
@@ -295,13 +295,13 @@ func (mvccs *KVMVCCStore) saveKVSets(kvset []*types.KeyValue, sync bool) {
 	dbm.MustWrite(storeBatch)
 }
 
-//GetMaxVersion GetMaxVersion 获取当前最大高度
+//GetMaxVersion GetMaxVersion 
 func (mvccs *KVMVCCStore) GetMaxVersion() (int64, error) {
 	return mvccs.mvcc.GetMaxVersion()
 }
 
 func (mvccs *KVMVCCStore) checkVersion(height int64) ([]*types.KeyValue, error) {
-	//检查新加入区块的height和现有的version的关系，来判断是否要回滚数据
+	/ heigh versio  
 	maxVersion, err := mvccs.mvcc.GetMaxVersion()
 	if err != nil {
 		if err != types.ErrNotFound {
@@ -350,7 +350,7 @@ func calcHash(datas proto.Message) []byte {
 //SetRdm ...
 func (mvccs *KVMVCCStore) SetRdm(datas *types.StoreSet, mavlHash []byte, sync bool) ([]byte, error) {
 	mvccHash := calcHash(datas)
-	// 取出前一个hash映射
+	// has 
 	var preMvccHash []byte
 	var err error
 	if datas.Height > 0 {
@@ -390,7 +390,7 @@ func (mvccs *KVMVCCStore) MemSetRdm(datas *types.StoreSet, mavlHash []byte, sync
 	//kmlog.Debug("KVMVCCStore MemSet AddMVCC", "prestatehash", common.ToHex(datas.StateHash), "hash", common.ToHex(hash), "height", datas.Height)
 	mvcchash := calcHash(datas)
 
-	// 取出前一个hash映射
+	// has 
 	var preMvccHash []byte
 	if datas.Height > 0 {
 		preMvccHash, err = mvccs.GetHashRdm(datas.StateHash, datas.Height-1)
@@ -410,7 +410,7 @@ func (mvccs *KVMVCCStore) MemSetRdm(datas *types.StoreSet, mavlHash []byte, sync
 
 	hash := mvcchash
 	if mavlHash != nil {
-		// 如果mavlHash是nil,即返回mvcchash
+		// mavlHas nil mvcchash
 		hash = mavlHash
 		// add rdm
 		kv := &types.KeyValue{Key: calcRdmKey(mavlHash, datas.Height), Value: mvcchash}
@@ -419,7 +419,7 @@ func (mvccs *KVMVCCStore) MemSetRdm(datas *types.StoreSet, mavlHash []byte, sync
 	mvccs.kvsetmap[string(hash)] = kvset
 	mvccs.sync = sync
 
-	// 进行裁剪
+	// 
 	if mvccs.kvmvccCfg != nil && mvccs.kvmvccCfg.EnableMVCCPrune &&
 		!isPruning() && mvccs.kvmvccCfg.PruneHeight != 0 &&
 		datas.Height%int64(mvccs.kvmvccCfg.PruneHeight) == 0 &&
@@ -454,7 +454,7 @@ func calcRdmKey(hash []byte, height int64) []byte {
 	return key
 }
 
-/*裁剪-------------------------------------------*/
+/ -------------------------------------------*/
 
 func pruning(db dbm.DB, height int64, KVmvccCfg *KVMCCCConfig) {
 	defer wg.Done()
@@ -479,7 +479,7 @@ func pruningFirst(db dbm.DB, curHeight int64, KVmvccCfg *KVMCCCConfig) {
 	batch := db.NewBatch(true)
 	for it.Rewind(); it.Valid(); it.Next() {
 		if quit {
-			//该处退出
+			/ 
 			return
 		}
 		if mp == nil {
@@ -515,10 +515,10 @@ func deleteOldKV(mp map[string][]int64, curHeight int64, batch dbm.Batch, KVmvcc
 	}
 	batch.Reset()
 	for key, vals := range mp {
-		if len(vals) > 1 && vals[1] != vals[0] { //防止相同高度时候出现的误删除
-			for _, val := range vals[1:] { //从第二个开始判断
+		if len(vals) > 1 && vals[1] != vals[0] { / 
+			for _, val := range vals[1:] { / 
 				if curHeight >= val+int64(KVmvccCfg.PruneHeight) {
-					batch.Delete(genKeyVersion([]byte(key), val)) // 删除老版本key
+					batch.Delete(genKeyVersion([]byte(key), val)) // key
 					if batch.ValueSize() > batchDataSize {
 						dbm.MustWrite(batch)
 						batch.Reset()

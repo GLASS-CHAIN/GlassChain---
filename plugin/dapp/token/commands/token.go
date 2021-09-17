@@ -25,7 +25,7 @@ var (
 	tokenSymbol string
 )
 
-// TokenCmd token 命令行
+// TokenCmd token 
 func TokenCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "token",

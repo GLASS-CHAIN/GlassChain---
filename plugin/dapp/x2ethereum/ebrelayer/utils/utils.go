@@ -37,7 +37,7 @@ func IsZeroAddress(address common.Address) bool {
 	return address == common.HexToAddress(nullAddress)
 }
 
-//IsValidPassWord 密码合法性校验,密码长度在8-30位之间。必须是数字+字母的组合
+//IsValidPassWord  8-3   
 func IsValidPassWord(password string) bool {
 	pwLen := len(password)
 	if pwLen < 8 || pwLen > 30 {

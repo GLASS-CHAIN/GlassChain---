@@ -8,12 +8,12 @@ import (
 )
 
 /*
- * 执行器相关定义
- * 重载基类相关接口
+ * 
+ * 
  */
 
 var (
-	//日志
+	/ 
 	elog = log.New("module", "storage.executor")
 )
 
@@ -51,7 +51,7 @@ func (s *storage) GetDriverName() string {
 	return driverName
 }
 
-//ExecutorOrder Exec 的时候 同时执行 ExecLocal
+//ExecutorOrder Exec   ExecLocal
 func (s *storage) ExecutorOrder() int64 {
 	cfg := s.GetAPI().GetConfig()
 	if cfg.IsDappFork(s.GetHeight(), storagetypes.StorageX, storagetypes.ForkStorageLocalDB) {
@@ -60,7 +60,7 @@ func (s *storage) ExecutorOrder() int64 {
 	return s.DriverBase.ExecutorOrder()
 }
 
-// CheckTx 实现自定义检验交易接口，供框架调用
+// CheckTx  
 func (s *storage) CheckTx(tx *types.Transaction, index int) error {
 	// implement code
 	return nil

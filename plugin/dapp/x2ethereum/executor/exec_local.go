@@ -8,8 +8,8 @@ import (
 )
 
 /*
- * 实现交易相关数据本地执行，数据不上链
- * 非关键数据，本地存储(localDB), 用于辅助查询，效率高
+ *  
+ *  (localDB),  
  */
 
 func (x *x2ethereum) ExecLocal_Eth2Chain33Lock(payload *x2eTy.Eth2Chain33, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
@@ -68,7 +68,7 @@ func (x *x2ethereum) ExecLocal_SetConsensusThreshold(payload *x2eTy.MsgConsensus
 	return x.addAutoRollBack(tx, dbSet.KV), nil
 }
 
-//设置自动回滚
+/ 
 func (x *x2ethereum) addAutoRollBack(tx *types.Transaction, kv []*types.KeyValue) *types.LocalDBSet {
 	dbSet := &types.LocalDBSet{}
 	dbSet.KV = x.AddRollbackKV(tx, tx.Execer, kv)

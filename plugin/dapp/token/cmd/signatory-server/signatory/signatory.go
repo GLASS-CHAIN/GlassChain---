@@ -20,7 +20,7 @@ import (
 
 var log = l.New("module", "signatory")
 
-// Signatory 签名密钥
+// Signatory 
 type Signatory struct {
 	Privkey string
 }
@@ -37,14 +37,14 @@ func (*Signatory) Echo(in *string, out *interface{}) error {
 	return nil
 }
 
-// TokenFinish token创建完成
+// TokenFinish toke 
 type TokenFinish struct {
 	OwnerAddr string `json:"ownerAddr"`
 	Symbol    string `json:"symbol"`
 	//	Fee       int64  `json:"fee"`
 }
 
-// SignApprove 完成签名
+// SignApprove 
 func (signatory *Signatory) SignApprove(in *TokenFinish, out *interface{}) error {
 	if in == nil {
 		return types.ErrInvalidParam
@@ -80,7 +80,7 @@ func (signatory *Signatory) SignApprove(in *TokenFinish, out *interface{}) error
 	return nil
 }
 
-// SignTransfer 签名交易，in 输入要数据 签名out 签名之后数据
+// SignTransfer ，in  out 
 func (signatory *Signatory) SignTransfer(in *string, out *interface{}) error {
 	if in == nil {
 		return types.ErrInvalidParam

@@ -51,7 +51,7 @@ func (a *action) procEth2Chain33_lock(ethBridgeClaim *x2eTy.Eth2Chain33) (*types
 
 	ID := strconv.Itoa(int(ethBridgeClaim.EthereumChainID)) + strconv.Itoa(int(ethBridgeClaim.Nonce)) + ethBridgeClaim.EthereumSender + ethBridgeClaim.TokenContractAddress + "lock"
 
-	//记录ethProphecy
+	/ ethProphecy
 	bz, err := a.db.Get(x2eTy.CalProphecyPrefix(ID))
 	if err != nil {
 		return nil, x2eTy.ErrProphecyGet
@@ -71,7 +71,7 @@ func (a *action) procEth2Chain33_lock(ethBridgeClaim *x2eTy.Eth2Chain33) (*types
 
 	if status.Text == x2eTy.EthBridgeStatus_SuccessStatusText {
 		// mavl-x2ethereum-eth+tokenAddress
-		// 这里为了区分相同tokensymbol不同tokenAddress做了级联处理
+		// tokensymbo tokenAddres 
 		accDB, err := account.NewAccountDB(a.api.GetConfig(), x2eTy.X2ethereumX, strings.ToLower(ethBridgeClaim.IssuerDotSymbol+ethBridgeClaim.TokenContractAddress), a.db)
 		if err != nil {
 			return nil, errors.Wrapf(err, "relay procMsgEth2Chain33,exec=%s,sym=%s", x2eTy.X2ethereumX, ethBridgeClaim.IssuerDotSymbol)
@@ -84,7 +84,7 @@ func (a *action) procEth2Chain33_lock(ethBridgeClaim *x2eTy.Eth2Chain33) (*types
 		receipt.KV = append(receipt.KV, r.KV...)
 		receipt.Logs = append(receipt.Logs, r.Logs...)
 
-		//记录成功lock的日志
+		/ loc 
 		msgEthBridgeClaimBytes := types.Encode(ethBridgeClaim)
 
 		receipt.KV = append(receipt.KV, &types.KeyValue{Key: x2eTy.CalEth2Chain33Prefix(), Value: msgEthBridgeClaimBytes})
@@ -114,7 +114,7 @@ func (a *action) procEth2Chain33_lock(ethBridgeClaim *x2eTy.Eth2Chain33) (*types
 }
 
 // chain33 -> ethereum
-// 返还在chain33上生成的erc20代币
+// chain3 erc2 
 func (a *action) procChain33ToEth_burn(msgBurn *x2eTy.Chain33ToEth) (*types.Receipt, error) {
 	receipt, err := a.checkConsensusThreshold()
 	if err != nil {
@@ -211,7 +211,7 @@ func (a *action) procEth2Chain33_burn(withdrawEth *x2eTy.Eth2Chain33) (*types.Re
 
 	ID := strconv.Itoa(int(withdrawEth.EthereumChainID)) + strconv.Itoa(int(withdrawEth.Nonce)) + withdrawEth.EthereumSender + withdrawEth.TokenContractAddress + "burn"
 
-	//记录ethProphecy
+	/ ethProphecy
 	bz, err := a.db.Get(x2eTy.CalProphecyPrefix(ID))
 	if err != nil {
 		return nil, x2eTy.ErrProphecyGet
@@ -351,9 +351,9 @@ func (a *action) procMsgWithDrawFromExec(msgWithdrawFromExec *types.AssetsWithdr
 	return receipt, nil
 }
 
-//需要一笔交易来注册validator
-//这里注册的validator的power之和可能不为1，需要在内部进行加权
-//返回的回执中，KV包含所有validator的power值，Log中包含本次注册的validator的power值
+/ validator
+/ validato powe 1 
+/ ，K validato powe ，Lo validato powe 
 func (a *action) procAddValidator(msgAddValidator *x2eTy.MsgValidator) (*types.Receipt, error) {
 	elog.Info("procAddValidator", "start", msgAddValidator)
 

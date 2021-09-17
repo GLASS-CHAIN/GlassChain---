@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 /*
-基于框架中Crypto接口，实现签名、验证的处理
+ Crypt   
 */
 
 package privacy
@@ -24,7 +24,7 @@ func init() {
 	crypto.Register(privacytypes.SignNameRing, &RingSignED25519{}, crypto.WithRegOptionTypeID(privacytypes.RingBaseonED25519))
 }
 
-// RingSignature 环签名中对于crypto.Signature接口实现
+// RingSignature crypto.Signatur 
 type RingSignature struct {
 	sign types.RingSignature
 }
@@ -53,7 +53,7 @@ func (r *RingSignature) Equals(other crypto.Signature) bool {
 	return false
 }
 
-// RingSignPrivateKey 环签名中对于crypto.PrivKey接口实现
+// RingSignPrivateKey crypto.PrivKe 
 type RingSignPrivateKey struct {
 	key [privateKeyLen]byte
 }
@@ -71,7 +71,7 @@ func (privkey *RingSignPrivateKey) Sign(msg []byte, _ ...interface{}) crypto.Sig
 	}
 	tx := new(types.Transaction)
 	if err := types.Decode(msg, tx); err != nil || !bytes.Equal([]byte(privacytypes.PrivacyX), tx.Execer) {
-		// 目前只有隐私交易用到了环签名
+		// 
 		return emptySign
 	}
 	action := new(privacytypes.PrivacyAction)
@@ -79,14 +79,14 @@ func (privkey *RingSignPrivateKey) Sign(msg []byte, _ ...interface{}) crypto.Sig
 		return emptySign
 	}
 	if action.Ty != privacytypes.ActionPrivacy2Privacy && action.Ty != privacytypes.ActionPrivacy2Public {
-		// 隐私交易中，隐私到隐私，隐私到公开才用到环签名
+		//   
 		return emptySign
 	}
 	//
 	privacyInput := action.GetInput()
 	retSign := new(types.RingSignature)
 	if err := types.Decode(tx.Signature.Signature, retSign); err != nil {
-		// 目前只有隐私交易用到了环签名
+		// 
 		return emptySign
 	}
 	//data := types.Encode(tx)
@@ -123,7 +123,7 @@ func (privkey *RingSignPrivateKey) PubKey(_ ...interface{}) crypto.PubKey {
 	A := new(edwards25519.ExtendedGroupElement)
 	edwards25519.GeScalarMultBase(A, addr32)
 	A.ToBytes(&publicKey.key)
-	// 这里可能有问题
+	// 
 	copy(addr64[KeyLen32:], publicKey.key[:])
 	return publicKey
 }
@@ -136,7 +136,7 @@ func (privkey *RingSignPrivateKey) Equals(other crypto.PrivKey) bool {
 	return false
 }
 
-// RingSignPublicKey 环签名中对于crypto.PubKey接口实现
+// RingSignPublicKey crypto.PubKe 
 type RingSignPublicKey struct {
 	key [publicKeyLen]byte
 }
@@ -157,7 +157,7 @@ func (pubkey *RingSignPublicKey) VerifyBytes(msg []byte, sign crypto.Signature) 
 	}
 	tx := new(types.Transaction)
 	if err := types.Decode(msg, tx); err != nil || !bytes.Equal([]byte(privacytypes.PrivacyX), types.GetRealExecName(tx.Execer)) {
-		// 目前只有隐私交易用到了环签名
+		// 
 		return false
 	}
 	action := new(privacytypes.PrivacyAction)
@@ -165,7 +165,7 @@ func (pubkey *RingSignPublicKey) VerifyBytes(msg []byte, sign crypto.Signature) 
 		return false
 	}
 	if action.Ty != privacytypes.ActionPrivacy2Privacy && action.Ty != privacytypes.ActionPrivacy2Public {
-		// 隐私交易中，隐私到隐私，隐私到公开才用到环签名
+		//   
 		return false
 	}
 	input := action.GetInput()
@@ -194,7 +194,7 @@ func (pubkey *RingSignPublicKey) Equals(other crypto.PubKey) bool {
 	return false
 }
 
-// RingSignED25519 对应crypto.Crypto的接口实现
+// RingSignED25519 crypto.Crypt 
 type RingSignED25519 struct {
 }
 

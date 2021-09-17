@@ -32,7 +32,7 @@ func Toeth(amount string, decimal int64) float64 {
 	return f
 }
 
-//ToWei 将eth单位的金额转为wei单位
+//ToWei et we 
 func ToWei(amount float64, decimal int64) *big.Int {
 
 	var ok bool

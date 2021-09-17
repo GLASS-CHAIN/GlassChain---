@@ -14,7 +14,7 @@
 #ethValidatorAddrKeyB="a5f3063552f4483cfc20ac4f40f45b798791379862219de9e915c64722c1d400"
 #ethValidatorAddrKeyC="bbf5e65539e9af0eb0cfac30bad475111054b09c11d668fc0731d54ea777471e"
 #ethValidatorAddrKeyD="c9fa31d7984edf81b8ef3b40c761f1847f6fcd5711ab2462da97dc458f1f896b"
-## 新增地址 chain33 需要导入地址 转入 10 bty当收费费
+##  chain33   10 bt 
 #chain33Validator1="1H4zzzQEQQR2FxXwppiMRXcvqLvqzxK2nv"
 #chain33Validator2="1Nq5AhTgVNvYaWQqih8ZQQEaRk3CFhTDHp"
 #chain33Validator3="16nmxjF58z5oKK9m44cGy241zMSJWPN1Ty"
@@ -99,7 +99,7 @@
 #    dockerAddr=$(get_docker_addr "${dockerNamePrefix}_ganachetest_rpc_1")
 #    ethUrl="http://${dockerAddr}:8545"
 #
-#    # 修改 relayer.toml 配置文件
+#    #  relayer.toml 
 #    updata_relayer_a_toml "${dockerAddr}" "${dockerNamePrefix}_ebrelayera_rpc_1" "./x2ethereum/relayer.toml"
 #
 #    line=$(delete_line_show "./x2ethereum/relayer.toml" "localhost:9901")
@@ -113,10 +113,10 @@
 #    fi
 #    CLIA_HTTP="http://${ebrelayeraRpcHost}:9901"
 #
-#    # 部署合约
+#    # 
 #    InitAndDeploy
 #
-#    # 获取 BridgeRegistry 地址
+#    #  BridgeRegistry 
 #    local req='{"method":"Manager.ShowBridgeRegistryAddr","params":[{}]}'
 #    chain33_Http "$req" "${CLIA_HTTP}" '(.error|not) and (.result != null)' "$FUNCNAME" ".result.addr"
 #    local BridgeRegistry="$RETURN_RESP"
@@ -125,9 +125,9 @@
 #    kill_docker_ebrelayer "${dockerNamePrefix}_ebrelayera_rpc_1"
 #    sleep 1
 #
-#    # 修改 relayer.toml 配置文件
+#    #  relayer.toml 
 #    updata_relayer_toml "${BridgeRegistry}" ${maturityDegree} "./x2ethereum/relayer.toml"
-#    # 重启
+#    # 
 #    start_ebrelayerA
 #
 #    # start ebrelayer B C D
@@ -135,7 +135,7 @@
 #        local file="./x2ethereum/relayer$name.toml"
 #        cp './x2ethereum/relayer.toml' "${file}"
 #
-#        # 删除配置文件中不需要的字段
+#        # 
 #        for deleteName in "deployerPrivateKey" "operatorAddr" "validatorsAddr" "initPowers" "deployerPrivateKey" "deploy"; do
 #            delete_line "${file}" "${deleteName}"
 #        done
@@ -181,10 +181,10 @@
 #    echo -e "${GRE}=========== $FUNCNAME end ===========${NOC}"
 #}
 #
-## chian33 添加验证着及权重
+## chian33 
 #function InitChain33Vilators() {
 #    echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-#    # 导入 chain33Validators 私钥生成地址
+#    #  chain33Validators 
 #    chain33_ImportPrivkey "${chain33ValidatorKey1}" "${chain33Validator1}" "tokenAddr" "${MAIN_HTTP}"
 #    chain33_ImportPrivkey "${chain33ValidatorKey2}" "${chain33Validator2}" "tokenAddr" "${MAIN_HTTP}"
 #    chain33_ImportPrivkey "${chain33ValidatorKey3}" "${chain33Validator3}" "tokenAddr" "${MAIN_HTTP}"
@@ -210,12 +210,12 @@
 #        echo -e "${RED}=========== GetTotalPower err: TotalPower = $RETURN_RESP ===========${NOC}"
 #    fi
 #
-#    # cions 转帐到 x2ethereum 合约地址
+#    # cions  x2ethereum 
 #    x2eth_addr=$(curl -ksd '{"method":"Chain33.ConvertExectoAddr","params":[{"execname":"x2ethereum"}]}' ${MAIN_HTTP} | jq -r ".result")
 #    chain33_SendToAddress "${sendAddress}" "${x2eth_addr}" 20000000000 "${MAIN_HTTP}"
 #    queryExecBalance "${sendAddress}" "20000000000"
 #
-#    # chain33Validator 要有手续费
+#    # chain33Validator 
 #    chain33_applyCoins "${chain33Validator1}" 1000000000 "${MAIN_HTTP}"
 #    queryChain33Balance "${chain33Validator1}" "1000000000"
 #    chain33_applyCoins "${chain33Validator2}" 1000000000 "${MAIN_HTTP}"
@@ -230,7 +230,7 @@
 #function EthImportKey() {
 #    echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 #
-#    # 解锁
+#    # 
 #    local req='{"method":"Manager.SetPassphase","params":[{"Passphase":"123456hzj"}]}'
 #    chain33_Http "$req" "${CLIB_HTTP}" '(.error|not) and (.result != null)' "SetPassphase" ".result"
 #    chain33_Http "$req" "${CLIC_HTTP}" '(.error|not) and (.result != null)' "SetPassphase" ".result"
@@ -264,7 +264,7 @@
 #
 #function TestChain33ToEthAssets() {
 #    echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-#    # token4chain33 在 以太坊 上先有 bty
+#    # token4chain33    bty
 #    local req='{"method":"Manager.CreateBridgeToken","params":["coins.bty"]}'
 #    chain33_Http "$req" "${CLIA_HTTP}" '(.error|not) and (.result != null)' "CreateBridgeToken" ".result.addr"
 #    tokenAddrBty=${RETURN_RESP}
@@ -291,7 +291,7 @@
 #    req='{"method":"Manager.GetBalance","params":[{"owner":"'${ethReceiverAddr1}'","tokenAddr":"'${tokenAddrBty}'"}]}'
 #    queryRelayerBalance "$req" "0"
 #
-#    # eth 等待 10 个区块
+#    # eth  10 
 #    eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 #
 #    queryExecBalance "${chain33SenderAddr}" "500000000"
@@ -300,7 +300,7 @@
 #}
 #
 ## eth to chain33
-## 在以太坊上锁定资产,然后在 chain33 上铸币,针对 eth 资产
+##   chain33   eth 
 #function TestETH2Chain33Assets() {
 #    echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
 #    local req='{"method":"Manager.ShowBridgeBankAddr","params":[{}]}'
@@ -317,7 +317,7 @@
 #    req='{"method":"Manager.GetBalance","params":[{"owner":"'${bridgeBankAddr}'","tokenAddr":""}]}'
 #    queryRelayerBalance "$req" "0.1"
 #
-#    # eth 等待 10 个区块
+#    # eth  10 
 #    eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 #
 #    req='{"method":"Chain33.Query","params":[{"execer":"x2ethereum","funcName":"GetRelayerBalance","payload":{"tokenSymbol":"eth","address":"'${sendAddress}'","tokenAddr":"0x0000000000000000000000000000000000000000"}}]}'
@@ -348,12 +348,12 @@
 #
 #function TestETH2Chain33Erc20() {
 #    echo -e "${GRE}=========== $FUNCNAME begin ===========${NOC}"
-#    # token4erc20 在 chain33 上先有 token,同时 mint
+#    # token4erc20  chain33  token  mint
 #    local req='{"method":"Manager.CreateERC20Token","params":["testc"]}'
 #    chain33_Http "$req" "${CLIA_HTTP}" '(.error|not) and (.result != null)' "CreateERC20Token" ".result.addr"
 #    tokenAddr="${RETURN_RESP}"
 #
-#    # 先铸币 1000
+#    #  1000
 #    req='{"method":"Manager.MintErc20","params":[{"owner":"'${ethReceiverAddr1}'","tokenAddr":"'${tokenAddr}'","amount":"100000000000"}]}'
 #    chain33_Http "$req" "${CLIA_HTTP}" '(.error|not) and (.result != null)' "MintErc20" ".result.addr"
 #
@@ -377,7 +377,7 @@
 #    req='{"method":"Manager.GetBalance","params":[{"owner":"'${bridgeBankAddr}'","tokenAddr":"'${tokenAddr}'"}]}'
 #    queryRelayerBalance "$req" "100"
 #
-#    # eth 等待 10 个区块
+#    # eth  10 
 #    eth_block_wait $((maturityDegree + 2)) "${ethUrl}"
 #
 #    req='{"method":"Chain33.Query","params":[{"execer":"x2ethereum","funcName":"GetRelayerBalance","payload":{"tokenSymbol":"testc","address":"'${chain33Validator1}'","tokenAddr":"'${tokenAddr}'"}}]}'

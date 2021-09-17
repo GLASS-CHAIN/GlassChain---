@@ -30,13 +30,13 @@ const _ = proto.ProtoPackageIsVersion4
 //////////////////////////////////////////////////////////////////////////////
 // message for multisig start/////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-//多重签名账户的状态信息，存在在statedb中，通过多重签名账户作为key值
-// createaddr: 创建多重签名地址的创建者账户
-// multisigaddr: 多重签名地址
-// owners: 可以操作此多重签名地址的owner账户列表
-// DailyLimit: 不同资产的每日限额，通过symbol来区分，本连的原生币，以及跨链过来的其他链的原生币
-// txCount:记录此多重签名地址上提交的withdraw交易数
-// requiredweight:确认一笔withdraw交易需要的权重。
+/  stated  ke 
+// createaddr: 
+// multisigaddr: 
+// owners: owne 
+// DailyLimit:  symbo   
+// txCount withdra 
+// requiredweight withdra 。
 type MultiSig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -124,7 +124,7 @@ func (x *MultiSig) GetRequiredWeight() uint64 {
 	return 0
 }
 
-//这个地址是否已经确认某个交易
+/ 
 type ConfirmedOwner struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -172,8 +172,8 @@ func (x *ConfirmedOwner) GetConfirmedOwner() []*Owner {
 	return nil
 }
 
-//记录提交的交易详情，在满足确认条件后执行data中的交易
-// txHash:用于存贮提交的确认交易。存贮在localdb中，通过txhash可以获取
+/  dat 
+// txHash  locald  txhas 
 type MultiSigTx struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -261,7 +261,7 @@ func (x *MultiSigTx) GetConfirmedOwner() []*Owner {
 	return nil
 }
 
-// owner 结构体：owner账户地址，以及权重
+// owner ：owne  
 type Owner struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -317,9 +317,9 @@ func (x *Owner) GetWeight() uint64 {
 	return 0
 }
 
-//每日资产限额，不同的资产价格不一致，需要设置各自的每日限额。没有设置或者限额是0时，表示不能取币
-// spentToday今天已经花费的额度。用于和dailyLimit做对比，超过每日限额时需要多重签名
-// lastDay记录当天开始的时间戳，新的一天需要重置spentToday为初始值0，并修改lastDay的时间戳
+/      
+// spentToda  dailyLimi  
+// lastDa  spentToda 0 lastDa 
 type DailyLimit struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -462,7 +462,7 @@ func (x *SymbolDailyLimit) GetDailyLimit() uint64 {
 	return 0
 }
 
-// MultiSig 所有可能的交易action
+// MultiSig action
 type MultiSigAction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -584,15 +584,15 @@ type MultiSigAction_MultiSigAccOperate struct {
 }
 
 type MultiSigAction_MultiSigConfirmTx struct {
-	MultiSigConfirmTx *MultiSigConfirmTx `protobuf:"bytes,4,opt,name=multiSigConfirmTx,proto3,oneof"` //确认或者撤销已确认
+	MultiSigConfirmTx *MultiSigConfirmTx `protobuf:"bytes,4,opt,name=multiSigConfirmTx,proto3,oneof"` / 
 }
 
 type MultiSigAction_MultiSigExecTransferTo struct {
-	MultiSigExecTransferTo *MultiSigExecTransferTo `protobuf:"bytes,5,opt,name=multiSigExecTransferTo,proto3,oneof"` //合约中外部账户转账到多重签名账户，Addr --->multiSigAddr
+	MultiSigExecTransferTo *MultiSigExecTransferTo `protobuf:"bytes,5,opt,name=multiSigExecTransferTo,proto3,oneof"` / ，Addr --->multiSigAddr
 }
 
 type MultiSigAction_MultiSigExecTransferFrom struct {
-	MultiSigExecTransferFrom *MultiSigExecTransferFrom `protobuf:"bytes,6,opt,name=multiSigExecTransferFrom,proto3,oneof"` //合约中多重签名账户转账到外部账户，multiSigAddr--->Addr
+	MultiSigExecTransferFrom *MultiSigExecTransferFrom `protobuf:"bytes,6,opt,name=multiSigExecTransferFrom,proto3,oneof"` / ，multiSigAddr--->Addr
 }
 
 func (*MultiSigAction_MultiSigAccCreate) isMultiSigAction_Value() {}
@@ -607,7 +607,7 @@ func (*MultiSigAction_MultiSigExecTransferTo) isMultiSigAction_Value() {}
 
 func (*MultiSigAction_MultiSigExecTransferFrom) isMultiSigAction_Value() {}
 
-//创建多重签名账户时需要的信息：创建时最少初始化两个owners，资产的每日限额初始时可以不设置
+/  owners 
 type MultiSigAccCreate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -671,7 +671,7 @@ func (x *MultiSigAccCreate) GetDailyLimit() *SymbolDailyLimit {
 	return nil
 }
 
-//对MultiSigAccount账户owner的操作：add/del/replace/modify
+/ MultiSigAccoun owne ：add/del/replace/modify
 type MultiSigOwnerOperate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -751,8 +751,8 @@ func (x *MultiSigOwnerOperate) GetOperateFlag() uint64 {
 	return 0
 }
 
-//对MultiSigAccount账户的操作：modify/add:SymbolDailyLimit,requiredweight
-//修改或者添加每日限额，或者请求权重的值。
+/ MultiSigAccoun ：modify/add:SymbolDailyLimit,requiredweight
+/  。
 type MultiSigAccOperate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -824,9 +824,9 @@ func (x *MultiSigAccOperate) GetOperateFlag() bool {
 	return false
 }
 
-//多重签名合约中账户之间转币操作:增加一个from的字段实现MultiSigAddr--->addr之间的转账
-//需要判断from地址是否是多重签名地址
-//将MultiSig合约中from地址上execname+symbol的资产转移到to地址
+/  fro MultiSigAddr--->add 
+/ fro 
+/ MultiSi fro execname+symbo t 
 type MultiSigExecTransferFrom struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -914,9 +914,9 @@ func (x *MultiSigExecTransferFrom) GetFrom() string {
 	return ""
 }
 
-//多重签名合约中账户之间转币操作: addr --->MultiSigAddr之间的转账
-//需要判断to地址是否是多重签名地址
-//将MultiSig合约中签名地址上execname+symbol的资产转移到to地址
+/ : addr --->MultiSigAdd 
+/ t 
+/ MultiSi execname+symbo t 
 type MultiSigExecTransferTo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -996,9 +996,9 @@ func (x *MultiSigExecTransferTo) GetTo() string {
 	return ""
 }
 
-//多重签名账户withdraw交易的确认或者取消确认
-// multisigaccaddr:多重签名账户地址
-// transactionid:多重签名账户上的withdraw交易的内部id
+/ withdra 
+// multisigaccaddr 
+// transactionid withdra id
 type MultiSigConfirmTx struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1062,7 +1062,7 @@ func (x *MultiSigConfirmTx) GetConfirmOrRevoke() bool {
 	return false
 }
 
-//获取所有多重签名账号
+/ 
 type ReqMultiSigAccs struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1165,7 +1165,7 @@ func (x *ReplyMultiSigAccs) GetAddress() []string {
 	return nil
 }
 
-//获取指定多重签名账号的状态信息
+/ 
 type ReqMultiSigAccInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1213,7 +1213,7 @@ func (x *ReqMultiSigAccInfo) GetMultiSigAccAddr() string {
 	return ""
 }
 
-//指定多重签名账号的状态信息
+/ 
 type ReplyMultiSigAccInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1301,7 +1301,7 @@ func (x *ReplyMultiSigAccInfo) GetRequiredWeight() uint64 {
 	return 0
 }
 
-//获取txids设置过滤条件和区间，pending, executed
+/ txid ，pending, executed
 type ReqMultiSigTxids struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1436,7 +1436,7 @@ func (x *ReplyMultiSigTxids) GetTxids() []uint64 {
 	return nil
 }
 
-//获取txid交易的信息，以及参与确认的owner信息
+/ txi  owne 
 type ReqMultiSigTxInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1539,7 +1539,7 @@ func (x *ReplyMultiSigTxInfo) GetMultiSigTxInfo() *MultiSigTx {
 	return nil
 }
 
-//获取指定资产当日剩余的免多重签名的余额
+/ 
 type ReqMultiSigAccUnSpentToday struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1705,7 +1705,7 @@ func (x *UnSpentAssets) GetAmount() uint64 {
 	return 0
 }
 
-// TyLogMultiSigAccCreate交易的执行Receipt
+// TyLogMultiSigAccCreat Receipt
 type ReceiptMultiSig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1816,8 +1816,8 @@ func (x *ReceiptOwnerAddOrDel) GetAddOrDel() bool {
 	return false
 }
 
-// TyLogMultiSigOwnerModify  = 10003 //输出modify的owner：preweight以及currentweight
-// TyLogMultiSigOwnerReplace = 10004 //输出old的owner的信息：以及当前的owner信息：addr+weight
+// TyLogMultiSigOwnerModify  = 10003 / modif owner：preweigh currentweight
+// TyLogMultiSigOwnerReplace = 10004 / ol owne  owne ：addr+weight
 type ReceiptOwnerModOrRep struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1889,8 +1889,8 @@ func (x *ReceiptOwnerModOrRep) GetModOrRep() bool {
 	return false
 }
 
-//多重签名账户的操作：ReqWeight，AssetDailyLimit
-// TyLogMultiSigAccWeightModify     = 10005 //输出修改前后确认权重的值：preReqWeight和curReqWeight
+/ ：ReqWeight，AssetDailyLimit
+// TyLogMultiSigAccWeightModify     = 10005 / ：preReqWeigh curReqWeight
 type ReceiptWeightModify struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1954,8 +1954,8 @@ func (x *ReceiptWeightModify) GetCurrentWeight() uint64 {
 	return 0
 }
 
-// TyLogMultiSigAccDailyLimitAdd    = 10006 //输出add的DailyLimit：Symbol和DailyLimit
-// TyLogMultiSigAccDailyLimitModify = 10007 //输出modify的DailyLimit：preDailyLimit以及currentDailyLimit
+// TyLogMultiSigAccDailyLimitAdd    = 10006 / ad DailyLimit：Symbo DailyLimit
+// TyLogMultiSigAccDailyLimitModify = 10007 / modif DailyLimit：preDailyLimi currentDailyLimit
 type ReceiptDailyLimitOperate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2027,9 +2027,9 @@ func (x *ReceiptDailyLimitOperate) GetAddOrModify() bool {
 	return false
 }
 
-//交易确认或者撤销（撤销值针对未执行的交易）
-// TyLogMultiSigConfirmTx       = 10008 //输出确认的交易id，以及owner信息：addr+weight
-// TyLogMultiSigConfirmTxRevoke = 10009 //输出撤销确认的交易id，以及owner信息：addr+weight
+/  ）
+// TyLogMultiSigConfirmTx       = 10008 / id owne ：addr+weight
+// TyLogMultiSigConfirmTxRevoke = 10009 / id owne ：addr+weight
 type ReceiptConfirmTx struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2085,7 +2085,7 @@ func (x *ReceiptConfirmTx) GetConfirmeOrRevoke() bool {
 	return false
 }
 
-//可能会修改dailyLimit的相关属性
+/ dailyLimi 
 type ReceiptAccDailyLimitUpdate struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2149,7 +2149,7 @@ func (x *ReceiptAccDailyLimitUpdate) GetCurDailyLimit() *DailyLimit {
 	return nil
 }
 
-//执行MultiSigAcc相关的交易可能会修改tx的执行状态和增加确认owner
+/ MultiSigAc t owner
 type ReceiptMultiSigTx struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2402,7 +2402,7 @@ func (x *Uint64) GetData() uint64 {
 	return 0
 }
 
-//记录账户收到固定资产的数量
+/ 
 type AccountAssets struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2466,7 +2466,7 @@ func (x *AccountAssets) GetAmount() int64 {
 	return 0
 }
 
-//获取多重签名账户上的指定资产或者所有资产
+/ 
 type ReqAccAssets struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2577,7 +2577,7 @@ func (x *ReplyAccAssets) GetAccAssets() []*AccAssets {
 	return nil
 }
 
-//账户资产信息
+/ 
 type AccAssets struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2696,7 +2696,7 @@ func (x *Assets) GetSymbol() string {
 	return ""
 }
 
-//账户地址列表
+/ 
 type AccAddress struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -2744,7 +2744,7 @@ func (x *AccAddress) GetAddress() []string {
 	return nil
 }
 
-// owner拥有的多重签名账户信息
+// owne 
 type OwnerAttr struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

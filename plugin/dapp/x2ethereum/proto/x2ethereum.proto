@@ -70,7 +70,7 @@ message Chain33ToEth {
     int64 Decimals = 7;
 }
 
-// 回执接口定义
+// 
 message ReceiptEth2Chain33 {
     int64 EthereumChainID = 1;
     string BridgeContractAddress = 2;
@@ -111,7 +111,7 @@ message ReceiptSetConsensusThreshold {
     uint64 xHeight = 4;
 }
 
-// 查询接口定义
+// 
 message QueryEthProphecyParams {
     string ID = 1;
 }

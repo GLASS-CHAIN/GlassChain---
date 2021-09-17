@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	voteStatusNormal   = iota //非关闭常规状态
-	voteStatusPending         //即将开始
-	voteStatusOngoing         //正在进行
-	voteStatusFinished        //已经结束
-	voteStatusClosed          //已经关闭
+	voteStatusNormal   = iota / 
+	voteStatusPending         / 
+	voteStatusOngoing         / 
+	voteStatusFinished        / 
+	voteStatusClosed          / 
 )
 
 const (
@@ -109,7 +109,7 @@ func filterVoteWithStatus(voteList []*vty.VoteInfo, status uint32, currentTime i
 			filterList = append(filterList, voteInfo)
 		}
 	}
-	//设置了状态筛选，返回对应的筛选列表
+	/  
 	if status > 0 {
 		return filterList
 	}

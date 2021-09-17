@@ -33,11 +33,11 @@ var relayerLog = log.New("module", "chain33_relayer")
 type Relayer4Chain33 struct {
 	syncTxReceipts      *syncTx.TxReceipts
 	ethClient           ethinterface.EthClientSpec
-	rpcLaddr            string //用户向指定的blockchain节点进行rpc调用
+	rpcLaddr            string / blockchai rp 
 	fetchHeightPeriodMs int64
 	db                  dbm.DB
-	lastHeight4Tx       int64 //等待被处理的具有相应的交易回执的高度
-	matDegree           int32 //成熟度         heightSync2App    matDegress   height
+	lastHeight4Tx       int64 / 
+	matDegree           int32 /          heightSync2App    matDegress   height
 	//passphase            string
 	privateKey4Ethereum  *ecdsa.PrivateKey
 	ethSender            ethCommon.Address
@@ -129,7 +129,7 @@ func (chain33Relayer *Relayer4Chain33) getCurrentHeight() int64 {
 }
 
 func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
-	//检查已经提交的交易结果
+	/ 
 	chain33Relayer.rwLock.Lock()
 	for chain33Relayer.statusCheckedIndex < chain33Relayer.totalTx4Chain33ToEth {
 		index := chain33Relayer.statusCheckedIndex + 1
@@ -139,8 +139,8 @@ func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
 			break
 		}
 		status := relayerTx.GetEthTxStatus(chain33Relayer.ethClient, txhash)
-		//按照提交交易的先后顺序检查交易，只要出现当前交易还在pending状态，就不再检查后续交易，等到下个区块再从该交易进行检查
-		//TODO:可能会由于网络和打包挖矿的原因，使得交易执行顺序和提交顺序有差别，后续完善该检查逻辑
+		/  pendin   
+		//TODO   
 		if status == relayerTx.EthTxPending.String() {
 			break
 		}
@@ -149,7 +149,7 @@ func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
 		_ = chain33Relayer.setStatusCheckedIndex(chain33Relayer.statusCheckedIndex)
 	}
 	chain33Relayer.rwLock.Unlock()
-	//未达到足够的成熟度，不进行处理
+	/  
 	//  +++++++++||++++++++++++||++++++++++||
 	//           ^             ^           ^
 	// lastHeight4Tx    matDegress   currentHeight
@@ -168,7 +168,7 @@ func (chain33Relayer *Relayer4Chain33) onNewHeightProc(currentHeight int64) {
 
 		txs := TxReceipts.Tx
 		for i, tx := range txs {
-			//检查是否为lns的交易(包括平行链：user.p.xxx.lns)，将闪电网络交易进行收集
+			/ ln  ：user.p.xxx.lns) 
 			if 0 != bytes.Compare(tx.Execer, []byte(relayerTx.X2Eth)) &&
 				(len(tx.Execer) > 4 && string(tx.Execer[(len(tx.Execer)-4):]) != "."+relayerTx.X2Eth) {
 				relayerLog.Debug("onNewHeightProc, the tx is not x2ethereum", "Execer", string(tx.Execer), "height:", TxReceipts.Height)
@@ -214,7 +214,7 @@ func (chain33Relayer *Relayer4Chain33) handleBurnLockMsg(claimEvent events.Event
 	// Parse the witnessed event's data into a new Chain33Msg
 	chain33Msg := relayerTx.ParseBurnLockTxReceipt(claimEvent, receipt)
 	if nil == chain33Msg {
-		//收到执行失败的交易，直接跳过
+		/  
 		relayerLog.Error("handleBurnLockMsg", "Received failed tx with hash", ethCommon.Bytes2Hex(chain33TxHash))
 		return nil
 	}
@@ -228,7 +228,7 @@ func (chain33Relayer *Relayer4Chain33) handleBurnLockMsg(claimEvent events.Event
 		return err
 	}
 
-	//保存交易hash，方便查询
+	/ hash 
 	atomic.AddInt64(&chain33Relayer.totalTx4Chain33ToEth, 1)
 	txIndex := atomic.LoadInt64(&chain33Relayer.totalTx4Chain33ToEth)
 	if err = chain33Relayer.updateTotalTxAmount2Eth(txIndex); nil != err {

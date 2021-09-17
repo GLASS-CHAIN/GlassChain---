@@ -18,17 +18,17 @@ var (
 	glog  = log.New("module", ParaX)
 	// ForkCommitTx main chain support paracross commit tx
 	ForkCommitTx = "ForkParacrossCommitTx"
-	// MainForkParacrossCommitTx 平行链配置项对应主链的ForkCommitTx 高度
+	// MainForkParacrossCommitTx ForkCommitTx 
 	MainForkParacrossCommitTx = "mainForkParacrossCommitTx"
-	// ForkLoopCheckCommitTxDone 循环检查共识交易done的fork
+	// ForkLoopCheckCommitTxDone don fork
 	ForkLoopCheckCommitTxDone = "ForkLoopCheckCommitTxDone"
-	// MainLoopCheckCommitTxDoneForkHeight 平行链的配置项，对应主链的ForkLoopCheckCommitTxDone高度
+	// MainLoopCheckCommitTxDoneForkHeight  ForkLoopCheckCommitTxDon 
 	MainLoopCheckCommitTxDoneForkHeight = "mainLoopCheckCommitTxDoneForkHeight"
-	// ForkParaSelfConsStages 平行链自共识分阶段共识
+	// ForkParaSelfConsStages 
 	ForkParaSelfConsStages = "ForkParaSelfConsStages"
-	// ForkParaAssetTransferRbk 平行链资产转移平行链失败主链回滚
+	// ForkParaAssetTransferRbk 
 	ForkParaAssetTransferRbk = "ForkParaAssetTransferRbk"
-	// ForkParaFullMinerHeight 平行链全挖矿开启高度
+	// ForkParaFullMinerHeight 
 	ForkParaFullMinerHeight = "ForkParaFullMinerHeight"
 
 	// ParaConsSubConf sub
@@ -59,7 +59,7 @@ func InitFork(cfg *types.Chain33Config) {
 	cfg.RegisterDappFork(ParaX, ForkLoopCheckCommitTxDone, 3230000)
 	cfg.RegisterDappFork(ParaX, ForkParaAssetTransferRbk, 4500000)
 
-	//只在平行链启用
+	/ 
 	cfg.RegisterDappFork(ParaX, ForkParaSelfConsStages, types.MaxHeight)
 	cfg.RegisterDappFork(ParaX, ForkParaFullMinerHeight, types.MaxHeight)
 }
@@ -87,7 +87,7 @@ func NewType(cfg *types.Chain33Config) *ParacrossType {
 	return c
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (p *ParacrossType) GetName() string {
 	return ParaX
 }
@@ -143,7 +143,7 @@ func (p *ParacrossType) GetPayload() types.Message {
 // CreateTx paracross create tx by different action
 func (p ParacrossType) CreateTx(action string, message json.RawMessage) (*types.Transaction, error) {
 	cfg := p.GetConfig()
-	//保留老的ParacrossAssetTransfer接口，默认的AssetTransfer　也可以
+	/ ParacrossAssetTransfe  AssetTransfer 
 	if action == "ParacrossAssetTransfer" || action == "ParacrossAssetWithdraw" {
 		var param types.CreateTx
 		err := json.Unmarshal(message, &param)
@@ -153,7 +153,7 @@ func (p ParacrossType) CreateTx(action string, message json.RawMessage) (*types.
 		}
 		return CreateRawAssetTransferTx(cfg, &param)
 	} else if action == "Transfer" || action == "Withdraw" || action == "TransferToExec" {
-		//transfer/withdraw/toExec 需要特殊处理主链上的tx.to场景
+		//transfer/withdraw/toExec tx.t 
 		return p.CreateRawTransferTx(action, message)
 	}
 	return p.ExecTypeBase.CreateTx(action, message)

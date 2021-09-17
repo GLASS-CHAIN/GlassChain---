@@ -84,7 +84,7 @@ func TestPrivacy_CheckTx(t *testing.T) {
 	mock := &testExecMock{}
 	mock.InitEnv()
 	defer mock.FreeEnv()
-	//用于测试双花
+	/ 
 	testKeyImage := []byte("testKeyImage")
 	mock.stateDB.Set(calcPrivacyKeyImageKey("coins", "bty", testKeyImage), []byte("testval"))
 	tcArr := []*testcase{

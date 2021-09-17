@@ -9,16 +9,16 @@ import (
 	pty "github.com/33cn/plugin/plugin/dapp/trade/types"
 )
 
-// 目前设计trade 的query， 有两个部分的大分类
-// 1. 按token 分
-//    可以用于 token的挂单查询 (按价格排序)： OnBuy/OnSale
-//    token 的历史行情 （按价格排序）: SoldOut/BoughtOut--> TODO 是否需要按时间（区块高度排序更合理）
-// 2. 按 addr 分。 用于客户个人的钱包
-//    自己未完成的交易 （按地址状态来）
-//    自己的历史交易 （addr 的所有订单）
+// trade query， 
+// 1. token 
+//     toke   )： OnBuy/OnSale
+//    token   ）: SoldOut/BoughtOut--> TODO  ）
+// 2.  addr 。 
+//      ）
+//     （addr ）
 //
-// 由于现价买/卖是没有orderID的， 用txhash 代替作为key
-// key 有两种 orderID， txhash (0xAAAAAAAAAAAAAAA)
+//  orderI ， txhash key
+// key  orderID， txhash (0xAAAAAAAAAAAAAAA)
 
 // 1.15 both buy/sell order
 func (t *trade) Query_GetOnesOrderWithStatus(req *pty.ReqAddrAssets) (types.Message, error) {
@@ -70,7 +70,7 @@ func (t *trade) GetOnesOrderWithStatus(req *pty.ReqAddrAssets) (types.Message, e
 		return nil, types.ErrInvalidParam
 	}
 
-	// 使用 owner isFinished 组合
+	//  owner isFinished 
 	var order pty.LocalOrder
 	if orderStatus == orderStatusOn {
 		order.IsFinished = false

@@ -31,7 +31,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// trade 交易部分
+// trade 
 //
 type Trade struct {
 	state         protoimpl.MessageState
@@ -177,27 +177,27 @@ func (*Trade_SellMarket) isTrade_Value() {}
 
 func (*Trade_RevokeBuy) isTrade_Value() {}
 
-// 创建众筹交易,确定一手交易的token的数量，单价以及总共有多少手token可以进行众筹
+//  toke  toke 
 type TradeForSell struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	TokenSymbol string `protobuf:"bytes,1,opt,name=tokenSymbol,proto3" json:"tokenSymbol,omitempty"`
-	// 每一手出售的token的数量
+	// toke 
 	AmountPerBoardlot int64 `protobuf:"varint,2,opt,name=amountPerBoardlot,proto3" json:"amountPerBoardlot,omitempty"`
-	// 起卖手数,必须达到这个门槛才允许进行交易
+	//  
 	MinBoardlot int64 `protobuf:"varint,3,opt,name=minBoardlot,proto3" json:"minBoardlot,omitempty"`
-	// 每一手token的价格
+	// toke 
 	PricePerBoardlot int64 `protobuf:"varint,4,opt,name=pricePerBoardlot,proto3" json:"pricePerBoardlot,omitempty"`
 	TotalBoardlot    int64 `protobuf:"varint,5,opt,name=totalBoardlot,proto3" json:"totalBoardlot,omitempty"`
-	// 此次出售的起始时间，如果非众筹则可以忽略此时间
+	//  
 	Starttime int64 `protobuf:"varint,6,opt,name=starttime,proto3" json:"starttime,omitempty"`
 	Stoptime  int64 `protobuf:"varint,7,opt,name=stoptime,proto3" json:"stoptime,omitempty"`
 	Crowdfund bool  `protobuf:"varint,8,opt,name=crowdfund,proto3" json:"crowdfund,omitempty"`
-	// 资产来源
+	// 
 	AssetExec string `protobuf:"bytes,9,opt,name=assetExec,proto3" json:"assetExec,omitempty"`
-	// 定价资产
+	// 
 	PriceExec   string `protobuf:"bytes,10,opt,name=priceExec,proto3" json:"priceExec,omitempty"`
 	PriceSymbol string `protobuf:"bytes,11,opt,name=priceSymbol,proto3" json:"priceSymbol,omitempty"`
 }
@@ -311,8 +311,8 @@ func (x *TradeForSell) GetPriceSymbol() string {
 	return ""
 }
 
-// 购买者发起交易用来购买token持有者之前挂单出售的token
-// 其中的hash为token出售者发起出售交易的hash
+// toke token
+// has toke hash
 type TradeForBuy struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -368,7 +368,7 @@ func (x *TradeForBuy) GetBoardlotCnt() int64 {
 	return 0
 }
 
-// 允许token的持有者撤销之前未成交出售token的挂单
+// toke toke 
 type TradeForRevokeSell struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -416,7 +416,7 @@ func (x *TradeForRevokeSell) GetSellID() string {
 	return ""
 }
 
-// 限价买单构造请求
+// 
 type TradeForBuyLimit struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -428,7 +428,7 @@ type TradeForBuyLimit struct {
 	PricePerBoardlot  int64  `protobuf:"varint,4,opt,name=pricePerBoardlot,proto3" json:"pricePerBoardlot,omitempty"`
 	TotalBoardlot     int64  `protobuf:"varint,5,opt,name=totalBoardlot,proto3" json:"totalBoardlot,omitempty"`
 	AssetExec         string `protobuf:"bytes,6,opt,name=assetExec,proto3" json:"assetExec,omitempty"`
-	// 定价资产
+	// 
 	PriceExec   string `protobuf:"bytes,7,opt,name=priceExec,proto3" json:"priceExec,omitempty"`
 	PriceSymbol string `protobuf:"bytes,8,opt,name=priceSymbol,proto3" json:"priceSymbol,omitempty"`
 }
@@ -521,7 +521,7 @@ func (x *TradeForBuyLimit) GetPriceSymbol() string {
 	return ""
 }
 
-// 现价卖单
+// 
 type TradeForSellMarket struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -577,7 +577,7 @@ func (x *TradeForSellMarket) GetBoardlotCnt() int64 {
 	return 0
 }
 
-// 撤销买单
+// 
 type TradeForRevokeBuy struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -625,7 +625,7 @@ func (x *TradeForRevokeBuy) GetBuyID() string {
 	return ""
 }
 
-// 数据库部分
+// 
 type SellOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -633,18 +633,18 @@ type SellOrder struct {
 
 	TokenSymbol string `protobuf:"bytes,1,opt,name=tokenSymbol,proto3" json:"tokenSymbol,omitempty"`
 	Address     string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	//每一手出售的token的数量
+	/ toke 
 	AmountPerBoardlot int64 `protobuf:"varint,3,opt,name=amountPerBoardlot,proto3" json:"amountPerBoardlot,omitempty"`
 	MinBoardlot       int64 `protobuf:"varint,4,opt,name=minBoardlot,proto3" json:"minBoardlot,omitempty"`
-	//每一手token的价格
+	/ toke 
 	PricePerBoardlot int64 `protobuf:"varint,5,opt,name=pricePerBoardlot,proto3" json:"pricePerBoardlot,omitempty"`
 	TotalBoardlot    int64 `protobuf:"varint,6,opt,name=totalBoardlot,proto3" json:"totalBoardlot,omitempty"`
 	SoldBoardlot     int64 `protobuf:"varint,7,opt,name=soldBoardlot,proto3" json:"soldBoardlot,omitempty"`
-	//此次出售的起始时间，如果非众筹则可以忽略此时间
+	/  
 	Starttime int64 `protobuf:"varint,8,opt,name=starttime,proto3" json:"starttime,omitempty"`
 	Stoptime  int64 `protobuf:"varint,9,opt,name=stoptime,proto3" json:"stoptime,omitempty"`
 	Crowdfund bool  `protobuf:"varint,10,opt,name=crowdfund,proto3" json:"crowdfund,omitempty"`
-	//此处使用tx的hash来指定
+	/ t has 
 	SellID      string `protobuf:"bytes,11,opt,name=sellID,proto3" json:"sellID,omitempty"`
 	Status      int32  `protobuf:"varint,12,opt,name=status,proto3" json:"status,omitempty"`
 	Height      int64  `protobuf:"varint,13,opt,name=height,proto3" json:"height,omitempty"`
@@ -797,7 +797,7 @@ func (x *SellOrder) GetPriceSymbol() string {
 	return ""
 }
 
-// 限价买单数据库记录
+// 
 type BuyLimitOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -941,7 +941,7 @@ func (x *BuyLimitOrder) GetPriceSymbol() string {
 	return ""
 }
 
-// 执行器日志部分
+// 
 type ReceiptBuyBase struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1108,18 +1108,18 @@ type ReceiptSellBase struct {
 
 	TokenSymbol string `protobuf:"bytes,1,opt,name=tokenSymbol,proto3" json:"tokenSymbol,omitempty"`
 	Owner       string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
-	//每一手出售的token的数量
+	/ toke 
 	AmountPerBoardlot string `protobuf:"bytes,3,opt,name=amountPerBoardlot,proto3" json:"amountPerBoardlot,omitempty"`
 	MinBoardlot       int64  `protobuf:"varint,4,opt,name=minBoardlot,proto3" json:"minBoardlot,omitempty"`
-	//每一手token的价格
+	/ toke 
 	PricePerBoardlot string `protobuf:"bytes,5,opt,name=pricePerBoardlot,proto3" json:"pricePerBoardlot,omitempty"`
 	TotalBoardlot    int64  `protobuf:"varint,6,opt,name=totalBoardlot,proto3" json:"totalBoardlot,omitempty"`
 	SoldBoardlot     int64  `protobuf:"varint,7,opt,name=soldBoardlot,proto3" json:"soldBoardlot,omitempty"`
-	//此次出售的起始时间，如果非众筹则可以忽略此时间
+	/  
 	Starttime int64 `protobuf:"varint,8,opt,name=starttime,proto3" json:"starttime,omitempty"`
 	Stoptime  int64 `protobuf:"varint,9,opt,name=stoptime,proto3" json:"stoptime,omitempty"`
 	Crowdfund bool  `protobuf:"varint,10,opt,name=crowdfund,proto3" json:"crowdfund,omitempty"`
-	//此处使用tx的hash来指定
+	/ t has 
 	SellID string `protobuf:"bytes,11,opt,name=sellID,proto3" json:"sellID,omitempty"`
 	Status string `protobuf:"bytes,12,opt,name=status,proto3" json:"status,omitempty"`
 	// buyid
@@ -1659,11 +1659,11 @@ func (x *ReqAddrAssets) GetFromKey() string {
 	return ""
 }
 
-// 获取Token未完成卖单的交易列表
-// 	 fromKey : 第一次传参为空，获取卖单单价最低的列表。 当要获得下一页时，
-// 传当前页最后一个；当要获得上一页时， 传当前页第一个。 	 count
-// :获取交易列表的个数。 	 direction :查找方式；0，上一页；1，下一页。
-// 越靠后的也单价越贵
+// Toke 
+// 	 fromKey :  。 ，
+//  ， 。 	 count
+//  。 	 direction  ；0 ；1 。
+// 
 type ReqTokenSellOrder struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

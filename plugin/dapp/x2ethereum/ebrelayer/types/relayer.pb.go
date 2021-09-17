@@ -9,9 +9,9 @@ import proto "github.com/golang/protobuf/proto"
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 
-// 以太坊账户信息
-// 	 privkey : 账户地址对应的私钥
-// 	 addr :账户地址
+// 
+// 	 privkey : 
+// 	 addr  
 type Account4Relayer struct {
 	Privkey []byte `protobuf:"bytes,1,opt,name=privkey,proto3" json:"privkey,omitempty"`
 	Addr    string `protobuf:"bytes,2,opt,name=addr" json:"addr,omitempty"`
@@ -155,7 +155,7 @@ type LockEthErc20 struct {
 	OwnerKey  string `protobuf:"bytes,1,opt,name=ownerKey" json:"ownerKey,omitempty"`
 	TokenAddr string `protobuf:"bytes,2,opt,name=tokenAddr" json:"tokenAddr,omitempty"`
 	Amount    string `protobuf:"bytes,3,opt,name=amount" json:"amount,omitempty"`
-	// 将lock住的资产跨链转移到chain33的该账户名下
+	// loc chain3 
 	Chain33Receiver string `protobuf:"bytes,4,opt,name=chain33Receiver" json:"chain33Receiver,omitempty"`
 }
 

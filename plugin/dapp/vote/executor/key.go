@@ -1,15 +1,15 @@
 package executor
 
 /*
- * 用户合约存取kv数据时，key值前缀需要满足一定规范
- * 即key = keyPrefix + userKey
- * 需要字段前缀查询时，使用’-‘作为分割符号
+ * k ，ke 
+ * key = keyPrefix + userKey
+ *  ’- 
  */
 
 var (
-	//keyPrefixStateDB state db key必须前缀
+	//keyPrefixStateDB state db ke 
 	keyPrefixStateDB = "mavl-vote-"
-	//keyPrefixLocalDB local db的key必须前缀
+	//keyPrefixLocalDB local d ke 
 	keyPrefixLocalDB = "LODB-vote-"
 )
 

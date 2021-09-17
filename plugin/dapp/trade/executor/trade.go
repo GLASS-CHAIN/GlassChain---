@@ -5,15 +5,15 @@
 package executor
 
 /*
-trade执行器支持trade的创建和交易，
+trad trad ，
 
-主要提供操作有以下几种：
-1）挂单出售；
-2）购买指定的卖单；
-3）撤销卖单；
-4）挂单购买；
-5）出售指定的买单；
-6）撤销买单；
+ ：
+1 ；
+2 ；
+3 ；
+4 ；
+5 ；
+6 ；
 */
 
 import (
@@ -32,7 +32,7 @@ var (
 	defaultPriceExec = "coins"
 )
 
-// Init : 注册当前trade合约
+// Init : trad 
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	drivers.Register(cfg, GetName(), newTrade, cfg.GetDappFork(driverName, "Enable"))
 	InitExecType()
@@ -44,7 +44,7 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&trade{}))
 }
 
-// GetName : 获取trade合约名字
+// GetName : trad 
 func GetName() string {
 	return newTrade().GetName()
 }

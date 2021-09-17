@@ -48,17 +48,17 @@ func (u *Unfreeze) execDelLocal(receiptData *types.ReceiptData, index int) (*typ
 	return dbSet, nil
 }
 
-// ExecDelLocal_Create 本地撤销执行创建冻结合约
+// ExecDelLocal_Create 
 func (u *Unfreeze) ExecDelLocal_Create(payload *uf.UnfreezeCreate, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return u.execDelLocal(receiptData, index)
 }
 
-// ExecDelLocal_Withdraw 本地撤销执行冻结合约中提币
+// ExecDelLocal_Withdraw 
 func (u *Unfreeze) ExecDelLocal_Withdraw(payload *uf.UnfreezeWithdraw, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return u.execDelLocal(receiptData, index)
 }
 
-// ExecDelLocal_Terminate 本地撤销执行冻结合约的终止
+// ExecDelLocal_Terminate 
 func (u *Unfreeze) ExecDelLocal_Terminate(payload *uf.UnfreezeTerminate, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return u.execDelLocal(receiptData, index)
 }

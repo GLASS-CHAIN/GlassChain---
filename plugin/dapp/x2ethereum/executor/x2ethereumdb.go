@@ -28,7 +28,7 @@ func NewOracle(db dbm.KV, consensusThreshold int64) *Oracle {
 	}
 }
 
-//ProcessSuccessfulClaimForLock 处理经过审核的关于Lock的claim
+//ProcessSuccessfulClaimForLock Loc claim
 func (o *Oracle) ProcessSuccessfulClaimForLock(claim, execAddr string, accDB *account.DB) (*types.Receipt, error) {
 	var receipt *types.Receipt
 	oracleClaim, err := CreateOracleClaimFromOracleString(claim)
@@ -40,7 +40,7 @@ func (o *Oracle) ProcessSuccessfulClaimForLock(claim, execAddr string, accDB *ac
 	receiverAddress := oracleClaim.Chain33Receiver
 
 	if oracleClaim.ClaimType == int64(x2eTy.LockClaimType) {
-		//铸币到相关的tokenSymbolBank账户下
+		/ tokenSymbolBan 
 		amount, _ := strconv.ParseInt(x2eTy.TrimZeroAndDot(oracleClaim.Amount), 10, 64)
 
 		receipt, err = accDB.Mint(receiverAddress, amount)
@@ -53,7 +53,7 @@ func (o *Oracle) ProcessSuccessfulClaimForLock(claim, execAddr string, accDB *ac
 	return nil, x2eTy.ErrInvalidClaimType
 }
 
-//ProcessSuccessfulClaimForBurn 处理经过审核的关于Burn的claim
+//ProcessSuccessfulClaimForBurn Bur claim
 func (o *Oracle) ProcessSuccessfulClaimForBurn(claim, execAddr, tokenSymbol string, accDB *account.DB) (*types.Receipt, error) {
 	oracleClaim, err := CreateOracleClaimFromOracleString(claim)
 	if err != nil {
@@ -89,7 +89,7 @@ func (o *Oracle) ProcessBurn(address, amount string, accDB *account.DB) (*types.
 // ProcessLock processes the lockup of cosmos coins from the given sender
 // accDB = mavl-coins-bty-addr
 func (o *Oracle) ProcessLock(address, to, execAddr, amount string, accDB *account.DB) (*types.Receipt, error) {
-	// 转到 mavl-coins-bty-execAddr:addr
+	//  mavl-coins-bty-execAddr:addr
 	a, _ := strconv.ParseInt(x2eTy.TrimZeroAndDot(amount), 10, 64)
 	receipt, err := accDB.ExecTransfer(address, to, execAddr, a)
 	if err != nil {
@@ -99,8 +99,8 @@ func (o *Oracle) ProcessLock(address, to, execAddr, amount string, accDB *accoun
 }
 
 //ProcessAddValidator ...
-// 对于相同的地址该如何处理?
-// 现有方案是相同地址就报错
+// ?
+// 
 func (o *Oracle) ProcessAddValidator(address string, power int64) (*types.Receipt, error) {
 	receipt := new(types.Receipt)
 
@@ -180,7 +180,7 @@ func (o *Oracle) ProcessRemoveValidator(address string) (*types.Receipt, error) 
 	return receipt, nil
 }
 
-//ProcessModifyValidator 这里的power指的是修改后的power
+//ProcessModifyValidator powe power
 func (o *Oracle) ProcessModifyValidator(address string, power int64) (*types.Receipt, error) {
 	var exist bool
 	receipt := new(types.Receipt)
@@ -290,7 +290,7 @@ func (o *Oracle) checkProphecy(prophecy *x2eTy.ReceiptEthProphecy) error {
 	return nil
 }
 
-//ProcessClaim 处理接收到的ethchain33请求
+//ProcessClaim ethchain3 
 func (o *Oracle) ProcessClaim(claim x2eTy.Eth2Chain33) (*x2eTy.ProphecyStatus, error) {
 	oracleClaim, err := CreateOracleClaimFromEthClaim(claim)
 	if err != nil {
@@ -362,7 +362,7 @@ func (o *Oracle) checkActiveValidator(validatorAddress string) bool {
 	return false
 }
 
-// 计算该prophecy是否达标
+// prophec 
 func (o *Oracle) processCompletion(prophecy *x2eTy.ReceiptEthProphecy, claimType int64) (*x2eTy.ReceiptEthProphecy, error) {
 	address2power := make(map[string]int64)
 	validatorArrays, err := o.GetValidatorArray()

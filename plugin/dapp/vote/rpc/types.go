@@ -5,15 +5,15 @@ import (
 )
 
 /*
- * rpc相关结构定义和初始化
+ * rp 
  */
 
-// 实现grpc的service接口
+// grp servic 
 type channelClient struct {
 	rpctypes.ChannelClient
 }
 
-// Jrpc 实现json rpc调用实例
+// Jrpc json rp 
 type Jrpc struct {
 	cli *channelClient
 }

@@ -10,7 +10,7 @@ import (
 )
 
 /*
- * 实现合约对应客户端
+ * 
  */
 
 // Cmd vote client command

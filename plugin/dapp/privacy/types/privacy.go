@@ -21,7 +21,7 @@ const (
 	UtxoFlagScanEnd int32 = 2
 )
 
-// RescanFlagMapint2string 常量字符串转换关系表
+// RescanFlagMapint2string 
 var RescanFlagMapint2string = map[int32]string{
 	UtxoFlagNoScan:  "UtxoFlagNoScan",
 	UtxoFlagScaning: "UtxoFlagScaning",
@@ -106,7 +106,7 @@ func (t PrivacyType) ActionName(tx *types.Transaction) string {
 	return action.GetActionName()
 }
 
-// TODO 暂时不修改实现， 先完成结构的重构
+// TODO ， 
 
 // CreateTx create transaction
 func (t *PrivacyType) CreateTx(action string, message json.RawMessage) (*types.Transaction, error) {

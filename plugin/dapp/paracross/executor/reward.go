@@ -18,7 +18,7 @@ const (
 	opUnBind = 2
 )
 
-//根据挖矿共识节点地址 过滤整体共识节点映射列表， 获取委托挖矿地址
+/  ， 
 func (a *action) getBindAddrs(nodes []string, statusHeight int64) (*pt.ParaNodeBindList, error) {
 	nodesMap := make(map[string]bool)
 	for _, n := range nodes {
@@ -31,7 +31,7 @@ func (a *action) getBindAddrs(nodes []string, statusHeight int64) (*pt.ParaNodeB
 		clog.Error("paracross getBindAddrs err", "height", statusHeight)
 		return nil, err
 	}
-	//这样检索是按照list的映射顺序，不是按照nodes的顺序(需要循环嵌套)
+	/ lis  node  )
 	for _, m := range list.Miners {
 		if nodesMap[m.SuperNode] {
 			newLists.Miners = append(newLists.Miners, m)
@@ -72,13 +72,13 @@ func (a *action) rewardDeposit(rewards []*pt.ParaMinerReward, statusHeight int64
 	return receipt, nil
 }
 
-//奖励委托挖矿账户
+/ 
 func (a *action) rewardBindAddr(coinReward int64, bindList *pt.ParaNodeBindList, statusHeight int64) (*types.Receipt, int64, error) {
 	if coinReward <= 0 {
 		return nil, 0, nil
 	}
 
-	//有可能一个bindAddr 在多个node绑定，这里会累计上去
+	/ bindAddr nod  
 	var bindAddrList []*pt.ParaBindMinerInfo
 	for _, node := range bindList.Miners {
 		info, err := getBindAddrInfo(a.db, node.SuperNode, node.Miner)
@@ -93,12 +93,12 @@ func (a *action) rewardBindAddr(coinReward int64, bindList *pt.ParaNodeBindList,
 		totalCoins += addr.BindCoins
 	}
 
-	//分配给矿工的单位奖励
+	/ 
 	minerUnit := coinReward / totalCoins
 	var change int64
 	receipt := &types.Receipt{Ty: types.ExecOk}
 	if minerUnit > 0 {
-		//如果不等分转到发展基金
+		/ 
 		change = coinReward % minerUnit
 		for _, miner := range bindAddrList {
 			rep, err := a.coinsAccount.ExecDeposit(miner.Addr, a.execaddr, minerUnit*miner.BindCoins)
@@ -113,11 +113,11 @@ func (a *action) rewardBindAddr(coinReward int64, bindList *pt.ParaNodeBindList,
 	return receipt, change, nil
 }
 
-// reward 挖矿奖励， 主要处理挖矿分配逻辑，先实现基本策略，后面根据需求进行重构
+// reward ，   
 func (a *action) reward(nodeStatus *pt.ParacrossNodeStatus, stat *pt.ParacrossHeightStatus) (*types.Receipt, error) {
-	//获取挖矿相关配置，这里需注意是共识的高度，而不是交易的高度
+	/   
 	cfg := a.api.GetConfig()
-	//此分叉后 0高度不产生挖矿奖励，也就是以后的新版本默认0高度不产生挖矿奖励
+	/     
 	if nodeStatus.Height == 0 && cfg.IsDappFork(nodeStatus.Height, pt.ParaX, pt.ForkParaFullMinerHeight) {
 		return nil, nil
 	}
@@ -129,17 +129,17 @@ func (a *action) reward(nodeStatus *pt.ParacrossNodeStatus, stat *pt.ParacrossHe
 	coinReward, fundReward, coinBaseReward := minerrewards.MinerRewards[mode].GetConfigReward(cfg, nodeStatus.Height)
 
 	fundAddr := cfg.MGStr("mver.consensus.fundKeyAddr", nodeStatus.Height)
-	//超级节点地址
+	/ 
 	nodeAddrs := getSuperNodes(stat.Details, nodeStatus.BlockHash)
-	//委托地址
+	/ 
 	bindAddrs, err := a.getBindAddrs(nodeAddrs, nodeStatus.Height)
 	if err != nil {
 		return nil, err
 	}
 
-	//奖励超级节点
+	/ 
 	minderRewards := coinReward
-	//如果有委托挖矿地址，则超级节点分baseReward部分，否则全部
+	/  baseRewar  
 	if len(bindAddrs.Miners) > 0 {
 		minderRewards = coinBaseReward
 	}
@@ -151,7 +151,7 @@ func (a *action) reward(nodeStatus *pt.ParacrossNodeStatus, stat *pt.ParacrossHe
 	fundReward += change
 	mergeReceipt(receipt, r)
 
-	//奖励委托挖矿地址
+	/ 
 	r, change, err = a.rewardBindAddr(coinReward-minderRewards, bindAddrs, nodeStatus.Height)
 	if err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (a *action) reward(nodeStatus *pt.ParacrossNodeStatus, stat *pt.ParacrossHe
 	fundReward += change
 	mergeReceipt(receipt, r)
 
-	//奖励发展基金
+	/ 
 	if fundReward > 0 {
 		rep, err := a.coinsAccount.ExecDeposit(fundAddr, a.execaddr, fundReward)
 		if err != nil {
@@ -173,7 +173,7 @@ func (a *action) reward(nodeStatus *pt.ParacrossNodeStatus, stat *pt.ParacrossHe
 	return receipt, nil
 }
 
-// getSuperNodes 获取提交共识消息的矿工地址
+// getSuperNodes 
 func getSuperNodes(detail *pt.ParacrossStatusDetails, blockHash []byte) []string {
 	addrs := make([]string, 0)
 	for i, hash := range detail.BlockHash {
@@ -237,14 +237,14 @@ func makeNodeBindReceipt(prev, current *pt.ParaNodeBindList) *types.Receipt {
 	}
 }
 
-//绑定到超级节点
+/ 
 func (a *action) bind2Node(node string) (*types.Receipt, error) {
 	list, err := getBindNodeInfo(a.db)
 	if err != nil {
 		return nil, errors.Wrap(err, "bind2Node")
 	}
 
-	//由于kvmvcc内存架构，如果存储结构为nil，将回溯查找，这样在只有一个绑定时候，unbind后，有可能会回溯到更早状态，是错误的，title这里就是占位使用
+	/ kvmvc  nil  ，unbin   ，titl 
 	if len(list.Title) <= 0 {
 		list.Title = a.api.GetConfig().GetTitle()
 	}
@@ -256,7 +256,7 @@ func (a *action) bind2Node(node string) (*types.Receipt, error) {
 
 }
 
-//从超级节点解绑
+/ 
 func (a *action) unbind2Node(node string) (*types.Receipt, error) {
 	list, err := getBindNodeInfo(a.db)
 	if err != nil {
@@ -324,7 +324,7 @@ func (a *action) bindOp(cmd *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 	}
 
 	coinPrecision := a.api.GetConfig().GetCoinPrecision()
-	//found, 修改当前的绑定
+	//found, 
 	if current != nil && current.BindStatus == opBind {
 		var receipt *types.Receipt
 
@@ -332,14 +332,14 @@ func (a *action) bindOp(cmd *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 			return nil, errors.Wrapf(types.ErrInvalidParam, "bind coins same current=%d, cmd=%d", current.BindCoins, cmd.BindCoins)
 		}
 
-		//释放一部分coins
+		/ coins
 		if cmd.BindCoins < current.BindCoins {
 			receipt, err = a.coinsAccount.ExecActive(a.fromaddr, a.execaddr, (current.BindCoins-cmd.BindCoins)*coinPrecision)
 			if err != nil {
 				return nil, errors.Wrapf(err, "bindOp Active addr=%s,execaddr=%s,coins=%d", a.fromaddr, a.execaddr, current.BindCoins-cmd.BindCoins)
 			}
 		} else {
-			//冻结更多
+			/ 
 			receipt, err = a.coinsAccount.ExecFrozen(a.fromaddr, a.execaddr, (cmd.BindCoins-current.BindCoins)*coinPrecision)
 			if err != nil {
 				return nil, errors.Wrapf(err, "bindOp frozen more addr=%s,execaddr=%s,coins=%d", a.fromaddr, a.execaddr, cmd.BindCoins-current.BindCoins)
@@ -352,7 +352,7 @@ func (a *action) bindOp(cmd *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 		return mergeReceipt(receipt, r), nil
 	}
 
-	//not bind, 增加新绑定
+	//not bind, 
 	receipt, err := a.coinsAccount.ExecFrozen(a.fromaddr, a.execaddr, cmd.BindCoins*coinPrecision)
 	if err != nil {
 		return nil, errors.Wrapf(err, "bindOp frozen addr=%s,execaddr=%s,count=%d", a.fromaddr, a.execaddr, cmd.BindCoins)
@@ -370,7 +370,7 @@ func (a *action) bindOp(cmd *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 	rBind := makeAddrBindReceipt(cmd.TargetNode, a.fromaddr, current, newer)
 	mergeReceipt(receipt, rBind)
 
-	//增加到列表中
+	/ 
 	rList, err := a.bind2Node(cmd.TargetNode)
 	if err != nil {
 		return nil, err
@@ -402,8 +402,8 @@ func (a *action) unBindOp(cmd *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 		return nil, errors.Wrapf(err, "unBindOp addr=%s,execaddr=%s,count=%d", a.fromaddr, a.execaddr, acct.BindCoins)
 	}
 
-	//删除 bind addr
-	//由于kvmvcc的原因，不能通过把一个key值=nil的方式删除，kvmvcc这样是删除了当前版本，就会查询更早的版本，&struct{}也不行，len=0 也被认为是删除了的
+	/  bind addr
+	/ kvmvc  ke =ni ，kvmvc  ，&struct{ ，len=0 
 	acctCopy := *acct
 	acct.BindStatus = opUnBind
 	acct.BlockHeight = a.height
@@ -411,7 +411,7 @@ func (a *action) unBindOp(cmd *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 	rUnBind := makeAddrBindReceipt(cmd.TargetNode, a.fromaddr, &acctCopy, acct)
 	mergeReceipt(receipt, rUnBind)
 
-	//从列表删除
+	/ 
 	rUnList, err := a.unbind2Node(cmd.TargetNode)
 	if err != nil {
 		return nil, err
@@ -426,7 +426,7 @@ func (a *action) bindMiner(info *pt.ParaBindMinerCmd) (*types.Receipt, error) {
 		return nil, errors.Wrapf(types.ErrInvalidParam, "bindMiner TargetNode should not be nil to addr %s", a.fromaddr)
 	}
 
-	//只允许平行链操作
+	/ 
 	if !types.IsParaExecName(string(a.tx.Execer)) {
 		return nil, errors.Wrapf(types.ErrInvalidParam, "exec=%s,should prefix with user.p.", string(a.tx.Execer))
 	}

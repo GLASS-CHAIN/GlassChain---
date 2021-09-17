@@ -306,7 +306,7 @@ func testStore_getAccountByPrefix(t *testing.T) {
 	assert.Nil(t, was)
 	assert.Equal(t, err, types.ErrAddrNotExist)
 
-	// 这里始终是成功的，所以不能建立测试
+	//  
 	//other := &types.ReqSignRawTx{Expire:"Ex"}
 	//bt, err := proto.Marshal(other)
 	//assert.NoError(t, err)

@@ -6,8 +6,8 @@ import (
 )
 
 /*
- * 实现交易的链上执行接口
- * 关键数据上链（statedb）并生成交易回执（log）
+ * 
+ * （statedb （log）
  */
 
 func (s *storage) Exec_ContentStorage(payload *storagetypes.ContentOnlyNotaryStorage, tx *types.Transaction, index int) (*types.Receipt, error) {

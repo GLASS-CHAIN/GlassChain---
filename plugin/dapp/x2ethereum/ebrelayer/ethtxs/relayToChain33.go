@@ -60,7 +60,7 @@ func RelayLockToChain33(privateKey chain33Crypto.PrivKey, claim *ebrelayerTypes.
 			return "", err
 		}
 	}
-	//构建交易，验证人validator用来向chain33合约证明自己验证了该笔从以太坊向chain33跨链转账的交易
+	/  validato chain3 chain3 
 	tx.Sign(chain33Types.SECP256K1, privateKey)
 
 	txData := chain33Types.Encode(&tx)
@@ -117,7 +117,7 @@ func RelayBurnToChain33(privateKey chain33Crypto.PrivKey, claim *ebrelayerTypes.
 			return "", err
 		}
 	}
-	//构建交易，验证人validator用来向chain33合约证明自己验证了该笔从以太坊向chain33跨链转账的交易
+	/  validato chain3 chain3 
 	tx.Sign(chain33Types.SECP256K1, privateKey)
 
 	txData := chain33Types.Encode(&tx)

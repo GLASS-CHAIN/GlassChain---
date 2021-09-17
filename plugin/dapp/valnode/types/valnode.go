@@ -45,7 +45,7 @@ func NewType(cfg *types.Chain33Config) *ValNodeType {
 	return c
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (t *ValNodeType) GetName() string {
 	return ValNodeX
 }

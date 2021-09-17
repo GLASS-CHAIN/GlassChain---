@@ -93,14 +93,14 @@ message ReqUTXOPubKeys {
     repeated GroupUTXOGlobalIndex groupUTXOGlobalIndex = 2;
 }
 
-// 一个公钥信息
+// 
 message PublicKeyData {
     repeated bytes data = 1;
 }
 
 message GroupUTXOPubKey {
     int64 amount = 1;
-    // 输出签名的所有公钥
+    // 
     repeated bytes pubkey = 2;
 }
 
@@ -132,7 +132,7 @@ message ReceiptPrivacyOutput {
     string   assetSymbol         = 2;
     repeated keyOutput keyoutput = 3;
 }
-//各种amount额度的UTXO在链上的数量
+/ amoun UTX 
 message AmountsOfUTXO {
     map<int64, int64> amountMap = 1;
 }
@@ -141,7 +141,7 @@ message TokenNamesOfUTXO {
     map<string, string> tokensMap = 1;
 }
 
-// 用以转换成json后继续可见的结构
+// jso 
 message UTXOGlobalIndex4Print {
     string txhash   = 1;
     int32  outindex = 2;
@@ -273,7 +273,7 @@ message ResUTXOGlobalIndex {
 message FTXOsSTXOsInOneTx {
     string tokenname = 1;
     string sender    = 2;
-    // FTXO的超期，设定原则与Transaction.expire一致
+    // FTX  Transaction.expir 
     int64    expire         = 3;
     string   txhash         = 4;
     repeated UTXO utxos     = 5;
@@ -291,13 +291,13 @@ message UTXOBasics {
 
 message CreateTransactionCache {
     bytes key = 1;
-    // 记录创建时间，用以处理过期的交易
+    //  
     int64 createtime = 2;
-    // 记录签名成功的时间，用以处理过期交易
+    //  
     int64 signtime = 3;
-    // 缓存状态
-    // 0 - 创建状态
-    // 1 - 已经签名状态
+    // 
+    // 0 - 
+    // 1 - 
     int32 status = 4;
     //
     Transaction transaction = 5;
@@ -320,20 +320,20 @@ message ReplyCacheTxList {
 message ReqPrivacyAccount {
     string addr  = 1;
     string token = 2;
-    // 设定显示的数据类型信息
-    // 0： 只显示账户的数值信息
-    // 1： 显示UTXO明细
-    // 2： 显示FTXO明细
-    // 3： 全部显示
+    // 
+    // 0： 
+    // 1： UTX 
+    // 2： FTX 
+    // 3： 
     int32  displaymode = 3;
     string assetExec   = 4;
 }
 
-// 请求隐私账户信息的应答
+// 
 message ReplyPrivacyAccount {
-    // 未花费的UTXO
+    // UTXO
     UTXOs utxos = 1;
-    // 冻结的UTXO
+    // UTXO
     UTXOs ftxos       = 2;
     int32 displaymode = 3;
 }
@@ -348,17 +348,17 @@ message ReqPrivacyTransactionList {
 
     // 1:sendtx  2:recvtx
     int32  sendRecvFlag = 2;
-    // 列表顺序，0降1升
+    // ，  
     int32  direction    = 3;
-    // 单次列表数量
+    // 
     int32  count        = 4;
-    // 交易相关的地址，发送方或接收方
+    //  
     string address      = 6;
-    // 资产执行器
+    // 
     string assetExec    = 8;
-    // 资产符号
+    // 
     string assetSymbol = 9;
-    // 指定列表请求开始位置
+    // 
     string startTxHeightIndex = 10;
 }
 
@@ -391,7 +391,7 @@ message RepEnablePrivacy {
     repeated PriAddrResult results = 1;
 }
 
-// 隐私交易三步发送时，临时存储签名需要的数据信息结构
+//  
 message PrivacySignatureParam {
     int32    actionType                 = 1;
     repeated UTXOBasics utxobasics      = 2;
@@ -405,18 +405,18 @@ message WalletAccountPrivacy {
     bytes spendPrivKey = 4;
 }
 
-// 创建隐私交易请求
+// 
 message ReqCreatePrivacyTx {
     string tokenname = 1;
-    // 构建交易类型
+    // 
     int32  actionType = 2;
     int64  amount     = 3;
     string note       = 4;
-    // 普通交易的发送方
+    // 
     string from = 5;
-    // 普通交易的接收方
+    // 
     string to = 6;
-    // 隐私交易，接收方的公钥对
+    //  
     string pubkeypair = 10;
     int32  mixcount   = 11;
     int64  expire     = 12;
@@ -425,12 +425,12 @@ message ReqCreatePrivacyTx {
 
 service privacy {
     // Privacy Trading
-    // 显示指定地址的公钥对信息，可以作为后续交易参数
+    //  
     rpc ShowPrivacyKey(ReqString) returns (ReplyPrivacyPkPair) {}
-    // 扫描UTXO以及获取扫描UTXO后的状态
+    // UTX UTX 
     rpc RescanUtxos(ReqRescanUtxos) returns (RepRescanUtxos) {}
-    // 使能隐私账户
+    // 
     rpc EnablePrivacy(ReqEnablePrivacy) returns (RepEnablePrivacy) {}
-    // 创建隐私交易
+    // 
     rpc CreateRawTransaction(ReqCreatePrivacyTx) returns (Transaction) {}
 }

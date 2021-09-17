@@ -39,14 +39,14 @@ func (mock *PrivacyMock) Init(walletOp wcom.WalletOperate, password string) {
 }
 
 func (mock *PrivacyMock) getPrivKeyByAddr(addr string) (crypto.PrivKey, error) {
-	//获取指定地址在钱包里的账户信息
+	/ 
 	Accountstor, err := mock.store.getAccountByAddr(addr)
 	if err != nil {
 		bizlog.Error("ProcSendToAddress", "GetAccountByAddr err:", err)
 		return nil, err
 	}
 
-	//通过password解密存储的私钥
+	/ passwor 
 	prikeybyte, err := common.FromHex(Accountstor.GetPrivkey())
 	if err != nil || len(prikeybyte) == 0 {
 		bizlog.Error("ProcSendToAddress", "FromHex err", err)
@@ -55,7 +55,7 @@ func (mock *PrivacyMock) getPrivKeyByAddr(addr string) (crypto.PrivKey, error) {
 
 	password := []byte(mock.password)
 	privkey := wcom.CBCDecrypterPrivkey(password, prikeybyte)
-	//通过privkey生成一个pubkey然后换算成对应的addr
+	/ privke pubke addr
 	cr, err := crypto.New(types.GetSignName("", mock.walletOp.GetSignType()))
 	if err != nil {
 		bizlog.Error("ProcSendToAddress", "err", err)
@@ -90,7 +90,7 @@ func (mock *PrivacyMock) getPrivacykeyPair(addr string) (*privacy.Privacy, error
 }
 
 func (mock *PrivacyMock) getPrivacyKeyPairsOfWallet() ([]addrAndprivacy, error) {
-	//通过Account前缀查找获取钱包中的所有账户信息
+	/ Accoun 
 	WalletAccStores, err := mock.walletOp.GetWalletAccounts()
 	if err != nil || len(WalletAccStores) == 0 {
 		return nil, err

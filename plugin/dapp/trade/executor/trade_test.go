@@ -67,7 +67,7 @@ var (
 	}
 )
 
-// TODO 几个测试数据 linter 不报错, 修改好后写测试可能需要用
+// TODO  linter , 
 func Test_Order(t *testing.T) {
 	assert.NotNil(t, &sellorderOnsale)
 	assert.NotNil(t, &sellorderSoldOut)

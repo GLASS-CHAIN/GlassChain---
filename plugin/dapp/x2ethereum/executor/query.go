@@ -51,7 +51,7 @@ func (x *x2ethereum) Query_GetValidators(in *x2eTy.QueryValidatorsParams) (types
 				}, nil
 			}
 		}
-		// 未知的地址
+		// 
 		return nil, x2eTy.ErrInvalidValidator
 	}
 
@@ -155,7 +155,7 @@ func (x *x2ethereum) Query_GetSymbolTotalAmountByTxType(in *x2eTy.QuerySymbolAss
 func (x *x2ethereum) Query_GetRelayerBalance(in *x2eTy.QueryRelayerBalance) (types.Message, error) {
 	symbolAmount := &x2eTy.ReceiptQueryRelayerBalance{}
 
-	// 要查询特定的tokenAddr
+	// tokenAddr
 	if in.TokenAddr != "" {
 		accDB, err := account.NewAccountDB(x.GetAPI().GetConfig(), x2eTy.X2ethereumX, strings.ToLower(in.TokenSymbol+in.TokenAddr), x.GetStateDB())
 		if err != nil {

@@ -94,7 +94,7 @@ checkItem = ["balance", "frozen"]
 fail = true
 
 
-#因trade购买需要指定sellID, DependBuyCase自动获取由dep指定SellCase的sellID
+ trad sellID, DependBuyCas de SellCas sellID
 [[DependBuyCase]]
 id = "tokenBuy"
 command = "send trade buy -c 100 -f 0.01 -k 1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"
@@ -108,7 +108,7 @@ repeat = 5
 
 
 
-#不满足最少份数
+ 
 [[DependBuyCase]]
 id = "failBuy1"
 command = "send trade buy -c 90 -f 0.01 -k 1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"
@@ -121,7 +121,7 @@ dep = ["tokenSell1"]
 fail = true
 
 
-#剩余正在sell的不够
+ sel 
 [[DependBuyCase]]
 id = "failBuy2"
 command = "send trade buy -c 200 -f 0.01 -k 1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"
@@ -137,7 +137,7 @@ fail = true
 
 
 
-#bty余额不足
+#bt 
 [[DependBuyCase]]
 id = "failBuy3"
 command = "send trade buy -c 800 -f 0.01 -k 1Luh4AziYyaC5zP3hUXtXFZS873xAxm6rH"

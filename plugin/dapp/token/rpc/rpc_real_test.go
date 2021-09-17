@@ -17,7 +17,7 @@ import (
 )
 
 func TestRPCTokenPreCreate(t *testing.T) {
-	// 启动RPCmocker
+	// RPCmocker
 	mock33 := testnode.New("", nil)
 	cfg := mock33.GetAPI().GetConfig()
 	defer mock33.Close()
@@ -37,7 +37,7 @@ func TestRPCTokenPreCreate(t *testing.T) {
 	detail, err := mock33.WaitTx(reply.GetMsg())
 	assert.Nil(t, err)
 	assert.Equal(t, detail.Receipt.Ty, int32(types.ExecOk))
-	//开始发行percreate
+	/ percreate
 	param := tokenty.TokenPreCreate{
 		Name:   "Test",
 		Symbol: "TEST",

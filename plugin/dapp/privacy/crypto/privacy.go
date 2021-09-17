@@ -158,7 +158,7 @@ func RecoverOnetimePriKey(R []byte, viewSecretKey, spendSecretKey crypto.PrivKey
 
 	var point2 edwards25519.ProjectiveGroupElement
 	zeroValue := &[32]byte{}
-	//TODO,编写新的函数只用于计算aR
+	//TODO aR
 	edwards25519.GeDoubleScalarMultVartime(&point2, viewSecAddr, &point, zeroValue)
 	var point3 edwards25519.CompletedGroupElement
 	mul8(&point3, &point2)
@@ -175,7 +175,7 @@ func RecoverOnetimePriKey(R []byte, viewSecretKey, spendSecretKey crypto.PrivKey
 	//Hs(aR)
 	HsAR := derivation2scalar(aR, outputIndex)
 
-	//TODO:代码疑问
+	//TODO 
 	//var onetimePriKey PrivKeyEd25519
 	//onetimePriKeyAddr := (*[32]byte)(unsafe.Pointer(&onetimePriKey.Bytes()[0]))
 	//edwards25519.ScAdd(onetimePriKeyAddr, HsAR, spendSecAddr)
@@ -195,7 +195,7 @@ func RecoverOnetimePriKey(R []byte, viewSecretKey, spendSecretKey crypto.PrivKey
 //	return keyImage
 //
 //}
-//其中的realUtxoIndex，是真实的utxo输出在混淆组中的位置索引
+/ realUtxoIndex utx 
 //func GenerateRingSignature(data []byte, utxos []*types.UTXO, realUtxoIndex int, sk []byte, keyImage []byte) Signature {
 //
 //	return nil

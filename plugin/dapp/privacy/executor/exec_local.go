@@ -24,7 +24,7 @@ func (p *privacy) execLocal(receiptData *types.ReceiptData, tx *types.Transactio
 		err := types.Decode(item.Log, &receiptPrivacyOutput)
 		if err != nil {
 			privacylog.Error("PrivacyTrading ExecLocal", "txhash", txhashstr, "Decode item.Log error ", err)
-			panic(err) //数据错误了，已经被修改了
+			panic(err) /  
 		}
 
 		assetExec := receiptPrivacyOutput.GetAssetExec()
@@ -32,7 +32,7 @@ func (p *privacy) execLocal(receiptData *types.ReceiptData, tx *types.Transactio
 		txhashInByte := tx.Hash()
 		txhash := common.ToHex(txhashInByte)
 		for outputIndex, keyOutput := range receiptPrivacyOutput.Keyoutput {
-			//kv1，添加一个具体的UTXO，方便我们可以查询相应token下特定额度下，不同高度时，不同txhash的UTXO
+			//kv1 UTXO toke   txhas UTXO
 			key := CalcPrivacyUTXOkeyHeight(assetExec, assetSymbol, keyOutput.Amount, p.GetHeight(), txhash, index, outputIndex)
 			localUTXOItem := &ty.LocalUTXOItem{
 				Height:        p.GetHeight(),
@@ -45,32 +45,32 @@ func (p *privacy) execLocal(receiptData *types.ReceiptData, tx *types.Transactio
 			kv := &types.KeyValue{Key: key, Value: value}
 			dbSet.KV = append(dbSet.KV, kv)
 
-			//kv2，添加各种不同额度的kv记录，能让我们很方便的获知本系统存在的所有不同的额度的UTXO
+			//kv2 k  UTXO
 			var amountTypes ty.AmountsOfUTXO
 			key2 := CalcprivacyKeyTokenAmountType(assetExec, assetSymbol)
 			value2, err := localDB.Get(key2)
-			//如果该种token不是第一次进行隐私操作
+			/ toke 
 			if err == nil && value2 != nil {
 				err := types.Decode(value2, &amountTypes)
 				if err == nil {
-					//当本地数据库不存在这个额度时，则进行添加
+					/  
 					amount, ok := amountTypes.AmountMap[keyOutput.Amount]
 					if !ok {
 						amountTypes.AmountMap[keyOutput.Amount] = 1
 					} else {
-						//todo:考虑后续溢出的情况
+						//todo 
 						amountTypes.AmountMap[keyOutput.Amount] = amount + 1
 					}
 					kv := &types.KeyValue{Key: key2, Value: types.Encode(&amountTypes)}
 					dbSet.KV = append(dbSet.KV, kv)
-					//在本地的query数据库进行设置，这样可以防止相同的新增amout不会被重复生成kv,而进行重复的设置
+					/ quer  amou kv 
 					localDB.Set(key2, types.Encode(&amountTypes))
 				} else {
 					privacylog.Error("PrivacyTrading ExecLocal", "txhash", txhashstr, "value2 Decode error ", err)
 					panic(err)
 				}
 			} else {
-				//如果该种token第一次进行隐私操作
+				/ toke 
 				amountTypes.AmountMap = make(map[int64]int64)
 				amountTypes.AmountMap[keyOutput.Amount] = 1
 				kv := &types.KeyValue{Key: key2, Value: types.Encode(&amountTypes)}
@@ -78,7 +78,7 @@ func (p *privacy) execLocal(receiptData *types.ReceiptData, tx *types.Transactio
 				localDB.Set(key2, types.Encode(&amountTypes))
 			}
 
-			//kv3,添加存在隐私交易token的类型
+			//kv3 toke 
 			assetKey := calcExecLocalAssetKey(assetExec, assetSymbol)
 			var tokenNames ty.TokenNamesOfUTXO
 			key3 := CalcprivacyKeyTokenTypes()

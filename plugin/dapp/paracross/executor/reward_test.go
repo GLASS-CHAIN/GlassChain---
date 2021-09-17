@@ -17,7 +17,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-// 构造一个4个节点的平行链数据， 进行测试
+//  ， 
 
 type RewardTestSuite struct {
 	suite.Suite

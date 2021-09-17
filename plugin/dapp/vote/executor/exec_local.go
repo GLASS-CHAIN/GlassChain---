@@ -8,8 +8,8 @@ import (
 )
 
 /*
- * 实现交易相关数据本地执行，数据不上链
- * 非关键数据，本地存储(localDB), 用于辅助查询，效率高
+ *  
+ *  (localDB),  
  */
 
 func (v *vote) ExecLocal_CreateGroup(payload *vty.CreateGroup, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
@@ -50,7 +50,7 @@ func (v *vote) ExecLocal_UpdateGroup(update *vty.UpdateGroup, tx *types.Transact
 		return nil, err
 	}
 	oldInfo, _ := row.Data.(*vty.GroupInfo)
-	// 状态数据中未保存投票个数信息，需要进行赋值
+	//  
 	groupInfo.VoteNum = oldInfo.VoteNum
 	kvs, err := v.updateAndSaveTable(table.Replace, table.Save, groupInfo, tx, vty.NameUpdateGroupAction, "group")
 	if err != nil {
@@ -58,7 +58,7 @@ func (v *vote) ExecLocal_UpdateGroup(update *vty.UpdateGroup, tx *types.Transact
 	}
 	dbSet.KV = kvs
 	removeAddrs := make([]string, 0)
-	//仍然为管理员或群成员之一，不删除groupID索引
+	/  groupI 
 	tempAddrs := append(update.RemoveAdmins, update.RemoveMembers...)
 	for _, addr := range tempAddrs {
 		if checkMemberExist(addr, groupInfo.Members) || checkSliceItemExist(addr, groupInfo.Admins) {
@@ -178,7 +178,7 @@ func (v *vote) ExecLocal_UpdateMember(payload *vty.UpdateMember, tx *types.Trans
 	return v.addAutoRollBack(tx, dbSet.KV), nil
 }
 
-//当区块回滚时，框架支持自动回滚localdb kv，需要对exec-local返回的kv进行封装
+/  localdb kv exec-loca k 
 func (v *vote) addAutoRollBack(tx *types.Transaction, kv []*types.KeyValue) *types.LocalDBSet {
 
 	dbSet := &types.LocalDBSet{}
@@ -204,7 +204,7 @@ func (v *vote) updateAndSaveTable(update updateFunc, save saveFunc, data types.M
 	return kvs, nil
 }
 
-// 新增用户时，将对应的groupID信息添加到用户表中
+//  groupI 
 func (v *vote) addGroupMember(groupID string, addrs []string) ([]*types.KeyValue, error) {
 
 	table := newMemberTable(v.GetLocalDB())
@@ -221,7 +221,7 @@ func (v *vote) addGroupMember(groupID string, addrs []string) ([]*types.KeyValue
 			err = table.Add(&vty.MemberInfo{Addr: addr, GroupIDs: []string{groupID}})
 		}
 
-		// 这个错可能由GetData，Replace，Add返回
+		// GetData，Replace，Ad 
 		if err != nil {
 			elog.Error("execLocal addMember", "member table Add/Replace", err)
 			return nil, err
@@ -235,7 +235,7 @@ func (v *vote) addGroupMember(groupID string, addrs []string) ([]*types.KeyValue
 	return kvs, nil
 }
 
-//删除用户，将对应的groupID信息删除
+/  groupI 
 func (v *vote) removeGroupMember(groupID string, addrs []string) ([]*types.KeyValue, error) {
 
 	table := newMemberTable(v.GetLocalDB())

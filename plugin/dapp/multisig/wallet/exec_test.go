@@ -67,7 +67,7 @@ func TestMultiSigAccount(t *testing.T) {
 	mocker.Listen()
 	jrpcClient := getRPCClient(t, mocker)
 
-	//导入私钥到钱包
+	/ 
 	for i, priv := range TestPrivkeyHex {
 		privkey := &types.ReqWalletImportPrivkey{Privkey: priv, Label: fmt.Sprintf("heyubin%d", i)}
 		_, err := mocker.GetAPI().ExecWalletFunc("wallet", "WalletImportPrivkey", privkey)
@@ -76,7 +76,7 @@ func TestMultiSigAccount(t *testing.T) {
 		}
 		//t.Log("import", "index", i, "addr", acc.Acc.Addr)
 	}
-	//创建多重签名账户,owner:AddrA,AddrB,GenAddr,weight:20,10,30;coins:BTY 1000000000 RequestWeight:15
+	/ ,owner:AddrA,AddrB,GenAddr,weight:20,10,30;coins:BTY 1000000000 RequestWeight:15
 	multiSigAccAddr := testAccCreateTx(t, mocker, jrpcClient)
 
 	//owner add AddrE
@@ -89,11 +89,11 @@ func TestMultiSigAccount(t *testing.T) {
 	testReplaceOwner(t, mocker, jrpcClient, multiSigAccAddr)
 }
 
-//创建多重签名账户
+/ 
 func testAccCreateTx(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *jsonclient.JSONClient) string {
 	gen := mocker.GetGenesisKey()
 	var params rpctypes.Query4Jrpc
-	//1. MultiSigAccCreateTx 创建交易
+	//1. MultiSigAccCreateTx 
 	var owners []*mty.Owner
 	owmer1 := &mty.Owner{OwnerAddr: AddrA, Weight: 20}
 	owmer2 := &mty.Owner{OwnerAddr: AddrB, Weight: 10}
@@ -123,7 +123,7 @@ func testAccCreateTx(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *jso
 	assert.Nil(t, err)
 	_, err = mocker.WaitTx(reply.GetMsg())
 	assert.Nil(t, err)
-	//查询account 计数
+	/ account 
 	params.Execer = mty.MultiSigX
 	params.FuncName = "MultiSigAccCount"
 	params.Payload = types.MustPBToJSON(&types.ReqNil{})
@@ -132,7 +132,7 @@ func testAccCreateTx(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *jso
 	assert.Nil(t, err)
 	assert.Equal(t, int64(1), rep.Data)
 
-	//查询account addr
+	/ account addr
 	//t.Log("MultiSigAccounts ")
 	req1 := mty.ReqMultiSigAccs{
 		Start: 0,
@@ -147,7 +147,7 @@ func testAccCreateTx(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *jso
 	//t.Log(rep1)
 
 	multiSigAccAddr := rep1.Address[0]
-	//获取owner拥有的多重签名账户地址
+	/ owne 
 	req4 := &types.ReqString{
 		Data: GenAddr,
 	}
@@ -178,7 +178,7 @@ func testAddOwner(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *jsoncl
 	_, err = mocker.WaitTx(reply.GetMsg())
 	assert.Nil(t, err)
 
-	//获取owner拥有的多重签名账户地址
+	/ owne 
 	req4 := &types.ReqString{
 		Data: AddrE,
 	}
@@ -211,7 +211,7 @@ func testDelOwner(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *jsoncl
 	_, err = mocker.WaitTx(reply.GetMsg())
 	assert.Nil(t, err)
 
-	//获取owner拥有的多重签名账户地址
+	/ owne 
 	req4 := &types.ReqString{
 		Data: AddrE,
 	}
@@ -242,7 +242,7 @@ func testModifyOwnerWeight(t *testing.T, mocker *testnode.Chain33Mock, jrpcClien
 	_, err = mocker.WaitTx(reply.GetMsg())
 	assert.Nil(t, err)
 
-	//获取owner拥有的多重签名账户地址
+	/ owne 
 	req4 := &types.ReqString{
 		Data: AddrA,
 	}
@@ -275,7 +275,7 @@ func testReplaceOwner(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *js
 	_, err = mocker.WaitTx(reply.GetMsg())
 	assert.Nil(t, err)
 
-	//获取owner AddrE 拥有的多重签名账户地址
+	/ owner AddrE 
 	req4 := &types.ReqString{
 		Data: AddrE,
 	}
@@ -286,7 +286,7 @@ func testReplaceOwner(t *testing.T, mocker *testnode.Chain33Mock, jrpcClient *js
 	assert.Equal(t, res4.Items[0].MultiSigAddr, multiSigAccAddr)
 	assert.Equal(t, res4.Items[0].Weight, uint64(30))
 
-	//获取owner AddrA 拥有的多重签名账户地址 没有
+	/ owner AddrA  
 	req5 := &types.ReqString{
 		Data: AddrA,
 	}

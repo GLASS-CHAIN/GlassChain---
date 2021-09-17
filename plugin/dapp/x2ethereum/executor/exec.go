@@ -12,13 +12,13 @@ import (
 )
 
 /*
- * 实现交易的链上执行接口
- * 关键数据上链（statedb）并生成交易回执（log）
+ * 
+ * （statedb （log）
  */
 
 //---------------- Ethereum(eth/erc20) --> Chain33-------------------//
 
-// 在chain33上为ETH/ERC20铸币
+// chain3 ETH/ERC2 
 func (x *x2ethereum) Exec_Eth2Chain33Lock(payload *x2eTy.Eth2Chain33, tx *types.Transaction, index int) (*types.Receipt, error) {
 	action := newAction(x, tx, int32(index))
 	if action == nil {
@@ -31,7 +31,7 @@ func (x *x2ethereum) Exec_Eth2Chain33Lock(payload *x2eTy.Eth2Chain33, tx *types.
 }
 
 //----------------  Chain33(eth/erc20)------> Ethereum -------------------//
-// 在chain33端将铸的币销毁，返还给eth
+// chain3  eth
 func (x *x2ethereum) Exec_Chain33ToEthBurn(payload *x2eTy.Chain33ToEth, tx *types.Transaction, index int) (*types.Receipt, error) {
 	action := newAction(x, tx, int32(index))
 	if action == nil {
@@ -41,7 +41,7 @@ func (x *x2ethereum) Exec_Chain33ToEthBurn(payload *x2eTy.Chain33ToEth, tx *type
 }
 
 //---------------- Ethereum (bty) --> Chain33-------------------//
-// 在eth端将铸的bty币销毁，返还给chain33
+// et bt  chain33
 func (x *x2ethereum) Exec_Eth2Chain33Burn(payload *x2eTy.Eth2Chain33, tx *types.Transaction, index int) (*types.Receipt, error) {
 	action := newAction(x, tx, int32(index))
 	if action == nil {
@@ -54,7 +54,7 @@ func (x *x2ethereum) Exec_Eth2Chain33Burn(payload *x2eTy.Eth2Chain33, tx *types.
 }
 
 //---------------- Chain33 --> Ethereum (bty) -------------------//
-// 在 ethereum 上为 chain33 铸币
+//  ethereum  chain33 
 func (x *x2ethereum) Exec_Chain33ToEthLock(payload *x2eTy.Chain33ToEth, tx *types.Transaction, index int) (*types.Receipt, error) {
 	action := newAction(x, tx, int32(index))
 	if action == nil {
@@ -63,7 +63,7 @@ func (x *x2ethereum) Exec_Chain33ToEthLock(payload *x2eTy.Chain33ToEth, tx *type
 	return action.procChain33ToEth_lock(payload)
 }
 
-// 转账功能
+// 
 func (x *x2ethereum) Exec_Transfer(payload *types.AssetsTransfer, tx *types.Transaction, index int) (*types.Receipt, error) {
 	action := newAction(x, tx, int32(index))
 	if action == nil {
@@ -94,9 +94,9 @@ func (x *x2ethereum) Exec_WithdrawFromExec(payload *types.AssetsWithdraw, tx *ty
 	return nil, errors.New("tx error")
 }
 
-//--------------------------合约管理员账户操作-------------------------//
+//------------------------- -------------------------//
 
-// AddValidator是为了增加validator
+// AddValidato validator
 func (x *x2ethereum) Exec_AddValidator(payload *x2eTy.MsgValidator, tx *types.Transaction, index int) (*types.Receipt, error) {
 	confManager := types.ConfSub(x.GetAPI().GetConfig(), manTy.ManageX).GStrList("superManager")
 	err := checkTxSignBySpecificAddr(tx, confManager)
@@ -110,7 +110,7 @@ func (x *x2ethereum) Exec_AddValidator(payload *x2eTy.MsgValidator, tx *types.Tr
 	return nil, err
 }
 
-// RemoveValidator是为了移除某一个validator
+// RemoveValidato validator
 func (x *x2ethereum) Exec_RemoveValidator(payload *x2eTy.MsgValidator, tx *types.Transaction, index int) (*types.Receipt, error) {
 	confManager := types.ConfSub(x.GetAPI().GetConfig(), manTy.ManageX).GStrList("superManager")
 	err := checkTxSignBySpecificAddr(tx, confManager)
@@ -124,7 +124,7 @@ func (x *x2ethereum) Exec_RemoveValidator(payload *x2eTy.MsgValidator, tx *types
 	return nil, err
 }
 
-// ModifyPower是为了修改某个validator的power
+// ModifyPowe validato power
 func (x *x2ethereum) Exec_ModifyPower(payload *x2eTy.MsgValidator, tx *types.Transaction, index int) (*types.Receipt, error) {
 	confManager := types.ConfSub(x.GetAPI().GetConfig(), manTy.ManageX).GStrList("superManager")
 	err := checkTxSignBySpecificAddr(tx, confManager)
@@ -138,7 +138,7 @@ func (x *x2ethereum) Exec_ModifyPower(payload *x2eTy.MsgValidator, tx *types.Tra
 	return nil, err
 }
 
-// SetConsensusThreshold是为了修改对validator所提供的claim达成共识的阈值
+// SetConsensusThreshol validato clai 
 func (x *x2ethereum) Exec_SetConsensusThreshold(payload *x2eTy.MsgConsensusThreshold, tx *types.Transaction, index int) (*types.Receipt, error) {
 	confManager := types.ConfSub(x.GetAPI().GetConfig(), manTy.ManageX).GStrList("superManager")
 	err := checkTxSignBySpecificAddr(tx, confManager)

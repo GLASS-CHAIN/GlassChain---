@@ -36,8 +36,8 @@ const (
 const (
 	ListDESC    = int32(0)
 	ListASC     = int32(1)
-	DefultCount = int32(20)  //默认一次取多少条记录
-	MaxCount    = int32(100) //最多取100条
+	DefultCount = int32(20)  / 
+	MaxCount    = int32(100) / 10 
 )
 
 // Star level
@@ -547,8 +547,8 @@ func (action *Action) findLuckyNum(isSolo bool, lott *LotteryDB) (int64, error) 
 		//used for internal verification
 		num = 12345
 	} else {
-		//发消息给randnum模块
-		//在主链上，当前高度查询不到，如果要保证区块个数，高度传入action.height-1
+		/ randnu 
+		/    action.height-1
 		llog.Debug("findLuckyNum on randnum module")
 		param := &types.ReqRandHash{
 			ExecName: "ticket",
@@ -811,7 +811,7 @@ func ListLotteryLuckyHistory(db dbm.Lister, stateDB dbm.KV, param *pty.ReqLotter
 	prefix = calcLotteryDrawPrefix(param.LotteryId)
 	key = calcLotteryDrawKey(param.LotteryId, param.GetRound())
 
-	if param.GetRound() == 0 { //第一次查询
+	if param.GetRound() == 0 { / 
 		values, err = db.List(prefix, nil, count, direction)
 	} else {
 		values, err = db.List(prefix, key, count, direction)
@@ -851,7 +851,7 @@ func ListLotteryBuyRecords(db dbm.Lister, stateDB dbm.KV, param *pty.ReqLotteryB
 	prefix = calcLotteryBuyPrefix(param.LotteryId, param.Addr)
 	key = calcLotteryBuyKey(param.LotteryId, param.Addr, param.GetRound(), param.GetIndex())
 
-	if param.GetRound() == 0 { //第一次查询
+	if param.GetRound() == 0 { / 
 		values, err = db.List(prefix, nil, count, direction)
 	} else {
 		values, err = db.List(prefix, key, count, direction)
@@ -893,7 +893,7 @@ func ListLotteryGainRecords(db dbm.Lister, stateDB dbm.KV, param *pty.ReqLottery
 	prefix = calcLotteryGainPrefix(param.LotteryId, param.Addr)
 	key = calcLotteryGainKey(param.LotteryId, param.Addr, param.GetRound())
 
-	if param.GetRound() == 0 { //第一次查询
+	if param.GetRound() == 0 { / 
 		values, err = db.List(prefix, nil, count, direction)
 	} else {
 		values, err = db.List(prefix, key, count, direction)

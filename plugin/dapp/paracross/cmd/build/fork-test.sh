@@ -16,12 +16,12 @@ function checkParaBlockHashfun() {
 
     if [ "${height2}" -ge "${height1}" ]; then
         height=$height2
-        printf "主链为 $PARA_CLI 当前最大高度 %d \\n" "${height}"
+        printf   $PARA_CLI  %d \\n" "${height}"
         sleep 1
         hash=$($CLI block hash -t "${height}" | jq ".hash")
     else
         height=$height1
-        printf "主链为 $PARA_CLI4 当前最大高度 %d \\n" "${height}"
+        printf   $PARA_CLI4  %d \\n" "${height}"
         sleep 1
         hash=$($CLI4 block hash -t "${height}" | jq ".hash")
     fi
@@ -48,9 +48,9 @@ function checkParaBlockHashfun() {
             fi
         fi
 
-        printf '第 %d 次，10s后查询\n' $j
+        printf   %d ，10 \n' $j
         sleep 10
-        #检查是否超过了最大检测次数
+         
         var=$(($1 - 1))
         if [ $j -ge "${var}" ]; then
             echo "====== syn para blockchain fail======"

@@ -34,7 +34,7 @@ func (policy *privacyPolicy) rescanAllTxAddToUpdateUTXOs() {
 	}
 	bizlog.Debug("rescanAllTxToUpdateUTXOs begin!")
 	for _, acc := range accounts {
-		//从blockchain模块同步Account.Addr对应的所有交易详细信息
+		/ blockchai Account.Add 
 		policy.rescanwg.Add(1)
 		go policy.rescanReqTxDetailByAddr(acc.Addr, policy.rescanwg)
 	}
@@ -42,13 +42,13 @@ func (policy *privacyPolicy) rescanAllTxAddToUpdateUTXOs() {
 	bizlog.Debug("rescanAllTxToUpdateUTXOs success!")
 }
 
-//从blockchain模块同步addr参与的所有交易详细信息
+/ blockchai add 
 func (policy *privacyPolicy) rescanReqTxDetailByAddr(addr string, wg *sync.WaitGroup) {
 	defer wg.Done()
 	policy.reqTxDetailByAddr(addr)
 }
 
-//从blockchain模块同步addr参与的所有交易详细信息
+/ blockchai add 
 func (policy *privacyPolicy) reqTxDetailByAddr(addr string) {
 	if len(addr) == 0 {
 		bizlog.Error("reqTxDetailByAddr input addr is nil!")
@@ -59,7 +59,7 @@ func (policy *privacyPolicy) reqTxDetailByAddr(addr string) {
 	i := 0
 	operater := policy.getWalletOperate()
 	for {
-		//首先从blockchain模块获取地址对应的所有交易hashs列表,从最新的交易开始获取
+		/ blockchai hash  
 		var ReqAddr types.ReqAddr
 		ReqAddr.Addr = addr
 		ReqAddr.Flag = 0
@@ -120,14 +120,14 @@ func (policy *privacyPolicy) parseViewSpendPubKeyPair(in string) (viewPubKey, sp
 }
 
 func (policy *privacyPolicy) getPrivKeyByAddr(addr string) (crypto.PrivKey, error) {
-	//获取指定地址在钱包里的账户信息
+	/ 
 	Accountstor, err := policy.store.getAccountByAddr(addr)
 	if err != nil {
 		bizlog.Error("ProcSendToAddress", "GetAccountByAddr err:", err)
 		return nil, err
 	}
 
-	//通过password解密存储的私钥
+	/ passwor 
 	prikeybyte, err := common.FromHex(Accountstor.GetPrivkey())
 	if err != nil || len(prikeybyte) == 0 {
 		bizlog.Error("ProcSendToAddress", "FromHex err", err)
@@ -136,7 +136,7 @@ func (policy *privacyPolicy) getPrivKeyByAddr(addr string) (crypto.PrivKey, erro
 	operater := policy.getWalletOperate()
 	password := []byte(operater.GetPassword())
 	privkey := wcom.CBCDecrypterPrivkey(password, prikeybyte)
-	//通过privkey生成一个pubkey然后换算成对应的addr
+	/ privke pubke addr
 	cr, err := crypto.New(types.GetSignName("privacy", operater.GetSignType()))
 	if err != nil {
 		bizlog.Error("ProcSendToAddress", "err", err)
@@ -261,7 +261,7 @@ func (policy *privacyPolicy) getPrivacyAccountInfo(req *privacytypes.ReqPrivacyA
 		return nil, errors.New("Address is empty")
 	}
 
-	// 搜索可用余额
+	// 
 	privacyDBStore, err := policy.store.listAvailableUTXOs(req.GetAssetExec(), token, addr)
 	if err != nil {
 		bizlog.Error("getPrivacyAccountInfo", "listAvailableUTXOs")
@@ -284,7 +284,7 @@ func (policy *privacyPolicy) getPrivacyAccountInfo(req *privacytypes.ReqPrivacyA
 	}
 	reply.Utxos = &privacytypes.UTXOs{Utxos: utxos}
 
-	// 搜索冻结余额
+	// 
 	utxos = make([]*privacytypes.UTXO, 0)
 	ftxoslice, err := policy.store.listFrozenUTXOs(req.GetAssetExec(), token, addr)
 	if err == nil && ftxoslice != nil {
@@ -298,10 +298,10 @@ func (policy *privacyPolicy) getPrivacyAccountInfo(req *privacytypes.ReqPrivacyA
 	return reply, nil
 }
 
-// 修改选择UTXO的算法
-// 优先选择UTXO高度与当前高度建个12个区块以上的UTXO
-// 如果选择还不够则再从老到新选择12个区块内的UTXO
-// 当该地址上的可用UTXO比较多时，可以考虑改进算法，优先选择币值小的，花掉小票，然后再选择币值接近的，减少找零，最后才选择大面值的找零
+// UTX 
+// UTX 1 UTXO
+// 1 UTXO
+// UTX       
 func (policy *privacyPolicy) selectUTXO(assetExec, token, addr string, amount int64) ([]*txOutputInfo, error) {
 	if len(token) == 0 || len(addr) == 0 || amount <= 0 {
 		return nil, types.ErrInvalidParam
@@ -326,8 +326,8 @@ func (policy *privacyPolicy) selectUTXO(assetExec, token, addr string, amount in
 		}
 	}
 	if balance < amount && len(unconfirmUTXOs) > 0 {
-		// 已经确认的UTXO还不够支付，则需要按照从老到新的顺序，从可能回退的队列中获取
-		// 高度从低到高获取
+		// UTX   
+		// 
 		sort.Slice(unconfirmUTXOs, func(i, j int) bool {
 			return unconfirmUTXOs[i].height < unconfirmUTXOs[j].height
 		})
@@ -355,15 +355,15 @@ func (policy *privacyPolicy) selectUTXO(assetExec, token, addr string, amount in
 }
 
 /*
-buildInput 构建隐私交易的输入信息
-操作步骤
-	1.从当前钱包中选择可用并且足够支付金额的UTXO列表
-	2.如果需要混淆(mixcout>0)，则根据UTXO的金额从数据库中获取足够数量的UTXO，与当前UTXO进行混淆
-	3.通过公式 x=Hs(aR)+b，计算出一个整数，因为 xG = Hs(ar)G+bG = Hs(aR)G+B，所以可以继续使用这笔交易
+buildInput 
+ 
+	1 UTX 
+	2 (mixcout>0) UTX UTXO UTX 
+	3  x=Hs(aR)+b   xG = Hs(ar)G+bG = Hs(aR)G+B 
 */
 func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, buildInfo *buildInputInfo) (*privacytypes.PrivacyInput, []*privacytypes.UTXOBasics, []*privacytypes.RealKeyInput, []*txOutputInfo, error) {
 	operater := policy.getWalletOperate()
-	//挑选满足额度的utxo
+	/ utxo
 	selectedUtxo, err := policy.selectUTXO(buildInfo.assetExec, buildInfo.assetSymbol, buildInfo.sender, buildInfo.amount)
 	if err != nil {
 		bizlog.Error("buildInput", "Failed to selectOutput for amount", buildInfo.amount,
@@ -386,7 +386,7 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 	for _, out := range selectedUtxo {
 		reqGetGlobalIndex.Amount = append(reqGetGlobalIndex.Amount, out.amount)
 	}
-	// 混淆数大于0时候才向blockchain请求
+	//  blockchai 
 	var resUTXOGlobalIndex *privacytypes.ResUTXOGlobalIndex
 	if buildInfo.mixcount > 0 {
 		query := &types.ChainExecutor{
@@ -394,7 +394,7 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 			FuncName: "GetUTXOGlobalIndex",
 			Param:    types.Encode(&reqGetGlobalIndex),
 		}
-		//向blockchain请求相同额度的不同utxo用于相同额度的混淆作用
+		/ blockchai utx 
 		data, err := operater.GetAPI().QueryChain(query)
 		if err != nil {
 			bizlog.Error("buildInput BlockChainQuery", "err", err)
@@ -417,7 +417,7 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 		}
 	}
 
-	//构造输入PrivacyInput
+	/ PrivacyInput
 	privacyInput := &privacytypes.PrivacyInput{}
 	utxosInKeyInput := make([]*privacytypes.UTXOBasics, len(selectedUtxo))
 	realkeyInputSlice := make([]*privacytypes.RealKeyInput, len(selectedUtxo))
@@ -426,7 +426,7 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 		if nil != resUTXOGlobalIndex && i < len(resUTXOGlobalIndex.UtxoIndex4Amount) && utxo2pay.amount == resUTXOGlobalIndex.UtxoIndex4Amount[i].Amount {
 			utxoIndex4Amount = resUTXOGlobalIndex.UtxoIndex4Amount[i]
 			for j, utxo := range utxoIndex4Amount.Utxos {
-				//查找自身这条UTXO是否存在，如果存在则将其从其中删除
+				/ UTX  
 				if bytes.Equal(utxo.OnetimePubkey, utxo2pay.onetimePublicKey) {
 					utxoIndex4Amount.Utxos = append(utxoIndex4Amount.Utxos[:j], utxoIndex4Amount.Utxos[j+1:]...)
 					break
@@ -440,7 +440,7 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 		if utxoIndex4Amount.Utxos == nil {
 			utxoIndex4Amount.Utxos = make([]*privacytypes.UTXOBasic, 0)
 		}
-		//如果请求返回的用于混淆的utxo不包含自身且达到mix的上限，则将最后一条utxo删除，保证最后的混淆度不大于设置
+		/ utx mi  utx  
 		if len(utxoIndex4Amount.Utxos) > int(buildInfo.mixcount) {
 			utxoIndex4Amount.Utxos = utxoIndex4Amount.Utxos[:len(utxoIndex4Amount.Utxos)-1]
 		}
@@ -449,7 +449,7 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 			UtxoGlobalIndex: utxo2pay.utxoGlobalIndex,
 			OnetimePubkey:   utxo2pay.onetimePublicKey,
 		}
-		//将真实的utxo添加到最后一个
+		/ utx 
 		utxoIndex4Amount.Utxos = append(utxoIndex4Amount.Utxos, utxo)
 		positions := operater.GetRandom().Perm(len(utxoIndex4Amount.Utxos))
 		utxos := make([]*privacytypes.UTXOBasic, len(utxoIndex4Amount.Utxos))
@@ -484,9 +484,9 @@ func (policy *privacyPolicy) buildInput(privacykeyParirs *privacy.Privacy, build
 		for _, utxo := range utxos {
 			keyInput.UtxoGlobalIndex = append(keyInput.UtxoGlobalIndex, utxo.UtxoGlobalIndex)
 		}
-		//完成一个input的构造，包括基于其环签名的生成，keyImage的生成，
-		//必须要注意的是，此处要添加用于混淆的其他utxo添加到最终keyinput的顺序必须和生成环签名时提供pubkey的顺序一致
-		//否则会导致环签名验证的失败
+		/ inpu  ，keyImag ，
+		/  utx keyinpu pubke 
+		/ 
 		privacyInput.Keyinput = append(privacyInput.Keyinput, keyInput)
 	}
 
@@ -557,7 +557,7 @@ func (policy *privacyPolicy) createPublic2PrivacyTx(req *privacytypes.ReqCreateP
 
 func (policy *privacyPolicy) createPrivacy2PrivacyTx(req *privacytypes.ReqCreatePrivacyTx) (*types.Transaction, error) {
 
-	//需要燃烧的utxo
+	/ utxo
 	var utxoBurnedAmount int64
 	cfg := policy.getWalletOperate().GetAPI().GetConfig()
 	isMainetCoins := !cfg.IsPara() && (req.AssetExec == cfg.GetCoinExec())
@@ -598,7 +598,7 @@ func (policy *privacyPolicy) createPrivacy2PrivacyTx(req *privacytypes.ReqCreate
 	for _, input := range privacyInput.Keyinput {
 		selectedAmounTotal += input.Amount
 	}
-	//构造输出UTXO
+	/ UTXO
 	privacyOutput, err := generateOuts(viewPublic, spendPublic, viewPub4chgPtr, spendPub4chgPtr, req.GetAmount(), selectedAmounTotal, utxoBurnedAmount, cfg.GetCoinPrecision())
 	if err != nil {
 		return nil, err
@@ -634,7 +634,7 @@ func (policy *privacyPolicy) createPrivacy2PrivacyTx(req *privacytypes.ReqCreate
 		}
 	}
 
-	// 创建交易成功，将已经使用掉的UTXO冻结，需要注意此处获取的txHash和交易发送时的一致
+	//  UTX  txHas 
 	policy.saveFTXOInfo(tx.GetExpire(), req.GetAssetExec(), req.Tokenname, req.GetFrom(), hex.EncodeToString(tx.Hash()), selectedUtxo)
 	tx.Signature = &types.Signature{
 		Signature: types.Encode(&privacytypes.PrivacySignatureParam{
@@ -648,8 +648,8 @@ func (policy *privacyPolicy) createPrivacy2PrivacyTx(req *privacytypes.ReqCreate
 
 func (policy *privacyPolicy) createPrivacy2PublicTx(req *privacytypes.ReqCreatePrivacyTx) (*types.Transaction, error) {
 
-	//需要燃烧的utxo
-	//需要燃烧的utxo
+	/ utxo
+	/ utxo
 	var utxoBurnedAmount int64
 	cfg := policy.getWalletOperate().GetAPI().GetConfig()
 	isMainetCoins := !cfg.IsPara() && (req.AssetExec == cfg.GetCoinExec())
@@ -688,7 +688,7 @@ func (policy *privacyPolicy) createPrivacy2PublicTx(req *privacytypes.ReqCreateP
 	}
 	changeAmount := selectedAmounTotal - req.GetAmount()
 	//step 2,generateOuts
-	//构造输出UTXO,只生成找零的UTXO
+	/ UTXO UTXO
 	privacyOutput, err := generateOuts(nil, nil, viewPub4chgPtr, spendPub4chgPtr, 0, changeAmount, utxoBurnedAmount, cfg.GetCoinPrecision())
 	if err != nil {
 		return nil, err
@@ -724,7 +724,7 @@ func (policy *privacyPolicy) createPrivacy2PublicTx(req *privacytypes.ReqCreateP
 			return nil, err
 		}
 	}
-	// 创建交易成功，将已经使用掉的UTXO冻结，需要注意此处获取的txHash和交易发送时的一致
+	//  UTX  txHas 
 	policy.saveFTXOInfo(tx.GetExpire(), req.GetAssetExec(), req.Tokenname, req.GetFrom(), hex.EncodeToString(tx.Hash()), selectedUtxo)
 	tx.Signature = &types.Signature{
 		Signature: types.Encode(&privacytypes.PrivacySignatureParam{
@@ -737,14 +737,14 @@ func (policy *privacyPolicy) createPrivacy2PublicTx(req *privacytypes.ReqCreateP
 }
 
 func (policy *privacyPolicy) saveFTXOInfo(expire int64, assetExec, assetSymbol, sender, txhash string, selectedUtxos []*txOutputInfo) {
-	//将已经作为本次交易输入的utxo进行冻结，防止产生双花交易
+	/ utx  
 	policy.store.moveUTXO2FTXO(expire, assetExec, assetSymbol, sender, txhash, selectedUtxos)
-	//TODO:需要加入超时处理，需要将此处的txhash写入到数据库中，以免钱包瞬间奔溃后没有对该笔隐私交易的记录，
-	//TODO:然后当该交易得到执行之后，没法将FTXO转化为STXO，added by hezhengjun on 2018.6.5
+	//TODO  txhas  ，
+	//TODO  FTX STXO，added by hezhengjun on 2018.6.5
 }
 
 func (policy *privacyPolicy) getPrivacyKeyPairs() ([]addrAndprivacy, error) {
-	//通过Account前缀查找获取钱包中的所有账户信息
+	/ Accoun 
 	WalletAccStores, err := policy.store.getAccountByPrefix("Account")
 	if err != nil || len(WalletAccStores) == 0 {
 		bizlog.Info("getPrivacyKeyPairs", "store getAccountByPrefix error", err)
@@ -775,7 +775,7 @@ func (policy *privacyPolicy) rescanUTXOs(req *privacytypes.ReqRescanUtxos) (*pri
 	if req.Flag != 0 {
 		return policy.store.getRescanUtxosFlag4Addr(req)
 	}
-	// Rescan请求
+	// Resca 
 	var repRescanUtxos privacytypes.RepRescanUtxos
 	repRescanUtxos.Flag = req.Flag
 
@@ -796,7 +796,7 @@ func (policy *privacyPolicy) rescanUTXOs(req *privacytypes.ReqRescanUtxos) (*pri
 	return &repRescanUtxos, nil
 }
 
-//从blockchain模块同步addr参与的所有交易详细信息
+/ blockchai add 
 func (policy *privacyPolicy) rescanReqUtxosByAddr(addrs []string) {
 	defer policy.getWalletOperate().GetWaitGroup().Done()
 	bizlog.Debug("RescanAllUTXO begin!")
@@ -805,7 +805,7 @@ func (policy *privacyPolicy) rescanReqUtxosByAddr(addrs []string) {
 }
 
 func (policy *privacyPolicy) reqUtxosByAddr(addrs []string) {
-	// 更新数据库存储状态
+	// 
 	var storeAddrs []string
 	if len(addrs) == 0 {
 		WalletAccStores, err := policy.store.getAccountByPrefix("Account")
@@ -833,8 +833,8 @@ func (policy *privacyPolicy) reqUtxosByAddr(addrs []string) {
 		default:
 		}
 
-		//首先从execs模块获取地址对应的所有UTXOs,
-		// 1 先获取隐私合约地址相关交易
+		/ exec UTXOs,
+		// 1 
 		var ReqAddr types.ReqAddr
 		ReqAddr.Addr = reqAddr
 		ReqAddr.Flag = 0
@@ -846,12 +846,12 @@ func (policy *privacyPolicy) reqUtxosByAddr(addrs []string) {
 		} else {
 			ReqAddr.Height = txInfo.GetHeight()
 			ReqAddr.Index = txInfo.GetIndex()
-			if !cfg.IsDappFork(ReqAddr.Height, privacytypes.PrivacyX, "ForkV21Privacy") { // 小于隐私分叉高度不做扫描
+			if !cfg.IsDappFork(ReqAddr.Height, privacytypes.PrivacyX, "ForkV21Privacy") { // 
 				break
 			}
 		}
 		i++
-		//请求交易信息
+		/ 
 		msg, err := operater.GetAPI().Query(privacytypes.PrivacyX, "GetTxsByAddr", &ReqAddr)
 		if err != nil {
 			bizlog.Error("reqUtxosByAddr", "GetTxsByAddr error", err, "addr", reqAddr)
@@ -881,14 +881,14 @@ func (policy *privacyPolicy) reqUtxosByAddr(addrs []string) {
 			break
 		}
 	}
-	// 扫描完毕
+	// 
 	policy.SetRescanFlag(privacytypes.UtxoFlagNoScan)
-	// 删除privacyInput
+	// privacyInput
 	policy.deleteScanPrivacyInputUtxo()
 	policy.store.saveREscanUTXOsAddresses(storeAddrs, privacytypes.UtxoFlagScanEnd)
 }
 
-//TODO:input也可能时混淆的utxo, 需要增加判定实际的utxo
+//TODO:inpu utxo, utxo
 func (policy *privacyPolicy) deleteScanPrivacyInputUtxo() {
 	maxUTXOsPerTime := 1000
 	for {
@@ -901,7 +901,7 @@ func (policy *privacyPolicy) deleteScanPrivacyInputUtxo() {
 }
 
 func (policy *privacyPolicy) getPrivacyTxDetailByHashs(ReqHashes *types.ReqHashes, addrs []string) {
-	//通过txhashs获取对应的txdetail
+	/ txhash txdetail
 	TxDetails, err := policy.getWalletOperate().GetAPI().GetTransactionByHash(ReqHashes)
 	if err != nil {
 		bizlog.Error("getPrivacyTxDetailByHashs", "GetTransactionByHash error", err)
@@ -959,7 +959,7 @@ func (policy *privacyPolicy) signatureTx(tx *types.Transaction, privacyInput *pr
 	tx.Signature = &types.Signature{
 		Ty:        privacytypes.RingBaseonED25519,
 		Signature: ringSignData,
-		// 这里填的是隐私合约的公钥，让框架保持一致
+		//  
 		Pubkey: address.ExecPubKey(cfg.ExecName(privacytypes.PrivacyX)),
 	}
 	return nil
@@ -986,7 +986,7 @@ func (policy *privacyPolicy) buildAndStoreWalletTxDetail(param *buildStoreWallet
 		txdetailbyte := types.Encode(&txdetail)
 
 		txInfo.batch.Set(key, txdetailbyte)
-		//额外存储可以快速定位到接收隐私的交易
+		/ 
 		if sendTx == param.sendRecvFlag {
 			txInfo.batch.Set(calcSendPrivacyTxKey(txInfo.assetExec, txInfo.assetSymbol, param.addr, heightstr), key)
 		} else if recvTx == param.sendRecvFlag {
@@ -1051,7 +1051,7 @@ func (policy *privacyPolicy) checkWalletStoreData() {
 func (policy *privacyPolicy) addDelPrivacyTxsFromBlock(tx *types.Transaction, index int32, block *types.BlockDetail, batch db.Batch, addDelType int32) {
 
 	privacyPairs, err := policy.getPrivacyKeyPairs()
-	//钱包未开启隐私功能，或不存在地址直接返回
+	/  
 	if len(privacyPairs) == 0 {
 		bizlog.Debug("addDelPrivacyTxsFromBlock", "getPrivacyKeyPairs err", err)
 		return
@@ -1093,7 +1093,7 @@ func (policy *privacyPolicy) addDelPrivacyTxsFromBlock(tx *types.Transaction, in
 
 	if txInfo.actionTy == privacytypes.ActionPublic2Privacy {
 
-		// 公对私的发送方是公开的，检测是否为本钱包地址
+		//  
 		txFrom := tx.From()
 		for _, key := range privacyPairs {
 			if *key.Addr == txFrom {
@@ -1114,7 +1114,7 @@ func (policy *privacyPolicy) addDelPrivacyTxsFromBlock(tx *types.Transaction, in
 	} else if txInfo.actionTy == privacytypes.ActionPrivacy2Public {
 		sender := policy.processInputUtxos(txInfo)
 		policy.processOutputUtxos(sender, privacyPairs, txInfo)
-		// 私有到公开的接收方是公开的，检测是否为本钱包地址
+		//  
 		txTo := action.GetPrivacy2Public().GetTo()
 		for _, key := range privacyPairs {
 			if *key.Addr == txTo {
@@ -1134,13 +1134,13 @@ func (policy *privacyPolicy) processInputUtxos(txInfo *privacyTxInfo) string {
 
 	bizlog.Debug("processInputUtxos", "txhash", txInfo.txHashHex, "actionName", txInfo.actionName, "isExecOk", txInfo.isExecOk, "isRollBack", txInfo.isRollBack)
 
-	// utxo发送者
+	// utx 
 	utxoSender := ""
 	var err error
-	// 区块回滚
+	// 
 	if txInfo.isRollBack {
 
-		//当发生交易回撤时，从记录的STXO中查找相关的交易，并将其重置为FTXO，因为该交易大概率会在其他区块中再次执行
+		/  STX  FTXO 
 		stxosInOneTx, _, _ := policy.store.getWalletFtxoStxo(STXOs4Tx)
 		for _, stxo := range stxosInOneTx {
 			if stxo.Txhash != txInfo.txHashHex {
@@ -1174,7 +1174,7 @@ func (policy *privacyPolicy) processInputUtxos(txInfo *privacyTxInfo) string {
 
 		}
 	}
-	// 解析出发送者是本地钱包地址，记录交易
+	//  
 	if utxoSender != "" {
 		param := &buildStoreWalletTxDetailParam{
 			txInfo:       txInfo,
@@ -1231,7 +1231,7 @@ func (policy *privacyPolicy) processOutputUtxos(utxoSender string, keys []addrAn
 			recvUtxos = append(recvUtxos, info2store)
 		}
 
-		// 公对私的utxo只属于一个地址，只需检测第一个utxo
+		// utx  utxo
 		if txInfo.actionTy == privacytypes.ActionPublic2Privacy {
 			omitCheck = true
 		}
@@ -1241,7 +1241,7 @@ func (policy *privacyPolicy) processOutputUtxos(utxoSender string, keys []addrAn
 	for _, utxo := range recvUtxos {
 
 		if !txInfo.isExecOk {
-			//对于执行失败的交易，只需要将该交易记录在钱包就行
+			/  
 			break
 		}
 		var err error
@@ -1257,12 +1257,12 @@ func (policy *privacyPolicy) processOutputUtxos(utxoSender string, keys []addrAn
 	}
 	// handle recv tx index
 	for receiver := range receivers {
-		// 如果utxo接收者有2个，说明发送者和接收者都是本钱包地址，且存在找零情况
-		// 这里需要过滤utxo找零接收情况，找零接收不是实际的交易接收方
+		// utx    
+		// utx  
 		if len(receivers) > 1 && receiver == utxoSender {
 			continue
 		}
-		// 私到公转账utxo接收者只可能是找零情况，不需要记录
+		// utx  
 		if txInfo.actionTy == privacytypes.ActionPrivacy2Public {
 			continue
 		}

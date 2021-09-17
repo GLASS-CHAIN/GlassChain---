@@ -6,7 +6,7 @@ package types
 
 import "errors"
 
-//multisig 合约的错误码
+//multisig 
 var (
 	ErrRequiredweight       = errors.New("ErrRequiredweight")
 	ErrCreatAccountAddr     = errors.New("ErrCreatAccountAddr")

@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Cmd wasm 命令行
+// Cmd wasm 
 func Cmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "wasm",

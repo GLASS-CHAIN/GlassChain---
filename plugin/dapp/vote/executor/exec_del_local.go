@@ -5,10 +5,10 @@ import (
 )
 
 /*
- * 实现区块回退时本地执行的数据清除
+ * 
  */
 
-// ExecDelLocal localdb kv数据自动回滚接口
+// ExecDelLocal localdb k 
 func (v *vote) ExecDelLocal(tx *types.Transaction, receipt *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	kvs, err := v.DelRollbackKV(tx, tx.Execer)
 	if err != nil {

@@ -141,7 +141,7 @@ func (s *P2pserver) Version2(ctx context.Context, in *pb.P2PVersion) (*pb.P2PVer
 		log.Error("Version2", "get grpc peer addr err", err)
 		return nil, fmt.Errorf("get grpc peer addr err:%s", err.Error())
 	}
-	//addrFrom:表示发送方外网地址，addrRecv:表示接收方外网地址
+	//addrFrom ，addrRecv 
 	_, port, err := net.SplitHostPort(in.AddrFrom)
 	if err != nil {
 		return nil, fmt.Errorf("AddrFrom format err")
@@ -252,7 +252,7 @@ func (s *P2pserver) GetData(in *pb.P2PGetData, stream pb.P2Pgservice_GetDataServ
 
 	invs := in.GetInvs()
 	client := s.node.nodeInfo.client
-	for _, inv := range invs { //过滤掉不需要的数据
+	for _, inv := range invs { / 
 		var invdata pb.InvData
 		var memtx = make(map[string]*pb.Transaction)
 		if inv.GetTy() == msgTx {
@@ -279,7 +279,7 @@ func (s *P2pserver) GetData(in *pb.P2PGetData, stream pb.P2Pgservice_GetDataServ
 			err := client.Send(msg, true)
 			if err != nil {
 				log.Error("GetBlocks", "Error", err.Error())
-				return err //blockchain 模块关闭，直接返回，不需要continue
+				return err //blockchain   continue
 			}
 			resp, err := client.WaitTimeout(msg, time.Second*20)
 			if err != nil {
@@ -420,15 +420,15 @@ func (s *P2pserver) ServerStreamSend(in *pb.P2PPing, stream pb.P2Pgservice_Serve
 		return fmt.Errorf("get grpc peer addr err:%s", err.Error())
 	}
 	peerAddr := fmt.Sprintf("%s:%v", peerIP, in.GetPort())
-	//等待ReadStream接收节点version信息
+	/ ReadStrea versio 
 	var peerInfo *innerpeer
 	var reTry int32
 	peerName := hex.EncodeToString(in.GetSign().GetPubkey())
-	//此处不能用IP:Port 作为key,因为存在内网多个节点共享一个IP的可能,用peerName 不会有这个问题
+	/ IP:Port key I  peerName 
 	for ; peerInfo == nil || peerInfo.p2pversion == 0; peerInfo = s.getInBoundPeerInfo(peerName) {
 		time.Sleep(time.Second)
 		reTry++
-		if reTry > 5 { //如果一直不跳出循环，这个goroutine 一直存在，潜在的风险点
+		if reTry > 5 { /  goroutine  
 			return fmt.Errorf("can not find peer:%v", peerAddr)
 		}
 	}
@@ -465,7 +465,7 @@ func (s *P2pserver) ServerStreamRead(stream pb.P2Pgservice_ServerStreamReadServe
 	}
 
 	var peeraddr, peername string
-	//此处delete是defer调用, 提前绑定变量,需要传入指针, peeraddr的值才能被获取
+	/ delet defe ,  , peeradd 
 	defer s.deleteInBoundPeerInfo(&peername)
 	defer stream.SendAndClose(&pb.ReqNil{})
 
@@ -482,7 +482,7 @@ func (s *P2pserver) ServerStreamRead(stream pb.P2Pgservice_ServerStreamReadServe
 		if s.node.processRecvP2P(in, peername, s.pubToStream, peeraddr) {
 
 		} else if ver := in.GetVersion(); ver != nil {
-			//接收版本信息
+			/ 
 			peername = ver.GetPeername()
 			softversion := ver.GetSoftversion()
 			innerpeer := s.getInBoundPeerInfo(peername)
@@ -491,17 +491,17 @@ func (s *P2pserver) ServerStreamRead(stream pb.P2Pgservice_ServerStreamReadServe
 				return pb.ErrP2PChannel
 			}
 			if innerpeer != nil {
-				//这里如果直接修改原值, 可能data race
+				/ , data race
 				info := *innerpeer
 				info.p2pversion = p2pVersion
 				info.softversion = softversion
 				s.addInBoundPeerInfo(peername, info)
 			} else {
-				//没有获取到peer 的信息，说明没有获取ping的消息包
+				/ peer  pin 
 				return pb.ErrStreamPing
 			}
 
-		} else if ping := in.GetPing(); ping != nil { ///被远程节点初次连接后，会收到ping 数据包，收到后注册到inboundpeers.
+		} else if ping := in.GetPing(); ping != nil { //  ping  inboundpeers.
 			//Ping package
 			if !P2pComm.CheckSign(ping) {
 				log.Error("ServerStreamRead", "check stream", "check sig err")
@@ -540,7 +540,7 @@ func (s *P2pserver) CollectInPeers(ctx context.Context, in *pb.P2PPing) (*pb.Pee
 			continue
 		}
 
-		p2pPeers = append(p2pPeers, &pb.Peer{Name: inpeer.name, Addr: ip, Port: int32(port)}) ///仅用name,addr,port字段，用于统计peer num.
+		p2pPeers = append(p2pPeers, &pb.Peer{Name: inpeer.name, Addr: ip, Port: int32(port)}) // name,addr,por  peer num.
 	}
 	return &pb.PeerList{Peers: p2pPeers}, nil
 }
@@ -565,7 +565,7 @@ func (s *P2pserver) CollectInPeers2(ctx context.Context, in *pb.P2PPing) (*pb.Pe
 		}
 
 		p2pPeers = append(p2pPeers, &pb.PeersInfo{Name: inpeer.name, Ip: ip, Port: int32(port),
-			Softversion: inpeer.softversion, P2Pversion: inpeer.p2pversion}) ///仅用name,addr,port字段，用于统计peer num.
+			Softversion: inpeer.softversion, P2Pversion: inpeer.p2pversion}) // name,addr,por  peer num.
 	}
 
 	return &pb.PeersReply{Peers: p2pPeers}, nil
@@ -597,7 +597,7 @@ func (s *P2pserver) loadMempool() (map[string]*pb.Transaction, error) {
 
 func (s *P2pserver) manageStream() {
 
-	go func() { //发送空的block stream ping
+	go func() { / block stream ping
 		ticker := time.NewTicker(StreamPingTimeout)
 		defer ticker.Stop()
 		for {
@@ -624,7 +624,7 @@ func (s *P2pserver) addStreamHandler(peerName string) chan interface{} {
 	s.smtx.Lock()
 	defer s.smtx.Unlock()
 	if dataChan, ok := s.streams[peerName]; ok {
-		//一个节点对应一个流, 重复打开两个流, 关闭老的数据管道
+		/ , , 
 		close(dataChan)
 	}
 
@@ -632,7 +632,7 @@ func (s *P2pserver) addStreamHandler(peerName string) chan interface{} {
 	return s.streams[peerName]
 }
 
-//发布数据到所有服务流
+/ 
 func (s *P2pserver) pubToAllStream(data interface{}) {
 	s.smtx.Lock()
 	defer s.smtx.Unlock()
@@ -648,7 +648,7 @@ func (s *P2pserver) pubToAllStream(data interface{}) {
 	}
 }
 
-//发布数据到指定流
+/ 
 func (s *P2pserver) pubToStream(data interface{}, peerName string) {
 	s.smtx.Lock()
 	defer s.smtx.Unlock()

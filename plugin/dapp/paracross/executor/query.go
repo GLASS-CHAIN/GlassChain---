@@ -377,7 +377,7 @@ func listNodeGroupStatus(db dbm.KVDB, prefix []byte) (types.Message, error) {
 	return &resp, nil
 }
 
-//按状态遍历
+/ 
 func listLocalNodeStatus(db dbm.KVDB, title string, status int32) (types.Message, error) {
 	var prefix []byte
 	if status == 0 {
@@ -470,7 +470,7 @@ func (p *Paracross) Query_GetSelfConsOneStage(in *types.Int64) (types.Message, e
 	return stage, nil
 }
 
-// Query_ListSelfStages 批量查询
+// Query_ListSelfStages 
 func (p *Paracross) Query_ListSelfStages(in *pt.ReqQuerySelfStages) (types.Message, error) {
 	return p.listSelfStages(in)
 }
@@ -520,7 +520,7 @@ func (p *Paracross) Query_GetHeight(req *types.ReqString) (*pt.ParacrossConsensu
 	chainHeight := header.Height
 
 	if resp, ok := res.(*pt.ParacrossStatus); ok {
-		// 如果主链上查询平行链的高度，chain height应该是平行链的高度而不是主链高度， 平行链的真实高度需要在平行链侧查询
+		// ，chain heigh ， 
 		if !cfg.IsPara() {
 			chainHeight = resp.Height
 		}
@@ -562,7 +562,7 @@ func (p *Paracross) Query_GetNodeBindMinerList(in *pt.ParaNodeBindOne) (types.Me
 	}
 
 	var newList pt.ParaNodeBindList
-	//按node query
+	/ node query
 	if len(in.SuperNode) != 0 && len(in.Miner) == 0 {
 		for _, n := range list.Miners {
 			if n.SuperNode == in.SuperNode {
@@ -572,7 +572,7 @@ func (p *Paracross) Query_GetNodeBindMinerList(in *pt.ParaNodeBindOne) (types.Me
 		return getMinerListResp(p.GetStateDB(), &newList)
 	}
 
-	//按miner query
+	/ miner query
 	if len(in.SuperNode) == 0 && len(in.Miner) != 0 {
 		for _, n := range list.Miners {
 			if n.Miner == in.Miner {
@@ -581,7 +581,7 @@ func (p *Paracross) Query_GetNodeBindMinerList(in *pt.ParaNodeBindOne) (types.Me
 		}
 		return getMinerListResp(p.GetStateDB(), &newList)
 	}
-	//按唯一绑定查询
+	/ 
 	if len(in.SuperNode) != 0 && len(in.Miner) != 0 {
 		for _, n := range list.Miners {
 			if n.SuperNode == in.SuperNode && n.Miner == in.Miner {
@@ -591,6 +591,6 @@ func (p *Paracross) Query_GetNodeBindMinerList(in *pt.ParaNodeBindOne) (types.Me
 		return getMinerListResp(p.GetStateDB(), &newList)
 	}
 
-	//获取所有
+	/ 
 	return getMinerListResp(p.GetStateDB(), list)
 }

@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package types;
 
-//以太坊账户信息
-// 	 privkey : 账户地址对应的私钥
-//	 addr :账户地址
+/ 
+// 	 privkey : 
+//	 addr  
 message Account4Relayer {
     bytes privkey    = 1;
     string addr      = 2;
@@ -92,7 +92,7 @@ message LockEthErc20 {
     string ownerKey        = 1;
     string tokenAddr       = 2;
     string amount           = 3;
-    //将lock住的资产跨链转移到chain33的该账户名下
+    / loc chain3 
     string chain33Receiver = 4;
 }
 

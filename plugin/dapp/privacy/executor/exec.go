@@ -34,10 +34,10 @@ func (p *privacy) Exec_Public2Privacy(payload *ty.Public2Privacy, tx *types.Tran
 
 	txhash := common.ToHex(tx.Hash())
 	output := payload.GetOutput().GetKeyoutput()
-	//因为只有包含当前交易的block被执行完成之后，同步到相应的钱包之后，
-	//才能将相应的utxo作为input，进行支付，所以此处不需要进行将KV设置到
-	//executor中的临时数据库中，只需要将kv返回给blockchain就行
-	//即：一个块中产生的UTXO是不能够在同一个高度进行支付的
+	/ bloc  ，
+	/ utx input  K 
+	//executo  k blockchai 
+	/  UTX 
 	for index, keyOutput := range output {
 		key := CalcPrivacyOutputKey(payload.AssetExec, payload.Tokenname, keyOutput.Amount, txhash, index)
 		value := types.Encode(keyOutput)

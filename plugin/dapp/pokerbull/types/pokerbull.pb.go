@@ -26,29 +26,29 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-//斗牛游戏内容
+/ 
 type PokerBull struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GameId      string      `protobuf:"bytes,1,opt,name=gameId,proto3" json:"gameId,omitempty"`           //默认是由创建这局游戏的txHash作为gameId
+	GameId      string      `protobuf:"bytes,1,opt,name=gameId,proto3" json:"gameId,omitempty"`           / txHas gameId
 	Status      int32       `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`          // Start 1 -> Continue 2 -> Quit 3
-	StartTime   int64       `protobuf:"varint,3,opt,name=startTime,proto3" json:"startTime,omitempty"`    //开始时间
-	StartTxHash string      `protobuf:"bytes,4,opt,name=startTxHash,proto3" json:"startTxHash,omitempty"` //游戏启动交易hash
-	Value       int64       `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`            //赌注
-	Poker       *PBPoker    `protobuf:"bytes,6,opt,name=poker,proto3" json:"poker,omitempty"`             //扑克牌
-	Players     []*PBPlayer `protobuf:"bytes,7,rep,name=players,proto3" json:"players,omitempty"`         //玩家历史牌和结果集
-	PlayerNum   int32       `protobuf:"varint,8,opt,name=playerNum,proto3" json:"playerNum,omitempty"`    //玩家数
-	Results     []*PBResult `protobuf:"bytes,9,rep,name=results,proto3" json:"results,omitempty"`         //游戏结果集
-	Index       int64       `protobuf:"varint,10,opt,name=index,proto3" json:"index,omitempty"`           //索引
-	PrevIndex   int64       `protobuf:"varint,11,opt,name=prevIndex,proto3" json:"prevIndex,omitempty"`   //上级索引
-	QuitTime    int64       `protobuf:"varint,12,opt,name=quitTime,proto3" json:"quitTime,omitempty"`     //游戏结束时间
-	QuitTxHash  string      `protobuf:"bytes,13,opt,name=quitTxHash,proto3" json:"quitTxHash,omitempty"`  //游戏结束交易hash
-	DealerAddr  string      `protobuf:"bytes,14,opt,name=dealerAddr,proto3" json:"dealerAddr,omitempty"`  //下局庄家地址
-	IsWaiting   bool        `protobuf:"varint,15,opt,name=isWaiting,proto3" json:"isWaiting,omitempty"`   //游戏是否处于等待状态
-	PreStatus   int32       `protobuf:"varint,16,opt,name=preStatus,proto3" json:"preStatus,omitempty"`   //上一index的状态
-	Round       int32       `protobuf:"varint,17,opt,name=round,proto3" json:"round,omitempty"`           //当前游戏回合数
+	StartTime   int64       `protobuf:"varint,3,opt,name=startTime,proto3" json:"startTime,omitempty"`    / 
+	StartTxHash string      `protobuf:"bytes,4,opt,name=startTxHash,proto3" json:"startTxHash,omitempty"` / hash
+	Value       int64       `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`            / 
+	Poker       *PBPoker    `protobuf:"bytes,6,opt,name=poker,proto3" json:"poker,omitempty"`             / 
+	Players     []*PBPlayer `protobuf:"bytes,7,rep,name=players,proto3" json:"players,omitempty"`         / 
+	PlayerNum   int32       `protobuf:"varint,8,opt,name=playerNum,proto3" json:"playerNum,omitempty"`    / 
+	Results     []*PBResult `protobuf:"bytes,9,rep,name=results,proto3" json:"results,omitempty"`         / 
+	Index       int64       `protobuf:"varint,10,opt,name=index,proto3" json:"index,omitempty"`           / 
+	PrevIndex   int64       `protobuf:"varint,11,opt,name=prevIndex,proto3" json:"prevIndex,omitempty"`   / 
+	QuitTime    int64       `protobuf:"varint,12,opt,name=quitTime,proto3" json:"quitTime,omitempty"`     / 
+	QuitTxHash  string      `protobuf:"bytes,13,opt,name=quitTxHash,proto3" json:"quitTxHash,omitempty"`  / hash
+	DealerAddr  string      `protobuf:"bytes,14,opt,name=dealerAddr,proto3" json:"dealerAddr,omitempty"`  / 
+	IsWaiting   bool        `protobuf:"varint,15,opt,name=isWaiting,proto3" json:"isWaiting,omitempty"`   / 
+	PreStatus   int32       `protobuf:"varint,16,opt,name=preStatus,proto3" json:"preStatus,omitempty"`   / inde 
+	Round       int32       `protobuf:"varint,17,opt,name=round,proto3" json:"round,omitempty"`           / 
 }
 
 func (x *PokerBull) Reset() {
@@ -202,17 +202,17 @@ func (x *PokerBull) GetRound() int32 {
 	return 0
 }
 
-//一把牌
+/ 
 type PBHand struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Cards    []int32 `protobuf:"varint,1,rep,packed,name=cards,proto3" json:"cards,omitempty"` //一把牌，五张
-	Result   int32   `protobuf:"varint,2,opt,name=result,proto3" json:"result,omitempty"`      //斗牛结果 (没牛：0， 牛1-9：1-9， 牛牛：10)
-	Address  string  `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`     //玩家地址
-	IsWin    bool    `protobuf:"varint,4,opt,name=isWin,proto3" json:"isWin,omitempty"`        //是否赢庄家
-	Leverage int32   `protobuf:"varint,5,opt,name=leverage,proto3" json:"leverage,omitempty"`  //赌注倍数
+	Cards    []int32 `protobuf:"varint,1,rep,packed,name=cards,proto3" json:"cards,omitempty"` /  
+	Result   int32   `protobuf:"varint,2,opt,name=result,proto3" json:"result,omitempty"`      /   ：0， 1-9：1-9， ：10)
+	Address  string  `protobuf:"bytes,3,opt,name=address,proto3" json:"address,omitempty"`     / 
+	IsWin    bool    `protobuf:"varint,4,opt,name=isWin,proto3" json:"isWin,omitempty"`        / 
+	Leverage int32   `protobuf:"varint,5,opt,name=leverage,proto3" json:"leverage,omitempty"`  / 
 }
 
 func (x *PBHand) Reset() {
@@ -282,16 +282,16 @@ func (x *PBHand) GetLeverage() int32 {
 	return 0
 }
 
-//玩家
+/ 
 type PBPlayer struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hands   []*PBHand `protobuf:"bytes,1,rep,name=hands,proto3" json:"hands,omitempty"`     //历史发牌和斗牛结果
-	Address string    `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` //玩家地址
-	TxHash  int64     `protobuf:"varint,3,opt,name=txHash,proto3" json:"txHash,omitempty"`  //发牌随机数因子txhash的整数格式
-	Ready   bool      `protobuf:"varint,4,opt,name=ready,proto3" json:"ready,omitempty"`    // continue状态下，是否ready
+	Hands   []*PBHand `protobuf:"bytes,1,rep,name=hands,proto3" json:"hands,omitempty"`     / 
+	Address string    `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"` / 
+	TxHash  int64     `protobuf:"varint,3,opt,name=txHash,proto3" json:"txHash,omitempty"`  / txhas 
+	Ready   bool      `protobuf:"varint,4,opt,name=ready,proto3" json:"ready,omitempty"`    // continu  ready
 }
 
 func (x *PBPlayer) Reset() {
@@ -354,17 +354,17 @@ func (x *PBPlayer) GetReady() bool {
 	return false
 }
 
-//本局游戏结果
+/ 
 type PBResult struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Hands          []*PBHand `protobuf:"bytes,1,rep,name=hands,proto3" json:"hands,omitempty"`                    //本局所有玩家的牌和结果，按牛大小升序排序
-	Winner         string    `protobuf:"bytes,2,opt,name=winner,proto3" json:"winner,omitempty"`                  //赢家地址
-	Leverage       int32     `protobuf:"varint,3,opt,name=leverage,proto3" json:"leverage,omitempty"`             //赢得赌注倍数
-	Dealer         string    `protobuf:"bytes,4,opt,name=dealer,proto3" json:"dealer,omitempty"`                  //庄家
-	DealerLeverage int32     `protobuf:"varint,5,opt,name=dealerLeverage,proto3" json:"dealerLeverage,omitempty"` //庄家赌注倍数
+	Hands          []*PBHand `protobuf:"bytes,1,rep,name=hands,proto3" json:"hands,omitempty"`                    /  
+	Winner         string    `protobuf:"bytes,2,opt,name=winner,proto3" json:"winner,omitempty"`                  / 
+	Leverage       int32     `protobuf:"varint,3,opt,name=leverage,proto3" json:"leverage,omitempty"`             / 
+	Dealer         string    `protobuf:"bytes,4,opt,name=dealer,proto3" json:"dealer,omitempty"`                  / 
+	DealerLeverage int32     `protobuf:"varint,5,opt,name=dealerLeverage,proto3" json:"dealerLeverage,omitempty"` / 
 }
 
 func (x *PBResult) Reset() {
@@ -434,14 +434,14 @@ func (x *PBResult) GetDealerLeverage() int32 {
 	return 0
 }
 
-//扑克牌
+/ 
 type PBPoker struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Cards   []int32 `protobuf:"varint,1,rep,packed,name=cards,proto3" json:"cards,omitempty"` // 52张牌
-	Pointer int32   `protobuf:"varint,2,opt,name=pointer,proto3" json:"pointer,omitempty"`    //已发牌偏移
+	Cards   []int32 `protobuf:"varint,1,rep,packed,name=cards,proto3" json:"cards,omitempty"` // 5 
+	Pointer int32   `protobuf:"varint,2,opt,name=pointer,proto3" json:"pointer,omitempty"`    / 
 }
 
 func (x *PBPoker) Reset() {
@@ -490,7 +490,7 @@ func (x *PBPoker) GetPointer() int32 {
 	return 0
 }
 
-//游戏状态
+/ 
 type PBGameAction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -621,7 +621,7 @@ func (*PBGameAction_Query) isPBGameAction_Value() {}
 
 func (*PBGameAction_Play) isPBGameAction_Value() {}
 
-//游戏启动
+/ 
 type PBGameStart struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -677,7 +677,7 @@ func (x *PBGameStart) GetPlayerNum() int32 {
 	return 0
 }
 
-//游戏继续
+/ 
 type PBGameContinue struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -725,7 +725,7 @@ func (x *PBGameContinue) GetGameId() string {
 	return ""
 }
 
-//游戏结束
+/ 
 type PBGameQuit struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -773,7 +773,7 @@ func (x *PBGameQuit) GetGameId() string {
 	return ""
 }
 
-//查询游戏结果
+/ 
 type PBGameQuery struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -821,16 +821,16 @@ func (x *PBGameQuery) GetGameId() string {
 	return ""
 }
 
-//已匹配玩家直接游戏
+/ 
 type PBGamePlay struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GameId  string   `protobuf:"bytes,1,opt,name=gameId,proto3" json:"gameId,omitempty"`   //游戏id
-	Round   int32    `protobuf:"varint,2,opt,name=round,proto3" json:"round,omitempty"`    //当前游戏回合数
-	Value   int64    `protobuf:"varint,3,opt,name=value,proto3" json:"value,omitempty"`    //当前游戏赌注
-	Address []string `protobuf:"bytes,4,rep,name=address,proto3" json:"address,omitempty"` //玩家地址
+	GameId  string   `protobuf:"bytes,1,opt,name=gameId,proto3" json:"gameId,omitempty"`   / id
+	Round   int32    `protobuf:"varint,2,opt,name=round,proto3" json:"round,omitempty"`    / 
+	Value   int64    `protobuf:"varint,3,opt,name=value,proto3" json:"value,omitempty"`    / 
+	Address []string `protobuf:"bytes,4,rep,name=address,proto3" json:"address,omitempty"` / 
 }
 
 func (x *PBGamePlay) Reset() {
@@ -893,7 +893,7 @@ func (x *PBGamePlay) GetAddress() []string {
 	return nil
 }
 
-//根据状态和游戏人数查找
+/ 
 type QueryPBGameListByStatusAndPlayerNum struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -957,7 +957,7 @@ func (x *QueryPBGameListByStatusAndPlayerNum) GetIndex() int64 {
 	return 0
 }
 
-// 索引value值
+// valu 
 type PBGameRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1382,7 +1382,7 @@ func (x *ReplyPBGameList) GetGames() []*PokerBull {
 	return nil
 }
 
-// QueryPBGameByRound 根据gameId和回合数查询某回合的游戏结果
+// QueryPBGameByRound gameI 
 type QueryPBGameByRound struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1438,7 +1438,7 @@ func (x *QueryPBGameByRound) GetRound() int32 {
 	return 0
 }
 
-// ReplyPBGameByRound 某一回合游戏结果
+// ReplyPBGameByRound 
 type ReplyPBGameByRound struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

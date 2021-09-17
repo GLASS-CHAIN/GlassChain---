@@ -12,15 +12,15 @@ import (
 )
 
 /*
-   在以前版本中只有token 合约发行的币在trade 里面交易， 订单中 symbol 为 token 的symbol，
-   现在 symbol 扩展成 exec.sybol@title, @title 先忽略， (因为不必要, 只支持主链到平行链)。
-   在订单中增加 exec， 表示币从那个合约中来的。
+   token trade ，  symbol  token symbol，
+    symbol  exec.sybol@title, @title ，  , )。
+    exec， 。
 
-   在主链
-     原来的订单  exec = "" symbol = "TEST"
-     新的订单    exec =  "token"  symbol = "token.TEST"
+   
+       exec = "" symbol = "TEST"
+         exec =  "token"  symbol = "token.TEST"
 
-   在平行链, 主链资产和本链资产的表示区别如下
+   , 
      exec = "paracross"  symbol = "token.TEST"
      exec = "token"      symbol = "token.TEST"
 
@@ -84,7 +84,7 @@ func createAccountDB(cfg *types.Chain33Config, height int64, db db.KV, exec, sym
 
 func createPriceDB(cfg *types.Chain33Config, height int64, db db.KV, exec, symbol string) (*account.DB, error) {
 	if cfg.IsDappFork(height, pt.TradeX, pt.ForkTradePriceX) {
-		// 为空默认使用 coins
+		//  coins
 		if exec == "" {
 			acc := account.NewCoinsAccount(cfg)
 			acc.SetDB(db)

@@ -43,7 +43,7 @@ func NewType(cfg *types.Chain33Config) *QbftNodeType {
 	return c
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (t *QbftNodeType) GetName() string {
 	return QbftNodeX
 }

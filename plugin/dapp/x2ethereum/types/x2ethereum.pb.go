@@ -682,7 +682,7 @@ func (x *Chain33ToEth) GetDecimals() int64 {
 	return 0
 }
 
-// 回执接口定义
+// 
 type ReceiptEth2Chain33 struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1063,7 +1063,7 @@ func (x *ReceiptSetConsensusThreshold) GetXHeight() uint64 {
 	return 0
 }
 
-// 查询接口定义
+// 
 type QueryEthProphecyParams struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

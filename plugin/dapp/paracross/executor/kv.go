@@ -19,10 +19,10 @@ const (
 var (
 	title                     string
 	titleHeight               string
-	managerConfigNodes        string //manager 合约配置的nodes
-	paraConfigNodes           string //平行链自组织配置的nodes，最初是从manager同步过来
-	paraConfigNodeAddr        string //平行链配置节点账户
-	paraNodeGroupStatusAddrs  string //正在申请的addrs
+	managerConfigNodes        string //manager nodes
+	paraConfigNodes           string / nodes manage 
+	paraConfigNodeAddr        string / 
+	paraNodeGroupStatusAddrs  string / addrs
 	paraNodeIDPrefix          string
 	paraNodeGroupIDPrefix     string
 	localTx                   string
@@ -124,7 +124,7 @@ func getParaNodeIDSuffix(id string) string {
 		return txID
 	}
 
-	//对于nodegroup 创建的"mavl-paracross-title-nodegroupid-user.p.para.-0xb6cd0274587...a61e444e9f848a4c02d7b-1"特殊场景
+	/ nodegroup "mavl-paracross-title-nodegroupid-user.p.para.-0xb6cd0274587...a61e444e9f848a4c02d7b-1 
 	if len(ids) > 1 {
 		txID = ids[len(ids)-2] + "-" + txID
 		if strings.HasPrefix(txID, "0x") {

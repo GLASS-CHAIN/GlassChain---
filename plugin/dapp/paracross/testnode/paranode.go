@@ -6,17 +6,17 @@ import (
 )
 
 /*
-1. solo 模式，后台启动一个 主节点
-2. 启动一个平行链节点：注意，这个要测试的话，会依赖平行链插件
+1. solo   
+2.    
 */
 
-//ParaNode 平行链节点由两个节点组成
+//ParaNode 
 type ParaNode struct {
 	Main *testnode.Chain33Mock
 	Para *testnode.Chain33Mock
 }
 
-//NewParaNode 创建一个平行链节点
+//NewParaNode 
 func NewParaNode(main *testnode.Chain33Mock, para *testnode.Chain33Mock) *ParaNode {
 	if main == nil {
 		main = testnode.New("", nil)
@@ -31,7 +31,7 @@ func NewParaNode(main *testnode.Chain33Mock, para *testnode.Chain33Mock) *ParaNo
 	return &ParaNode{Main: main, Para: para}
 }
 
-//Close 关闭系统
+//Close 
 func (node *ParaNode) Close() {
 	node.Para.Close()
 	node.Main.Close()

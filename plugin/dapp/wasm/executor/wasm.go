@@ -51,7 +51,7 @@ func newWasm() drivers.Driver {
 	return d
 }
 
-// GetName 获取执行器别名
+// GetName 
 func GetName() string {
 	return newWasm().GetName()
 }

@@ -13,7 +13,7 @@ func init() {
 	drivers.Reg("para", New)
 }
 
-//New 创建price cache 结构的 mempool
+//New price cache  mempool
 func New(cfg *types.Mempool, sub []byte) queue.Module {
 	return NewMempool(cfg)
 }

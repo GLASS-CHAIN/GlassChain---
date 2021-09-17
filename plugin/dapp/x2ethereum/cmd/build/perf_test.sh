@@ -30,7 +30,7 @@ ethUrl=""
 Chain33Cli=""
 
 loop_send_lock_eth() {
-    # while 遍历数组
+    # while 
     echo -e "${GRE}=========== Ethereum Lock begin ===========${NOC}"
     #shellcheck disable=SC2154
     preChain33Balance=$(${Chain33Cli} x2ethereum balance -s 12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv -t eth | jq ".res" | jq ".[]" | jq ".balance" | sed 's/\"//g')

@@ -65,33 +65,33 @@ oracle_QueryOraclesByID() {
 }
 
 function run_test() {
-    # 增加发布人
+    # 
     oracle_AddPublisher
-    # 生成发布事件的交易
+    # 
     oracle_publish_transaction
-    # 预发布事件结果交易
+    # 
     oracle_prePublishResult_transaction "$eventId"
-    # 事件正式发布
+    # 
     oracle_publishResult_transaction "$eventId"
-    # 根据ID查询事件
+    # I 
     chain33_BlockWait 2 "${MAIN_HTTP}"
     oracle_QueryOraclesByID "$eventId"
 
-    # 生成发布事件的交易
+    # 
     oracle_publish_transaction
-    # 取消事件发布
+    # 
     oracle_eventAbort_transaction "$eventId"
-    # 根据ID查询事件
+    # I 
     chain33_BlockWait 2 "${MAIN_HTTP}"
     oracle_QueryOraclesByID "$eventId"
 
-    # 生成发布事件的交易
+    # 
     oracle_publish_transaction
-    # 预发布事件结果交易
+    # 
     oracle_prePublishResult_transaction "$eventId"
-    # 取消事件预发布
+    # 
     oracle_resultAbort_transaction "$eventId"
-    # 根据ID查询事件
+    # I 
     chain33_BlockWait 2 "${MAIN_HTTP}"
     oracle_QueryOraclesByID "$eventId"
 

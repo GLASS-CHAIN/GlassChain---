@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// PokerBullCmd 斗牛游戏命令行
+// PokerBullCmd 
 func PokerBullCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "pokerbull",
@@ -38,7 +38,7 @@ func PokerBullCmd() *cobra.Command {
 	return cmd
 }
 
-// PokerBullStartRawTxCmd 生成开始交易命令行
+// PokerBullStartRawTxCmd 
 func PokerBullStartRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "start",
@@ -80,7 +80,7 @@ func pokerbullStart(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// PokerBullContinueRawTxCmd 生成继续游戏命令行
+// PokerBullContinueRawTxCmd 
 func PokerBullContinueRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "continue",
@@ -112,7 +112,7 @@ func pokerbullContinue(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// PokerBullQuitRawTxCmd 生成继续游戏命令行
+// PokerBullQuitRawTxCmd 
 func PokerBullQuitRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "quit",
@@ -144,7 +144,7 @@ func pokerbullQuit(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// PokerBullPlayRawTxCmd 生成已匹配玩家游戏命令行
+// PokerBullPlayRawTxCmd 
 func PokerBullPlayRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "play",
@@ -199,7 +199,7 @@ func pokerbullPlay(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-// PokerBullQueryResultRawTxCmd 查询命令行
+// PokerBullQueryResultRawTxCmd 
 func PokerBullQueryResultRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",

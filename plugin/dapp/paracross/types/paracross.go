@@ -15,22 +15,22 @@ import (
 
 var tlog = log15.New("module", ParaX)
 
-// paracross 执行器的日志类型
+// paracross 
 const (
 
 	// TyLogParacrossCommit commit log key
 	TyLogParacrossCommit = 650
 	// TyLogParacrossCommitDone commit down key
 	TyLogParacrossCommitDone = 651
-	// record 和 commit 不一样， 对应高度完成共识后收到commit 交易
-	// 这个交易就不参与共识, 只做记录
+	// record  commit ， commit 
+	// , 
 	// TyLogParacrossCommitRecord commit record key
 	TyLogParacrossCommitRecord = 652
 	// TyLogParaAssetTransfer asset transfer log key
 	TyLogParaAssetTransfer = 653
 	// TyLogParaAssetWithdraw asset withdraw log key
 	TyLogParaAssetWithdraw = 654
-	//在平行链上保存节点参与共识的数据
+	/ 
 	// TyLogParacrossMiner miner log key
 	TyLogParacrossMiner = 655
 	// TyLogParaAssetDeposit asset deposit log key
@@ -45,7 +45,7 @@ const (
 	TyLogParaSelfConsStageConfig   = 665
 	TyLogParaStageVoteDone         = 666
 	TyLogParaStageGroupUpdate      = 667
-	//TyLogParaCrossAssetTransfer 统一的跨链资产转移
+	//TyLogParaCrossAssetTransfer 
 	TyLogParaCrossAssetTransfer = 670
 	TyLogParaBindMinerAddr      = 671
 	TyLogParaBindMinerNode      = 672
@@ -131,7 +131,7 @@ const (
 // ParaNodeVoteStr ...
 var ParaNodeVoteStr = []string{"invalid", "yes", "no"}
 
-//针对addr申请的id的生命周期
+/ add i 
 const (
 	// ParaApplyJoining apply for join group
 	ParaApplyJoining = iota + 1
@@ -145,7 +145,7 @@ const (
 	ParaApplyVoting
 )
 
-//针对addr本身的生命周期，addr维护了申请id和quit id，方便查询如coinfrozen等额外信息
+/ add ，add i quit id coinfroze 
 const (
 	// ParaApplyJoined pass to add by votes
 	ParaApplyJoined = iota + 10
@@ -222,7 +222,7 @@ func CreateRawAssetTransferTx(cfg *types.Chain33Config, param *types.CreateTx) (
 
 // CreateRawAssetTransferTxExt create asset transfer tx
 func CreateRawAssetTransferTxExt(chainID int32, minFee int64, param *types.CreateTx) (*types.Transaction, error) {
-	// 跨链交易需要在主链和平行链上执行， 所以应该可以在主链和平行链上构建
+	// ， 
 	if !types.IsParaExecName(param.GetExecName()) {
 		tlog.Error("CreateRawAssetTransferTx", "exec", param.GetExecName())
 		return nil, types.ErrInvalidParam
@@ -321,7 +321,7 @@ func GetDappForkHeight(cfg *types.Chain33Config, forkKey string) int64 {
 	} else {
 		forkHeight = cfg.GetDappFork(ParaX, forkKey)
 
-		// CI特殊处理，主链是local，fork都是0，平行链有些配置项需要设置为非0，不然获取到的高度为MaxHeight
+		// C  local，for 0 0 MaxHeight
 		if cfg.IsLocal() {
 			switch forkKey {
 			case ForkCommitTx:

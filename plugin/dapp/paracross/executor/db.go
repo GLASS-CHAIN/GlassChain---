@@ -19,7 +19,7 @@ func getTitle(db dbm.KV, key []byte) (*pt.ParacrossStatus, error) {
 		if !isNotFound(err) {
 			return nil, err
 		}
-		// 平行链如果是从其他链上移过来的，  需要增加配置， 对应title的平行链的起始高度
+		// ，  ， titl 
 		clog.Debug("first time load title", "key", string(key))
 		return &pt.ParacrossStatus{Height: -1}, nil
 	}
@@ -37,7 +37,7 @@ func saveTitle(db dbm.KV, key []byte, title *pt.ParacrossStatus) error {
 func getTitleHeight(db dbm.KV, key []byte) (*pt.ParacrossHeightStatus, error) {
 	val, err := db.Get(key)
 	if err != nil {
-		// 对应高度第一次提交commit
+		// commit
 		if isNotFound(err) {
 			clog.Debug("paracross.Commit first commit", "key", string(key))
 		}

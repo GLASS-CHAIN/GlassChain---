@@ -40,7 +40,7 @@ func NewType(cfg *types.Chain33Config) *NormType {
 	return c
 }
 
-// GetName 获取执行器名称
+// GetName 
 func (norm *NormType) GetName() string {
 	return NormX
 }

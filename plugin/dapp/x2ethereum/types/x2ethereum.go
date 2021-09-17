@@ -9,15 +9,15 @@ import (
 )
 
 /*
- * 交易相关类型定义
- * 交易action通常有对应的log结构，用于交易回执日志记录
- * 每一种action和log需要用id数值和name名称加以区分
+ * 
+ * actio lo  
+ * actio lo i nam 
  */
 
 var (
-	//X2ethereumX 执行器名称定义
+	//X2ethereumX 
 	X2ethereumX = "x2ethereum"
-	//定义actionMap
+	/ actionMap
 	actionMap = map[string]int32{
 		NameEth2Chain33Action:           TyEth2Chain33Action,
 		NameWithdrawEthAction:           TyWithdrawEthAction,
@@ -31,7 +31,7 @@ var (
 		NameTransferToExecAction:        TyTransferToExecAction,
 		NameWithdrawFromExecAction:      TyWithdrawFromExecAction,
 	}
-	//定义log的id和具体log类型及名称，填入具体自定义log类型
+	/ lo i lo  lo 
 	logMap = map[int64]*types.LogInfo{
 		TyEth2Chain33Log:           {Ty: reflect.TypeOf(ReceiptEth2Chain33{}), Name: "LogEth2Chain33"},
 		TyWithdrawEthLog:           {Ty: reflect.TypeOf(ReceiptEth2Chain33{}), Name: "LogWithdrawEth"},
@@ -52,7 +52,7 @@ var (
 // init defines a register function
 func init() {
 	types.AllowUserExec = append(types.AllowUserExec, []byte(X2ethereumX))
-	//注册合约启用高度
+	/ 
 	types.RegFork(X2ethereumX, InitFork)
 	types.RegExec(X2ethereumX, InitExecutor)
 }
@@ -85,17 +85,17 @@ func (x *X2ethereumType) GetName() string {
 	return X2ethereumX
 }
 
-// GetPayload 获取合约action结构
+// GetPayload actio 
 func (x *X2ethereumType) GetPayload() types.Message {
 	return &X2EthereumAction{}
 }
 
-// GetTypeMap 获取合约action的id和name信息
+// GetTypeMap actio i nam 
 func (x *X2ethereumType) GetTypeMap() map[string]int32 {
 	return actionMap
 }
 
-// GetLogMap 获取合约log相关信息
+// GetLogMap lo 
 func (x *X2ethereumType) GetLogMap() map[int64]*types.LogInfo {
 	return logMap
 }
@@ -139,7 +139,7 @@ func (action *X2EthereumAction) GetActionName() string {
 	return "unknown-x2ethereum"
 }
 
-// CreateTx token 创建合约
+// CreateTx token 
 func (x *X2ethereumType) CreateTx(action string, msg json.RawMessage) (*types.Transaction, error) {
 	tx, err := x.ExecTypeBase.CreateTx(action, msg)
 	if err != nil {

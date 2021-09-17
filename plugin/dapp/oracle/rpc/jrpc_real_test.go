@@ -5,26 +5,26 @@
  */
 
 /*
-操作说明：
-1.sendAddPublisher 通过manage合约增加数据发布者地址
-2.sendPublishEvent 发布一个事件
-3.queryEventByeventID 通过事件ID查询事件状态
-4.sendAbortPublishEvent 取消事件发布
-5.sendPrePublishResult 预发布事件结果
-6.sendAbortPublishResult 取消事件预发布结果
-7.sendPublishResult 发布事件最终结果
-测试步骤：
-1.需要首先在配置文件中增加超级管理员账号，例如：
+ ：
+1.sendAddPublisher manag 
+2.sendPublishEvent 
+3.queryEventByeventID I 
+4.sendAbortPublishEvent 
+5.sendPrePublishResult 
+6.sendAbortPublishResult 
+7.sendPublishResult 
+ ：
+1  ：
   [exec.sub.manage]
   superManager=["14KEKbYtKKQm4wMthSK9J4La4nAiidGozt"]
-2.TestPublishNomal 正常发布流程
-3.TestAbortPublishEvent 取消事件发布
-4.TestPrePublishResult  预发布结果
-5.TestAbortPublishResult 取消结果预发布
-6.TestPublishResult 发布结果
-7.TestQueryEventIDByStatus 按状态查询
-8.TestQueryEventIDByAddrAndStatus 按地址和状态查询
-9.TestQueryEventIDByTypeAndStatus 按类型和状态查询
+2.TestPublishNomal 
+3.TestAbortPublishEvent 
+4.TestPrePublishResult  
+5.TestAbortPublishResult 
+6.TestPublishResult 
+7.TestQueryEventIDByStatus 
+8.TestQueryEventIDByAddrAndStatus 
+9.TestQueryEventIDByTypeAndStatus 
 */
 
 package rpc_test
@@ -373,7 +373,7 @@ func TestQueryEventIDByTypeAndStatus(t *testing.T) {
 }
 
 func sendAddPublisher(t *testing.T, jrpcClient *jsonclient.JSONClient, mocker *testnode.Chain33Mock) {
-	//1. 调用createrawtransaction 创建交易
+	//1. createrawtransaction 
 	req := &rpctypes.CreateTxIn{
 		Execer:     "manage",
 		ActionName: "Modify",
@@ -393,7 +393,7 @@ func sendAddPublisher(t *testing.T, jrpcClient *jsonclient.JSONClient, mocker *t
 
 func sendPublishEvent(t *testing.T, jrpcClient *jsonclient.JSONClient, mocker *testnode.Chain33Mock) (eventID string) {
 	ti := time.Now().AddDate(0, 0, 1)
-	//1. 调用createrawtransaction 创建交易
+	//1. createrawtransaction 
 	req := &rpctypes.CreateTxIn{
 		Execer:     oty.OracleX,
 		ActionName: "EventPublish",
@@ -539,7 +539,7 @@ func sendPublishResult(eventID string, t *testing.T, jrpcClient *jsonclient.JSON
 }
 
 func queryEventByeventID(eventID string, t *testing.T, jrpcClient *jsonclient.JSONClient, expectedStatus int32) {
-	//按事件ID查询事件信息
+	/ I 
 	params := rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryOracleListByIDs,
@@ -555,7 +555,7 @@ func queryEventByeventID(eventID string, t *testing.T, jrpcClient *jsonclient.JS
 
 func queryEventByStatus(t *testing.T, jrpcClient *jsonclient.JSONClient) {
 	for i := 1; i <= 5; i++ {
-		//查询第一页
+		/ 
 		params := rpctypes.Query4Jrpc{
 			Execer:   oty.OracleX,
 			FuncName: oty.FuncNameQueryEventIDByStatus,
@@ -566,7 +566,7 @@ func queryEventByStatus(t *testing.T, jrpcClient *jsonclient.JSONClient) {
 		assert.Nil(t, err)
 		assert.EqualValues(t, oty.DefaultCount, len(res.EventID))
 		lastEventID := res.EventID[oty.DefaultCount-1]
-		//查询下一页
+		/ 
 		params = rpctypes.Query4Jrpc{
 			Execer:   oty.OracleX,
 			FuncName: oty.FuncNameQueryEventIDByStatus,
@@ -576,7 +576,7 @@ func queryEventByStatus(t *testing.T, jrpcClient *jsonclient.JSONClient) {
 		assert.Nil(t, err)
 		assert.Equal(t, 10, len(res.EventID))
 		lastEventID = res.EventID[9]
-		//查询最后一条后面的,应该查不到
+		/  
 		params = rpctypes.Query4Jrpc{
 			Execer:   oty.OracleX,
 			FuncName: oty.FuncNameQueryEventIDByStatus,
@@ -588,7 +588,7 @@ func queryEventByStatus(t *testing.T, jrpcClient *jsonclient.JSONClient) {
 }
 
 func queryEventByStatusAndAddr(t *testing.T, jrpcClient *jsonclient.JSONClient) {
-	//查询处于事件发布状态的事件
+	/ 
 	params := rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByAddrAndStatus,
@@ -599,7 +599,7 @@ func queryEventByStatusAndAddr(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 	assert.Nil(t, err)
 	assert.EqualValues(t, oty.DefaultCount, len(res.EventID))
 	lastEventID := res.EventID[oty.DefaultCount-1]
-	//第二页
+	/ 
 	params = rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByAddrAndStatus,
@@ -610,7 +610,7 @@ func queryEventByStatusAndAddr(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 	assert.Equal(t, 10, len(res.EventID))
 	lastEventID = res.EventID[9]
 
-	//最后一条以后查不到
+	/ 
 	params = rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByAddrAndStatus,
@@ -620,7 +620,7 @@ func queryEventByStatusAndAddr(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 	err = jrpcClient.Call("Chain33.Query", params, &res)
 	assert.Equal(t, types.ErrNotFound, err)
 
-	//查询另一个地址+状态，应该查不到
+	/   
 	params = rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByAddrAndStatus,
@@ -631,7 +631,7 @@ func queryEventByStatusAndAddr(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 }
 
 func queryEventByStatusAndType(t *testing.T, jrpcClient *jsonclient.JSONClient) {
-	//查询处于事件发布状态的事件
+	/ 
 	params := rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByTypeAndStatus,
@@ -642,7 +642,7 @@ func queryEventByStatusAndType(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 	assert.Nil(t, err)
 	assert.EqualValues(t, oty.DefaultCount, len(res.EventID))
 	lastEventID := res.EventID[oty.DefaultCount-1]
-	//第二页
+	/ 
 	params = rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByTypeAndStatus,
@@ -653,7 +653,7 @@ func queryEventByStatusAndType(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 	assert.Equal(t, 10, len(res.EventID))
 	lastEventID = res.EventID[9]
 
-	//最后一条以后查不到
+	/ 
 	params = rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByTypeAndStatus,
@@ -663,7 +663,7 @@ func queryEventByStatusAndType(t *testing.T, jrpcClient *jsonclient.JSONClient) 
 	err = jrpcClient.Call("Chain33.Query", params, &res)
 	assert.Equal(t, types.ErrNotFound, err)
 
-	//查询另一种类型+状态查不到
+	/  
 	params = rpctypes.Query4Jrpc{
 		Execer:   oty.OracleX,
 		FuncName: oty.FuncNameQueryEventIDByTypeAndStatus,

@@ -299,7 +299,7 @@ func TestRingSignatere1(t *testing.T) {
 	var signs [maxCount]*Sign
 	index := 0
 
-	// 初始化测试数据
+	// 
 	prefixHash, _ := common.FromHex("fd1f64844a7d6a9f74fc2141bceba9d9d69b1fd6104f93bfa42a6d708a6ab22c")
 	for i := 0; i < maxCount; i++ {
 		pub := PubKeyPrivacy{}
@@ -309,17 +309,17 @@ func TestRingSignatere1(t *testing.T) {
 
 		copy(pub[:], pubsByte[i])
 		if i == index {
-			// 创建 KeyImage
+			//  KeyImage
 			copy(sec[:], secsByte[i])
 			generateKeyImage(&pub, &sec, &image)
 		}
 	}
-	// 创建环签名
+	// 
 	err := generateRingSignature(prefixHash, &image, pubs[:], &sec, signs[:], index)
 	if err != nil {
 		t.Fatal("generateRingSignature() failed. error ", err)
 	}
-	// 消炎环签名
+	// 
 	if !checkRingSignature(prefixHash, &image, pubs[:], signs[:]) {
 		t.Fatal("checkRingSignature() failed.")
 	}
@@ -332,7 +332,7 @@ func testRingSignatureOncetime(maxCount int, t *testing.T) {
 	pubs := make([]*PubKeyPrivacy, maxCount)
 	signs := make([]*Sign, maxCount)
 
-	// 初始化测试数据
+	// 
 	prefixHash, _ := common.FromHex("fd1f64844a7d6a9f74fc2141bceba9d9d69b1fd6104f93bfa42a6d708a6ab22c")
 
 	c, err := crypto.New(types.GetSignName("privacy", privacytypes.OnetimeED25519))
@@ -354,7 +354,7 @@ func testRingSignatureOncetime(maxCount int, t *testing.T) {
 
 		copy(pub[:], pubKey)
 		if i == index {
-			// 创建 KeyImage
+			//  KeyImage
 			copy(sec[:], privkey.Bytes())
 			err = generateKeyImage(&pub, &sec, &image)
 			if err != nil {
@@ -362,12 +362,12 @@ func testRingSignatureOncetime(maxCount int, t *testing.T) {
 			}
 		}
 	}
-	// 创建环签名
+	// 
 	err = generateRingSignature(prefixHash, &image, pubs[:], &sec, signs[:], index)
 	if err != nil {
 		t.Fatal("generateRingSignature() failed. error ", err)
 	}
-	// 消炎环签名
+	// 
 	if !checkRingSignature(prefixHash, &image, pubs[:], signs[:]) {
 		t.Fatal("checkRingSignature() failed.")
 	}
@@ -403,11 +403,11 @@ func TestGenerateRingSignatureAPI(t *testing.T) {
 		utxo.OnetimePubkey = append(utxo.OnetimePubkey[:], pubsByte[i]...)
 		if i == realUtxoIndex {
 			pubKey := privkey.PubKey().Bytes()
-			// 增加指定的密钥对
+			// 
 			copy(utxo.OnetimePubkey[:], pubKey)
 			copy(sec[:], privkey.Bytes())
 
-			// 创建 KeyImage
+			//  KeyImage
 			image, err := GenerateKeyImage(privkey, pubKey[:])
 			if err != nil {
 				t.Errorf("Generate private key failed. %v\n", err)
@@ -439,7 +439,7 @@ func benchRingSignatureOncetime(maxCount int) {
 	pubs := make([]*PubKeyPrivacy, maxCount)
 	signs := make([]*Sign, maxCount)
 
-	// 初始化测试数据
+	// 
 	prefixHash, _ := common.FromHex("fd1f64844a7d6a9f74fc2141bceba9d9d69b1fd6104f93bfa42a6d708a6ab22c")
 
 	c, _ := crypto.New(types.GetSignName("privacy", privacytypes.OnetimeED25519))
@@ -455,14 +455,14 @@ func benchRingSignatureOncetime(maxCount int) {
 
 		copy(pub[:], pubKey)
 		if i == index {
-			// 创建 KeyImage
+			//  KeyImage
 			copy(sec[:], privkey.Bytes())
 			generateKeyImage(&pub, &sec, &image)
 		}
 	}
-	// 创建环签名
+	// 
 	generateRingSignature(prefixHash, &image, pubs[:], &sec, signs[:], index)
-	// 效验环签名
+	// 
 	checkRingSignature(prefixHash, &image, pubs[:], signs[:])
 }
 
@@ -474,9 +474,9 @@ func Benchmark_RingSignature(b *testing.B) {
 	b.StopTimer()
 }
 
-// 最终版本的单元测试测试用例集合
+// 
 
-// 最终版本的压力测试测试用例集合
+// 
 func Benchmark_RingSignatureAllStep(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 

@@ -13,25 +13,25 @@ import (
 	pty "github.com/33cn/plugin/plugin/dapp/trade/types"
 )
 
-// 本地数据版本
-// 1. v0 手动生成
-// 2. v1 用table生成 LocalOrder
-// 3. v2 用table生成 LocalOrderV2 比v1 用更多的索引，支持v0需要的数据索引，即将v2 包含 v0 v1 数据
-//       预期在6.4升级后 v0 格式将不存在
+// 
+// 1. v0 
+// 2. v1 tabl  LocalOrder
+// 3. v2 tabl  LocalOrderV2 v1  v  v2  v0 v1 
+//       6.  v0 
 
 /*
-现有接口
- 1.  查询地址对应的买单 （无分页）
-   1.1 只指定地址   -> owner
-   1.2 同时指定地址和token  -> owner_asset
-   1.3 显示一个用户成交的所有买单 -> owner
-   1.4 显示一个用户成交的指定一个或者多个token所有买单 -> owner_asset 不支持多个
- 2. 分状态查询地址的买单： 状态 地址 （无分页） -> owner_status
- 3. 显示一个token 指定数量的买单 GetTokenBuyOrderByStatus  -> asset_inBuy_status
- 4. 显示指定token出售者的一个或多个token 或 不指定token 的卖单 （无分页） -> owner_asset/owner_asset_isSell 不支持多个
- 5. 显示指定状态下的某地址卖单 （无分页）  -> owner_isSell_status
- 6. 显示一个token 指定数量的卖单    -> asset_isSell
- 7. 根据状态分页列出某地址的订单（包括买单卖单） owner_status
+ 
+ 1.    ）
+   1.1    -> owner
+   1.2 token  -> owner_asset
+   1.3  -> owner
+   1.4 toke  -> owner_asset 
+ 2. ：    ） -> owner_status
+ 3. token  GetTokenBuyOrderByStatus  -> asset_inBuy_status
+ 4. toke token  token   ） -> owner_asset/owner_asset_isSell 
+ 5.   ）  -> owner_isSell_status
+ 6. token     -> asset_isSell
+ 7.  ） owner_status
 */
 
 //
@@ -39,33 +39,33 @@ var optV2 = &table.Option{
 	Prefix:  "LODB-trade",
 	Name:    "order_v2",
 	Primary: "txIndex",
-	// asset 指定交易对 price_exec + price_symbol + asset_exec+asset_symbol
-	// status: 设计为可以同时查询几种的并集 , 存储为前缀， 需要提前设计需要合并的， 用前缀表示
-	//    进行中，  撤销，  部分成交 ， 全部成交，  完成状态统一前缀. 数字和原来不一样
+	// asset  price_exec + price_symbol + asset_exec+asset_symbol
+	// status:  , ， ， 
+	//    ，  ，   ， ，  . 
 	//      00     10     11          12         1*
-	// 排序特点： 在不用key排序时，需要生成排序用的组合索引， 前面n个索引用来区分前缀， 后一个索引用来排序
+	// ： ke  ，  ， 
 	Index: []string{
-		"key",                 // 内部查询用
-		"asset",               // 按资产统计订单
-		"asset_isSell_status", // 接口 3
-		// "asset_status", 可能需求， 用于资产的交易历史
+		"key",                 // 
+		"asset",               // 
+		"asset_isSell_status", //  3
+		// "asset_status", ， 
 		// "asset_isSell",
-		"owner",              // 接口 1.1， 1.3
-		"owner_asset",        // 接口 1.2, 1.4, 4, 7
-		"owner_asset_isSell", // 接口 4
-		"owner_asset_status", // 新需求， 在
-		"owner_isSell",       // 接口 6
-		// "owner_isSell_statusPrefix", // 状态可以定制组合, 成交历史需求
-		"owner_status",             // 接口 2
-		"assset_isSell_isFinished", // 用 isFinish, 进行订单是否完成的列表功能
+		"owner",              //  1.1， 1.3
+		"owner_asset",        //  1.2, 1.4, 4, 7
+		"owner_asset_isSell", //  4
+		"owner_asset_status", // ， 
+		"owner_isSell",       //  6
+		// "owner_isSell_statusPrefix", // , 
+		"owner_status",             //  2
+		"assset_isSell_isFinished", //  isFinish, 
 		"owner_asset_isFinished",
 		"owner_isFinished",
-		// "owner_statusPrefix", // 状态可以定制组合 , 成交历史需求
-		// 增加更多的key， 把老接口的数据的key 也生成，可以去掉老接口的实现
-		// https://chain.33.cn/document/105 文档1.8 sell & asset-price & status, order by price
-		// https://chain.33.cn/document/105 文档1.3 buy  & asset-price & status, order by price
+		// "owner_statusPrefix", //  , 
+		// key， key  
+		// https://chain.33.cn/document/105 1.8 sell & asset-price & status, order by price
+		// https://chain.33.cn/document/105 1.3 buy  & asset-price & status, order by price
 		"asset_isSell_status_price",
-		// 文档1.2 文档1.5 按 用户状态来 addr-status buy or sell
+		// 1.2 1.5   addr-status buy or sell
 		"owner_isSell_status",
 	},
 }
@@ -135,7 +135,7 @@ func (r *OrderV2Row) Get(key string) ([]byte, error) {
 	}
 }
 
-// 老接口查询参数： Price 用主币
+// ： Price 
 func (r *OrderV2Row) asset() string {
 	return r.LocalOrder.PriceExec + "." + r.LocalOrder.PriceSymbol + "_" + r.LocalOrder.AssetExec + "." + r.LocalOrder.AssetSymbol
 }
@@ -155,7 +155,7 @@ func (r *OrderV2Row) isFinished() int {
 }
 
 func (r *OrderV2Row) price() string {
-	// 在计算前缀时，返回空
+	//  
 	if r.AmountPerBoardlot == 0 {
 		return ""
 	}
@@ -163,12 +163,12 @@ func (r *OrderV2Row) price() string {
 	return fmt.Sprintf("%018d", p)
 }
 
-// status: 设计为可以同时查询几种的并集 , 存储为前缀， 需要提前设计需要合并的， 用前缀表示
-//    进行中，  撤销，  部分成交 ， 全部成交，  完成状态统一前缀. 数字和原来不一样
+// status:  , ， ， 
+//    ，  ，   ， ，  . 
 //      01     10     11          12        19 -> 1*
 func (r *OrderV2Row) status() string {
 	if r.Status == pty.TradeOrderStatusOnBuy || r.Status == pty.TradeOrderStatusOnSale {
-		return "01" // 试图用1 可以匹配所有完成的
+		return "01" // 1 
 	} else if r.Status == pty.TradeOrderStatusSoldOut || r.Status == pty.TradeOrderStatusBoughtOut {
 		return "12"
 	} else if r.Status == pty.TradeOrderStatusRevoked || r.Status == pty.TradeOrderStatusBuyRevoked {

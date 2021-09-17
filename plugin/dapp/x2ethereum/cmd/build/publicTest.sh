@@ -5,14 +5,14 @@
 set -x
 set -e
 
-# 公用测试函数
+# 
 
 #color
 RED='\033[1;31m'
 GRE='\033[1;32m'
 NOC='\033[0m'
 
-# 出错退出前拷贝日志文件
+# 
 function exit_cp_file() {
     set -x
     # shellcheck disable=SC2116
@@ -59,7 +59,7 @@ function copyErrLogs() {
     fi
 }
 
-# 判断结果是否正确
+# 
 function cli_ret() {
     set +x
     if [[ $# -lt 2 ]]; then
@@ -90,7 +90,7 @@ function cli_ret() {
     echo "${msg}"
 }
 
-# 判断 chain33 金额是否正确
+#  chain33 
 function balance_ret() {
     set +x
     if [[ $# -lt 2 ]]; then
@@ -108,33 +108,33 @@ function balance_ret() {
     echo "${balance}"
 }
 
-# 查询关键字所在行然后删除 ${1}文件名称 ${2}关键字
+#  ${1  ${2 
 function delete_line() {
     line=$(cat -n "${1}" | grep "${2}" | awk '{print $1}')
     if [[ ${line} != "" ]]; then
-        sed -i "${line}"'d' "${1}" # 删除行
+        sed -i "${line}"'d' "${1}" # 
     fi
 }
 
-# 查询关键字所在行然后删除 ${1}文件名称 ${2}关键字
+#  ${1  ${2 
 function delete_line_show() {
     local line=$(cat -n "${1}" | grep "${2}" | awk '{print $1}')
     if [[ ${line} != "" ]]; then
-        sed -i "${line}"'d' "${1}" # 删除行
+        sed -i "${line}"'d' "${1}" # 
         line=$((line - 1))
     fi
     echo "${line}"
 }
 
-# 后台启动 ebrelayer 进程 $1 docker 名称 $2进程名称 $3进程信息输出重定向文件
+#  ebrelayer  $1 docker  $  $ 
 function start_docker_ebrelayer() {
-    # 参数如果小于 3 直接报错
+    #  3 
     if [[ $# -lt 3 ]]; then
         echo -e "${RED}wrong parameter${NOC}"
         exit_cp_file
     fi
 
-    # 后台启动程序
+    # 
     docker exec "$1" nohup "${2}" >"${3}" 2>&1 &
     sleep 2
 
@@ -156,21 +156,21 @@ function start_docker_ebrelayer() {
     done
 }
 
-# 后台启动 ebrelayer 进程 $1进程名称 $2进程信息输出重定向文件
+#  ebrelayer  $  $ 
 function start_ebrelayer() {
-    # 参数如果小于 2 直接报错
+    #  2 
     if [[ $# -lt 2 ]]; then
         echo -e "${RED}wrong parameter${NOC}"
         exit_cp_file
     fi
 
-    # 判断可执行文件是否存在
+    # 
     if [ ! -x "${1}" ]; then
         echo -e "${RED}${1} not exist${NOC}"
         exit_cp_file
     fi
 
-    # 后台启动程序
+    # 
     nohup "${1}" >"${2}" 2>&1 &
     sleep 2
 
@@ -192,7 +192,7 @@ function start_ebrelayer() {
     done
 }
 
-# 后台启动 ebrelayer 进程 $1 A B C D
+#  ebrelayer  $1 A B C D
 function start_ebrelayer_and_unlock() {
     start_ebrelayer "./${1}/ebrelayer" "./${1}/ebrelayer.log"
     sleep 2
@@ -215,7 +215,7 @@ function start_ebrelayer_and_unlock() {
     done
 }
 
-# 后台启动 ebrelayer 进程 $1 A B C D
+#  ebrelayer  $1 A B C D
 function start_ebrelayer_and_setpwd_unlock() {
     start_ebrelayer "./${1}/ebrelayer" "./${1}/ebrelayer.log"
     sleep 2
@@ -254,7 +254,7 @@ function start_ebrelayer_and_setpwd_unlock() {
     done
 }
 
-# 杀死进程 ebrelayer 进程 docker ebrelayer 名称
+#  ebrelayer  docker ebrelayer 
 function kill_docker_ebrelayer() {
     # shellcheck disable=SC2009
     pid=$(docker exec "$1" ps -ef | grep "ebrelayer" | grep -v 'grep' | awk '{print $2}')
@@ -273,7 +273,7 @@ function kill_docker_ebrelayer() {
     sleep 1
 }
 
-# 杀死进程ebrelayer 进程 $1进程名称
+# ebrelayer  $ 
 function kill_ebrelayer() {
     # shellcheck disable=SC2009
     pid=$(ps -ef | grep "${1}" | grep -v 'grep' | awk '{print $2}')
@@ -292,7 +292,7 @@ function kill_ebrelayer() {
     sleep 1
 }
 
-# chain33 区块等待 $1:cli 路径  $2:等待高度
+# chain33  $1:cli   $2 
 function block_wait() {
     set +x
     local CLI=${1}
@@ -320,7 +320,7 @@ function block_wait() {
     echo -e "${GRE}chain33 wait new block $count s, cur height=$expect,old=$cur_height${NOC}"
 }
 
-# 检查交易是否执行成功 $1:cli 路径  $2:交易hash
+#  $1:cli   $2 hash
 function check_tx() {
     set +x
     local CLI=${1}
@@ -372,7 +372,7 @@ function check_number() {
     fi
 }
 
-# 检查地址是否匹配 $1返回结果 $2匹配地址
+#  $  $ 
 function check_addr() {
     if [[ $# -lt 2 ]]; then
         echo -e "${RED}wrong check number parameters${NOC}"
@@ -392,7 +392,7 @@ function get_docker_addr() {
     echo "${dockerAddr}"
 }
 
-# $1 dockerAddr; $2 docker ebrelayer name; $2 relayer.toml 地址
+# $1 dockerAddr; $2 docker ebrelayer name; $2 relayer.toml 
 function updata_relayer_a_toml() {
     local dockerAddr=${1}
     local ebrelayer=${2}
@@ -419,14 +419,14 @@ function updata_relayer_a_toml() {
     fi
 
     local line=$(delete_line_show "${file}" "chain33Host")
-    # 在第 line 行后面 新增合约地址
+    #  line  
     sed -i ''"${line}"' a chain33Host="http://'"${chain33Host}"':8801"' "${file}"
 
     sed -i 's/^EthBlockFetchPeriod=.*/EthBlockFetchPeriod=500/g' "${file}"
     sed -i 's/^fetchHeightPeriodMs=.*/fetchHeightPeriodMs=500/g' "${file}"
 }
 
-# 更新配置文件 $1 为 BridgeRegistry 合约地址; $2 等待区块 默认10; $3 relayer.toml 地址
+#  $1  BridgeRegistry ; $2  10; $3 relayer.toml 
 function updata_relayer_toml() {
     local BridgeRegistry=${1}
     local maturityDegree=${2}
@@ -439,7 +439,7 @@ function updata_relayer_toml() {
     sed -i 's/maturityDegree=10/'maturityDegree="${maturityDegree}"'/g' "${file}"
 }
 
-# 更新配置文件 $1 为 BridgeRegistry 合约地址; $2 等待区块 默认10; $3 relayer.toml 地址
+#  $1  BridgeRegistry ; $2  10; $3 relayer.toml 
 function updata_relayer_toml_ropston() {
     local BridgeRegistry=${1}
     local maturityDegree=${2}
@@ -449,7 +449,7 @@ function updata_relayer_toml_ropston() {
     local pushHost=127.0.0.1
 
     local line=$(delete_line_show "${file}" "chain33Host")
-    # 在第 line 行后面 新增合约地址
+    #  line  
     sed -i ''"${line}"' a chain33Host="http://'${chain33Host}':8801"' "${file}"
 
     line=$(delete_line_show "${file}" "pushHost")
@@ -462,7 +462,7 @@ function updata_relayer_toml_ropston() {
     sed -i 's/maturityDegree=10/'maturityDegree="${maturityDegree}"'/g' "${file}"
 }
 
-# 获取本机 IP
+#  IP
 function get_inet_addr() {
     inetAddr=$(ifconfig wlp2s0 | grep "inet " | awk '{ print $2}' | awk -F: '{print $2}')
     if [[ ${inetAddr} == "" ]]; then
@@ -482,9 +482,9 @@ function get_inet_addr() {
     echo "${inetAddr}"
 }
 
-# 启动 eth
+#  eth
 function start_trufflesuite() {
-    # 如果原来存在先删除
+    # 
     local ganacheName=ganachetest
     #local isExit=$(docker inspect ${ganacheName} | jq ".[]" | jq ".Id")
     #if [[ ${isExit} != "" ]]; then
@@ -492,12 +492,12 @@ function start_trufflesuite() {
     docker rm ${ganacheName}
     #fi
 
-    # 启动 eth
+    #  eth
     docker run -d --name ${ganacheName} -p 7545:8545 -l eth_test trufflesuite/ganache-cli:latest -a 10 --debug -b 1 -m "coast bar giraffe art venue decide symbol law visual crater vital fold"
     sleep 1
 }
 
-# eth 区块等待 $1:等待高度  $2:url地址，默认为 http://localhost:7545,测试网络用 https://ropsten-rpc.linkpool.io/
+# eth  $1   $2:ur   http://localhost:7545  https://ropsten-rpc.linkpool.io/
 function eth_block_wait() {
     set +x
     if [[ $# -lt 0 ]]; then

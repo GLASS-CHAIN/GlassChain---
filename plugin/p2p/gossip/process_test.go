@@ -74,7 +74,7 @@ func Test_processP2P(t *testing.T) {
 		}
 	}()
 
-	//测试发送
+	/ 
 	go func() {
 		for data := range sendChan {
 			verData, ok := data.(*versionData)
@@ -86,7 +86,7 @@ func Test_processP2P(t *testing.T) {
 			recvChan <- sendData
 		}
 	}()
-	//测试接收
+	/ 
 	go func() {
 		for data := range recvChan {
 			txHashFilter.Remove(txHash)
@@ -107,17 +107,17 @@ func Test_processP2P(t *testing.T) {
 
 	//data test
 	subChan := node.pubsub.Sub(pid)
-	//全数据广播
+	/ 
 	sendChan <- &versionData{peerName: pid + "1", rawData: &types.P2PTx{Tx: tx, Route: &types.P2PRoute{}}, version: lightBroadCastVersion - 1}
 	p2p.mgr.PubSub.Pub(client.NewMessage("p2p", types.EventTxBroadcast, tx), P2PTypeName)
 	sendChan <- &versionData{peerName: pid + "1", rawData: &types.P2PBlock{Block: block}, version: lightBroadCastVersion - 1}
-	//交易发送过滤
+	/ 
 	txHashFilter.Add(hex.EncodeToString(tx1.Hash()), &types.P2PRoute{TTL: DefaultLtTxBroadCastTTL})
 	p2p.mgr.PubSub.Pub(client.NewMessage("p2p", types.EventTxBroadcast, tx1), P2PTypeName)
-	//交易短哈希广播
+	/ 
 	sendChan <- &versionData{peerName: pid + "2", rawData: &types.P2PTx{Tx: tx, Route: &types.P2PRoute{TTL: DefaultLtTxBroadCastTTL}}, version: lightBroadCastVersion}
-	recvWithTimeout(t, subChan, "case 1") //缺失交易，从对端获取
-	//区块短哈希广播
+	recvWithTimeout(t, subChan, "case 1") /  
+	/ 
 	sendChan <- &versionData{peerName: pid + "2", rawData: &types.P2PBlock{Block: block}, version: lightBroadCastVersion}
 	recvWithTimeout(t, subChan, "case 2")
 	assert.True(t, ltBlockCache.Contains(blockHash))
@@ -167,7 +167,7 @@ func Test_processP2P(t *testing.T) {
 	assert.False(t, doSend)
 }
 
-// 等待接收channel数据，超时报错
+// channe  
 func recvWithTimeout(t *testing.T, ch chan interface{}, testCase string) interface{} {
 	select {
 	case data := <-ch:

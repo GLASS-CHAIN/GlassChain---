@@ -15,7 +15,7 @@ import (
 	context "golang.org/x/net/context"
 )
 
-//TODO:和GetBalance进行泛化处理，同时LoadAccounts和LoadExecAccountQueue也需要进行泛化处理, added by hzj
+//TODO GetBalanc  LoadAccount LoadExecAccountQueu , added by hzj
 func (c *channelClient) getTokenBalance(in *tokenty.ReqTokenBalance) ([]*types.Account, error) {
 	cfg := c.GetConfig()
 	accountTokendb, err := account.NewAccountDB(cfg, tokenty.TokenX, in.GetTokenSymbol(), nil)
@@ -54,7 +54,7 @@ func (c *channelClient) getTokenBalance(in *tokenty.ReqTokenBalance) ([]*types.A
 	}
 }
 
-// GetTokenBalance 获取token金额（channelClient）
+// GetTokenBalance toke （channelClient）
 func (c *channelClient) GetTokenBalance(ctx context.Context, in *tokenty.ReqTokenBalance) (*types.Accounts, error) {
 	reply, err := c.getTokenBalance(in)
 	if err != nil {
@@ -63,7 +63,7 @@ func (c *channelClient) GetTokenBalance(ctx context.Context, in *tokenty.ReqToke
 	return &types.Accounts{Acc: reply}, nil
 }
 
-// GetTokenBalance 获取token金额 (Jrpc)
+// GetTokenBalance toke  (Jrpc)
 func (c *Jrpc) GetTokenBalance(in tokenty.ReqTokenBalance, result *interface{}) error {
 	balances, err := c.cli.GetTokenBalance(context.Background(), &in)
 	if err != nil {
@@ -80,7 +80,7 @@ func (c *Jrpc) GetTokenBalance(in tokenty.ReqTokenBalance, result *interface{}) 
 	return nil
 }
 
-// CreateRawTokenPreCreateTx 创建未签名的创建Token交易
+// CreateRawTokenPreCreateTx Toke 
 func (c *Jrpc) CreateRawTokenPreCreateTx(param *tokenty.TokenPreCreate, result *interface{}) error {
 	if param == nil || param.Symbol == "" {
 		return types.ErrInvalidParam
@@ -94,7 +94,7 @@ func (c *Jrpc) CreateRawTokenPreCreateTx(param *tokenty.TokenPreCreate, result *
 	return nil
 }
 
-// CreateRawTokenFinishTx 创建未签名的结束Token交易
+// CreateRawTokenFinishTx Toke 
 func (c *Jrpc) CreateRawTokenFinishTx(param *tokenty.TokenFinishCreate, result *interface{}) error {
 	if param == nil || param.Symbol == "" {
 		return types.ErrInvalidParam
@@ -108,7 +108,7 @@ func (c *Jrpc) CreateRawTokenFinishTx(param *tokenty.TokenFinishCreate, result *
 	return nil
 }
 
-// CreateRawTokenRevokeTx 创建未签名的撤销Token交易
+// CreateRawTokenRevokeTx Toke 
 func (c *Jrpc) CreateRawTokenRevokeTx(param *tokenty.TokenRevokeCreate, result *interface{}) error {
 	if param == nil || param.Symbol == "" {
 		return types.ErrInvalidParam
@@ -122,7 +122,7 @@ func (c *Jrpc) CreateRawTokenRevokeTx(param *tokenty.TokenRevokeCreate, result *
 	return nil
 }
 
-// CreateRawTokenMintTx 创建未签名的mint Token交易
+// CreateRawTokenMintTx mint Toke 
 func (c *Jrpc) CreateRawTokenMintTx(param *tokenty.TokenMint, result *interface{}) error {
 	if param == nil || param.Symbol == "" || param.Amount <= 0 {
 		return types.ErrInvalidParam
@@ -136,7 +136,7 @@ func (c *Jrpc) CreateRawTokenMintTx(param *tokenty.TokenMint, result *interface{
 	return nil
 }
 
-// CreateRawTokenBurnTx 创建未签名的 burn Token交易
+// CreateRawTokenBurnTx  burn Toke 
 func (c *Jrpc) CreateRawTokenBurnTx(param *tokenty.TokenBurn, result *interface{}) error {
 	if param == nil || param.Symbol == "" || param.Amount <= 0 {
 		return types.ErrInvalidParam

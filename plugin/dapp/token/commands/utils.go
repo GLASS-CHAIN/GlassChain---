@@ -11,7 +11,7 @@ import (
 	"github.com/33cn/chain33/types"
 )
 
-// GetExecAddr 获取执行器地址
+// GetExecAddr 
 func GetExecAddr(exec string) (string, error) {
 	if ok := types.IsAllowExecName([]byte(exec), []byte(exec)); !ok {
 		return "", types.ErrExecNameNotAllow

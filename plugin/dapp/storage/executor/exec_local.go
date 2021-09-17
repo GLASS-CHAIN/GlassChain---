@@ -6,8 +6,8 @@ import (
 )
 
 /*
- * 实现交易相关数据本地执行，数据不上链
- * 非关键数据，本地存储(localDB), 用于辅助查询，效率高
+ *  
+ *  (localDB),  
  */
 
 func (s *storage) ExecLocal_ContentStorage(payload *ety.ContentOnlyNotaryStorage, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
@@ -136,7 +136,7 @@ func (s *storage) ExecLocal_EncryptAdd(payload *ety.EncryptNotaryAdd, tx *types.
 	return s.addAutoRollBack(tx, dbSet.KV), nil
 }
 
-//设置自动回滚
+/ 
 func (s *storage) addAutoRollBack(tx *types.Transaction, kv []*types.KeyValue) *types.LocalDBSet {
 
 	dbSet := &types.LocalDBSet{}

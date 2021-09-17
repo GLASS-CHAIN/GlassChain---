@@ -87,7 +87,7 @@ func (x *ParacrossStatusDetails) GetBlockHash() [][]byte {
 	return nil
 }
 
-//记录不同blockHash的详细数据
+/ blockHas 
 type ParacrossStatusBlockDetails struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -495,7 +495,7 @@ type ParaNodeAddrConfig struct {
 	Addr        string `protobuf:"bytes,4,opt,name=addr,proto3" json:"addr,omitempty"`
 	Value       uint32 `protobuf:"varint,5,opt,name=value,proto3" json:"value,omitempty"`
 	CoinsFrozen int64  `protobuf:"varint,6,opt,name=coinsFrozen,proto3" json:"coinsFrozen,omitempty"`
-	BlsPubKey   string `protobuf:"bytes,7,opt,name=blsPubKey,proto3" json:"blsPubKey,omitempty"` //本地址私钥对应的bls聚合签名的公钥
+	BlsPubKey   string `protobuf:"bytes,7,opt,name=blsPubKey,proto3" json:"blsPubKey,omitempty"` / bl 
 }
 
 func (x *ParaNodeAddrConfig) Reset() {
@@ -2458,7 +2458,7 @@ type ConfigVoteInfo struct {
 	unknownFields protoimpl.UnknownFields
 
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// 投票值　１:ok 2:nok
+	// 　１:ok 2:nok
 	Value uint32 `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
 }
 
@@ -2555,14 +2555,14 @@ func (x *ConfigCancelInfo) GetId() string {
 	return ""
 }
 
-//广义配置类型
+/ 
 type ParaStageConfig struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	// 配置类型
+	// 
 	Ty uint32 `protobuf:"varint,2,opt,name=ty,proto3" json:"ty,omitempty"`
 	// Types that are assignable to Value:
 	//	*ParaStageConfig_Stage
@@ -4195,7 +4195,7 @@ func (x *ReqParacrossTitleHash) GetBlockHash() []byte {
 	return nil
 }
 
-// 跨链转账相关
+// 
 type ParacrossAsset struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -4209,11 +4209,11 @@ type ParacrossAsset struct {
 	Amount     int64  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
 	Exec       string `protobuf:"bytes,6,opt,name=exec,proto3" json:"exec,omitempty"`
 	Symbol     string `protobuf:"bytes,7,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	//跨链类型　0:to para, 1:to main
+	/ 　0:to para, 1:to main
 	CrossType uint32 `protobuf:"varint,8,opt,name=crossType,proto3" json:"crossType,omitempty"`
-	// 主链部分
+	// 
 	Height int64 `protobuf:"varint,10,opt,name=height,proto3" json:"height,omitempty"`
-	// 平行链部分
+	// 
 	CommitDoneHeight int64 `protobuf:"varint,21,opt,name=commitDoneHeight,proto3" json:"commitDoneHeight,omitempty"`
 	ParaHeight       int64 `protobuf:"varint,22,opt,name=paraHeight,proto3" json:"paraHeight,omitempty"`
 	Success          bool  `protobuf:"varint,23,opt,name=success,proto3" json:"success,omitempty"`

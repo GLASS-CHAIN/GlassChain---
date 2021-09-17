@@ -45,42 +45,42 @@ func (t *trade) localDelLog(tx *types.Transaction, receipt *types.ReceiptData, i
 			var receipt pty.ReceiptTradeSellLimit
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.deleteSell(receipt.Base, item.Ty, tx, txIndex, table, tradedBoardlot)
 		} else if item.Ty == pty.TyLogTradeSellRevoke {
 			var receipt pty.ReceiptTradeSellRevoke
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.deleteSell(receipt.Base, item.Ty, tx, txIndex, table, tradedBoardlot)
 		} else if item.Ty == pty.TyLogTradeBuyMarket {
 			var receipt pty.ReceiptTradeBuyMarket
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.deleteBuy(receipt.Base, txIndex, table)
 		} else if item.Ty == pty.TyLogTradeBuyRevoke {
 			var receipt pty.ReceiptTradeBuyRevoke
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.deleteBuyLimit(receipt.Base, item.Ty, tx, txIndex, table, tradedBoardlot)
 		} else if item.Ty == pty.TyLogTradeBuyLimit {
 			var receipt pty.ReceiptTradeBuyLimit
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.deleteBuyLimit(receipt.Base, item.Ty, tx, txIndex, table, tradedBoardlot)
 		} else if item.Ty == pty.TyLogTradeSellMarket {
 			var receipt pty.ReceiptSellMarket
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.deleteSellMarket(receipt.Base, txIndex, table)
 		}

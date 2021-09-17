@@ -6,15 +6,15 @@ import (
 )
 
 /*
- * rpc相关结构定义和初始化
+ * rp 
  */
 
-// 实现grpc的service接口
+// grp servic 
 type channelClient struct {
 	rpctypes.ChannelClient
 }
 
-// Jrpc 实现json rpc调用实例
+// Jrpc json rp 
 type Jrpc struct {
 	cli *channelClient
 }
@@ -29,6 +29,6 @@ func Init(name string, s rpctypes.RPCServer) {
 	cli := &channelClient{}
 	grpc := &Grpc{channelClient: cli}
 	cli.Init(name, s, &Jrpc{cli: cli}, grpc)
-	//存在grpc service时注册grpc server，需要生成对应的pb.go文件
+	/ grpc servic grpc server pb.g 
 	x2ethereumtypes.RegisterX2EthereumServer(s.GRPC(), grpc)
 }

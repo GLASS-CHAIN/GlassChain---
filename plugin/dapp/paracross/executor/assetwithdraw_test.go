@@ -22,10 +22,10 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// 构建跨链交易, 依然使用1个节点
-// 流程模拟
-//   Height 9  withdraw 交易
-//   Height 10 有committed, 并在主链执行
+// ,  
+// 
+//   Height 9  withdraw 
+//   Height 10 committed, 
 //
 
 type AssetWithdrawTestSuite struct {
@@ -43,7 +43,7 @@ func TestAssetWithdrawSuite(t *testing.T) {
 
 func (suite *AssetWithdrawTestSuite) SetupTest() {
 	suite.stateDB, _ = dbm.NewGoMemDB("state", "state", 1024)
-	// memdb 不支持KVDB接口， 等测试完Exec ， 再扩展 memdb
+	// memdb KVD ， Exec ，  memdb
 	//suite.localDB, _ = dbm.NewGoMemDB("local", "local", 1024)
 	suite.localDB = new(dbmock.KVDB)
 	suite.api = new(apimock.QueueProtocolAPI)
@@ -90,7 +90,7 @@ func (suite *AssetWithdrawTestSuite) SetupTest() {
 		&types.ReplyHash{Hash: MainBlockHash10}, nil)
 }
 
-// 主链先不执行
+// 
 func (suite *AssetWithdrawTestSuite) TestExecAssetWithdrawOnMainChain() {
 	//types.Init("test", nil)
 	suite.api = new(apimock.QueueProtocolAPI)
@@ -110,7 +110,7 @@ func (suite *AssetWithdrawTestSuite) TestExecAssetWithdrawOnMainChain() {
 	assert.Nil(suite.T(), receipt, "mainChain not exec withdraw, wait for paraChain")
 }
 
-// 平行链执行
+// 
 func (suite *AssetWithdrawTestSuite) TestExecAssetWithdrawOnParaChain() {
 	// para_init(Title)
 	// make coins for transfer
@@ -148,7 +148,7 @@ func (suite *AssetWithdrawTestSuite) TestExecAssetWithdrawOnParaChain() {
 	}
 }
 
-// 主链在平行链执行成功后执行
+// 
 func (suite *AssetWithdrawTestSuite) TestExecAssetWithdrawAfterPara() {
 	// types.Init("test", nil)
 	suite.api = new(apimock.QueueProtocolAPI)

@@ -127,7 +127,7 @@ func (policy *ticketPolicy) Init(walletBiz wcom.WalletOperate, sub []byte) {
 	}
 	policy.initMingTicketTicker(wait)
 	walletBiz.RegisterMineStatusReporter(policy)
-	// 启动自动挖矿
+	// 
 	walletBiz.GetWaitGroup().Add(1)
 	go policy.autoMining()
 }
@@ -228,12 +228,12 @@ func (policy *ticketPolicy) SignTransaction(key crypto.PrivKey, req *types.ReqSi
 
 // OnWalletLocked process lock event
 func (policy *ticketPolicy) OnWalletLocked() {
-	// 钱包锁住时，不允许挖矿
+	//  
 	atomic.CompareAndSwapInt32(&policy.isTicketLocked, 0, 1)
 	FlushTicket(policy.getAPI())
 }
 
-//解锁超时处理，需要区分整个钱包的解锁或者只挖矿的解锁
+/  
 func (policy *ticketPolicy) resetTimeout(Timeout int64) {
 	if policy.minertimeout == nil {
 		policy.minertimeout = time.AfterFunc(time.Second*time.Duration(Timeout), func() {
@@ -253,7 +253,7 @@ func (policy *ticketPolicy) OnWalletUnlocked(param *types.WalletUnLock) {
 			policy.resetTimeout(param.Timeout)
 		}
 	}
-	// 钱包解锁时，需要刷新，通知挖矿
+	//   
 	FlushTicket(policy.getAPI())
 }
 
@@ -261,7 +261,7 @@ func (policy *ticketPolicy) OnWalletUnlocked(param *types.WalletUnLock) {
 func (policy *ticketPolicy) OnCreateNewAccount(acc *types.Account) {
 }
 
-// OnImportPrivateKey 导入key的时候flush ticket
+// OnImportPrivateKey ke flush ticket
 func (policy *ticketPolicy) OnImportPrivateKey(acc *types.Account) {
 	FlushTicket(policy.getAPI())
 }
@@ -269,7 +269,7 @@ func (policy *ticketPolicy) OnImportPrivateKey(acc *types.Account) {
 // OnAddBlockFinish process finish block
 func (policy *ticketPolicy) OnAddBlockFinish(block *types.BlockDetail) {
 	if policy.needFlush {
-		// 新增区块，由于ticket具有锁定期，所以这里不需要刷新
+		//  ticke  
 		//policy.flushTicket()
 	}
 	policy.needFlush = false
@@ -314,7 +314,7 @@ func (policy *ticketPolicy) forceCloseTicket(height int64, minerAddr string) (*t
 	return policy.forceCloseAllTicket(height)
 }
 
-//通过minerAddr地址找到绑定的ticket的returnAddr，通过returnAddr的私钥close ticket，防止miner的私钥丢失场景
+/ minerAdd ticke returnAddr returnAdd close ticket mine 
 func (policy *ticketPolicy) forceCloseTicketByReturnAddr(height int64, minerAddr string) (*types.ReplyHashes, error) {
 	tListMiner, err := policy.getForceCloseTickets(minerAddr)
 	if err != nil {
@@ -439,9 +439,9 @@ func (policy *ticketPolicy) forceCloseTicketList(height int64, priv crypto.PrivK
 	return nil, nil
 }
 
-//通过rpc 精选close 操作
+/ rpc close 
 func (policy *ticketPolicy) closeTickets(priv crypto.PrivKey, ids []string) ([]byte, error) {
-	//每次最多close 200个
+	/ close 20 
 	end := 200
 	if end > len(ids) {
 		end = len(ids)
@@ -465,7 +465,7 @@ func (policy *ticketPolicy) getTicketsByStatus(status int32) ([]*ty.Ticket, [][]
 	if !ok && err != types.ErrOnlyTicketUnLocked {
 		return nil, nil, err
 	}
-	//循环遍历所有的账户-->保证钱包已经解锁
+	/ -- 
 	var tickets []*ty.Ticket
 	var privs [][]byte
 	for _, acc := range accounts {
@@ -572,7 +572,7 @@ func (policy *ticketPolicy) processFee(priv crypto.PrivKey) error {
 		return err
 	}
 	toaddr := address.ExecAddress(ty.TicketX)
-	//如果acc2 的余额足够，那题withdraw 部分钱做手续费
+	/ acc2  withdraw 
 	coinPrecision := cfg.GetCoinPrecision()
 	if (acc1.Balance < (coinPrecision / 2)) && (acc2.Balance > coinPrecision) {
 		_, err := operater.SendToAddress(priv, toaddr, -coinPrecision, "ticket->coins", false, "")
@@ -583,7 +583,7 @@ func (policy *ticketPolicy) processFee(priv crypto.PrivKey) error {
 	return nil
 }
 
-//手续费处理
+/ 
 func (policy *ticketPolicy) processFees() error {
 	keys, err := policy.getWalletOperate().GetAllPrivKeys()
 	if err != nil {
@@ -648,18 +648,18 @@ func (policy *ticketPolicy) buyTicketOne(height int64, priv crypto.PrivKey) ([]b
 	if err != nil {
 		return nil, 0, err
 	}
-	//留一个币作为手续费，如果手续费不够了，不能挖矿
-	//判断手续费是否足够，如果不足要及时补充。
+	/   
+	/  。
 	chain33Cfg := policy.walletOperate.GetAPI().GetConfig()
 	cfg := ty.GetTicketMinerParam(chain33Cfg, height)
 	fee := chain33Cfg.GetCoinPrecision()
 	if acc1.Balance+acc2.Balance-2*fee >= cfg.TicketPrice {
-		// 如果可用余额+冻结余额，可以凑成新票，则转币到冻结余额
+		//    
 		if (acc1.Balance+acc2.Balance-2*fee)/cfg.TicketPrice > acc2.Balance/cfg.TicketPrice {
-			//第一步。转移币到 ticket
+			/   ticket
 			toaddr := address.ExecAddress(ty.TicketX)
 			amount := acc1.Balance - 2*fee
-			//必须大于0，才需要转移币
+			/ 0 
 			var hash *types.ReplyHash
 			if amount > 0 {
 				bizlog.Info("buyTicketOne.send", "toaddr", toaddr, "amount", amount)
@@ -749,7 +749,7 @@ func checkMinerWhiteList(addr string) bool {
 
 func (policy *ticketPolicy) buyMinerAddrTicketOne(height int64, priv crypto.PrivKey) ([][]byte, int, error) {
 	addr := address.PubKeyToAddress(priv.PubKey().Bytes()).String()
-	//判断是否绑定了coldaddr
+	/ coldaddr
 	addrs, err := policy.getMinerColdAddr(addr)
 	if err != nil {
 		return nil, 0, err
@@ -830,23 +830,23 @@ func (policy *ticketPolicy) withdrawFromTicket() (hashes [][]byte, err error) {
 	return hashes, nil
 }
 
-//检查周期 --> 10分
-//开启挖矿：
-//1. 自动把成熟的ticket关闭
-//2. 查找超过1万余额的账户，自动购买ticket
-//3. 查找mineraddress 和他对应的 账户的余额（不在1中），余额超过1万的自动购买ticket 挖矿
+/  --> 1 
+/ ：
+//1. ticke 
+//2.   ticket
+//3. mineraddress    ）  ticket 
 //
-//停止挖矿：
-//1. 自动把成熟的ticket关闭
-//2. 查找ticket 可取的余额
-//3. 取出ticket 里面的钱
+/ ：
+//1. ticke 
+//2. ticket 
+//3. ticket 
 func (policy *ticketPolicy) autoMining() {
 	bizlog.Info("Begin auto mining")
 	defer bizlog.Info("End auto mining")
 	operater := policy.getWalletOperate()
 	defer operater.GetWaitGroup().Done()
 
-	// 只有ticket共识下ticket相关的操作才有效
+	// ticke ticke 
 	cfg := policy.walletOperate.GetAPI().GetConfig()
 	q := types.Conf(cfg, "config.consensus")
 	if q != nil {
@@ -870,7 +870,7 @@ func (policy *ticketPolicy) autoMining() {
 				bizlog.Error("wallet IsCaughtUp false")
 				break
 			}
-			//判断高度是否增长
+			/ 
 			height := operater.GetBlockHeight()
 			if height <= lastHeight {
 				bizlog.Error("wallet Height not inc", "height", height, "lastHeight", lastHeight)

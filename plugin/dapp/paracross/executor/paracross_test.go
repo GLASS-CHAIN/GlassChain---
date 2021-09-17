@@ -26,7 +26,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-// 构造一个4个节点的平行链数据， 进行测试
+//  ， 
 const (
 	SignedType = types.SECP256K1
 )
@@ -94,7 +94,7 @@ func init() {
 func (suite *CommitTestSuite) SetupSuite() {
 
 	suite.stateDB, _ = dbm.NewGoMemDB("state", "state", 1024)
-	// memdb 不支持KVDB接口， 等测试完Exec ， 再扩展 memdb
+	// memdb KVD ， Exec ，  memdb
 	//suite.localDB, _ = dbm.NewGoMemDB("local", "local", 1024)
 	suite.localDB = new(dbmock.KVDB)
 	suite.api = new(apimock.QueueProtocolAPI)
@@ -478,7 +478,7 @@ func (s *VoteTestSuite) SetupSuite() {
 	s.exec.SetAPI(api)
 
 	s.stateDB, _ = dbm.NewGoMemDB("state", "state", 1024)
-	// memdb 不支持KVDB接口， 等测试完Exec ， 再扩展 memdb
+	// memdb KVD ， Exec ，  memdb
 	//s.localDB, _ = dbm.NewGoMemDB("local", "local", 1024)
 	s.localDB = new(dbmock.KVDB)
 

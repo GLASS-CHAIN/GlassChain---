@@ -16,7 +16,7 @@ import (
 var olog = log.New("module", "execs.oracle")
 var driverName = oty.OracleX
 
-// Init 执行器初始化
+// Init 
 func Init(name string, cfg *types.Chain33Config, sub []byte) {
 	drivers.Register(cfg, newOracle().GetName(), newOracle, cfg.GetDappFork(driverName, "Enable"))
 	InitExecType()
@@ -28,7 +28,7 @@ func InitExecType() {
 	ety.InitFuncList(types.ListMethod(&oracle{}))
 }
 
-// GetName 获取oracle执行器名
+// GetName oracl 
 func GetName() string {
 	return newOracle().GetName()
 }

@@ -15,7 +15,7 @@ var (
 
 // oracle action type
 const (
-	ActionEventPublish = iota + 1 //事件发布
+	ActionEventPublish = iota + 1 / 
 	ActionResultPrePublish
 	ActionResultPublish
 	ActionEventAbort
@@ -43,31 +43,31 @@ const (
 
 // executor action and function define
 const (
-	// FuncNameQueryOracleListByIDs 根据ids查询OracleStatus
+	// FuncNameQueryOracleListByIDs id OracleStatus
 	FuncNameQueryOracleListByIDs = "QueryOraclesByIDs"
-	// FuncNameQueryEventIDByStatus 根据状态查询eventID
+	// FuncNameQueryEventIDByStatus eventID
 	FuncNameQueryEventIDByStatus = "QueryEventIDsByStatus"
-	// FuncNameQueryEventIDByAddrAndStatus 根据创建者地址和状态查询eventID
+	// FuncNameQueryEventIDByAddrAndStatus eventID
 	FuncNameQueryEventIDByAddrAndStatus = "QueryEventIDsByAddrAndStatus"
-	// FuncNameQueryEventIDByTypeAndStatus 根据事件类型和状态查询eventID
+	// FuncNameQueryEventIDByTypeAndStatus eventID
 	FuncNameQueryEventIDByTypeAndStatus = "QueryEventIDsByTypeAndStatus"
-	// CreateEventPublishTx 创建发布事件交易
+	// CreateEventPublishTx 
 	CreateEventPublishTx = "EventPublish"
-	// CreateAbortEventPublishTx 创建取消发布事件交易
+	// CreateAbortEventPublishTx 
 	CreateAbortEventPublishTx = "EventAbort"
-	// CreatePrePublishResultTx 创建预发布事件结果交易
+	// CreatePrePublishResultTx 
 	CreatePrePublishResultTx = "ResultPrePublish"
-	// CreateAbortResultPrePublishTx 创建取消预发布的事件结果交易
+	// CreateAbortResultPrePublishTx 
 	CreateAbortResultPrePublishTx = "ResultAbort"
-	// CreateResultPublishTx 创建预发布事件结果交易
+	// CreateResultPublishTx 
 	CreateResultPublishTx = "ResultPublish"
 )
 
 // query param define
 const (
-	// ListDESC 降序
+	// ListDESC 
 	ListDESC = int32(0)
-	// DefaultCount 默认一次取多少条记录
+	// DefaultCount 
 	DefaultCount = int32(20)
 )
 

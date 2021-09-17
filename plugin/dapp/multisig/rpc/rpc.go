@@ -11,7 +11,7 @@ import (
 	mty "github.com/33cn/plugin/plugin/dapp/multisig/types"
 )
 
-// MultiSigAccCreateTx :构造创建多重签名账户的交易
+// MultiSigAccCreateTx  
 func (c *Jrpc) MultiSigAccCreateTx(param *mty.MultiSigAccCreate, result *interface{}) error {
 	if param == nil {
 		return types.ErrInvalidParam
@@ -25,7 +25,7 @@ func (c *Jrpc) MultiSigAccCreateTx(param *mty.MultiSigAccCreate, result *interfa
 	return nil
 }
 
-// MultiSigOwnerOperateTx :构造修改多重签名账户owner属性的交易
+// MultiSigOwnerOperateTx  owne 
 func (c *Jrpc) MultiSigOwnerOperateTx(param *mty.MultiSigOwnerOperate, result *interface{}) error {
 	if param == nil {
 		return types.ErrInvalidParam
@@ -39,7 +39,7 @@ func (c *Jrpc) MultiSigOwnerOperateTx(param *mty.MultiSigOwnerOperate, result *i
 	return nil
 }
 
-// MultiSigAccOperateTx :构造修改多重签名账户属性的交易
+// MultiSigAccOperateTx  
 func (c *Jrpc) MultiSigAccOperateTx(param *mty.MultiSigAccOperate, result *interface{}) error {
 	if param == nil {
 		return types.ErrInvalidParam
@@ -53,7 +53,7 @@ func (c *Jrpc) MultiSigAccOperateTx(param *mty.MultiSigAccOperate, result *inter
 	return nil
 }
 
-// MultiSigConfirmTx :构造确认多重签名账户的交易
+// MultiSigConfirmTx  
 func (c *Jrpc) MultiSigConfirmTx(param *mty.MultiSigConfirmTx, result *interface{}) error {
 	if param == nil {
 		return types.ErrInvalidParam
@@ -67,7 +67,7 @@ func (c *Jrpc) MultiSigConfirmTx(param *mty.MultiSigConfirmTx, result *interface
 	return nil
 }
 
-// MultiSigAccTransferInTx :构造在多重签名合约中转账到多重签名账户的交易
+// MultiSigAccTransferInTx  
 func (c *Jrpc) MultiSigAccTransferInTx(param *mty.MultiSigExecTransferTo, result *interface{}) error {
 	if param == nil {
 		return types.ErrInvalidParam
@@ -82,7 +82,7 @@ func (c *Jrpc) MultiSigAccTransferInTx(param *mty.MultiSigExecTransferTo, result
 	return nil
 }
 
-// MultiSigAccTransferOutTx :构造在多重签名合约中从多重签名账户转账的交易
+// MultiSigAccTransferOutTx  
 func (c *Jrpc) MultiSigAccTransferOutTx(param *mty.MultiSigExecTransferFrom, result *interface{}) error {
 	if param == nil {
 		return types.ErrInvalidParam
@@ -97,7 +97,7 @@ func (c *Jrpc) MultiSigAccTransferOutTx(param *mty.MultiSigExecTransferFrom, res
 	return nil
 }
 
-// MultiSigAddresList 获取owner地址上的多重签名账户列表{multiSigAddr，owneraddr，weight}
+// MultiSigAddresList owne {multiSigAddr，owneraddr，weight}
 func (c *Jrpc) MultiSigAddresList(in *types.ReqString, result *interface{}) error {
 	v := *in
 	data, err := c.cli.ExecWalletFunc(mty.MultiSigX, "MultiSigAddresList", &v)

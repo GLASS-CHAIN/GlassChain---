@@ -35,9 +35,9 @@ var (
 //	types.Init(title, cfg)
 //}
 
-// 构建跨链交易, 用1个节点即可， 不测试共识
+// ,  ， 
 //    assetTransfer
-//	 分别测试在主链和平行链的情况
+//	 
 
 type AssetTransferTestSuite struct {
 	suite.Suite
@@ -54,7 +54,7 @@ func TestAssetTransfer(t *testing.T) {
 
 func (suite *AssetTransferTestSuite) SetupTest() {
 	suite.stateDB, _ = dbm.NewGoMemDB("state", "state", 1024)
-	// memdb 不支持KVDB接口， 等测试完Exec ， 再扩展 memdb
+	// memdb KVD ， Exec ，  memdb
 	//suite.localDB, _ = dbm.NewGoMemDB("local", "local", 1024)
 	suite.localDB = new(dbmock.KVDB)
 

@@ -30,7 +30,7 @@ func TestParaQuery(t *testing.T) {
 	para.Para.GetAPI().ExecWalletFunc("wallet", "NewAccount", &param1)
 	para.Para.GetAPI().ExecWalletFunc("wallet", "WalletLock", &types.ReqNil{})
 
-	//通过rpc 发生信息
+	/ rpc 
 	tx := util.CreateTxWithExecer(paraCfg, para.Para.GetGenesisKey(), "user.p.test.none")
 	para.Para.SendTxRPC(tx)
 	para.Para.WaitHeight(1)

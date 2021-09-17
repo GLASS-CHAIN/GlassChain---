@@ -44,28 +44,28 @@ func (t *trade) localAddLog(tx *types.Transaction, receipt *types.ReceiptData, i
 			var receipt pty.ReceiptTradeSellLimit
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.saveSell(receipt.Base, item.Ty, tx, txIndex, table)
 		} else if item.Ty == pty.TyLogTradeSellRevoke {
 			var receipt pty.ReceiptTradeSellRevoke
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.saveSell(receipt.Base, item.Ty, tx, txIndex, table)
 		} else if item.Ty == pty.TyLogTradeBuyMarket {
 			var receipt pty.ReceiptTradeBuyMarket
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.saveBuy(receipt.Base, tx, txIndex, table)
 		} else if item.Ty == pty.TyLogTradeBuyRevoke {
 			var receipt pty.ReceiptTradeBuyRevoke
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 
 			t.saveBuyLimit(receipt.Base, item.Ty, tx, txIndex, table)
@@ -73,7 +73,7 @@ func (t *trade) localAddLog(tx *types.Transaction, receipt *types.ReceiptData, i
 			var receipt pty.ReceiptTradeBuyLimit
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 
 			t.saveBuyLimit(receipt.Base, item.Ty, tx, txIndex, table)
@@ -81,7 +81,7 @@ func (t *trade) localAddLog(tx *types.Transaction, receipt *types.ReceiptData, i
 			var receipt pty.ReceiptSellMarket
 			err := types.Decode(item.Log, &receipt)
 			if err != nil {
-				panic(err) //数据错误了，已经被修改了
+				panic(err) /  
 			}
 			t.saveSellMarket(receipt.Base, tx, txIndex, table)
 		}

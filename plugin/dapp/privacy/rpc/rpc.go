@@ -14,7 +14,7 @@ import (
 	"golang.org/x/net/context"
 )
 
-// 显示指定地址的公钥对信息，可以作为后续交易参数
+//  
 func (g *channelClient) ShowPrivacyKey(ctx context.Context, in *types.ReqString) (*pty.ReplyPrivacyPkPair, error) {
 	data, err := g.ExecWalletFunc(pty.PrivacyX, "ShowPrivacyKey", in)
 	if err != nil {
@@ -23,7 +23,7 @@ func (g *channelClient) ShowPrivacyKey(ctx context.Context, in *types.ReqString)
 	return data.(*pty.ReplyPrivacyPkPair), nil
 }
 
-// 扫描UTXO以及获取扫描UTXO后的状态
+// UTX UTX 
 func (g *channelClient) RescanUtxos(ctx context.Context, in *pty.ReqRescanUtxos) (*pty.RepRescanUtxos, error) {
 	data, err := g.ExecWalletFunc(pty.PrivacyX, "RescanUtxos", in)
 	if err != nil {
@@ -32,7 +32,7 @@ func (g *channelClient) RescanUtxos(ctx context.Context, in *pty.ReqRescanUtxos)
 	return data.(*pty.RepRescanUtxos), nil
 }
 
-// 使能隐私账户
+// 
 func (g *channelClient) EnablePrivacy(ctx context.Context, in *pty.ReqEnablePrivacy) (*pty.RepEnablePrivacy, error) {
 	data, err := g.ExecWalletFunc(pty.PrivacyX, "EnablePrivacy", in)
 	if err != nil {

@@ -15,12 +15,12 @@ func newStore(db db.DB) *multisigStore {
 	return &multisigStore{Store: wcom.NewStore(db)}
 }
 
-// multisigStore 多重签名数据库存储操作类
+// multisigStore 
 type multisigStore struct {
 	*wcom.Store
 }
 
-//获取指定owner拥有的多重签名地址
+/ owne 
 func (store *multisigStore) listOwnerAttrsByAddr(addr string) (*mtypes.OwnerAttrs, error) {
 	if len(addr) == 0 {
 		bizlog.Error("listMultisigAddrByOwnerAddr addr is nil")
@@ -47,7 +47,7 @@ func (store *multisigStore) listOwnerAttrsByAddr(addr string) (*mtypes.OwnerAttr
 	return &ownerAttrs, nil
 }
 
-//获取本钱包地址拥有的所有多重签名地址
+/ 
 func (store *multisigStore) listOwnerAttrs() (*mtypes.OwnerAttrs, error) {
 
 	list := store.NewListHelper()

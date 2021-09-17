@@ -26,7 +26,7 @@ const (
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
-// vote 合约交易行为总类型
+// vote 
 type VoteAction struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -136,27 +136,27 @@ type isVoteAction_Value interface {
 }
 
 type VoteAction_CreateGroup struct {
-	CreateGroup *CreateGroup `protobuf:"bytes,2,opt,name=createGroup,proto3,oneof"` //创建投票组
+	CreateGroup *CreateGroup `protobuf:"bytes,2,opt,name=createGroup,proto3,oneof"` / 
 }
 
 type VoteAction_UpdateGroup struct {
-	UpdateGroup *UpdateGroup `protobuf:"bytes,3,opt,name=updateGroup,proto3,oneof"` //更新组成员
+	UpdateGroup *UpdateGroup `protobuf:"bytes,3,opt,name=updateGroup,proto3,oneof"` / 
 }
 
 type VoteAction_CreateVote struct {
-	CreateVote *CreateVote `protobuf:"bytes,4,opt,name=createVote,proto3,oneof"` //创建一个投票
+	CreateVote *CreateVote `protobuf:"bytes,4,opt,name=createVote,proto3,oneof"` / 
 }
 
 type VoteAction_CommitVote struct {
-	CommitVote *CommitVote `protobuf:"bytes,5,opt,name=commitVote,proto3,oneof"` //组员提交投票
+	CommitVote *CommitVote `protobuf:"bytes,5,opt,name=commitVote,proto3,oneof"` / 
 }
 
 type VoteAction_CloseVote struct {
-	CloseVote *CloseVote `protobuf:"bytes,6,opt,name=closeVote,proto3,oneof"` //关闭投票
+	CloseVote *CloseVote `protobuf:"bytes,6,opt,name=closeVote,proto3,oneof"` / 
 }
 
 type VoteAction_UpdateMember struct {
-	UpdateMember *UpdateMember `protobuf:"bytes,7,opt,name=updateMember,proto3,oneof"` //更新用户信息
+	UpdateMember *UpdateMember `protobuf:"bytes,7,opt,name=updateMember,proto3,oneof"` / 
 }
 
 func (*VoteAction_CreateGroup) isVoteAction_Value() {}
@@ -176,9 +176,9 @@ type GroupMember struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Addr       string `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`              //用户地址
-	VoteWeight uint32 `protobuf:"varint,2,opt,name=voteWeight,proto3" json:"voteWeight,omitempty"` //投票权重， 不填时默认为1
-	NickName   string `protobuf:"bytes,3,opt,name=nickName,proto3" json:"nickName,omitempty"`      //群昵称
+	Addr       string `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`              / 
+	VoteWeight uint32 `protobuf:"varint,2,opt,name=voteWeight,proto3" json:"voteWeight,omitempty"` / ， 1
+	NickName   string `protobuf:"bytes,3,opt,name=nickName,proto3" json:"nickName,omitempty"`      / 
 }
 
 func (x *GroupMember) Reset() {
@@ -234,16 +234,16 @@ func (x *GroupMember) GetNickName() string {
 	return ""
 }
 
-//创建投票组
+/ 
 type CreateGroup struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name        string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`               //投票组名称
-	Admins      []string       `protobuf:"bytes,2,rep,name=admins,proto3" json:"admins,omitempty"`           //管理员地址列表，创建者默认为管理员
-	Members     []*GroupMember `protobuf:"bytes,3,rep,name=members,proto3" json:"members,omitempty"`         //组员
-	Description string         `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"` //描述
+	Name        string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`               / 
+	Admins      []string       `protobuf:"bytes,2,rep,name=admins,proto3" json:"admins,omitempty"`           /  
+	Members     []*GroupMember `protobuf:"bytes,3,rep,name=members,proto3" json:"members,omitempty"`         / 
+	Description string         `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"` / 
 }
 
 func (x *CreateGroup) Reset() {
@@ -306,17 +306,17 @@ func (x *CreateGroup) GetDescription() string {
 	return ""
 }
 
-//更新投票组
+/ 
 type UpdateGroup struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GroupID       string         `protobuf:"bytes,1,opt,name=groupID,proto3" json:"groupID,omitempty"`             //投票组ID
-	AddMembers    []*GroupMember `protobuf:"bytes,2,rep,name=addMembers,proto3" json:"addMembers,omitempty"`       //需要增加的组成员
-	RemoveMembers []string       `protobuf:"bytes,3,rep,name=removeMembers,proto3" json:"removeMembers,omitempty"` //删除组成员的地址列表
-	AddAdmins     []string       `protobuf:"bytes,4,rep,name=addAdmins,proto3" json:"addAdmins,omitempty"`         //增加管理员
-	RemoveAdmins  []string       `protobuf:"bytes,5,rep,name=removeAdmins,proto3" json:"removeAdmins,omitempty"`   //删除管理员
+	GroupID       string         `protobuf:"bytes,1,opt,name=groupID,proto3" json:"groupID,omitempty"`             / ID
+	AddMembers    []*GroupMember `protobuf:"bytes,2,rep,name=addMembers,proto3" json:"addMembers,omitempty"`       / 
+	RemoveMembers []string       `protobuf:"bytes,3,rep,name=removeMembers,proto3" json:"removeMembers,omitempty"` / 
+	AddAdmins     []string       `protobuf:"bytes,4,rep,name=addAdmins,proto3" json:"addAdmins,omitempty"`         / 
+	RemoveAdmins  []string       `protobuf:"bytes,5,rep,name=removeAdmins,proto3" json:"removeAdmins,omitempty"`   / 
 }
 
 func (x *UpdateGroup) Reset() {
@@ -386,20 +386,20 @@ func (x *UpdateGroup) GetRemoveAdmins() []string {
 	return nil
 }
 
-// 投票组信息
+// 
 type GroupInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID          string         `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`                   //投票组ID
-	Name        string         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`               //投票组名称
-	MemberNum   uint32         `protobuf:"varint,3,opt,name=memberNum,proto3" json:"memberNum,omitempty"`    //组员数量
-	Creator     string         `protobuf:"bytes,4,opt,name=creator,proto3" json:"creator,omitempty"`         //创建者
-	Admins      []string       `protobuf:"bytes,5,rep,name=admins,proto3" json:"admins,omitempty"`           //管理员列表
-	Members     []*GroupMember `protobuf:"bytes,6,rep,name=members,proto3" json:"members,omitempty"`         //成员列表
-	Description string         `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"` //描述信息
-	VoteNum     uint32         `protobuf:"varint,8,opt,name=voteNum,proto3" json:"voteNum,omitempty"`        //投票数量
+	ID          string         `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`                   / ID
+	Name        string         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`               / 
+	MemberNum   uint32         `protobuf:"varint,3,opt,name=memberNum,proto3" json:"memberNum,omitempty"`    / 
+	Creator     string         `protobuf:"bytes,4,opt,name=creator,proto3" json:"creator,omitempty"`         / 
+	Admins      []string       `protobuf:"bytes,5,rep,name=admins,proto3" json:"admins,omitempty"`           / 
+	Members     []*GroupMember `protobuf:"bytes,6,rep,name=members,proto3" json:"members,omitempty"`         / 
+	Description string         `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"` / 
+	VoteNum     uint32         `protobuf:"varint,8,opt,name=voteNum,proto3" json:"voteNum,omitempty"`        / 
 }
 
 func (x *GroupInfo) Reset() {
@@ -495,7 +495,7 @@ type GroupInfos struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GroupList []*GroupInfo `protobuf:"bytes,1,rep,name=groupList,proto3" json:"groupList,omitempty"` //投票组信息列表
+	GroupList []*GroupInfo `protobuf:"bytes,1,rep,name=groupList,proto3" json:"groupList,omitempty"` / 
 }
 
 func (x *GroupInfos) Reset() {
@@ -537,14 +537,14 @@ func (x *GroupInfos) GetGroupList() []*GroupInfo {
 	return nil
 }
 
-//投票选项
+/ 
 type VoteOption struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Option string `protobuf:"bytes,1,opt,name=option,proto3" json:"option,omitempty"` //投票选项
-	Score  uint32 `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`  //投票得分
+	Option string `protobuf:"bytes,1,opt,name=option,proto3" json:"option,omitempty"` / 
+	Score  uint32 `protobuf:"varint,2,opt,name=score,proto3" json:"score,omitempty"`  / 
 }
 
 func (x *VoteOption) Reset() {
@@ -593,18 +593,18 @@ func (x *VoteOption) GetScore() uint32 {
 	return 0
 }
 
-// 创建投票交易，请求结构
+//  
 type CreateVote struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name           string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`                      //投票名称
-	GroupID        string   `protobuf:"bytes,2,opt,name=groupID,proto3" json:"groupID,omitempty"`                //投票关联组
-	VoteOptions    []string `protobuf:"bytes,3,rep,name=voteOptions,proto3" json:"voteOptions,omitempty"`        //投票选项列表
-	BeginTimestamp int64    `protobuf:"varint,4,opt,name=beginTimestamp,proto3" json:"beginTimestamp,omitempty"` //投票开始时间戳
-	EndTimestamp   int64    `protobuf:"varint,5,opt,name=endTimestamp,proto3" json:"endTimestamp,omitempty"`     //投票结束时间戳
-	Description    string   `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`        //描述信息
+	Name           string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`                      / 
+	GroupID        string   `protobuf:"bytes,2,opt,name=groupID,proto3" json:"groupID,omitempty"`                / 
+	VoteOptions    []string `protobuf:"bytes,3,rep,name=voteOptions,proto3" json:"voteOptions,omitempty"`        / 
+	BeginTimestamp int64    `protobuf:"varint,4,opt,name=beginTimestamp,proto3" json:"beginTimestamp,omitempty"` / 
+	EndTimestamp   int64    `protobuf:"varint,5,opt,name=endTimestamp,proto3" json:"endTimestamp,omitempty"`     / 
+	Description    string   `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`        / 
 }
 
 func (x *CreateVote) Reset() {
@@ -681,14 +681,14 @@ func (x *CreateVote) GetDescription() string {
 	return ""
 }
 
-// 创建提交投票交易，请求结构
+//  
 type CommitVote struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VoteID      string `protobuf:"bytes,1,opt,name=voteID,proto3" json:"voteID,omitempty"`            //投票ID
-	OptionIndex uint32 `protobuf:"varint,2,opt,name=optionIndex,proto3" json:"optionIndex,omitempty"` //投票选项数组下标，下标对应投票内容
+	VoteID      string `protobuf:"bytes,1,opt,name=voteID,proto3" json:"voteID,omitempty"`            / ID
+	OptionIndex uint32 `protobuf:"varint,2,opt,name=optionIndex,proto3" json:"optionIndex,omitempty"` /  
 }
 
 func (x *CommitVote) Reset() {
@@ -742,9 +742,9 @@ type CommitInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Addr       string `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`              //提交地址
-	TxHash     string `protobuf:"bytes,2,opt,name=txHash,proto3" json:"txHash,omitempty"`          //提交交易哈希
-	VoteWeight uint32 `protobuf:"varint,3,opt,name=voteWeight,proto3" json:"voteWeight,omitempty"` //投票权重
+	Addr       string `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`              / 
+	TxHash     string `protobuf:"bytes,2,opt,name=txHash,proto3" json:"txHash,omitempty"`          / 
+	VoteWeight uint32 `protobuf:"varint,3,opt,name=voteWeight,proto3" json:"voteWeight,omitempty"` / 
 }
 
 func (x *CommitInfo) Reset() {
@@ -805,7 +805,7 @@ type CloseVote struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VoteID string `protobuf:"bytes,1,opt,name=voteID,proto3" json:"voteID,omitempty"` // 投票ID
+	VoteID string `protobuf:"bytes,1,opt,name=voteID,proto3" json:"voteID,omitempty"` // ID
 }
 
 func (x *CloseVote) Reset() {
@@ -852,7 +852,7 @@ type UpdateMember struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"` //用户名称
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"` / 
 }
 
 func (x *UpdateMember) Reset() {
@@ -894,23 +894,23 @@ func (x *UpdateMember) GetName() string {
 	return ""
 }
 
-//投票信息
+/ 
 type VoteInfo struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ID             string        `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`                          //投票ID
-	Name           string        `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                      //投票名称
-	Creator        string        `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty"`                //创建者
-	GroupID        string        `protobuf:"bytes,4,opt,name=groupID,proto3" json:"groupID,omitempty"`                //投票关联的投票组
-	VoteOptions    []*VoteOption `protobuf:"bytes,5,rep,name=voteOptions,proto3" json:"voteOptions,omitempty"`        //投票的选项
-	BeginTimestamp int64         `protobuf:"varint,6,opt,name=beginTimestamp,proto3" json:"beginTimestamp,omitempty"` //投票开始时间戳
-	EndTimestamp   int64         `protobuf:"varint,7,opt,name=endTimestamp,proto3" json:"endTimestamp,omitempty"`     //投票结束时间戳
-	CommitInfos    []*CommitInfo `protobuf:"bytes,8,rep,name=commitInfos,proto3" json:"commitInfos,omitempty"`        //已投票的提交信息
-	Description    string        `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`        //描述信息
-	Status         uint32        `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`                //状态，1即将开始，2正在进行，3已经结束，4已关闭
-	GroupName      string        `protobuf:"bytes,11,opt,name=groupName,proto3" json:"groupName,omitempty"`           //所属投票组名称
+	ID             string        `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`                          / ID
+	Name           string        `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                      / 
+	Creator        string        `protobuf:"bytes,3,opt,name=creator,proto3" json:"creator,omitempty"`                / 
+	GroupID        string        `protobuf:"bytes,4,opt,name=groupID,proto3" json:"groupID,omitempty"`                / 
+	VoteOptions    []*VoteOption `protobuf:"bytes,5,rep,name=voteOptions,proto3" json:"voteOptions,omitempty"`        / 
+	BeginTimestamp int64         `protobuf:"varint,6,opt,name=beginTimestamp,proto3" json:"beginTimestamp,omitempty"` / 
+	EndTimestamp   int64         `protobuf:"varint,7,opt,name=endTimestamp,proto3" json:"endTimestamp,omitempty"`     / 
+	CommitInfos    []*CommitInfo `protobuf:"bytes,8,rep,name=commitInfos,proto3" json:"commitInfos,omitempty"`        / 
+	Description    string        `protobuf:"bytes,9,opt,name=description,proto3" json:"description,omitempty"`        / 
+	Status         uint32        `protobuf:"varint,10,opt,name=status,proto3" json:"status,omitempty"`                / ， ， ， ， 
+	GroupName      string        `protobuf:"bytes,11,opt,name=groupName,proto3" json:"groupName,omitempty"`           / 
 }
 
 func (x *VoteInfo) Reset() {
@@ -1027,7 +1027,7 @@ type VoteInfos struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VoteList []*VoteInfo `protobuf:"bytes,1,rep,name=voteList,proto3" json:"voteList,omitempty"` //投票信息列表
+	VoteList []*VoteInfo `protobuf:"bytes,1,rep,name=voteList,proto3" json:"voteList,omitempty"` / 
 }
 
 func (x *VoteInfos) Reset() {
@@ -1074,9 +1074,9 @@ type MemberInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Addr     string   `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`         //地址
-	Name     string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`         //用户名称
-	GroupIDs []string `protobuf:"bytes,3,rep,name=groupIDs,proto3" json:"groupIDs,omitempty"` //所属投票组的ID列表
+	Addr     string   `protobuf:"bytes,1,opt,name=addr,proto3" json:"addr,omitempty"`         / 
+	Name     string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`         / 
+	GroupIDs []string `protobuf:"bytes,3,rep,name=groupIDs,proto3" json:"groupIDs,omitempty"` / I 
 }
 
 func (x *MemberInfo) Reset() {
@@ -1137,7 +1137,7 @@ type MemberInfos struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	MemberList []*MemberInfo `protobuf:"bytes,1,rep,name=memberList,proto3" json:"memberList,omitempty"` //投票组成员信息列表
+	MemberList []*MemberInfo `protobuf:"bytes,1,rep,name=memberList,proto3" json:"memberList,omitempty"` / 
 }
 
 func (x *MemberInfos) Reset() {
@@ -1184,7 +1184,7 @@ type ReqStrings struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []string `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"` //请求项数组
+	Items []string `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"` / 
 }
 
 func (x *ReqStrings) Reset() {
@@ -1226,15 +1226,15 @@ func (x *ReqStrings) GetItems() []string {
 	return nil
 }
 
-//列表请求结构
+/ 
 type ReqListItem struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	StartItemID string `protobuf:"bytes,1,opt,name=startItemID,proto3" json:"startItemID,omitempty"` //列表开始的ID，如请求组列表即groupID，不包含在结果中
-	Count       int32  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`            //请求列表项数量, 0表示请求所有
-	Direction   int32  `protobuf:"varint,3,opt,name=direction,proto3" json:"direction,omitempty"`    // 0表示根据ID降序，1表示升序，目前ID和区块高度正相关
+	StartItemID string `protobuf:"bytes,1,opt,name=startItemID,proto3" json:"startItemID,omitempty"` / ID groupID 
+	Count       int32  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`            / ,  
+	Direction   int32  `protobuf:"varint,3,opt,name=direction,proto3" json:"direction,omitempty"`    //  I ，  I 
 }
 
 func (x *ReqListItem) Reset() {
@@ -1295,9 +1295,9 @@ type ReqListVote struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	GroupID string       `protobuf:"bytes,1,opt,name=groupID,proto3" json:"groupID,omitempty"` //指定所属组ID
-	ListReq *ReqListItem `protobuf:"bytes,2,opt,name=listReq,proto3" json:"listReq,omitempty"` //列表请求
-	Status  uint32       `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`  //指定投票状态
+	GroupID string       `protobuf:"bytes,1,opt,name=groupID,proto3" json:"groupID,omitempty"` / ID
+	ListReq *ReqListItem `protobuf:"bytes,2,opt,name=listReq,proto3" json:"listReq,omitempty"` / 
+	Status  uint32       `protobuf:"varint,3,opt,name=status,proto3" json:"status,omitempty"`  / 
 }
 
 func (x *ReqListVote) Reset() {
@@ -1358,8 +1358,8 @@ type ReplyVoteList struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VoteList         []*VoteInfo `protobuf:"bytes,1,rep,name=voteList,proto3" json:"voteList,omitempty"`                  //投票列表
-	CurrentTimestamp int64       `protobuf:"varint,2,opt,name=currentTimestamp,proto3" json:"currentTimestamp,omitempty"` //当前系统时间
+	VoteList         []*VoteInfo `protobuf:"bytes,1,rep,name=voteList,proto3" json:"voteList,omitempty"`                  / 
+	CurrentTimestamp int64       `protobuf:"varint,2,opt,name=currentTimestamp,proto3" json:"currentTimestamp,omitempty"` / 
 }
 
 func (x *ReplyVoteList) Reset() {

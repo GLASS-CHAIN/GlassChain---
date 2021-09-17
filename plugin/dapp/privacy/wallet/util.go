@@ -18,8 +18,8 @@ func checkAmountValid(amount, coinPrecision int64) bool {
 	if amount <= 0 {
 		return false
 	}
-	// 隐私交易中，交易金额必须是types.Coin的整数倍
-	// 后续调整了隐私交易中手续费计算以后需要修改
+	//  types.Coi 
+	// 
 	if (int64(float64(amount)/float64(coinPrecision)) * coinPrecision) != amount {
 		return false
 	}
@@ -32,7 +32,7 @@ func makeViewSpendPubKeyPairToString(viewPubKey, spendPubKey []byte) string {
 	return hex.EncodeToString(pair)
 }
 
-//将amount切分为1,2,5的组合，这样在进行amount混淆的时候就能够方便获取相同额度的utxo
+/ amoun 1,2,  amoun utxo
 func decomAmount2Nature(amount int64, order int64) []int64 {
 	res := make([]int64, 0)
 	if order == 0 {
@@ -85,22 +85,22 @@ func decomposeAmount2digits(amount, dustThreshold int64) []int64 {
 		amount /= 10
 		order *= 10
 		if dust+chunk < dustThreshold {
-			dust += chunk //累加小数，直到超过dust_threshold为止
+			dust += chunk /  dust_threshol 
 		} else {
 			if !isDustHandled && 0 != dust {
-				//1st 正常情况下，先把dust保存下来
+				//1st  dus 
 				res = append(res, dust)
 				isDustHandled = true
 			}
 			if 0 != chunk {
-				//2nd 然后依次将大的整数额度进行保存
+				//2nd 
 				goodAmount := decomAmount2Nature(chunk, order/10)
 				res = append(res, goodAmount...)
 			}
 		}
 	}
 
-	//如果需要被拆分的额度 < dustThreshold，则直接将其进行保存
+	/  < dustThreshold 
 	if !isDustHandled && 0 != dust {
 		res = append(res, dust)
 	}
@@ -122,8 +122,8 @@ func parseViewSpendPubKeyPair(in string) (viewPubKey, spendPubKey []byte, err er
 	return
 }
 
-// genCustomOuts 构建一个交易的输出
-// 构建方式是，P=Hs(rA)G+B
+// genCustomOuts 
+// ，P=Hs(rA)G+B
 //func genCustomOuts(viewpubTo, spendpubto *[32]byte, transAmount int64, count int32) (*privacytypes.PrivacyOutput, error) {
 //	decomDigit := make([]int64, count)
 //	for i := range decomDigit {
@@ -140,7 +140,7 @@ func parseViewSpendPubKeyPair(in string) (viewPubKey, spendPubKey []byte, err er
 //	privacyOutput.RpubKeytx = RtxPublicKey
 //	privacyOutput.Keyoutput = make([]*privacytypes.KeyOutput, len(decomDigit))
 //
-//	//添加本次转账的目的接收信息（UTXO），包括一次性公钥和额度
+//	/ （UTXO） 
 //	for index, digit := range decomDigit {
 //		pubkeyOnetime, err := privacy.GenerateOneTimeAddr(viewpubTo, spendpubto, sktx, int64(index))
 //		if err != nil {
@@ -157,12 +157,12 @@ func parseViewSpendPubKeyPair(in string) (viewPubKey, spendPubKey []byte, err er
 //	return &privacyOutput, nil
 //}
 
-//最后构造完成的utxo依次是2种类型，不构造交易费utxo，使其直接燃烧消失
-//1.进行实际转账utxo
-//2.进行找零转账utxo
+/ utx   utxo 
+//1 utxo
+//2 utxo
 func generateOuts(viewpubTo, spendpubto, viewpubChangeto, spendpubChangeto *[32]byte, transAmount, selectedAmount, fee, coinPrecision int64) (*privacytypes.PrivacyOutput, error) {
 	decomDigit := decomposeAmount2digits(transAmount, privacytypes.BTYDustThreshold*coinPrecision)
-	//计算找零
+	/ 
 	changeAmount := selectedAmount - transAmount - fee
 	var decomChange []int64
 	if 0 < changeAmount {
@@ -180,7 +180,7 @@ func generateOuts(viewpubTo, spendpubto, viewpubChangeto, spendpubChangeto *[32]
 	privacyOutput.RpubKeytx = RtxPublicKey
 	privacyOutput.Keyoutput = make([]*privacytypes.KeyOutput, len(decomDigit)+len(decomChange))
 
-	//添加本次转账的目的接收信息（UTXO），包括一次性公钥和额度
+	/ （UTXO） 
 	for index, digit := range decomDigit {
 		pubkeyOnetime, err := privacy.GenerateOneTimeAddr(viewpubTo, spendpubto, sktx, int64(index))
 		if err != nil {
@@ -193,7 +193,7 @@ func generateOuts(viewpubTo, spendpubto, viewpubChangeto, spendpubChangeto *[32]
 		}
 		privacyOutput.Keyoutput[index] = keyOutput
 	}
-	//添加本次转账选择的UTXO后的找零后的UTXO
+	/ UTX UTXO
 	for index, digit := range decomChange {
 		pubkeyOnetime, err := privacy.GenerateOneTimeAddr(viewpubChangeto, spendpubChangeto, sktx, int64(index+len(decomDigit)))
 		if err != nil {
@@ -206,7 +206,7 @@ func generateOuts(viewpubTo, spendpubto, viewpubChangeto, spendpubChangeto *[32]
 		}
 		privacyOutput.Keyoutput[index+len(decomDigit)] = keyOutput
 	}
-	//交易费不产生额外的utxo，方便执行器执行的时候直接燃烧殆尽
+	/ utxo 
 	if 0 != fee {
 		//viewPub, _ := common.Hex2Bytes(types.ViewPubFee)
 		//spendPub, _ := common.Hex2Bytes(types.SpendPubFee)

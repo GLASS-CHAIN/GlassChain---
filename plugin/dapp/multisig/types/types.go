@@ -26,12 +26,12 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(MultiSigX, NewType(cfg))
 }
 
-// MultiSigType multisig合约结构体
+// MultiSigType multisi 
 type MultiSigType struct {
 	types.ExecTypeBase
 }
 
-// NewType new一个新的multisig合约实例
+// NewType ne multisi 
 func NewType(cfg *types.Chain33Config) *MultiSigType {
 	c := &MultiSigType{}
 	c.SetChild(c)
@@ -39,17 +39,17 @@ func NewType(cfg *types.Chain33Config) *MultiSigType {
 	return c
 }
 
-//GetPayload 获取交易payload的结构体信息：也就是multisig.pb.go中定义的具体交易类型结构体
+//GetPayload payloa  multisig.pb.g 
 func (m *MultiSigType) GetPayload() types.Message {
 	return &MultiSigAction{}
 }
 
-//GetName 获取合约name
+//GetName name
 func (m *MultiSigType) GetName() string {
 	return MultiSigX
 }
 
-//GetTypeMap 获取处理具体交易的接口函数，也就是exec.go中的函数实现，去掉EXEC_
+//GetTypeMap  exec.g  EXEC_
 func (m *MultiSigType) GetTypeMap() map[string]int32 {
 	return map[string]int32{
 		"MultiSigAccCreate":        ActionMultiSigAccCreate,
@@ -61,7 +61,7 @@ func (m *MultiSigType) GetTypeMap() map[string]int32 {
 	}
 }
 
-//GetLogMap 获取具体执行Receiptlog对应的结构体：
+//GetLogMap Receiptlo ：
 func (m *MultiSigType) GetLogMap() map[int64]*types.LogInfo {
 	return map[int64]*types.LogInfo{
 		TyLogMultiSigAccCreate: {Ty: reflect.TypeOf(MultiSig{}), Name: "LogMultiSigAccCreate"},
@@ -84,7 +84,7 @@ func (m *MultiSigType) GetLogMap() map[int64]*types.LogInfo {
 	}
 }
 
-//DecodePayload 解码交易的Payload信息
+//DecodePayload Payloa 
 func (m MultiSigType) DecodePayload(tx *types.Transaction) (types.Message, error) {
 	var action MultiSigAction
 	err := types.Decode(tx.Payload, &action)
@@ -94,7 +94,7 @@ func (m MultiSigType) DecodePayload(tx *types.Transaction) (types.Message, error
 	return &action, nil
 }
 
-//ActionName 获取actionid对应的name
+//ActionName actioni name
 func (m MultiSigType) ActionName(tx *types.Transaction) string {
 	var g MultiSigAction
 	err := types.Decode(tx.Payload, &g)

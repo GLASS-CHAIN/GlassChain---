@@ -9,7 +9,7 @@ import (
 	vty "github.com/33cn/plugin/plugin/dapp/vote/types"
 )
 
-// CheckTx 实现自定义检验交易接口，供框架调用
+// CheckTx  
 func (v *vote) CheckTx(tx *types.Transaction, index int) error {
 	// implement code
 
@@ -62,11 +62,11 @@ func (v *vote) checkCreateGroup(create *vty.CreateGroup) error {
 		return errEmptyName
 	}
 
-	//检测组成员是否有重复
+	/ 
 	if err := checkMemberValidity(create.GetMembers()); err != nil {
 		return err
 	}
-	//检测管理员是否有重复
+	/ 
 	if checkSliceItemDuplicate(create.GetAdmins()) {
 		return errDuplicateAdmin
 	}
@@ -85,7 +85,7 @@ func (v *vote) checkUpdateGroup(update *vty.UpdateGroup, tx *types.Transaction, 
 		return errAddrPermissionDenied
 	}
 
-	//防止将管理员全部删除
+	/ 
 	if len(update.RemoveAdmins) >= len(groupInfo.GetAdmins()) && len(update.AddAdmins) == 0 {
 		return errAddrPermissionDenied
 	}
@@ -107,7 +107,7 @@ func (v *vote) checkUpdateGroup(update *vty.UpdateGroup, tx *types.Transaction, 
 		}
 	}
 
-	//保证管理员地址合法性
+	/ 
 	for _, addr := range update.GetAddAdmins() {
 		if err := dapp.CheckAddress(v.GetAPI().GetConfig(), addr, v.GetHeight()); err != nil {
 			elog.Error("checkUpdateGroup", "addr", addr, "CheckAddress err", err)

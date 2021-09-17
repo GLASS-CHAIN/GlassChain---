@@ -115,7 +115,7 @@ func (t *TradeType) ActionName(tx *types.Transaction) string {
 
 //Amount ...
 func (t *TradeType) Amount(tx *types.Transaction) (int64, error) {
-	//TODO: 补充和完善token和trade分支的amount的计算, added by hzj
+	//TODO: toke trad amoun , added by hzj
 	var trade Trade
 	err := types.Decode(tx.GetPayload(), &trade)
 	if err != nil {
@@ -189,7 +189,7 @@ func (t *TradeType) CreateTx(action string, message json.RawMessage) (*types.Tra
 	return nil, types.ErrNotSupport
 }
 
-//CreateRawTradeSellTx : 创建卖单交易
+//CreateRawTradeSellTx : 
 func CreateRawTradeSellTx(cfg *types.Chain33Config, parm *TradeSellTx) (*types.Transaction, error) {
 	if parm == nil {
 		return nil, types.ErrInvalidParam
@@ -214,7 +214,7 @@ func CreateRawTradeSellTx(cfg *types.Chain33Config, parm *TradeSellTx) (*types.T
 	return types.CreateFormatTx(cfg, cfg.ExecName(TradeX), types.Encode(sell))
 }
 
-//CreateRawTradeBuyTx :创建想指定卖单发起的买单交易
+//CreateRawTradeBuyTx  
 func CreateRawTradeBuyTx(cfg *types.Chain33Config, parm *TradeBuyTx) (*types.Transaction, error) {
 	if parm == nil {
 		return nil, types.ErrInvalidParam
@@ -227,7 +227,7 @@ func CreateRawTradeBuyTx(cfg *types.Chain33Config, parm *TradeBuyTx) (*types.Tra
 	return types.CreateFormatTx(cfg, cfg.ExecName(TradeX), types.Encode(buy))
 }
 
-//CreateRawTradeRevokeTx :创建取消卖单的交易
+//CreateRawTradeRevokeTx  
 func CreateRawTradeRevokeTx(cfg *types.Chain33Config, parm *TradeRevokeTx) (*types.Transaction, error) {
 	if parm == nil {
 		return nil, types.ErrInvalidParam
@@ -241,7 +241,7 @@ func CreateRawTradeRevokeTx(cfg *types.Chain33Config, parm *TradeRevokeTx) (*typ
 	return types.CreateFormatTx(cfg, cfg.ExecName(TradeX), types.Encode(buy))
 }
 
-//CreateRawTradeBuyLimitTx :创建买单交易
+//CreateRawTradeBuyLimitTx  
 func CreateRawTradeBuyLimitTx(cfg *types.Chain33Config, parm *TradeBuyLimitTx) (*types.Transaction, error) {
 	if parm == nil {
 		return nil, types.ErrInvalidParam
@@ -263,7 +263,7 @@ func CreateRawTradeBuyLimitTx(cfg *types.Chain33Config, parm *TradeBuyLimitTx) (
 	return types.CreateFormatTx(cfg, cfg.ExecName(TradeX), types.Encode(buyLimit))
 }
 
-//CreateRawTradeSellMarketTx : 创建向指定买单出售token的卖单交易
+//CreateRawTradeSellMarketTx : toke 
 func CreateRawTradeSellMarketTx(cfg *types.Chain33Config, parm *TradeSellMarketTx) (*types.Transaction, error) {
 	if parm == nil {
 		return nil, types.ErrInvalidParam
@@ -276,7 +276,7 @@ func CreateRawTradeSellMarketTx(cfg *types.Chain33Config, parm *TradeSellMarketT
 	return types.CreateFormatTx(cfg, cfg.ExecName(TradeX), types.Encode(sellMarket))
 }
 
-//CreateRawTradeRevokeBuyTx : 取消发起的买单交易
+//CreateRawTradeRevokeBuyTx : 
 func CreateRawTradeRevokeBuyTx(cfg *types.Chain33Config, parm *TradeRevokeBuyTx) (*types.Transaction, error) {
 	if parm == nil {
 		return nil, types.ErrInvalidParam

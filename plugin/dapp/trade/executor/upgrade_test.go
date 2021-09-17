@@ -54,22 +54,22 @@ func Test_Upgrade(t *testing.T) {
 		localdb.Set(kv.Key, kv.Value)
 	}
 
-	// 初次升级
+	// 
 	setVersion(localdb, 1)
 	kvset, err = callUpgradeLocalDBV2(localdb)
 	assert.Nil(t, err)
 	assert.NotNil(t, kvset)
 
-	// 已经是升级后的版本了， 不需要再升级
+	// ， 
 	kvset, err = callUpgradeLocalDBV2(localdb)
 	assert.Nil(t, err)
 	assert.Nil(t, kvset)
 
-	// 先修改版本去升级，但数据已经升级了， 所以处理数据量为0
+	//  ， 0
 	setVersion(localdb, 1)
 	kvset, err = callUpgradeLocalDBV2(localdb)
 	assert.Nil(t, err)
-	// 只有version 升级
+	// version 
 	assert.Equal(t, 1, len(kvset.KV))
 
 	// just print log
@@ -80,7 +80,7 @@ func callUpgradeLocalDBV2(localdb dbm.KVDB) (*types.LocalDBSet, error) {
 	return UpgradeLocalDBV2(localdb, "coins", "bty")
 }
 
-// 测试更新后是否删除完全， asset 设置
+// ， asset 
 func Test_UpgradeOrderAsset(t *testing.T) {
 	dir, db, localdb := util.CreateTestDB()
 	defer util.CloseTestDB(dir, db)
@@ -109,14 +109,14 @@ func Test_UpgradeOrderAsset(t *testing.T) {
 		err := types.Decode(v, &kv)
 		assert.Nil(t, err)
 
-		// 前缀都是v2， 删除完成测试
+		// v2， 
 		if !bytes.Equal([]byte("LODB-trade-order_v2-d-000000000000300001"), kv.Key) {
 			assert.Equal(t, []byte(primaryKey), kv.Value)
 			assert.True(t, bytes.HasPrefix(kv.Key, []byte(prefix)))
 		}
 	}
 
-	// assert 前缀测试
+	// assert 
 	v, err := localdb.Get([]byte("LODB-trade-order_v2-m-asset-coins.bty_token.CCNY-000000000000300001"))
 	assert.Nil(t, err)
 	assert.Equal(t, primaryKey, string(v))

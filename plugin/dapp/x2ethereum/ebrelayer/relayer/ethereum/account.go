@@ -179,7 +179,7 @@ func checksum(input []byte) (cksum [4]byte) {
 }
 
 func pubKeyToAddress4Bty(pub []byte) (addr string, err error) {
-	if len(pub) != 33 && len(pub) != 65 { //压缩格式 与 非压缩格式
+	if len(pub) != 33 && len(pub) != 65 { /   
 		return "", fmt.Errorf("invalid public key byte")
 	}
 
@@ -194,14 +194,14 @@ func pubKeyToAddress4Bty(pub []byte) (addr string, err error) {
 	if err != nil {
 		return "", err
 	}
-	//添加版本号
+	/ 
 	hash160res := append([]byte{0}, ripemd160h.Sum([]byte(""))...)
 
-	//添加校验码
+	/ 
 	cksum := checksum(hash160res)
 	address := append(hash160res, cksum[:]...)
 
-	//地址进行base58编码
+	/ base5 
 	addr = base58.Encode(address)
 	return
 }

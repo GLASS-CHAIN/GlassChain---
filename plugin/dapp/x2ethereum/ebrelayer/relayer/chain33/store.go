@@ -26,7 +26,7 @@ func (chain33Relayer *Relayer4Chain33) updateTotalTxAmount2Eth(total int64) erro
 	totalTx := &types.Int64{
 		Data: atomic.LoadInt64(&chain33Relayer.totalTx4Chain33ToEth),
 	}
-	//更新成功见证的交易数
+	/ 
 	return chain33Relayer.db.Set(chain33ToEthBurnLockTxTotalAmount, types.Encode(totalTx))
 }
 
@@ -72,7 +72,7 @@ func (chain33Relayer *Relayer4Chain33) getStatusCheckedIndex() int64 {
 	return index
 }
 
-//获取上次同步到app的高度
+/ ap 
 func (chain33Relayer *Relayer4Chain33) loadLastSyncHeight() int64 {
 	height, err := utils.LoadInt64FromDB(lastSyncHeightPrefix, chain33Relayer.db)
 	if nil != err && err != types.ErrHeightNotExist {

@@ -8,11 +8,11 @@ import (
 //AES ...
 type AES struct {
 	key []byte
-	//iv的长度必须等于block块的大小，这里是16字节，固定
+	//i bloc  1  
 	iv []byte
 }
 
-//NewAES 密钥长度为 16,24,32 字节，三种
+//NewAES  16,24,32  
 func NewAES(key, iv []byte) *AES {
 	return &AES{key: key, iv: iv}
 }
@@ -28,7 +28,7 @@ func (a *AES) Encrypt(origData []byte) ([]byte, error) {
 	// origData = ZeroPadding(origData, block.BlockSize())
 	blockMode := cipher.NewCBCEncrypter(block, a.iv[:blockSize])
 	crypted := make([]byte, len(origData))
-	// 根据CryptBlocks方法的说明，如下方式初始化crypted也可以
+	// CryptBlock  crypte 
 	// crypted := origData
 	blockMode.CryptBlocks(crypted, origData)
 	return crypted, nil

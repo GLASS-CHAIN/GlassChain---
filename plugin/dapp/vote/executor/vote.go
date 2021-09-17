@@ -8,12 +8,12 @@ import (
 )
 
 /*
- * 执行器相关定义
- * 重载基类相关接口
+ * 
+ * 
  */
 
 var (
-	//日志
+	/ 
 	elog = log.New("module", "vote.executor")
 )
 

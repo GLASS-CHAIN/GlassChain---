@@ -42,7 +42,7 @@ func getLocalDBSize(key []byte) int {
 
 func getLocalDB(key []byte) ([]byte, error) {
 	newKey := append(calcLocalPrefix(wasmCB.contractName), key...)
-	// 先查缓存，再查数据库
+	//  
 	for _, kv := range wasmCB.localCache {
 		if string(newKey) == string(kv.Key) {
 			return kv.Value, nil

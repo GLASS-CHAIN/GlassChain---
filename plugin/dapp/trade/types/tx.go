@@ -24,13 +24,13 @@ type TradeBuyTx struct {
 	Fee         int64  `json:"fee"`
 }
 
-//TradeRevokeTx :用于取消卖单的信息
+//TradeRevokeTx  
 type TradeRevokeTx struct {
 	SellID string `json:"sellID,"`
 	Fee    int64  `json:"fee"`
 }
 
-//TradeBuyLimitTx :用于挂买单的信息
+//TradeBuyLimitTx  
 type TradeBuyLimitTx struct {
 	TokenSymbol       string `json:"tokenSymbol"`
 	AmountPerBoardlot int64  `json:"amountPerBoardlot"`
@@ -43,14 +43,14 @@ type TradeBuyLimitTx struct {
 	PriceSymbol       string `json:"priceSymbol"`
 }
 
-//TradeSellMarketTx :用于向指定买单出售token的信息
+//TradeSellMarketTx  toke 
 type TradeSellMarketTx struct {
 	BuyID       string `json:"buyID"`
 	BoardlotCnt int64  `json:"boardlotCnt"`
 	Fee         int64  `json:"fee"`
 }
 
-//TradeRevokeBuyTx :取消指定买单
+//TradeRevokeBuyTx  
 type TradeRevokeBuyTx struct {
 	BuyID string `json:"buyID,"`
 	Fee   int64  `json:"fee"`

@@ -126,7 +126,7 @@ func IsIPWhiteListEmpty() bool {
 	return len(IPWhiteListMap) == 0
 }
 
-//IsInIPWhitelist 判断ipAddr是否在ip地址白名单中
+//IsInIPWhitelist ipAdd i 
 func IsInIPWhitelist(ipAddrPort string) bool {
 	ipAddr, _, err := net.SplitHostPort(ipAddrPort)
 	if err != nil {
@@ -183,7 +183,7 @@ func (c *HTTPConn) Close() error { return nil }
 func startRPCServer(address string, api interface{}) {
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
-		fmt.Println("监听失败，端口可能已经被占用")
+		fmt.Println(  ")
 		panic(err)
 	}
 	srv := &RPCServer{rpc.NewServer()}

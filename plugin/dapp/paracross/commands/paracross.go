@@ -1484,7 +1484,7 @@ func GetSelfConsOneStageCmd() *cobra.Command {
 	return cmd
 }
 
-// QuerySelfStagesCmd 显示提案查询信息
+// QuerySelfStagesCmd 
 func QuerySelfStagesCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",

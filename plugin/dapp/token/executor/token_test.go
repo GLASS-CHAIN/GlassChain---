@@ -96,7 +96,7 @@ func TestToken(t *testing.T) {
 	stateDB.Set([]byte(item2.Key), types.Encode(item2))
 
 	// create token
-	// 创建
+	// 
 	//ty := pty.TokenType{}
 	p1 := &pty.TokenPreCreate{
 		Name:         Symbol,

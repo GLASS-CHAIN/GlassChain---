@@ -22,7 +22,7 @@ var opt = &table.Option{
 	Index:   []string{"status", "addr_status", "type_status"},
 }
 
-//NewTable 新建表
+//NewTable 
 func NewTable(kvdb db.KV) *table.Table {
 	rowmeta := NewOracleRow()
 	table, err := table.NewTable(rowmeta, kvdb, opt)
@@ -32,22 +32,22 @@ func NewTable(kvdb db.KV) *table.Table {
 	return table
 }
 
-//OracleRow table meta 结构
+//OracleRow table meta 
 type OracleRow struct {
 	*ReceiptOracle
 }
 
-//NewOracleRow 新建一个meta 结构
+//NewOracleRow meta 
 func NewOracleRow() *OracleRow {
 	return &OracleRow{ReceiptOracle: &ReceiptOracle{}}
 }
 
-//CreateRow 新建数据行(注意index 数据一定也要保存到数据中,不能就保存eventid)
+//CreateRow  index  eventid)
 func (tx *OracleRow) CreateRow() *table.Row {
 	return &table.Row{Data: &ReceiptOracle{}}
 }
 
-//SetPayload 设置数据
+//SetPayload 
 func (tx *OracleRow) SetPayload(data types.Message) error {
 	if txdata, ok := data.(*ReceiptOracle); ok {
 		tx.ReceiptOracle = txdata
@@ -56,7 +56,7 @@ func (tx *OracleRow) SetPayload(data types.Message) error {
 	return types.ErrTypeAsset
 }
 
-//Get 按照indexName 查询 indexValue
+//Get indexName  indexValue
 func (tx *OracleRow) Get(key string) ([]byte, error) {
 	if key == "eventid" {
 		return []byte(tx.EventID), nil

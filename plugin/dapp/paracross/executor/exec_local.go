@@ -146,8 +146,8 @@ func (e *Paracross) ExecLocal_NodeGroupConfig(payload *pt.ParaNodeGroupConfig, t
 func (e *Paracross) ExecLocal_AssetTransfer(payload *types.AssetsTransfer, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	var set types.LocalDBSet
 
-	//  主链转出记录，
-	//  转入在 commit done 时记录， 因为没有日志里没有当时tx信息
+	//  ，
+	//   commit done ， t 
 	asset, err := e.getAssetTransferInfo(tx, payload.Cointoken, false)
 	if err != nil {
 		return nil, err
@@ -175,8 +175,8 @@ func (e *Paracross) ExecLocal_CrossAssetTransfer(payload *pt.CrossAssetTransfer,
 		clog.Crit("local CrossAssetTransfer getCrossAction failed", "error", err)
 		return nil, err
 	}
-	//  主链转出和平行链提取记录，
-	//  主链提取和平行链转出在 commit done 时记录
+	//  ，
+	//   commit done 
 	if !cfg.IsPara() && (act == pt.ParacrossMainAssetWithdraw || act == pt.ParacrossParaAssetTransfer) {
 		return nil, nil
 	}
@@ -199,7 +199,7 @@ func setMinerTxResult(cfg *types.Chain33Config, payload *pt.ParacrossMinerAction
 	for _, tx := range txs {
 		hash := tx.Hash()
 		curTxHashs = append(curTxHashs, hash)
-		//对user.p.xx.paracross ,actionTy==commit 的tx不需要再发回主链
+		/ user.p.xx.paracross ,actionTy==commit t 
 		if cfg.IsMyParaExecName(string(tx.Execer)) && bytes.HasSuffix(tx.Execer, []byte(pt.ParaX)) {
 			var payload pt.ParacrossAction
 			err := types.Decode(tx.Payload, &payload)
@@ -211,7 +211,7 @@ func setMinerTxResult(cfg *types.Chain33Config, payload *pt.ParacrossMinerAction
 				isCommitTx[string(hash)] = true
 			}
 		}
-		//跨链交易包含了主链交易，需要过滤出来
+		/  
 		if cfg.IsMyParaExecName(string(tx.Execer)) && !isCommitTx[string(hash)] {
 			paraTxHashs = append(paraTxHashs, hash)
 		}
@@ -250,20 +250,20 @@ func setMinerTxResultFork(cfg *types.Chain33Config, status *pt.ParacrossNodeStat
 		}
 	}
 
-	//有tx且全部是user.p.x.paracross的commit tx时候设为0
+	/ t user.p.x.paracros commit t 0
 	status.NonCommitTxCounts = 1
 	if len(curTxHashs) != 0 && len(curTxHashs) == len(isCommitTx) {
 		status.NonCommitTxCounts = 0
 	}
 
-	//主链自己过滤平行链tx， 对平行链执行失败的tx主链无法识别，主链和平行链需要获取相同的最初的tx map
-	//全部平行链tx结果
+	/ tx， t  tx map
+	/ t 
 	status.TxResult = []byte(hex.EncodeToString(util.CalcSingleBitMap(curTxHashs, receipts)))
 	clog.Debug("setMinerTxResultFork", "height", status.Height, "txResult", string(status.TxResult))
 
-	//ForkLoopCheckCommitTxDone 后只保留全部txreseult 结果
+	//ForkLoopCheckCommitTxDone txreseult 
 	if !pt.IsParaForkHeight(cfg, status.MainBlockHeight, pt.ForkLoopCheckCommitTxDone) {
-		//跨链tx结果
+		/ t 
 		crossTxHashs := FilterParaCrossTxHashes(txs)
 		status.CrossTxResult = []byte(hex.EncodeToString(util.CalcBitMap(crossTxHashs, curTxHashs, receipts)))
 		status.TxHashs = [][]byte{CalcTxHashsHash(curTxHashs)}
