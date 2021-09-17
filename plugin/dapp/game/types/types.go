@@ -32,10 +32,7 @@ func InitExecutor(cfg *types.Chain33Config) {
 	types.RegistorExecutor(GameX, NewType(cfg))
 }
 
-//getRealExecName
-//如果paraName == "", 那么自动用 types.ExecName("game")
-//如果设置了paraName , 那么强制用paraName
-//也就是说，我们可以构造其他平行链的交易
+
 func getRealExecName(cfg *types.Chain33Config, paraName string) string {
 	return cfg.ExecName(paraName + GameX)
 }
@@ -53,7 +50,6 @@ type GameType struct {
 	types.ExecTypeBase
 }
 
-// GetName 获取执行器名称
 func (gt *GameType) GetName() string {
 	return GameX
 }

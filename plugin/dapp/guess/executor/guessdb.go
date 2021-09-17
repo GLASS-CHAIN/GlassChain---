@@ -20,32 +20,23 @@ import (
 )
 
 const (
-	//ListDESC 表示记录降序排列
 	ListDESC = int32(0)
 
-	//ListASC 表示记录升序排列
 	ListASC = int32(1)
 
-	//DefaultCount 默认一次获取的记录数
 	DefaultCount = int32(10)
 
-	//DefaultCategory 默认分类
 	DefaultCategory = "default"
 
-	//MaxBetsOneTime 一次最多下多少注
 	MaxBetsOneTime = 10000e8
 
-	//MaxBetsNumber 一局游戏最多接受多少注
 	MaxBetsNumber = 10000000e8
 
-	//MaxBetHeight 距离游戏创建区块的最大可下注高度差
 	MaxBetHeight = 1000000
 
-	//MaxExpireHeight 距离游戏创建区块的最大过期高度差
 	MaxExpireHeight = 1000000
 )
 
-//Action 具体动作执行
 type Action struct {
 	coinsAccount *account.DB
 	db           dbm.KV
@@ -59,7 +50,6 @@ type Action struct {
 	mainHeight   int64
 }
 
-//NewAction 生成Action对象
 func NewAction(guess *Guess, tx *types.Transaction, index int) *Action {
 	hash := tx.Hash()
 	fromAddr := tx.From()
@@ -78,7 +68,6 @@ func NewAction(guess *Guess, tx *types.Transaction, index int) *Action {
 	}
 }
 
-//CheckExecAccountBalance 检查地址在Guess合约中的余额是否足够
 func (action *Action) CheckExecAccountBalance(fromAddr string, ToFrozen, ToActive int64) bool {
 	acc := action.coinsAccount.LoadExecAccount(fromAddr, action.execaddr)
 	if acc.GetBalance() >= ToFrozen && acc.GetFrozen() >= ToActive {
@@ -87,7 +76,6 @@ func (action *Action) CheckExecAccountBalance(fromAddr string, ToFrozen, ToActiv
 	return false
 }
 
-//Key State数据库中存储记录的Key值格式转换
 func Key(id string) (key []byte) {
 	//key = append(key, []byte("mavl-"+types.ExecName(pkt.GuessX)+"-")...)
 	key = append(key, []byte("mavl-"+gty.GuessX+"-")...)
@@ -95,7 +83,6 @@ func Key(id string) (key []byte) {
 	return key
 }
 
-//queryGameInfos 根据游戏id列表查询多个游戏详情信息
 func queryGameInfos(kvdb db.KVDB, infos *gty.QueryGuessGameInfos) (types.Message, error) {
 	var games []*gty.GuessGame
 	gameTable := gty.NewGuessGameTable(kvdb)
@@ -113,7 +100,6 @@ func queryGameInfos(kvdb db.KVDB, infos *gty.QueryGuessGameInfos) (types.Message
 	return &gty.ReplyGuessGameInfos{Games: games}, nil
 }
 
-//queryGameInfo 根据gameid查询game信息
 func queryGameInfo(kvdb db.KVDB, gameID []byte) (*gty.GuessGame, error) {
 	gameTable := gty.NewGuessGameTable(kvdb)
 	query := gameTable.GetQuery(kvdb)
@@ -127,7 +113,6 @@ func queryGameInfo(kvdb db.KVDB, gameID []byte) (*gty.GuessGame, error) {
 	return game, nil
 }
 
-//queryUserTableData 查询user表数据
 func queryUserTableData(query *table.Query, indexName string, prefix, primaryKey []byte) (types.Message, error) {
 	rows, err := query.ListIndex(indexName, prefix, primaryKey, DefaultCount, 0)
 	if err != nil {
@@ -152,7 +137,6 @@ func queryUserTableData(query *table.Query, indexName string, prefix, primaryKey
 	return &gty.GuessGameRecords{Records: records, PrimaryKey: primary}, nil
 }
 
-//queryGameTableData 查询game表数据
 func queryGameTableData(query *table.Query, indexName string, prefix, primaryKey []byte) (types.Message, error) {
 	rows, err := query.ListIndex(indexName, prefix, primaryKey, DefaultCount, 0)
 	if err != nil {
@@ -177,7 +161,6 @@ func queryGameTableData(query *table.Query, indexName string, prefix, primaryKey
 	return &gty.GuessGameRecords{Records: records, PrimaryKey: primary}, nil
 }
 
-//queryJoinTableData 查询join表数据
 func queryJoinTableData(talbeJoin *table.JoinTable, indexName string, prefix, primaryKey []byte) (types.Message, error) {
 	rows, err := talbeJoin.ListIndex(indexName, prefix, primaryKey, DefaultCount, 0)
 	if err != nil {
@@ -216,7 +199,6 @@ func (action *Action) getIndex() int64 {
 	return action.height*types.MaxTxsPerBlock + int64(action.index)
 }
 
-//getReceiptLog 根据游戏信息生成收据记录
 func (action *Action) getReceiptLog(game *gty.GuessGame, statusChange bool, bet *gty.GuessGameBet) *types.ReceiptLog {
 	log := &types.ReceiptLog{}
 	r := &gty.ReceiptGuessGame{}
@@ -270,7 +252,6 @@ func (action *Action) readGame(id string) (*gty.GuessGame, error) {
 	return &game, nil
 }
 
-// 新建一局游戏
 func (action *Action) newGame(gameID string, start *gty.GuessGameStart) *gty.GuessGame {
 	game := &gty.GuessGame{
 		GameID: gameID,
@@ -297,7 +278,6 @@ func (action *Action) newGame(gameID string, start *gty.GuessGameStart) *gty.Gue
 	return game
 }
 
-//GameStart 创建游戏动作执行
 func (action *Action) GameStart(start *gty.GuessGameStart) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -369,7 +349,6 @@ func (action *Action) GameStart(start *gty.GuessGameStart) (*types.Receipt, erro
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//GameBet 参与游戏动作执行
 func (action *Action) GameBet(pbBet *gty.GuessGameBet) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -393,7 +372,6 @@ func (action *Action) GameBet(pbBet *gty.GuessGameBet) (*types.Receipt, error) {
 	if !canBet {
 		var receiptLog *types.ReceiptLog
 		if prevStatus != game.Status {
-			//状态发生了变化，且是变到了不可下注的状态，那么对于所有下注的addr来说，其addr:status主键的数据都需要更新
 			action.changeAllAddrIndex(game)
 			receiptLog = action.getReceiptLog(game, true, nil)
 		} else {
@@ -406,7 +384,6 @@ func (action *Action) GameBet(pbBet *gty.GuessGameBet) (*types.Receipt, error) {
 		return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 	}
 
-	//检查竞猜选项是否合法
 	options, legal := getOptions(game.GetOptions())
 	if !legal || len(options) == 0 {
 		logger.Error("GameBet", "addr", action.fromaddr, "execaddr", action.execaddr, "Game Options illegal",
@@ -420,7 +397,6 @@ func (action *Action) GameBet(pbBet *gty.GuessGameBet) (*types.Receipt, error) {
 		return nil, types.ErrInvalidParam
 	}
 
-	//检查下注金额是否超限，如果超限，按最大值
 	if pbBet.GetBetsNum() > game.GetMaxBetsOneTime() {
 		pbBet.BetsNum = game.GetMaxBetsOneTime()
 	}
@@ -431,7 +407,6 @@ func (action *Action) GameBet(pbBet *gty.GuessGameBet) (*types.Receipt, error) {
 		return nil, types.ErrInvalidParam
 	}
 
-	// 检查账户余额
 	checkValue := pbBet.BetsNum
 	if !action.CheckExecAccountBalance(action.fromaddr, checkValue, 0) {
 		logger.Error("GameBet", "addr", action.fromaddr, "execaddr", action.execaddr, "id",
@@ -463,7 +438,6 @@ func (action *Action) GameBet(pbBet *gty.GuessGameBet) (*types.Receipt, error) {
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//GameStopBet 停止游戏下注动作执行
 func (action *Action) GameStopBet(pbBet *gty.GuessGameStopBet) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -481,7 +455,6 @@ func (action *Action) GameStopBet(pbBet *gty.GuessGameStopBet) (*types.Receipt, 
 		return nil, gty.ErrGuessStatus
 	}
 
-	//只有adminAddr可以发起stopBet
 	if game.AdminAddr != action.fromaddr {
 		logger.Error("GameStopBet", "addr", action.fromaddr, "execaddr", action.execaddr, "fromAddr is not adminAddr",
 			action.fromaddr, "adminAddr", game.AdminAddr)
@@ -491,7 +464,7 @@ func (action *Action) GameStopBet(pbBet *gty.GuessGameStopBet) (*types.Receipt, 
 	action.changeStatus(game, gty.GuessGameStatusStopBet)
 
 	var receiptLog *types.ReceiptLog
-	//状态发生变化，更新所有addr对应记录的index
+
 	action.changeAllAddrIndex(game)
 	receiptLog = action.getReceiptLog(game, true, nil)
 
@@ -501,7 +474,7 @@ func (action *Action) GameStopBet(pbBet *gty.GuessGameStopBet) (*types.Receipt, 
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//addGuessBet 向游戏结构中加入下注信息
+
 func (action *Action) addGuessBet(game *gty.GuessGame, pbBet *gty.GuessGameBet) {
 	bet := &gty.GuessBet{Option: pbBet.GetOption(), BetsNumber: pbBet.BetsNum, Index: action.getIndex()}
 	player := &gty.GuessPlayer{Addr: action.fromaddr, Bet: bet}
@@ -509,11 +482,11 @@ func (action *Action) addGuessBet(game *gty.GuessGame, pbBet *gty.GuessGameBet) 
 
 	for i := 0; i < len(game.BetStat.Items); i++ {
 		if game.BetStat.Items[i].Option == trimStr(pbBet.GetOption()) {
-			//针对具体选项更新统计项
+
 			game.BetStat.Items[i].BetsNumber += pbBet.GetBetsNum()
 			game.BetStat.Items[i].BetsTimes++
 
-			//更新整体统计
+
 			game.BetStat.TotalBetsNumber += pbBet.GetBetsNum()
 			game.BetStat.TotalBetTimes++
 			break
@@ -523,7 +496,7 @@ func (action *Action) addGuessBet(game *gty.GuessGame, pbBet *gty.GuessGameBet) 
 	game.BetsNumber += pbBet.GetBetsNum()
 }
 
-//GamePublish 公布竞猜游戏结果动作执行
+
 func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -535,7 +508,6 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 		return nil, err
 	}
 
-	//只有adminAddr可以发起publish
 	if game.AdminAddr != action.fromaddr {
 		logger.Error("GamePublish", "addr", action.fromaddr, "execaddr", action.execaddr, "fromAddr is not adminAddr",
 			action.fromaddr, "adminAddr", game.AdminAddr)
@@ -548,7 +520,6 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 		return nil, gty.ErrGuessStatus
 	}
 
-	//检查竞猜选项是否合法
 	options, legal := getOptions(game.GetOptions())
 	if !legal || len(options) == 0 {
 		logger.Error("GamePublish", "addr", action.fromaddr, "execaddr", action.execaddr, "Game Options illegal",
@@ -564,7 +535,6 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 
 	game.Result = trimStr(publish.Result)
 
-	//先遍历所有下注数据，转移资金到Admin账户合约地址；
 	for i := 0; i < len(game.Plays); i++ {
 		player := game.Plays[i]
 		value := player.Bet.BetsNumber
@@ -589,7 +559,7 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 	}
 
 	action.changeStatus(game, gty.GuessGameStatusPublish)
-	//计算竞猜正确的筹码总数
+
 	totalBetsNumber := game.BetStat.TotalBetsNumber
 	winBetsNumber := int64(0)
 	for j := 0; j < len(game.BetStat.Items); j++ {
@@ -598,7 +568,6 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 		}
 	}
 
-	//按创建游戏时设定的比例，转移佣金到开发者账户和平台账户
 	devAddr := gty.DevShareAddr
 	platAddr := gty.PlatformShareAddr
 	devFee := int64(0)
@@ -643,7 +612,6 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 		kv = append(kv, receipt.KV...)
 	}
 
-	//再遍历赢家，按照投注占比分配所有筹码
 	winValue := totalBetsNumber - devFee - platFee
 	for j := 0; j < len(game.Plays); j++ {
 		player := game.Plays[j]
@@ -677,7 +645,7 @@ func (action *Action) GamePublish(publish *gty.GuessGamePublish) (*types.Receipt
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//GameAbort 撤销游戏动作执行
+
 func (action *Action) GameAbort(pbend *gty.GuessGameAbort) (*types.Receipt, error) {
 	var logs []*types.ReceiptLog
 	var kv []*types.KeyValue
@@ -697,10 +665,9 @@ func (action *Action) GameAbort(pbend *gty.GuessGameAbort) (*types.Receipt, erro
 	}
 
 	preStatus := game.Status
-	//根据区块链高度或时间刷新游戏状态。
+
 	action.refreshStatusByTime(game)
 
-	//如果游戏超时，则任何地址都可以Abort，否则只有创建游戏的地址可以Abort
 	if game.Status != gty.GuessGameStatusTimeOut {
 		if game.AdminAddr != action.fromaddr {
 			logger.Error("GameAbort", "addr", action.fromaddr, "execaddr", action.execaddr, "Only admin can abort",
@@ -709,7 +676,7 @@ func (action *Action) GameAbort(pbend *gty.GuessGameAbort) (*types.Receipt, erro
 		}
 	}
 
-	//激活冻结账户
+
 	for i := 0; i < len(game.Plays); i++ {
 		player := game.Plays[i]
 		value := player.Bet.BetsNumber
@@ -727,13 +694,12 @@ func (action *Action) GameAbort(pbend *gty.GuessGameAbort) (*types.Receipt, erro
 	}
 
 	if game.Status != preStatus {
-		//说明action.RefreshStatusByTime(game)调用时已经更新过状态和index了，这里直接再改状态就行了。
 		game.Status = gty.GuessGameStatusAbort
 	} else {
 		action.changeStatus(game, gty.GuessGameStatusAbort)
 	}
 
-	//状态发生变化，统一更新所有addr记录的index
+
 	action.changeAllAddrIndex(game)
 
 	receiptLog := action.getReceiptLog(game, true, nil)
@@ -742,7 +708,6 @@ func (action *Action) GameAbort(pbend *gty.GuessGameAbort) (*types.Receipt, erro
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-//getOptions 获得竞猜选项，并判断是否符合约定格式，类似"A:xxxx;B:xxxx;C:xxx"，“：”前为选项名称，不能重复，":"后为选项说明。
 func getOptions(strOptions string) (options []string, legal bool) {
 	if len(strOptions) == 0 {
 		return nil, false
@@ -765,7 +730,6 @@ func getOptions(strOptions string) (options []string, legal bool) {
 	return options, legal
 }
 
-//trimStr 去除字符串中的空格、制表符、换行符
 func trimStr(str string) string {
 	str = strings.Replace(str, " ", "", -1)
 	str = strings.Replace(str, "\t", "", -1)
@@ -774,7 +738,6 @@ func trimStr(str string) string {
 	return str
 }
 
-//isLegalOption 判断选项是否为合法选项
 func isLegalOption(options []string, option string) bool {
 	option = trimStr(option)
 	for i := 0; i < len(options); i++ {
@@ -786,7 +749,6 @@ func isLegalOption(options []string, option string) bool {
 	return false
 }
 
-//changeStatus 修改游戏状态，同步更新历史记录
 func (action *Action) changeStatus(game *gty.GuessGame, destStatus int32) {
 	if game.Status != destStatus {
 		game.PreStatus = game.Status
@@ -796,7 +758,6 @@ func (action *Action) changeStatus(game *gty.GuessGame, destStatus int32) {
 	}
 }
 
-//changeAllAddrIndex 状态更新时，更新下注记录的历史信息
 func (action *Action) changeAllAddrIndex(game *gty.GuessGame) {
 	for i := 0; i < len(game.Plays); i++ {
 		player := game.Plays[i]
@@ -805,10 +766,8 @@ func (action *Action) changeAllAddrIndex(game *gty.GuessGame) {
 	}
 }
 
-//refreshStatusByTime 检测游戏是否过期，是否可以下注
 func (action *Action) refreshStatusByTime(game *gty.GuessGame) (canBet bool) {
 	mainHeight := action.mainHeight
-	//如果完全由管理员驱动状态变化，则除了保护性过期判断外，不需要做其他判断。
 	if game.DrivenByAdmin {
 
 		if (mainHeight - game.StartHeight) >= game.ExpireHeight {
@@ -820,7 +779,6 @@ func (action *Action) refreshStatusByTime(game *gty.GuessGame) (canBet bool) {
 		return true
 	}
 
-	// 检查区块高度是否超过最大可下注高度限制，看是否可以下注
 	heightDiff := mainHeight - game.StartHeight
 	if heightDiff >= game.MaxBetHeight {
 		logger.Error("GameBet", "addr", action.fromaddr, "execaddr", action.execaddr, "Height over limit",
@@ -839,13 +797,12 @@ func (action *Action) refreshStatusByTime(game *gty.GuessGame) (canBet bool) {
 	return canBet
 }
 
-//checkTime 检测游戏的过期设置。
 func (action *Action) checkTime(start *gty.GuessGameStart) bool {
 	if start.MaxBetHeight == 0 && start.ExpireHeight == 0 {
-		//如果上述字段都不携带，则认为完全由admin的指令驱动。
+
 		start.DrivenByAdmin = true
 
-		//依然设定最大过期高度差，作为最后的保护
+
 		start.ExpireHeight = MaxExpireHeight
 		return true
 	}

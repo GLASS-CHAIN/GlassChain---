@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//GuessCmd Guess合约命令行
 func GuessCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "guess",
@@ -35,7 +34,6 @@ func GuessCmd() *cobra.Command {
 	return cmd
 }
 
-//GuessStartRawTxCmd 构造Guess合约的start原始交易（未签名）的命令行
 func GuessStartRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "start",
@@ -92,7 +90,6 @@ func guessStart(cmd *cobra.Command, args []string) {
 
 }
 
-//GuessBetRawTxCmd 构造Guess合约的bet原始交易（未签名）的命令行
 func GuessBetRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "bet",
@@ -131,7 +128,6 @@ func guessBet(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-//GuessStopBetRawTxCmd 构造Guess合约的停止下注(stopBet)原始交易（未签名）的命令行
 func GuessStopBetRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "stop",
@@ -164,7 +160,6 @@ func guessStopBet(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-//GuessAbortRawTxCmd 构造Guess合约的撤销(Abort)原始交易（未签名）的命令行
 func GuessAbortRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "abort",
@@ -197,7 +192,6 @@ func guessAbort(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-//GuessPublishRawTxCmd 构造Guess合约的发布结果(Publish)原始交易（未签名）的命令行
 func GuessPublishRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "publish",
@@ -234,7 +228,6 @@ func guessPublish(cmd *cobra.Command, args []string) {
 	ctx.RunWithoutMarshal()
 }
 
-//GuessQueryRawTxCmd 构造Guess合约的查询(Query)命令行
 func GuessQueryRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "query",

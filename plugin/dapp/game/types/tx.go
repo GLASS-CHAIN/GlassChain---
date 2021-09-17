@@ -7,9 +7,9 @@ package types
 // GamePreCreateTx pre create game,unused
 type GamePreCreateTx struct {
 	//Secret     string `json:"secret"`
-	//下注必须时偶数，不能时级数
+
 	Amount int64 `json:"amount"`
-	//暂时只支持sha256加密
+
 	HashType  string `json:"hashType"`
 	HashValue []byte `json:"hashValue,omitempty"`
 	Fee       int64  `json:"fee"`

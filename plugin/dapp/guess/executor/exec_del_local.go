@@ -17,21 +17,17 @@ func (g *Guess) rollbackGame(game *gty.GuessGame, log *gty.ReceiptGuessGame) {
 		return
 	}
 
-	//如果状态发生了变化，则需要将游戏状态恢复到前一状态
 	if log.StatusChange {
 		game.Status = log.PreStatus
 		game.Index = log.PreIndex
 
-		//玩家信息中的index回滚
 		for i := 0; i < len(game.Plays); i++ {
 			player := game.Plays[i]
 			player.Bet.Index = player.Bet.PreIndex
 		}
 	}
 
-	//如果下注了，则需要把下注回滚
 	if log.Bet {
-		//统计信息回滚
 		game.BetStat.TotalBetTimes--
 		game.BetStat.TotalBetsNumber -= log.BetsNumber
 		for i := 0; i < len(game.BetStat.Items); i++ {
@@ -43,7 +39,6 @@ func (g *Guess) rollbackGame(game *gty.GuessGame, log *gty.ReceiptGuessGame) {
 			}
 		}
 
-		//玩家下注信息回滚
 		for i := 0; i < len(game.Plays); i++ {
 			player := game.Plays[i]
 			if player.Addr == log.Addr && player.Bet.Index == log.Index {
@@ -65,7 +60,7 @@ func (g *Guess) rollbackIndex(log *gty.ReceiptGuessGame) (kvs []*types.KeyValue,
 	}
 
 	if log.Status == gty.GuessGameStatusStart {
-		//新创建游戏回滚,game表删除记录
+
 		err = gameTable.Del([]byte(fmt.Sprintf("%018d", log.StartIndex)))
 		if err != nil {
 			return nil, err
@@ -73,11 +68,10 @@ func (g *Guess) rollbackIndex(log *gty.ReceiptGuessGame) (kvs []*types.KeyValue,
 		kvs, err = tableJoin.Save()
 		return kvs, err
 	} else if log.Status == gty.GuessGameStatusBet {
-		//下注阶段，需要更新游戏信息，回滚下注信息
+
 		game := log.Game
 		log.Game = nil
 
-		//先回滚游戏信息，再进行更新
 		g.rollbackGame(game, log)
 
 		err = tableJoin.MustGetTable("game").Replace(game)
@@ -95,11 +89,9 @@ func (g *Guess) rollbackIndex(log *gty.ReceiptGuessGame) (kvs []*types.KeyValue,
 			return nil, err
 		}
 	} else if log.StatusChange {
-		//如果是其他状态下仅发生了状态变化，则需要恢复游戏状态，并更新游戏记录。
 		game := log.Game
 		log.Game = nil
 
-		//先回滚游戏信息，再进行更新
 		g.rollbackGame(game, log)
 
 		err = tableJoin.MustGetTable("game").Replace(game)
@@ -139,22 +131,18 @@ func (g *Guess) execDelLocal(receipt *types.ReceiptData) (*types.LocalDBSet, err
 	return dbSet, nil
 }
 
-//ExecDelLocal_Start Guess执行器Start交易撤销
 func (g *Guess) ExecDelLocal_Start(payload *gty.GuessGameStart, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return g.execLocal(receiptData)
 }
 
-//ExecDelLocal_Bet Guess执行器Bet交易撤销
 func (g *Guess) ExecDelLocal_Bet(payload *gty.GuessGameBet, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return g.execLocal(receiptData)
 }
 
-//ExecDelLocal_Publish Guess执行器Publish交易撤销
 func (g *Guess) ExecDelLocal_Publish(payload *gty.GuessGamePublish, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return g.execLocal(receiptData)
 }
 
-//ExecDelLocal_Abort Guess执行器Abort交易撤销
 func (g *Guess) ExecDelLocal_Abort(payload *gty.GuessGameAbort, tx *types.Transaction, receiptData *types.ReceiptData, index int) (*types.LocalDBSet, error) {
 	return g.execLocal(receiptData)
 }

@@ -193,7 +193,7 @@ func (action *Action) GameCreate(create *gt.GameCreate) (*types.Receipt, error) 
 			gameID, "err", types.ErrNoBalance.Error())
 		return nil, types.ErrNoBalance
 	}
-	//冻结子账户资金
+
 	receipt, err := action.coinsAccount.ExecFrozen(action.fromaddr, action.execaddr, create.GetValue())
 	if err != nil {
 		glog.Error("GameCreate.ExecFrozen", "addr", action.fromaddr, "execaddr", action.execaddr, "amount", create.GetValue(), "err", err.Error())
@@ -209,7 +209,7 @@ func (action *Action) GameCreate(create *gt.GameCreate) (*types.Receipt, error) 
 		Status:        gt.GameActionCreate,
 		CreateTxHash:  gameID,
 	}
-	//更新stateDB缓存，用于计数
+
 	action.updateStateDBCache(game.GetStatus(), "")
 	action.updateStateDBCache(game.GetStatus(), game.GetCreateAddress())
 	game.Index = action.GetIndex(game)
@@ -248,7 +248,7 @@ func (action *Action) GameMatch(match *gt.GameMatch) (*types.Receipt, error) {
 			match.GetGameId(), "err", types.ErrNoBalance.Error())
 		return nil, types.ErrNoBalance
 	}
-	//冻结 game value 中资金的一半
+
 	receipt, err := action.coinsAccount.ExecFrozen(action.fromaddr, action.execaddr, game.GetValue()/2)
 	if err != nil {
 		glog.Error("GameMatch.ExecFrozen", "addr", action.fromaddr, "execaddr", action.execaddr, "amount", game.GetValue()/2, "err", err.Error())
@@ -341,9 +341,9 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 			close.GetGameId(), "err", err.Error())
 		return nil, err
 	}
-	//开奖时间控制
+
 	if action.fromaddr != game.GetCreateAddress() && !action.checkGameIsTimeOut(game) {
-		//如果不是游戏创建者开奖，则检查是否超时
+
 		glog.Error(gt.ErrGameCloseAddr.Error())
 		return nil, gt.ErrGameCloseAddr
 	}
@@ -351,7 +351,7 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 		glog.Error(gt.ErrGameCloseStatus.Error())
 		return nil, gt.ErrGameCloseStatus
 	}
-	//各自冻结余额检查
+
 	if !action.checkExecAccountBalance(game.GetCreateAddress(), 0, 2*game.GetValue()/3) {
 		glog.Error("GameClose", "addr", game.GetCreateAddress(), "execaddr", action.execaddr, "id",
 			game.GetGameId(), "err", types.ErrNoBalance.Error())
@@ -364,7 +364,6 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 	}
 	result, creatorGuess := action.checkGameResult(game, close)
 	if result == IsCreatorWin {
-		//如果是庄家赢了，则解冻所有钱,并将对赌者相应冻结的钱转移到庄家的合约账户中
 		receipt, err := action.coinsAccount.ExecActive(game.GetCreateAddress(), action.execaddr, 2*game.GetValue()/3)
 		if err != nil {
 			glog.Error("GameClose.execActive", "addr", game.GetCreateAddress(), "execaddr", action.execaddr, "amount", 2*game.GetValue()/3,
@@ -383,7 +382,7 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 		logs = append(logs, receipt.Logs...)
 		kv = append(kv, receipt.KV...)
 	} else if result == IsMatcherWin {
-		//如果是庄家输了，则反向操作
+
 		receipt, err := action.coinsAccount.ExecActive(game.GetCreateAddress(), action.execaddr, game.GetValue()/3)
 		if err != nil {
 			glog.Error("GameClose.ExecActive", "addr", game.GetCreateAddress(), "execaddr", action.execaddr, "amount", game.GetValue()/3,
@@ -413,7 +412,7 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 		kv = append(kv, receipt.KV...)
 
 	} else if result == IsDraw {
-		//平局是解冻各自的押注即可
+
 		receipt, err := action.coinsAccount.ExecActive(game.GetCreateAddress(), action.execaddr, 2*game.GetValue()/3)
 		if err != nil {
 			glog.Error("GameClose.ExecActive", "addr", game.GetCreateAddress(), "execaddr", action.execaddr, "amount", 2*game.GetValue()/3,
@@ -432,7 +431,7 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 		logs = append(logs, receipt.Logs...)
 		kv = append(kv, receipt.KV...)
 	} else if result == IsTimeOut {
-		//开奖超时，庄家输掉所有筹码
+
 		receipt, err := action.coinsAccount.ExecActive(game.GetMatchAddress(), action.execaddr, game.GetValue()/3)
 		if err != nil {
 			glog.Error("GameClose.ExecActive", "addr", game.GetCreateAddress(), "execaddr", action.execaddr, "amount", 2*game.GetValue()/3,
@@ -473,8 +472,7 @@ func (action *Action) GameClose(close *gt.GameClose) (*types.Receipt, error) {
 	return &types.Receipt{Ty: types.ExecOk, KV: kv, Logs: logs}, nil
 }
 
-// 检查开奖是否超时，若超过一天，则不让庄家开奖，但其他人可以开奖，
-// 若没有一天，则其他人没有开奖权限，只有庄家有开奖权限
+
 func (action *Action) checkGameIsTimeOut(game *gt.Game) bool {
 	cfg := action.api.GetConfig()
 	activeTime := getConfValue(cfg, action.db, ConfNameActiveTime, ActiveTime)
@@ -482,14 +480,13 @@ func (action *Action) checkGameIsTimeOut(game *gt.Game) bool {
 	return action.blocktime > (game.GetMatchTime() + DurTime)
 }
 
-//根据传入密钥，揭晓游戏结果
 func (action *Action) checkGameResult(game *gt.Game, close *gt.GameClose) (int32, int32) {
-	//如果超时，直接走超时开奖逻辑
+
 	if action.checkGameIsTimeOut(game) {
 		return IsTimeOut, Unknown
 	}
 	if bytes.Equal(common.Sha256([]byte(close.GetSecret()+string(Rock))), game.GetHashValue()) {
-		//此刻庄家出的是石头
+
 		if game.GetMatcherGuess() == Rock {
 			return IsDraw, Rock
 		} else if game.GetMatcherGuess() == Scissor {
@@ -497,11 +494,11 @@ func (action *Action) checkGameResult(game *gt.Game, close *gt.GameClose) (int32
 		} else if game.GetMatcherGuess() == Paper {
 			return IsMatcherWin, Rock
 		}
-		//其他情况说明matcher 使坏，填了其他值，当做作弊处理
+
 		return IsCreatorWin, Rock
 
 	} else if bytes.Equal(common.Sha256([]byte(close.GetSecret()+string(Scissor))), game.GetHashValue()) {
-		//此刻庄家出的剪刀
+
 		if game.GetMatcherGuess() == Rock {
 			return IsMatcherWin, Scissor
 		} else if game.GetMatcherGuess() == Scissor {
@@ -512,7 +509,7 @@ func (action *Action) checkGameResult(game *gt.Game, close *gt.GameClose) (int32
 		return IsCreatorWin, Scissor
 
 	} else if bytes.Equal(common.Sha256([]byte(close.GetSecret()+string(Paper))), game.GetHashValue()) {
-		//此刻庄家出的是布
+
 		if game.GetMatcherGuess() == Rock {
 			return IsCreatorWin, Paper
 		} else if game.GetMatcherGuess() == Scissor {
@@ -523,7 +520,7 @@ func (action *Action) checkGameResult(game *gt.Game, close *gt.GameClose) (int32
 		return IsCreatorWin, Paper
 
 	}
-	//其他情况默认是matcher win
+
 	return IsMatcherWin, Unknown
 }
 
@@ -546,7 +543,6 @@ func List(cfg *types.Chain33Config, db dbm.Lister, stateDB dbm.KV, param *gt.Que
 	return QueryGameListByPage(cfg, db, stateDB, param)
 }
 
-// QueryGameListByPage 分页查询
 func QueryGameListByPage(cfg *types.Chain33Config, db dbm.Lister, stateDB dbm.KV, param *gt.QueryGameListByStatusAndAddr) (types.Message, error) {
 	switch param.GetStatus() {
 	case gt.GameActionCreate, gt.GameActionMatch, gt.GameActionClose, gt.GameActionCancel:
@@ -576,7 +572,7 @@ func queryGameListByStatusAndAddr(cfg *types.Chain33Config, db dbm.Lister, state
 	}
 	var values [][]byte
 	var err error
-	if param.GetIndex() == 0 { //第一次查询
+	if param.GetIndex() == 0 { 
 		values, err = db.List(prefix, nil, count, direction)
 	} else {
 		values, err = db.List(prefix, key, count, direction)
@@ -596,7 +592,6 @@ func queryGameListByStatusAndAddr(cfg *types.Chain33Config, db dbm.Lister, state
 	return &gt.ReplyGameList{Games: GetGameList(stateDB, gameIds)}, nil
 }
 
-// QueryGameListCount count数查询
 func QueryGameListCount(stateDB dbm.KV, param *gt.QueryGameListCount) (types.Message, error) {
 	if param.Status < 1 || param.Status > 4 {
 		return nil, fmt.Errorf("%s", "the status only fill in 1,2,3,4!")
@@ -658,7 +653,7 @@ func QueryGameListByIds(db dbm.KV, infos *gt.QueryGameInfos) (types.Message, err
 	return &gt.ReplyGameList{Games: games}, nil
 }
 
-// GetGameList 安全批量查询方式,防止因为脏数据导致查询接口奔溃
+
 func GetGameList(db dbm.KV, values []string) []*gt.Game {
 	var games []*gt.Game
 	for _, value := range values {
@@ -688,7 +683,7 @@ func getConfValue(cfg *types.Chain33Config, db dbm.KV, key string, defaultValue 
 		glog.Error("gamedb getConfValue", "can't get value from values arr. key:", key)
 		return defaultValue
 	}
-	//取数组最后一位，作为最新配置项的值
+
 	v, err := strconv.ParseInt(values[len(values)-1], 10, 64)
 	if err != nil {
 		glog.Error("gamedb getConfValue", "Type conversion error:", err.Error())
@@ -700,7 +695,7 @@ func getManageKey(cfg *types.Chain33Config, key string, db dbm.KV) ([]byte, erro
 	manageKey := types.ManageKey(key)
 	value, err := db.Get([]byte(manageKey))
 	if err != nil {
-		if cfg.IsPara() { //平行链只有一种存储方式
+		if cfg.IsPara() { 
 			glog.Error("gamedb getManage", "can't get value from db,key:", key, "err", err.Error())
 			return nil, err
 		}

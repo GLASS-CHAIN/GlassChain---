@@ -33,7 +33,7 @@ func (g *Guess) updateIndex(log *gty.ReceiptGuessGame) (kvs []*types.KeyValue, e
 	}
 
 	if log.Status == gty.GuessGameStatusStart {
-		//新创建游戏,game表新增记录
+
 		game := log.Game
 		log.Game = nil
 
@@ -47,7 +47,6 @@ func (g *Guess) updateIndex(log *gty.ReceiptGuessGame) (kvs []*types.KeyValue, e
 			return nil, err
 		}
 	} else if log.Status == gty.GuessGameStatusBet {
-		//用户下注，game表发生更新(game中下注信息有更新)，user表新增下注记录
 		game := log.Game
 		log.Game = nil
 		userBet := g.getUserBet(log)
@@ -67,7 +66,6 @@ func (g *Guess) updateIndex(log *gty.ReceiptGuessGame) (kvs []*types.KeyValue, e
 			return nil, err
 		}
 	} else if log.StatusChange {
-		//其他状态，游戏状态变化，只需要更新game表
 		game := log.Game
 		log.Game = nil
 

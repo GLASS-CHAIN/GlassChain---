@@ -31,36 +31,34 @@ type Game struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//默认是由创建这局游戏的txHash作为gameId
 	GameId string `protobuf:"bytes,1,opt,name=gameId,proto3" json:"gameId,omitempty"`
 	// create 1 -> Match 2 -> Cancel 3 -> Close 4
 	Status int32 `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
-	//创建时间
+
 	CreateTime int64 `protobuf:"varint,3,opt,name=createTime,proto3" json:"createTime,omitempty"`
-	//匹配时间(何时参与对赌）
+
 	MatchTime int64 `protobuf:"varint,4,opt,name=matchTime,proto3" json:"matchTime,omitempty"`
-	//状态close的时间（包括cancel）
+
 	Closetime int64 `protobuf:"varint,5,opt,name=closetime,proto3" json:"closetime,omitempty"`
-	//赌注
+
 	Value int64 `protobuf:"varint,6,opt,name=value,proto3" json:"value,omitempty"`
-	//发起者账号地址
+
 	CreateAddress string `protobuf:"bytes,7,opt,name=createAddress,proto3" json:"createAddress,omitempty"`
-	//对赌者账号地址
+
 	MatchAddress string `protobuf:"bytes,8,opt,name=matchAddress,proto3" json:"matchAddress,omitempty"`
-	// hash 类型，预留字段
+
 	HashType string `protobuf:"bytes,9,opt,name=hashType,proto3" json:"hashType,omitempty"`
-	//庄家创建游戏时，庄家自己出拳结果加密后的hash值
+
 	HashValue []byte `protobuf:"bytes,10,opt,name=hashValue,proto3" json:"hashValue,omitempty"`
-	//用来公布庄家出拳结果的私钥
+
 	Secret string `protobuf:"bytes,11,opt,name=secret,proto3" json:"secret,omitempty"`
-	// 1 平局，2 庄家获胜，3 matcher获胜，4
-	// 庄家开奖超时，matcher获胜，并获得本局所有赌资
+
 	Result int32 `protobuf:"varint,12,opt,name=result,proto3" json:"result,omitempty"`
-	// matcher 出拳结果
+
 	MatcherGuess int32 `protobuf:"varint,13,opt,name=matcherGuess,proto3" json:"matcherGuess,omitempty"`
 	// create txHash
 	CreateTxHash string `protobuf:"bytes,14,opt,name=createTxHash,proto3" json:"createTxHash,omitempty"`
-	// matche交易hash
+
 	MatchTxHash string `protobuf:"bytes,15,opt,name=matchTxHash,proto3" json:"matchTxHash,omitempty"`
 	// close txhash
 	CloseTxHash string `protobuf:"bytes,16,opt,name=closeTxHash,proto3" json:"closeTxHash,omitempty"`
@@ -523,9 +521,9 @@ type GameCreate struct {
 	unknownFields protoimpl.UnknownFields
 
 	Value int64 `protobuf:"varint,1,opt,name=value,proto3" json:"value,omitempty"`
-	//加密用的算法
+
 	HashType string `protobuf:"bytes,2,opt,name=hashType,proto3" json:"hashType,omitempty"`
-	//加密后的值
+
 	HashValue []byte `protobuf:"bytes,3,opt,name=hashValue,proto3" json:"hashValue,omitempty"`
 }
 
@@ -582,21 +580,19 @@ func (x *GameCreate) GetHashValue() []byte {
 	return nil
 }
 
-// queryByAddr 和 queryByStatus共用同一个结构体
 type QueryGameListByStatusAndAddr struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//优先根据status查询,status不可为空
+
 	Status int32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	//二级搜索，如果要查询一个地址下的所有game信息，可以根据status，分多次查询，这样规避存储数据时的臃余情况
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	// 索引值
+
 	Index int64 `protobuf:"varint,3,opt,name=index,proto3" json:"index,omitempty"`
-	//单页返回多少条记录，默认返回20条，单次最多返回100条
+
 	Count int32 `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
-	// 0降序，1升序，默认降序
+
 	Direction int32 `protobuf:"varint,5,opt,name=direction,proto3" json:"direction,omitempty"`
 }
 
@@ -667,15 +663,13 @@ func (x *QueryGameListByStatusAndAddr) GetDirection() int32 {
 	return 0
 }
 
-// 统计数量
+
 type QueryGameListCount struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//优先根据status查询,status不可为空
 	Status int32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	//二级搜索，如果要查询一个地址下的所有game信息，可以根据status，分多次查询，这样规避存储数据时的臃余情况
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 }
 
@@ -725,7 +719,6 @@ func (x *QueryGameListCount) GetAddress() string {
 	return ""
 }
 
-// 索引value值
 type GameRecord struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1023,7 +1016,7 @@ type ReceiptGame struct {
 
 	GameId string `protobuf:"bytes,1,opt,name=gameId,proto3" json:"gameId,omitempty"`
 	Status int32  `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
-	//记录上一次状态
+
 	PrevStatus int32  `protobuf:"varint,3,opt,name=prevStatus,proto3" json:"prevStatus,omitempty"`
 	Addr       string `protobuf:"bytes,4,opt,name=addr,proto3" json:"addr,omitempty"`
 	CreateAddr string `protobuf:"bytes,5,opt,name=createAddr,proto3" json:"createAddr,omitempty"`

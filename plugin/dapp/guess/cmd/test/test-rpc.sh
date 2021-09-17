@@ -102,7 +102,7 @@ init() {
 }
 
 function run_test() {
-    #导入地址私钥
+
     chain33_ImportPrivkey "0xc889d2958843fc96d4bd3f578173137d37230e580d65e9074545c61e7e9c1932" "1NrfEBfdFJUUqgbw5ZbHXhdew6NNQumYhM" "user1" "$MAIN_HTTP"
     chain33_ImportPrivkey "0xf10c79470dc74c229c4ee73b05d14c58322b771a6c749d27824f6a59bb6c2d73" "17tRkBrccmFiVcLPXgEceRxDzJ2WaDZumN" "user2" "$MAIN_HTTP"
     chain33_ImportPrivkey "4257D8692EF7FE13C68B65D6A52F03933DB2FA5CE8FAF210B5B8B80C721CED01" "12qyocayNF7Lv6C9qW4avxs2E7U41fKSfv" "admin" "$MAIN_HTTP"
@@ -113,129 +113,90 @@ function run_test() {
     chain33_QueryExecBalance "${guess_user1_addr}" "${guess_exec}" "$MAIN_HTTP"
     chain33_QueryExecBalance "${guess_user2_addr}" "${guess_exec}" "$MAIN_HTTP"
 
-    #场景1：start -> bet -> bet -> stop -> publish
-    #管理员创建游戏
+
     guess_game_start
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 11
 
-    #用户1下注
     guess_game_bet "0xc889d2958843fc96d4bd3f578173137d37230e580d65e9074545c61e7e9c1932" "A"
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 12
 
-    #用户2下注
     guess_game_bet "0xf10c79470dc74c229c4ee73b05d14c58322b771a6c749d27824f6a59bb6c2d73" "B"
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 12
 
-    #管理员停止下注
     guess_game_stop
 
-    #查询游戏状态
+
     guess_QueryGameByID "$eventId" 13
 
-    #管理员发布结果
     guess_game_publish
 
-    #查询游戏状态
+
     guess_QueryGameByID "$eventId" 15
 
-    #查询余额
     chain33_QueryExecBalance "${guess_user1_addr}" "${guess_exec}" "$MAIN_HTTP"
     chain33_QueryExecBalance "${guess_user2_addr}" "${guess_exec}" "$MAIN_HTTP"
 
-    #场景2：start->stop->abort
     guess_game_start
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 11
 
-    #管理员停止下注
     guess_game_stop
 
-    #查询游戏状态
+
     guess_QueryGameByID "$eventId" 13
 
-    #管理员发布结果
+
     guess_game_abort
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 14
 
-    #场景3：start->abort
     guess_game_start
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 11
 
-    #管理员发布结果
     guess_game_abort
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 14
 
-    #场景4：start->bet->abort
-
-    #管理员创建游戏
     guess_game_start
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 11
 
-    #用户1下注
     guess_game_bet "0xc889d2958843fc96d4bd3f578173137d37230e580d65e9074545c61e7e9c1932" "A"
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 12
 
-    #用户2下注
     guess_game_bet "0xf10c79470dc74c229c4ee73b05d14c58322b771a6c749d27824f6a59bb6c2d73" "B"
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 12
 
-    #管理员发布结果
     guess_game_abort
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 14
 
-    #场景5：start->bet->stop->abort
-    #管理员创建游戏
     guess_game_start
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 11
 
-    #用户1下注
     guess_game_bet "0xc889d2958843fc96d4bd3f578173137d37230e580d65e9074545c61e7e9c1932" "A"
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 12
 
-    #用户2下注
     guess_game_bet "0xf10c79470dc74c229c4ee73b05d14c58322b771a6c749d27824f6a59bb6c2d73" "B"
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 12
 
-    #管理员停止下注
     guess_game_stop
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 13
 
-    #管理员发布结果
     guess_game_abort
 
-    #查询游戏状态
     guess_QueryGameByID "$eventId" 14
 
-    #查询余额
     chain33_QueryExecBalance "${guess_user1_addr}" "${guess_exec}" "$MAIN_HTTP"
     chain33_QueryExecBalance "${guess_user2_addr}" "${guess_exec}" "$MAIN_HTTP"
 }
